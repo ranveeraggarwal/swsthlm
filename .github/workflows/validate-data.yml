@@ -1,14 +1,11 @@
 name: Validate data
 
-# Schema + integrity gate for /data (issue #3). Runs on any PR that touches
-# the data or the validator itself, and on pushes to main. Make this check
-# required in branch protection so no malformed row can merge.
+# Schema + integrity gate for /data (issue #3). Runs on every PR (no path
+# filter) so the required status check is always reported — path-filtered
+# workflows leave the check "waiting" on PRs that don't touch those paths,
+# blocking merge. Push to main keeps the path filter for efficiency.
 on:
   pull_request:
-    paths:
-      - 'data/**'
-      - 'scripts/validate-data.mjs'
-      - '.github/workflows/validate-data.yml'
   push:
     branches: [main]
     paths:

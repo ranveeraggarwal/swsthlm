@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Code } from 'lucide-react';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -48,6 +48,25 @@ export default function AboutPage() {
               affiliated with any single dance studio or organization, meaning we showcase events, socials, tea dances,
               and workshops from all organizers across Stockholm fairly and transparently.
             </p>
+          </section>
+
+          <section>
+            <h3 className="font-serif text-2xl font-bold text-[var(--on-surface)] mb-3">Open Source</h3>
+            <p className="text-[15px] sm:text-base mb-4">
+              We love open source. Stockholm Swing is built in the open and released under the MIT License —
+              the entire site, its data, and the tools that maintain it live in a public GitHub repository.
+              If you&apos;d like to fix a listing, add a feature, or just see how it works, the code is right there.
+              Contributions are welcome.
+            </p>
+            <a
+              href="https://github.com/ranveeraggarwal/swsthlm"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-[var(--primary)] hover:underline font-bold"
+            >
+              <Code className="w-4 h-4" />
+              View on GitHub
+            </a>
           </section>
 
           <section className="bg-[var(--surface-container-low)] p-6 rounded-lg border-2 border-[var(--on-surface)] shadow-[3px_3px_0px_0px_var(--on-surface)]">

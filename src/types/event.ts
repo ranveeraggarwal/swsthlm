@@ -7,6 +7,7 @@ export interface SwingEvent {
   end: string;        // HH:MM
   venue: string;      // e.g., "Chicago Swing Dance Studio"
   address: string;    // e.g., "Hornsgatan 75"
+  neighborhood?: string; // e.g., "Söder"
   style: string;      // e.g., "lindy", "balboa", "blues", "all"
   music: 'live' | 'dj' | 'mixed';
   organizer: string;

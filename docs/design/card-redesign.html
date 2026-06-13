@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stockholm Swing — card redesign</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBFBF9; --card:#FFFFFF; --ink:#16161D; --muted:#6B6B76;
+    --line:#E9E8E3; --line2:#F1F0EC;
+    --live:#B26B12; --live-bg:#FBF1E2;       /* warm brass for live music */
+    --beg:#2E7D54; --beg-bg:#E7F3EC;          /* green for beginner */
+    --now:#C03A2B; --now-bg:#FBEAE7;          /* coral for happening now */
+    --pill:#F3F2EE; --pill-ink:#444;
+    --accent:#16161D;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif; line-height:1.5;
+    padding:28px 16px 80px; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:480px;margin:0 auto}
+  .lead{margin-bottom:8px}
+  .lead h1{font-family:'Space Grotesk';font-size:1.45rem;font-weight:700;letter-spacing:-.02em}
+  .lead p{color:var(--muted);font-size:.92rem;margin-top:4px}
+  .sectlabel{
+    font-family:'Space Grotesk';font-size:.7rem;font-weight:600;
+    text-transform:uppercase;letter-spacing:.12em;color:var(--muted);
+    margin:34px 0 12px; display:flex;align-items:center;gap:10px;
+  }
+  .sectlabel::after{content:"";flex:1;height:1px;background:var(--line)}
+
+  /* date header in the real list */
+  .dayhead{
+    font-family:'Space Grotesk';font-weight:600;font-size:.95rem;
+    color:var(--ink);margin:18px 2px 10px;
+  }
+
+  /* ---------- BEFORE ---------- */
+  .before{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:16px;margin-bottom:12px;
+  }
+  .before .badrow{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+  .before .b{font-size:.72rem;padding:3px 9px;border-radius:999px;background:var(--pill);color:var(--pill-ink);font-weight:500}
+  .before .b.now{background:var(--now-bg);color:var(--now)}
+  .before h3{font-family:'Space Grotesk';font-size:1.1rem;font-weight:600;margin-bottom:2px}
+  .before .meta{font-size:.86rem;color:var(--muted);margin:2px 0}
+  .before .meta a{color:var(--ink)}
+  .before .desc{font-size:.86rem;color:#4a4a52;margin:8px 0;}
+  .before .link{font-size:.85rem;font-weight:600;color:var(--live);display:inline-block;margin-top:6px}
+  .tag{display:inline-block;background:#FFF6E9;color:var(--live);font-size:.7rem;font-weight:600;padding:2px 7px;border-radius:6px;margin-top:6px}
+
+  /* ---------- AFTER ---------- */
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    margin-bottom:10px;overflow:hidden;transition:border-color .15s;
+  }
+  .card:hover{border-color:#dad9d2}
+  .card .top{padding:14px 16px 13px;cursor:pointer}
+  .row1{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+  .time{font-family:'Space Grotesk';font-weight:600;font-size:.92rem;color:var(--ink);font-variant-numeric:tabular-nums}
+  .recur{font-size:.72rem;color:var(--muted);font-weight:500;margin-left:7px}
+  .status{font-size:.7rem;font-weight:600;padding:3px 9px;border-radius:999px;white-space:nowrap}
+  .status.now{background:var(--now-bg);color:var(--now)}
+  .status.ended{background:var(--pill);color:var(--muted)}
+  .title{font-family:'Space Grotesk';font-size:1.16rem;font-weight:600;letter-spacing:-.01em;margin:7px 0 3px;line-height:1.25}
+  .venue{font-size:.88rem;color:var(--muted)}
+  .venue a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line)}
+  .venue .hood{color:var(--muted)}
+  .pills{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:11px}
+  .pill{font-size:.73rem;font-weight:500;padding:3px 9px;border-radius:999px;background:var(--pill);color:var(--pill-ink)}
+  .pill.live{background:var(--live-bg);color:var(--live);font-weight:600}
+  .pill.beg{background:var(--beg-bg);color:var(--beg);font-weight:600}
+  .pill.price{background:transparent;color:var(--ink);font-weight:600;padding-left:2px}
+  .who{font-size:.8rem;color:var(--muted);margin-left:auto}
+  .toggle{
+    display:flex;align-items:center;gap:6px;width:100%;
+    background:none;border:none;border-top:1px solid var(--line2);
+    padding:10px 16px;font-family:'Inter';font-size:.8rem;font-weight:600;
+    color:var(--muted);cursor:pointer;
+  }
+  .toggle:hover{color:var(--ink)}
+  .chev{transition:transform .2s;font-size:.7rem}
+  .card.open .chev{transform:rotate(180deg)}
+  .detail{display:none;padding:2px 16px 16px;border-top:1px solid var(--line2)}
+  .card.open .detail{display:block}
+  .detail .kv{font-size:.84rem;margin:10px 0 2px}
+  .detail .kv b{font-weight:600}
+  .detail .by{font-size:.8rem;color:var(--muted);margin-bottom:8px}
+  .detail .text{font-size:.86rem;color:#4a4a52;line-height:1.55}
+  .detail .cta{
+    display:inline-block;margin-top:12px;background:var(--accent);color:#fff;
+    font-size:.82rem;font-weight:600;padding:8px 15px;border-radius:9px;text-decoration:none;
+  }
+  .note{font-size:.82rem;color:var(--muted);background:#F6F5F1;border:1px solid var(--line);border-radius:10px;padding:11px 13px;margin-top:6px}
+  .note b{color:var(--ink);font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="lead">
+    <h1>Card redesign</h1>
+    <p>Same data, two thirds less ink. Tap “Details” on the new cards.</p>
+  </div>
+
+  <!-- BEFORE -->
+  <div class="sectlabel">Before · today</div>
+  <div class="dayhead">Saturday, Jun 13</div>
+  <div class="before">
+    <div class="badrow">
+      <span class="b">Social – all styles</span>
+      <span class="b">DJ</span>
+      <span class="b now">Happening Now</span>
+    </div>
+    <h3>Saturday Night Fusion</h3>
+    <div class="meta">Saturday, Jun 13</div>
+    <div class="meta">20:00 – 00:30</div>
+    <div class="meta"><a href="#">Swedish Swing Society</a> · Odengatan 89</div>
+    <div class="meta">DJ: <b>Emma Lundqvist</b></div>
+    <div class="meta">By Swedish Swing Society</div>
+    <div class="desc">Detta är en lite nyare företeelse på SSS startad av bluesgänget. På våra fusionkvällar lämnar vi jazz- och bluesvärlden och utforskar mer varierad, ofta modern och elektronisk musik. Vi har inga lektioner i fusion, men socialkvällarna inleds ofta med en konceptklass… <b>Show More</b></div>
+    <a class="link" href="#">Get Tickets / Info</a>
+  </div>
+  <div class="note">The date repeats the header. Five stacked meta lines. An 80-word Swedish paragraph sits in prime space before you’ve even registered the title. Multiply by 20 cards.</div>
+
+  <!-- AFTER -->
+  <div class="sectlabel">After</div>
+
+  <div class="dayhead">Saturday, Jun 13</div>
+
+  <!-- Happening now, DJ, no price known -->
+  <div class="card">
+    <div class="top" onclick="t(this)">
+      <div class="row1">
+        <span class="time">20:00 – 00:30</span>
+        <span class="status now">Happening now</span>
+      </div>
+      <div class="title">Saturday Night Fusion</div>
+      <div class="venue"><a href="#">Swedish Swing Society</a> <span class="hood">· Vasastan</span></div>
+      <div class="pills">
+        <span class="pill">DJ</span>
+        <span class="who">Emma Lundqvist</span>
+      </div>
+    </div>
+    <button class="toggle" onclick="t(this.parentElement)"><span class="chev">▾</span> Details</button>
+    <div class="detail">
+      <div class="kv">DJ: <b>Emma Lundqvist</b></div>
+      <div class="by">By Swedish Swing Society · Odengatan 89</div>
+      <div class="text">Detta är en lite nyare företeelse på SSS startad av bluesgänget. På våra fusionkvällar lämnar vi jazz- och bluesvärlden och utforskar mer varierad, ofta modern och elektronisk musik.</div>
+      <a class="cta" href="#">Tickets / info →</a>
+    </div>
+  </div>
+
+  <div class="dayhead">Tuesday, Jun 16</div>
+
+  <!-- Recurring, priced, Lindy -->
+  <div class="card">
+    <div class="top" onclick="t(this)">
+      <div class="row1">
+        <span class="time">18:00 – 22:00 <span class="recur">· every Tue</span></span>
+      </div>
+      <div class="title">P-Tzz-Dah</div>
+      <div class="venue"><a href="#">Sprallen</a> <span class="hood">· Hammarby Sjöstad</span></div>
+      <div class="pills">
+        <span class="pill">Lindy Hop</span>
+        <span class="pill">DJ</span>
+        <span class="pill price">50 kr</span>
+        <span class="who">DJ Hank Hipshot</span>
+      </div>
+    </div>
+    <button class="toggle" onclick="t(this.parentElement)"><span class="chev">▾</span> Details</button>
+    <div class="detail">
+      <div class="kv">DJ: <b>DJ Hank Hipshot</b> · 50 kr (Swish/cash)</div>
+      <div class="by">By Sprallen · Hammarby Slussväg 15</div>
+      <div class="text">Every Tuesday is a swingin’ night with P-Tzz-Dah. Swing jazz, R&B and jump blues for your swingin’ moves.</div>
+      <a class="cta" href="#">Tickets / info →</a>
+    </div>
+  </div>
+
+  <div class="dayhead">Sunday, Jun 28</div>
+
+  <!-- Beginner + live + price -->
+  <div class="card">
+    <div class="top" onclick="t(this)">
+      <div class="row1">
+        <span class="time">16:00 – 20:00</span>
+      </div>
+      <div class="title">Tegels Jazzorkester</div>
+      <div class="venue"><a href="#">Vintervikens Trädgård</a> <span class="hood">· Aspudden</span></div>
+      <div class="pills">
+        <span class="pill live">Live band</span>
+        <span class="pill beg">Beginner class 16:00</span>
+        <span class="pill price">100/150 kr</span>
+      </div>
+    </div>
+    <button class="toggle" onclick="t(this.parentElement)"><span class="chev">▾</span> Details</button>
+    <div class="detail">
+      <div class="kv">Live band: <b>Tegels Jazzorkester</b></div>
+      <div class="by">By Tegels Jazzorkester · book by email, limited places</div>
+      <div class="text">Dans i Vintervikens trädgård. Vi inleder med en crash-course i enkel swingdans som passar alla, även total nybörjare — sen följer en konsert med dansvänlig jazz.</div>
+      <a class="cta" href="#">Tickets / info →</a>
+    </div>
+  </div>
+
+  <div class="dayhead">Fri 28 & Sat 29 Aug</div>
+
+  <!-- Multi-day premium, collapsed into one card -->
+  <div class="card">
+    <div class="top" onclick="t(this)">
+      <div class="row1">
+        <span class="time">20:00 – 01:00</span>
+        <span class="status">2 nights</span>
+      </div>
+      <div class="title">Danshuset – Dans i Stadshuset</div>
+      <div class="venue"><a href="#">Stockholms stadshus</a> <span class="hood">· Kungsholmen</span></div>
+      <div class="pills">
+        <span class="pill live">Live + DJ</span>
+        <span class="pill price">295 kr</span>
+      </div>
+    </div>
+    <button class="toggle" onclick="t(this.parentElement)"><span class="chev">▾</span> Details</button>
+    <div class="detail">
+      <div class="kv">Live band: <b>Stadshusorkestern</b> · DJ: <b>Clabbe af Geijerstam</b></div>
+      <div class="by">By Stockholms stadshus · 18+</div>
+      <div class="text">Sveriges ståtligaste dansbana öppnar för två danskvällar i sensommaren. Foxtrot och swing till Bublé och Sinatra, och vid midnatt tar DJ Clabbe över.</div>
+      <a class="cta" href="#">Tickets / info →</a>
+    </div>
+  </div>
+
+  <div class="note" style="margin-top:18px">What changed: the date line is gone (the header carries it), the description is one tap away instead of always-on, badges collapsed to one calm row, and DJ/band + organizer moved into Details. The collapsed card answers <b>when · what · where · is-it-for-me · how-much</b> in one glance — and that’s the whole decision.</div>
+
+</div>
+<script>
+  function t(el){ el.classList.toggle('open'); event.stopPropagation(); }
+</script>
+</body>
+</html>

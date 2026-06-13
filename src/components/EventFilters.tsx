@@ -305,7 +305,7 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
                       <h3 className="font-sans text-xs font-bold text-[var(--primary)] uppercase tracking-widest bg-[var(--primary)]/10 py-1.5 px-3 rounded inline-block border border-[var(--primary)]/15">
                         {formatEventDate(date)}
                       </h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
                         {dateEvents.map((event) => (
                           <EventCard key={event.id} event={event} isThisWeek={true} currentDate={currentDate} currentTime={currentTime} />
                         ))}
@@ -332,7 +332,7 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
                       <h3 className="font-sans text-xs font-bold text-zinc-600 uppercase tracking-widest bg-[var(--surface-container-low)] py-1.5 px-3 rounded inline-block border border-[var(--surface-container-highest)]">
                         {formatEventDate(date)}
                       </h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
                         {dateEvents.map((event) => (
                           <EventCard key={event.id} event={event} isThisWeek={false} currentDate={currentDate} currentTime={currentTime} />
                         ))}

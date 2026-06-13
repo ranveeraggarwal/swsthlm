@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, Clock, MapPin, Music, Disc, Ticket, User } from 'lucide-react';
+import { Calendar, Clock, MapPin, Music, Disc, Ticket, User, Banknote } from 'lucide-react';
 import { SwingEvent } from '@/types/event';
 import { formatEventDate, getTemporalBadge, TemporalBadge } from '@/lib/datetime';
 
@@ -104,6 +104,8 @@ export function EventCard({ event, isThisWeek, currentDate, currentTime }: Event
 
   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${event.venue} ${event.address}`)}`;
 
+  const priceDisplay = event.price ? `${event.price}${event.payment ? ` (${event.payment})` : ''}` : null;
+
   return (
     <div className={`relative lift-card rounded border-2 border-[var(--on-surface)] bg-[var(--surface-container-low)] p-6 overflow-hidden flex flex-col justify-between min-h-[340px] text-[var(--on-surface)] ${badge === 'happening-now' ? 'ring-2 ring-red-500/30' : ''}`}>
       {/* Highlighting border/accent stripe */}
@@ -160,6 +162,15 @@ export function EventCard({ event, isThisWeek, currentDate, currentTime }: Event
               )}
             </div>
           </div>
+
+          {priceDisplay && (
+            <div className="flex items-center gap-2.5 text-sm">
+              <div className="flex items-center justify-center px-2 py-0.5 rounded bg-[var(--surface-container)] text-[var(--on-surface-variant)] border border-[var(--surface-container-highest)] text-[11px] font-bold uppercase tracking-wider gap-1.5">
+                <Banknote className="w-3.5 h-3.5" />
+                <span>{priceDisplay}</span>
+              </div>
+            </div>
+          )}
 
           {/* Music: Band / DJ */}
           {(event.band || event.dj) && (

@@ -69,7 +69,7 @@ export function EventCard({ event, isThisWeek, currentDate, currentTime }: Event
       case 'blues':
         return 'Blues';
       case 'all':
-        return 'All Swing Styles';
+        return 'Social – all styles';
       default:
         return style.charAt(0).toUpperCase() + style.slice(1);
     }

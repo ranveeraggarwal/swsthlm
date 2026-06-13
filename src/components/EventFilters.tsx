@@ -90,7 +90,10 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
         event.body.toLowerCase().includes(q);
 
       // 2. Style Filter
-      const matchesStyle = selectedStyle === 'all' || event.style.toLowerCase() === selectedStyle.toLowerCase();
+      const matchesStyle =
+        selectedStyle === 'all' ||
+        event.style.toLowerCase() === 'all' ||
+        event.style.toLowerCase() === selectedStyle.toLowerCase();
 
       // 3. Venue Filter
       const matchesVenue = selectedVenue === 'all' || event.venue.trim() === selectedVenue;

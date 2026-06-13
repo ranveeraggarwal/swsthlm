@@ -162,6 +162,7 @@ export async function getEvents(): Promise<SwingEvent[]> {
       dj: occ.dj,
       ticket: occ.url,
       body: occ.description ?? '',
+      beginnerClass: occ.beginnerClass,
     };
   });
 }

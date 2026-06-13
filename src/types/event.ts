@@ -13,4 +13,5 @@ export interface SwingEvent {
   dj?: string;
   ticket?: string;    // URL string
   body: string;       // Markdown or plain text description
+  beginnerClass?: string;
 }

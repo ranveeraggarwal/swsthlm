@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, Clock, MapPin, Music, Disc, Ticket, User } from 'lucide-react';
+import { Calendar, Clock, MapPin, Music, Disc, Ticket, User, GraduationCap } from 'lucide-react';
 import { SwingEvent } from '@/types/event';
 import { formatEventDate, getTemporalBadge, TemporalBadge } from '@/lib/datetime';
 
@@ -143,6 +143,17 @@ export function EventCard({ event, isThisWeek, currentDate, currentTime }: Event
             <Clock className="w-4 h-4 text-[var(--outline)] shrink-0" />
             <span>{event.start} – {event.end}</span>
           </div>
+
+          {event.beginnerClass && (
+            <div className="flex items-center gap-2.5 text-sm">
+              <GraduationCap className="w-4 h-4 text-green-600 shrink-0" />
+              <span className="px-2 py-0.5 rounded bg-green-50 text-green-800 border border-green-200 text-[10px] uppercase font-bold tracking-wider">
+                {event.beginnerClass.toLowerCase() === 'yes'
+                  ? 'Beginner friendly'
+                  : `Beginner class ${event.beginnerClass}`}
+              </span>
+            </div>
+          )}
 
           <div className="flex items-start gap-2.5 text-sm">
             <MapPin className="w-4 h-4 text-[var(--outline)] shrink-0 mt-0.5" />

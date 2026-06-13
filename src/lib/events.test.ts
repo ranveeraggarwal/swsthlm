@@ -20,11 +20,12 @@ describe('getEvents', () => {
     const mockOneoffs = 'id,name,style,venue_id,date,end_date,start,end,price,payment,beginner_class,music,dj,band,organizer,url,description,status\n' +
       'oneoff-1,Oneoff 1,lindy-hop,chicago,2026-06-05,,19:00,22:00,,,19:00,live,  TBA  ,T.B.A,Organizer,https://example.com,Desc,live';
 
-    vi.mocked(fs.readFileSync).mockImplementation((path: any) => {
-      if (path.endsWith('venues.csv')) return mockVenues;
-      if (path.endsWith('series.csv')) return mockSeries;
-      if (path.endsWith('exceptions.csv')) return mockExceptions;
-      if (path.endsWith('oneoffs.csv')) return mockOneoffs;
+    vi.mocked(fs.readFileSync).mockImplementation((path: string | number | URL | Buffer) => {
+      const p = path.toString();
+      if (p.endsWith('venues.csv')) return mockVenues;
+      if (p.endsWith('series.csv')) return mockSeries;
+      if (p.endsWith('exceptions.csv')) return mockExceptions;
+      if (p.endsWith('oneoffs.csv')) return mockOneoffs;
       return '';
     });
 
@@ -46,11 +47,12 @@ describe('getEvents', () => {
     const mockExceptions = 'series_id,date,cancelled,start,end,dj,band,music,price,note,description';
     const mockOneoffs = '';
 
-    vi.mocked(fs.readFileSync).mockImplementation((path: any) => {
-      if (path.endsWith('venues.csv')) return mockVenues;
-      if (path.endsWith('series.csv')) return mockSeries;
-      if (path.endsWith('exceptions.csv')) return mockExceptions;
-      if (path.endsWith('oneoffs.csv')) return mockOneoffs;
+    vi.mocked(fs.readFileSync).mockImplementation((path: string | number | URL | Buffer) => {
+      const p = path.toString();
+      if (p.endsWith('venues.csv')) return mockVenues;
+      if (p.endsWith('series.csv')) return mockSeries;
+      if (p.endsWith('exceptions.csv')) return mockExceptions;
+      if (p.endsWith('oneoffs.csv')) return mockOneoffs;
       return '';
     });
 

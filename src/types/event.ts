@@ -12,6 +12,9 @@ export interface SwingEvent {
   organizer: string;
   band?: string;
   dj?: string;
+  price?: string;
+  payment?: string;
   ticket?: string;    // URL string
   body: string;       // Markdown or plain text description
+  beginnerClass?: string;
 }

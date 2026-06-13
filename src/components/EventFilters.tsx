@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';
-import { Search, CalendarDays, SlidersHorizontal, MapPin, Sparkles } from 'lucide-react';
+import { Search, CalendarDays, SlidersHorizontal, MapPin, Sparkles, Music } from 'lucide-react';
 import { SwingEvent } from '@/types/event';
 import { EventCard } from './EventCard';
 import {
@@ -23,6 +23,7 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStyle, setSelectedStyle] = useState('all');
   const [selectedVenue, setSelectedVenue] = useState('all');
+  const [liveMusicOnly, setLiveMusicOnly] = useState(false);
 
   // "Now" can't be known by static HTML, so the temporal badges and the
   // This Week / Upcoming split are computed client-side after hydration.
@@ -90,14 +91,20 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
         event.body.toLowerCase().includes(q);
 
       // 2. Style Filter
-      const matchesStyle = selectedStyle === 'all' || event.style.toLowerCase() === selectedStyle.toLowerCase();
+      const matchesStyle =
+        selectedStyle === 'all' ||
+        event.style.toLowerCase() === 'all' ||
+        event.style.toLowerCase() === selectedStyle.toLowerCase();
 
       // 3. Venue Filter
       const matchesVenue = selectedVenue === 'all' || event.venue.trim() === selectedVenue;
 
-      return matchesSearch && matchesStyle && matchesVenue;
+      // 4. Live Music Filter
+      const matchesLiveMusic = !liveMusicOnly || event.music === 'live' || event.music === 'mixed';
+
+      return matchesSearch && matchesStyle && matchesVenue && matchesLiveMusic;
     });
-  }, [events, searchQuery, selectedStyle, selectedVenue]);
+  }, [events, searchQuery, selectedStyle, selectedVenue, liveMusicOnly]);
 
   // Group events by date into "This Week" vs "Upcoming"
   const eventSections = useMemo(() => {
@@ -137,7 +144,7 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
 
   // Total count for filters label
   const totalCount = filteredEvents.length;
-  const hasActiveFilters = selectedStyle !== 'all' || selectedVenue !== 'all' || !!searchQuery;
+  const hasActiveFilters = selectedStyle !== 'all' || selectedVenue !== 'all' || !!searchQuery || liveMusicOnly;
 
   // Smart filter status message
   const filterStatusMessage = useMemo(() => {
@@ -148,6 +155,9 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
     const parts: string[] = [];
     if (selectedStyle !== 'all') {
       parts.push(normalizeStyleLabel(selectedStyle));
+    }
+    if (liveMusicOnly) {
+      parts.push('Live Music');
     }
 
     let message = `${totalCount} ${parts.length > 0 ? parts.join(' ') + ' ' : ''}event${totalCount !== 1 ? 's' : ''}`;
@@ -180,27 +190,46 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
             />
           </div>
 
-          {/* Style Filters */}
-          <div>
-            <span className="flex items-center gap-2 font-sans text-xs font-bold text-zinc-500 uppercase tracking-widest mb-3">
-              <Sparkles className="w-3.5 h-3.5 text-[var(--primary)]" /> Filter by Style
-            </span>
-            <div className="filter-scroll-container">
-              <div className="flex overflow-x-auto pb-2 -mb-2 gap-2.5 snap-x md:flex-wrap [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-                {stylesList.map((style) => (
-                  <button
-                    key={style}
-                    onClick={() => setSelectedStyle(style)}
-                    className={`snap-start whitespace-nowrap px-4 py-2 rounded text-xs font-bold uppercase tracking-wider border-2 border-[var(--on-surface)] transition-all cursor-pointer ${
-                      selectedStyle === style
-                        ? 'bg-[var(--primary)] text-white font-bold shadow-[2px_2px_0px_0px_var(--on-surface)] -translate-y-0.5 -translate-x-0.5'
-                        : 'bg-[var(--surface-container)] hover:bg-[var(--surface-container-high)] text-[var(--on-surface)] shadow-[0px_0px_0px_0px_var(--on-surface)]'
-                    }`}
-                  >
-                    {normalizeStyleLabel(style)}
-                  </button>
-                ))}
+          {/* Style & Music Filters */}
+          <div className="flex flex-col md:flex-row gap-6">
+            <div className="flex-1">
+              <span className="flex items-center gap-2 font-sans text-xs font-bold text-zinc-500 uppercase tracking-widest mb-3">
+                <Sparkles className="w-3.5 h-3.5 text-[var(--primary)]" /> Filter by Style
+              </span>
+              <div className="filter-scroll-container">
+                <div className="flex overflow-x-auto pb-2 -mb-2 gap-2.5 snap-x md:flex-wrap [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                  {stylesList.map((style) => (
+                    <button
+                      key={style}
+                      onClick={() => setSelectedStyle(style)}
+                      className={`snap-start whitespace-nowrap px-4 py-2 rounded text-xs font-bold uppercase tracking-wider border-2 border-[var(--on-surface)] transition-all cursor-pointer ${
+                        selectedStyle === style
+                          ? 'bg-[var(--primary)] text-white font-bold shadow-[2px_2px_0px_0px_var(--on-surface)] -translate-y-0.5 -translate-x-0.5'
+                          : 'bg-[var(--surface-container)] hover:bg-[var(--surface-container-high)] text-[var(--on-surface)] shadow-[0px_0px_0px_0px_var(--on-surface)]'
+                      }`}
+                    >
+                      {normalizeStyleLabel(style)}
+                    </button>
+                  ))}
+                </div>
               </div>
+            </div>
+
+            <div className="md:w-48">
+              <span className="flex items-center gap-2 font-sans text-xs font-bold text-zinc-500 uppercase tracking-widest mb-3">
+                <Music className="w-3.5 h-3.5 text-amber-600" /> Music
+              </span>
+              <button
+                onClick={() => setLiveMusicOnly(!liveMusicOnly)}
+                className={`w-full whitespace-nowrap px-4 py-2 rounded text-xs font-bold uppercase tracking-wider border-2 border-[var(--on-surface)] transition-all cursor-pointer flex items-center justify-center gap-2 ${
+                  liveMusicOnly
+                    ? 'bg-amber-500 text-white font-bold shadow-[2px_2px_0px_0px_var(--on-surface)] -translate-y-0.5 -translate-x-0.5'
+                    : 'bg-[var(--surface-container)] hover:bg-[var(--surface-container-high)] text-[var(--on-surface)] shadow-[0px_0px_0px_0px_var(--on-surface)]'
+                }`}
+              >
+                <Music className="w-3.5 h-3.5" />
+                Live Music Only
+              </button>
             </div>
           </div>
 
@@ -238,6 +267,7 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
                 setSearchQuery('');
                 setSelectedStyle('all');
                 setSelectedVenue('all');
+                setLiveMusicOnly(false);
               }}
               className="text-[var(--primary)] hover:underline font-bold"
             >

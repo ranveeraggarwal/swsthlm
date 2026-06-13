@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, Clock, MapPin, Music, Disc, Ticket, User } from 'lucide-react';
+import { Calendar, Clock, MapPin, Music, Disc, Ticket, User, Banknote, GraduationCap } from 'lucide-react';
 import { SwingEvent } from '@/types/event';
 import { formatEventDate, getTemporalBadge, TemporalBadge } from '@/lib/datetime';
 
@@ -69,7 +69,7 @@ export function EventCard({ event, isThisWeek, currentDate, currentTime }: Event
       case 'blues':
         return 'Blues';
       case 'all':
-        return 'All Swing Styles';
+        return 'Social – all styles';
       default:
         return style.charAt(0).toUpperCase() + style.slice(1);
     }
@@ -85,6 +85,34 @@ export function EventCard({ event, isThisWeek, currentDate, currentTime }: Event
         return 'bg-[var(--surface-container-high)] text-[var(--on-surface-variant)] border-[var(--outline-variant)]';
       default:
         return 'bg-[var(--surface-container)] text-[var(--on-surface-variant)] border-[var(--surface-container-highest)]';
+    }
+  };
+
+  const MusicBadge = () => {
+    switch (event.music) {
+      case 'live':
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider border bg-amber-50 text-amber-800 border-amber-200">
+            <Music className="w-3 h-3" />
+            Live Music
+          </span>
+        );
+      case 'dj':
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider border bg-[var(--surface-container)] text-[var(--on-surface-variant)] border-[var(--surface-container-highest)]">
+            <Disc className="w-3 h-3" />
+            DJ
+          </span>
+        );
+      case 'mixed':
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider border bg-[var(--surface-container)] text-[var(--on-surface-variant)] border-[var(--surface-container-highest)]">
+            <Music className="w-3 h-3" />
+            Live + DJ
+          </span>
+        );
+      default:
+        return null;
     }
   };
 
@@ -104,6 +132,8 @@ export function EventCard({ event, isThisWeek, currentDate, currentTime }: Event
 
   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${event.venue} ${event.address}`)}`;
 
+  const priceDisplay = event.price ? `${event.price}${event.payment ? ` (${event.payment})` : ''}` : null;
+
   return (
     <div className={`relative lift-card rounded border-2 border-[var(--on-surface)] bg-[var(--surface-container-low)] p-6 overflow-hidden flex flex-col justify-between min-h-[340px] text-[var(--on-surface)] ${badge === 'happening-now' ? 'ring-2 ring-red-500/30' : ''}`}>
       {/* Highlighting border/accent stripe */}
@@ -114,9 +144,12 @@ export function EventCard({ event, isThisWeek, currentDate, currentTime }: Event
       <div>
         {/* Badges / Header Row */}
         <div className="flex flex-wrap items-center justify-between gap-2 mb-4 font-sans font-label-sm">
-          <span className={`px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider border ${getStyleColor(event.style)}`}>
-            {getStyleLabel(event.style)}
-          </span>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className={`px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider border ${getStyleColor(event.style)}`}>
+              {getStyleLabel(event.style)}
+            </span>
+            <MusicBadge />
+          </div>
           <div className="flex items-center gap-2">
             {event.status === 'draft' && (
               <span className="px-2 py-0.5 rounded bg-red-100 text-red-800 border border-red-200 text-[10px] uppercase font-bold tracking-wider">
@@ -144,6 +177,17 @@ export function EventCard({ event, isThisWeek, currentDate, currentTime }: Event
             <span>{event.start} – {event.end}</span>
           </div>
 
+          {event.beginnerClass && (
+            <div className="flex items-center gap-2.5 text-sm">
+              <GraduationCap className="w-4 h-4 text-green-600 shrink-0" />
+              <span className="px-2 py-0.5 rounded bg-green-50 text-green-800 border border-green-200 text-[10px] uppercase font-bold tracking-wider">
+                {event.beginnerClass.toLowerCase() === 'yes'
+                  ? 'Beginner friendly'
+                  : `Beginner class ${event.beginnerClass}`}
+              </span>
+            </div>
+          )}
+
           <div className="flex items-start gap-2.5 text-sm">
             <MapPin className="w-4 h-4 text-[var(--outline)] shrink-0 mt-0.5" />
             <div>
@@ -160,6 +204,15 @@ export function EventCard({ event, isThisWeek, currentDate, currentTime }: Event
               )}
             </div>
           </div>
+
+          {priceDisplay && (
+            <div className="flex items-center gap-2.5 text-sm">
+              <div className="flex items-center justify-center px-2 py-0.5 rounded bg-[var(--surface-container)] text-[var(--on-surface-variant)] border border-[var(--surface-container-highest)] text-[11px] font-bold uppercase tracking-wider gap-1.5">
+                <Banknote className="w-3.5 h-3.5" />
+                <span>{priceDisplay}</span>
+              </div>
+            </div>
+          )}
 
           {/* Music: Band / DJ */}
           {(event.band || event.dj) && (

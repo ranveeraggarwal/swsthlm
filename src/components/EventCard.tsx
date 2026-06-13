@@ -24,6 +24,12 @@ function TemporalBadgeDisplay({ badge }: { badge: TemporalBadge }) {
           Happening Now
         </span>
       );
+    case 'just-ended':
+      return (
+        <span className="px-2.5 py-0.5 rounded bg-[var(--surface-container-high)] text-[var(--on-surface-variant)] text-[11px] uppercase font-bold tracking-wider border border-[var(--outline-variant)]">
+          Just Ended
+        </span>
+      );
     case 'tonight':
       return (
         <span className="px-2.5 py-0.5 rounded bg-[var(--primary)] text-white text-[11px] uppercase font-bold tracking-wider">
@@ -121,6 +127,8 @@ export function EventCard({ event, isThisWeek, currentDate, currentTime }: Event
     switch (badge) {
       case 'happening-now':
         return 'bg-red-600';
+      case 'just-ended':
+        return '';
       case 'tonight':
         return 'bg-[var(--primary)]';
       case 'tomorrow':

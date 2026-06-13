@@ -117,11 +117,11 @@ export function isHappeningNow(
 /**
  * Temporal badge types in priority order.
  */
-export type TemporalBadge = 'happening-now' | 'tonight' | 'tomorrow' | 'this-week' | null;
+export type TemporalBadge = 'happening-now' | 'just-ended' | 'tonight' | 'tomorrow' | 'this-week' | null;
 
 /**
  * Returns the appropriate temporal badge for an event.
- * Priority: HAPPENING NOW > TONIGHT > TOMORROW > THIS WEEK > null
+ * Priority: HAPPENING NOW > JUST ENDED > TONIGHT > TOMORROW > THIS WEEK > null
  */
 export function getTemporalBadge(
   dateStr: string,
@@ -135,6 +135,14 @@ export function getTemporalBadge(
     if (isHappeningNow(dateStr, startTime, endTime, referenceDateStr, referenceTime)) {
       return 'happening-now';
     }
+
+    // Just Ended: today, not happening now, and the end time has passed.
+    // We only flag this for same-day events (endTime >= startTime);
+    // overnight events are treated as not-yet-ended for the "Just Ended" badge.
+    if (endTime >= startTime && referenceTime > endTime) {
+      return 'just-ended';
+    }
+
     return 'tonight';
   }
   if (isTomorrow(dateStr, referenceDateStr)) {

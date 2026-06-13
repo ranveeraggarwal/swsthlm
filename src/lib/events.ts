@@ -38,6 +38,14 @@ const opt = (v?: string) => {
   const t = (v ?? '').trim();
   return t === '' ? undefined : t;
 };
+
+// TBA, t.b.a, or empty (trimmed, case-insensitive) → undefined.
+const filterTba = (v?: string) => {
+  const t = (v ?? '').trim();
+  const low = t.toLowerCase();
+  if (low === '' || low === 'tba' || low === 't.b.a') return undefined;
+  return t;
+};
 const req = (v?: string) => (v ?? '').trim();
 const isYes = (v?: string) => (v ?? '').trim().toLowerCase() === 'yes';
 
@@ -158,8 +166,8 @@ export async function getEvents(): Promise<SwingEvent[]> {
       address: venue?.address ?? '',
       style: styleForUi(occ.style),
       organizer: occ.organizer,
-      band: occ.band,
-      dj: occ.dj,
+      band: filterTba(occ.band),
+      dj: filterTba(occ.dj),
       ticket: occ.url,
       body: occ.description ?? '',
     };

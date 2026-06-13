@@ -157,6 +157,7 @@ export async function getEvents(): Promise<SwingEvent[]> {
       venue: venue?.name ?? occ.venueId,
       address: venue?.address ?? '',
       style: styleForUi(occ.style),
+      music: occ.music,
       organizer: occ.organizer,
       band: occ.band,
       dj: occ.dj,

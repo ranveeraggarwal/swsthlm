@@ -88,6 +88,34 @@ export function EventCard({ event, isThisWeek, currentDate, currentTime }: Event
     }
   };
 
+  const MusicBadge = () => {
+    switch (event.music) {
+      case 'live':
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider border bg-amber-50 text-amber-800 border-amber-200">
+            <Music className="w-3 h-3" />
+            Live Music
+          </span>
+        );
+      case 'dj':
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider border bg-[var(--surface-container)] text-[var(--on-surface-variant)] border-[var(--surface-container-highest)]">
+            <Disc className="w-3 h-3" />
+            DJ
+          </span>
+        );
+      case 'mixed':
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider border bg-[var(--surface-container)] text-[var(--on-surface-variant)] border-[var(--surface-container-highest)]">
+            <Music className="w-3 h-3" />
+            Live + DJ
+          </span>
+        );
+      default:
+        return null;
+    }
+  };
+
   // Accent stripe color based on badge
   const getStripeColor = () => {
     switch (badge) {
@@ -114,9 +142,12 @@ export function EventCard({ event, isThisWeek, currentDate, currentTime }: Event
       <div>
         {/* Badges / Header Row */}
         <div className="flex flex-wrap items-center justify-between gap-2 mb-4 font-sans font-label-sm">
-          <span className={`px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider border ${getStyleColor(event.style)}`}>
-            {getStyleLabel(event.style)}
-          </span>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className={`px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider border ${getStyleColor(event.style)}`}>
+              {getStyleLabel(event.style)}
+            </span>
+            <MusicBadge />
+          </div>
           <div className="flex items-center gap-2">
             {event.status === 'draft' && (
               <span className="px-2 py-0.5 rounded bg-red-100 text-red-800 border border-red-200 text-[10px] uppercase font-bold tracking-wider">

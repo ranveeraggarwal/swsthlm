@@ -1,0 +1,38 @@
+name: Nightly scrape
+
+# Runs the scrapers nightly and opens/updates ONE review PR (branch bot/scrape)
+# whenever there's a non-empty diff. Idle nights produce no PR. Manual runs via
+# the Actions tab (workflow_dispatch). No secrets — uses the built-in token.
+
+on:
+  schedule:
+    - cron: '17 2 * * *' # ~02:17 UTC nightly
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Run scrapers
+        run: node scripts/scrape.mjs
+      - name: Open / update review PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: bot/scrape
+          base: main
+          add-paths: data/oneoffs.csv
+          commit-message: 'chore(data): scraped event proposals'
+          title: 'Scraped events: review'
+          body-path: scrape-report.md
+          labels: data
+          delete-branch: false

@@ -1,0 +1,596 @@
+<html>
+  <head>
+    <title>St:a Clara</title>
+	<meta name="viewport" content = "width=device-width, initial-scale=1, user-scalable=yes" />
+	<meta name="format-detection" content="telephone=no">
+	
+      <meta name="description" content="Restaurang Santa Clara är ett klassiskt bierhaus i hjärtat av Gamla Stan i centrala Stockholm. Här serveras svensk husmanskost, kalvschnitzel och tyska specialiteter direkt från pannan. Här finns levande musik en trappa ner 6 dagar i veckan och 14 olika öl på fat att välja bland." />
+      <meta name="keywords" content="Restaurang Santa Clara, Bierhaus, Live Music, Schnitzel, öl på fat,       svensk husmanskost" />
+      <meta name="title" content="Restaurang Santa Clara, Bierhaus, Live Music, Schnitzel, öl på fat,          svensk husmanskost" />
+    
+	
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif:opsz@12..24&family=Kameron:wght@400..700&display=swap" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i&display=swap" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="/index.css?i2">
+    <script src="/admin/injector.js"></script>
+    <script type="text/javascript" src="https://www.bokabord.se/widget.min.js"></script>
+  </head>
+  <body>
+    <nav id="main-nav" class="closed">
+<a class="logo" href="/"><img src="https://www.staclara.se/uploads/f1282bfaa26934395fe4c5f0a8f7253eccfec18b/white-header.png" style="height: 110px; top: 20px;" /></a>
+
+<x-div class="navset nav-stockholm">
+  <a href="/stockholm.html">Om Clara</a>
+  <a href="/stockholm.html#menus">Menyer</a>
+  <a href="https://book.easytable.com/book/?id=62447&lang=auto">Book a Table</a>
+  <a href="/calendar.html">Live Music</a>
+  <a href="/stockholm.html#contact">Kontakt</a>
+  <a href="/english.html">English</a>
+</x-div>
+<x-div class="navset nav-sundsvall" style="display: none;">
+  <a href="/sundsvall.html">Om Clara</a>
+  <a href="/sundsvall.html#menus">Menyer</a>
+  <a href="https://book.easytable.com/book/?id=e9ad4&lang=auto">Book a Table</a>
+  <a href="/sundsvall/calendar.html">Live Music</a>
+  <a href="/sundsvall.html#contact">Kontakt</a>
+</x-div>
+
+<script type="module">
+window.setNav = function (id) {
+  // Hide all navsets
+  document.querySelectorAll('.navset').forEach(el => {
+    el.style.display = 'none';
+  });
+
+  document.querySelectorAll(`.nav-${id}`).forEach(el => {
+      el.style.display = '';
+  });
+};
+</script>
+
+<!-- easyTableBooking START -->
+<!-- Script augments the "Book-a-Table" link to open in an overlay. -->
+<script type="text/javascript">
+(function() { var st=document.createElement('script'); st.type='text/javascript'; st.async=true; st.src='//book.easytable.com/book/widget/v3/book.js'; var sc=document.getElementsByTagName('script')[0]; sc.parentNode.insertBefore(st, sc); })();
+</script>
+<!-- easyTableBooking END -->
+
+  <a id="main-nav-close" href="javascript: void 0;">X</a>
+  <a id="main-nav-expand" href="javascript: void 0;">
+    <svg width="42" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="position: absolute;top: 24px;right: 24px;">
+      <rect x="5" y="15" width="90" height="6" fill="white"></rect>
+      <rect x="5" y="45" width="90" height="6" fill="white"></rect>
+      <rect x="5" y="75" width="90" height="6" fill="white"></rect>
+    </svg>
+  </a>
+</nav>
+
+<style>
+  #main-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 9999;
+    
+    display: flex;
+    justify-content: center;
+  
+    transition: height 0.5s, line-height 0.5s;
+    height: 142px;
+    line-height: 142px;
+    background: #8e9a7c;
+    border-bottom: 1px solid #eee;
+    text-align: center;
+  }
+
+  #main-nav a {
+    color: #fff;
+    font-family: "Hedvig Letters Serif", serif;
+    font-weight: 300;
+    letter-spacing: 0.6px;
+    font-size: 16px;
+    padding: 0 11px;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+  #main-nav #main-nav-expand { padding: 0; }
+  #main-nav a:hover {
+    text-decoration: underline;
+  }
+
+  #main-nav.smaller {
+    height: 46px;
+    line-height: 46px;
+  }
+  
+  #main-nav img {
+    height: 30px;
+    display: inline;
+    position: relative;
+    top: 8px;
+  }
+
+  @media (max-width: 875px) {
+    #main-nav.closed a { display: none; }
+    #main-nav.closed a.logo { display: inline; float: left; margin: 4px 8px; }
+    #main-nav.open a.logo { display: none; }
+
+    #main-nav.closed #main-nav-expand { display: inline; }
+    #main-nav.closed .burger {
+      display: block;
+      position: absolute;
+      top: 20px;
+      right: 24px;
+      width: 42px;
+      transition: width 0.5s, top 0.5s;
+    }
+    #main-nav.closed.smaller .burger {
+      top: 10px;
+      width: 36px;
+    }
+
+    #main-nav.open #main-nav-expand { display: none; }
+    #main-nav.open {
+      background: #8e9a7cee;                       /* Bakgrund; öppen mobilnav. */
+      backdrop-filter: blur(3px);
+      -webkit-backdrop-filter: blur(3px);
+      border-bottom: 0px solid #ddd;
+      padding: 30px;
+      height: auto;
+      display: block;
+    }
+    #main-nav.open a {
+      color: #fff;                               /* Textfärg; öppen mobilnav. */
+      display: block;
+      text-align: left;
+      font-weight: normal;
+      font-size: 28px;
+      line-height: 2em;
+      text-transform: none;
+    }
+    #main-nav-close { position: absolute; right: 90px; top: 30px; }
+  }
+
+  @media (min-width: 601px) {
+    #main-nav-expand,
+    #main-nav-close { display: none; }
+  }
+</style>
+
+<script>
+  window.addEventListener('nope-scroll', function() {
+    var dy = window.pageYOffset || document.documentElement.scrollTop;
+    var co = 300;
+    var header = document.getElementById("main-nav");
+
+    if (dy > co) {
+      header.classList.add('smaller');
+    } else {
+      header.classList.remove('smaller');
+    }
+  });
+
+  (function() {
+    var nav = document.getElementById("main-nav");
+    var expand = document.getElementById("main-nav-expand");
+    var close = document.getElementById("main-nav-close");
+
+    expand.addEventListener('click', function() {
+      setTimeout(function() {
+        nav.classList.add('open');
+        nav.classList.remove('closed');
+      });
+    });
+
+    nav.addEventListener('click', function(e) {
+      if (nav.classList.contains('open')) {
+        nav.classList.add('closed');
+        nav.classList.remove('open');
+      }
+    });
+  })();
+</script>
+
+
+
+    <div id="height">
+      <div id="content">
+        <div id="lv1">
+          <h1>LIVE MUSIC CALENDAR</h1>
+
+
+<h2>JUNE 2026</h2>
+
+<calendar-event>
+  <h1>Mon 1 June</h1>
+  <p>
+    MATS LUNDMARK JAZZ QUARTET 19-22 <BR>
+    Jazz!
+  </p>
+</calendar-event>
+
+<calendar-event>
+  <h1>Thu 2 June</h1>
+  <p>
+    BJÄRHALL COMBO 19-22<BR>
+    Blues & Rock!
+  </p>
+</calendar-event>
+
+<calendar-event>
+  <h1>Wed 3 June</h1>
+  <p>
+    Wed 3 - BLUES MEN 19-22<BR>
+    Blues, Soul, Rock!
+  </p>
+</calendar-event>
+
+<calendar-event>
+  <h1>Thu 4 June</h1>
+  <p>
+    TBC
+  </p>
+</calendar-event>
+
+<calendar-event>
+  <h1>Fri 5 June</h1> 
+  <p>
+  BLUES JAM 20-00<BR>
+  with Jam-leader PER ÄNGKVIST</h1>
+  </p>
+</calendar-event>
+
+<calendar-event>
+  <h1>Sat 6 June</h1> 
+  <p>
+  BLUES JAM 20-00<BR>
+  with Jam-leader OLLE SJÖSTEDT</h1>
+  </p>
+</calendar-event>
+
+<calendar-event>
+  <h1>Sun 7 june</h1>
+ <p>
+   QUIZZ NIGHT 18-21<BR>
+   With Quizz Master PER EGGERS!
+ </p>
+ </calendar-event>
+
+<calendar-event>
+  <h1>Mon 8 June</h1>
+  <p>
+    TRAD-JAZZ JAM 19-22<BR>
+    Open Jazz Jam!
+  </p>
+</calendar-event>
+
+<calendar-event>
+  <h1>Tue 9 June</h1>
+  <p>
+    TBC
+  </p>
+</calendar-event>
+
+<calendar-event>
+  <h1>Wed 10 June</h1>
+  <p>
+    VERES 19-22<BR>
+    Finnish Folk & Psychadelica!
+  </p>
+</calendar-event>
+
+<calendar-event>
+  <h1>Thu 11 June</h1>
+  <p>
+    RUTER 4 19-22<BR>
+    Jazz & Visa!
+  </p>
+</calendar-event>
+
+<calendar-event>
+  <h1>Fri 12 June</h1>
+  <p>
+  BLUES JAM 20-00<BR>
+  with Jam-leader THOMAS HAMMARLUND</h1>
+  </p>
+</calendar-event>
+
+<calendar-event>
+  <h1>Sat 13 June</h1>
+  <p>
+  BLUES JAM 20-00<BR>
+  with Jam-leader JOHN SENNET</h1>
+  </p>
+</calendar-event>
+
+<calendar-event>
+  <h1>Mon 15 June</h1>
+  <p>
+    JESSES JAZZ BAND 19-22<BR>
+    Trad Jazz!
+  </p>
+</calendar-event>
+
+<calendar-event>
+  <h1>Tue 16 June</h1>
+  <p>
+    RICKARD MALMSTEN GROUP 19-22<BR>
+    Jazz!
+  </p>
+</calendar-event>
+
+<calendar-event>
+  <h1>Wed 17 June</h1>
+  <p>
+    SWING MAGNIFIQUE 19-22<BR>
+    Django Reinhardt Swing Jazz!
+  </p>
+</calendar-event>
+
+
+<calendar-event>
+  <h1>Thu 18 June</h1>
+  <p>
+    WEBOP KVINTETT 19-22<BR>
+    Hardbop & Blue Note Jazz!
+  </p>
+</calendar-event>
+
+<calendar-event>
+  <h1>Fri 19 June</h1>
+  <p>
+    NO MUSIC (MIDSUMMER EVE)
+  </p>
+</calendar-event>
+
+<calendar-event>
+  <h1>Sat 20 June</h1>
+  <p>
+    NO MUSIC (MIDSUMMER DAY)
+  </p>
+</calendar-event>
+
+<calendar-event>
+  <h1>Mon 22 June</h1>
+  <p>
+    RAD-JAZZ JAM 19-22<BR>
+    Open Jazz Jam!
+  </p>
+</calendar-event>
+
+<calendar-event>
+  <h1>Tue 23 June</h1>
+  <p>
+    BJÄRHALL COMBO 19-22<BR>
+    Blues & Rock!
+  </p>
+</calendar-event>
+
+<calendar-event>
+  <h1>Wed 24 June</h1>
+  <p>
+    TIGER MILY 19-22<BR>
+    Indie Folk!
+  </p>
+</calendar-event>
+
+<calendar-event>
+  <h1>Thu 25 June</h1>
+  <p>
+    MELLOW 19-22<BR>
+    Modern New York Jazz!
+  </p>
+</calendar-event>
+
+<calendar-event>
+  <h1>Fri 26 June</h1>
+  <p>
+  BLUES JAM 20-00<BR>
+  with Jam-leader PER ÄNGKVIST
+  </p>
+</calendar-event>
+
+<calendar-event>
+  <h1>Sat 27 June</h1> 
+  <p>
+  BLUES JAM 20-00<BR>
+  with Jam-leader BIG ROB SVENSSON
+  </p>
+</calendar-event>
+
+<calendar-event>
+  <h1>Mon 29 June</h1>
+  <p>
+   JESSES JAZZ BAND 19-22<BR>
+   Trad Jazz!
+  </p>
+</calendar-event>
+
+<calendar-event>
+  <h1>Tue 30 June</h1>
+  <p>
+    TBC 19-22
+  </p>
+</calendar-event>
+
+
+
+<style>
+    calendar-event > * { display: none; }
+    .event { background: #fff1; padding: 10px 20px; display: block; margin-bottom: 2px; }
+    .event h1 { font-size: 1rem; font-weight: bold; color: black; text-align: left; margin: 0.4rem 0; color: #c5a77b; }
+    .event p { font-size: 0.8rem; line-height: 1.3rem; }
+    .event .expand { color: #aaa; font-style: italic; font-size: 0.8rem; color: #aaf; font-family: inherit; text-decoration: none; }
+    .event .extra { display: none; }
+    .event.open .extra { display: block; }
+</style>
+
+<script type="module">
+  import { html, register, useState, useRef, useEffect } from '/lib/preact.js';
+
+  register(function ({ children }) {
+    const [open, setOpen] = useState(false);
+    const [hasExtra, setHasExtra] = useState(false);
+    const hostRef = useRef();
+
+    useEffect(() => {
+      if (hostRef.current) {
+        setHasExtra(!!hostRef.current.querySelector('.extra'));
+      }
+    }, [children]);
+
+    const expander = hasExtra && (open
+      ? html`<a class="expand" href="javascript: void 0;" onclick=${() => setOpen(false)}>» Dölj</a>`
+      : html`<a class="expand" href="javascript: void 0;" onclick=${() => setOpen(true)}>» Läs mer</a>`
+    );
+
+    return html`
+      <div class="event ${open ? 'open' : ''}" ref=${hostRef}>
+        ${children}
+        ${expander}
+      </div>
+    `;
+  }, 'calendar-event');
+</script>
+
+        </div>
+      </div>
+
+      <footer id="page-footer">
+  <div id="page-footer-content">
+    <div class="footer-col">
+      <img src="/uploads/343f25e67dc53905f379a0ae9e28ba7b4db39eba/nylogo-staclara-footer-2.png" style="width:200px; position: relative; top: -6px;">
+  </div>
+    <div id="contact" class="footer-col">
+        <p class="navset nav-stockholm">
+            <!-- Det här visas på Stockholmssidan -->
+            Restaurant S:ta Clara<br/>
+            Bierhaus Blues & Jazz Venue<br/>
+            Lilla Nygatan 17,<br/>
+            111 28 Stockholm.<br/>
+            <BR>
+            <a href="Tel:+4684113032">Tel: +46 (0)8 411 30 32</a>
+            <BR>
+            Frågor och bordsbokningar:<br/>
+            <a href="mailto:info@staclara.se">info@staclara.se</a>
+            <BR>
+            Artistbokningar:<br/>
+            <a href="mailto:musik@staclara.se">musik@staclara.se</a>
+            <BR>
+            Social media<br/>
+            <a href="https://www.instagram.com/staclara.se/">Instagram</a>
+            <a href="https://www.facebook.com/staclara.se/">Facebook</a>
+        </p>
+        <p class="navset nav-sundsvall" style="display: none;">
+            <!-- Det här visas på Sundsvallssidan -->
+            Resturant S:ta Clara<br/>
+            Bierhaus Blues & Jazz Venue<br/>
+            Trädgårdsgatan 22,<br/>
+            852 31 Sundsvall<br/>
+            <BR>
+            
+            Kontakta oss:<br/>
+            <a href="Tel:+4660100411">Tel: +46 (0)60 100 411</a>
+            <BR>
+            Frågor och bordsbokningar:<br/>
+            <a href="mailto:sundsvall@staclara.se">sundsvall@staclara.se</a>
+            <BR>
+            Artistbokningar:<br/>
+            <a href="mailto:live@staclara.se">live@staclara.se</a>
+            <BR>
+            Social media<br/>
+            <a href="https://www.instagram.com/staclarasundsvall/">Instagram</a>
+            <a href="https://www.facebook.com/staclara.se/">Facebook</a>
+        </p>
+    </div>
+    <div class="footer-col">
+      <p>
+        <x-div class="navset nav-stockholm">
+  <a href="/stockholm.html">Om Clara</a>
+  <a href="/stockholm.html#menus">Menyer</a>
+  <a href="https://book.easytable.com/book/?id=62447&lang=auto">Book a Table</a>
+  <a href="/calendar.html">Live Music</a>
+  <a href="/stockholm.html#contact">Kontakt</a>
+  <a href="/english.html">English</a>
+</x-div>
+<x-div class="navset nav-sundsvall" style="display: none;">
+  <a href="/sundsvall.html">Om Clara</a>
+  <a href="/sundsvall.html#menus">Menyer</a>
+  <a href="https://book.easytable.com/book/?id=e9ad4&lang=auto">Book a Table</a>
+  <a href="/sundsvall/calendar.html">Live Music</a>
+  <a href="/sundsvall.html#contact">Kontakt</a>
+</x-div>
+
+<script type="module">
+window.setNav = function (id) {
+  // Hide all navsets
+  document.querySelectorAll('.navset').forEach(el => {
+    el.style.display = 'none';
+  });
+
+  document.querySelectorAll(`.nav-${id}`).forEach(el => {
+      el.style.display = '';
+  });
+};
+</script>
+
+<!-- easyTableBooking START -->
+<!-- Script augments the "Book-a-Table" link to open in an overlay. -->
+<script type="text/javascript">
+(function() { var st=document.createElement('script'); st.type='text/javascript'; st.async=true; st.src='//book.easytable.com/book/widget/v3/book.js'; var sc=document.getElementsByTagName('script')[0]; sc.parentNode.insertBefore(st, sc); })();
+</script>
+<!-- easyTableBooking END -->
+
+      </p>
+    </div>
+    <div class="footer-col">
+
+    </div>
+  </div>
+</footer>
+
+<style>
+  #page-footer {
+    font-family: 'Hedvig Letters Serif', monospace;
+    background:#8e9a7c;
+    color: #fff;
+    line-height: 16px;
+    padding: 60px 40px 50px;
+  }
+
+  #page-footer-content {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  #page-footer-content p { margin-top: -5px; padding: 0; color: inherit; font-size: 0.8rem; }
+  #page-footer a { text-decoration: none; color: inherit; }
+  #page-footer a:hover { text-decoration: underline; }
+  #page-footer a::after { content: "\A"; white-space: pre; }
+
+  @media (max-width: 550px) {
+    #page-footer-content { flex-direction: column; }
+    #page-footer-content .footer-col { margin: 20px 0 0; }
+  }
+  
+  @media (min-width: 500px) {
+      #page-footer-content p { font-size: 0.6rem; }
+  }
+</style>
+
+    </div>
+    <style>
+      #height { display: flex; flex-direction: column; min-height: 100vh; justify-content: space-between; }
+    </style>
+    
+    
+        <!-- This is the template test content -->
+    
+  </body>
+</html>

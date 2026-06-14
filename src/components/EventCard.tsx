@@ -195,19 +195,21 @@ export function EventCard({ event, isThisWeek, currentDate, currentTime }: Event
           <span className={`px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider border ${getStyleColor(event.style)}`}>
             {getStyleLabel(event.style)}
           </span>
-          {event.beginnerClass && (
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-green-50 text-green-800 border border-green-200 text-[10px] uppercase font-bold tracking-wider">
-              <GraduationCap className="w-3 h-3" />
-              {event.beginnerClass.toLowerCase() === 'yes'
-                ? 'Beginner friendly'
-                : `Beginner class ${event.beginnerClass}`}
-            </span>
-          )}
           {priceDisplay && (
             <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-[var(--surface-container)] text-[var(--on-surface-variant)] border border-[var(--surface-container-highest)] text-[11px] font-bold uppercase tracking-wider">
               <Banknote className="w-3.5 h-3.5" />
               {priceDisplay}
             </span>
+          )}
+          {event.beginnerClass && (
+            <div className="basis-full">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-green-50 text-green-800 border border-green-200 text-[10px] uppercase font-bold tracking-wider">
+                <GraduationCap className="w-3 h-3" />
+                {event.beginnerClass.toLowerCase() === 'yes'
+                  ? 'Beginner friendly'
+                  : `Beginner class ${event.beginnerClass}`}
+              </span>
+            </div>
           )}
         </div>
 

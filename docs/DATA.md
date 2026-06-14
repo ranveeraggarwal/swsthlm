@@ -33,7 +33,7 @@ A build step expands `series` plus `exceptions` into concrete occurrences for th
 | `id` | yes | slug | Stable. `chicago`, `sprallen`, `norrport`, `sss`, `augustas`, `scala`, `stadshuset`, `vinterviken`. |
 | `name` | yes | string | Display name. "Chicago Swing Dance Studio". |
 | `address` | yes | string | Street and number. "Hornsgatan 75". |
-| `neighborhood` | yes | string | "Söder", "Vasastan", "Norrmalm", "Hammarby Sjöstad", "Östermalm", "Solna". |
+| `neighborhood` | yes | string | "Söder", "Vasastan", "Norrmalm", "Hammarby Sjöstad", "Skanstull", "Östermalm", "Solna". |
 | `lat`, `lng` | no | float | For future map use. Skip if unknown. |
 | `maps_url` | no | URL | Override the default Maps link. Usually leave empty. |
 

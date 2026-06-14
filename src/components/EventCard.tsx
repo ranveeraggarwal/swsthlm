@@ -190,7 +190,7 @@ export function EventCard({ event, isThisWeek, currentDate, currentTime }: Event
           )}
         </div>
 
-        {/* Compact pill row: style / for-whom / how-much */}
+        {/* Compact pill row: style / how-much */}
         <div className="flex flex-wrap items-center gap-2 font-sans">
           <span className={`px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider border ${getStyleColor(event.style)}`}>
             {getStyleLabel(event.style)}
@@ -201,21 +201,11 @@ export function EventCard({ event, isThisWeek, currentDate, currentTime }: Event
               {priceDisplay}
             </span>
           )}
-          {event.beginnerClass && (
-            <div className="basis-full">
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-green-50 text-green-800 border border-green-200 text-[10px] uppercase font-bold tracking-wider">
-                <GraduationCap className="w-3 h-3" />
-                {event.beginnerClass.toLowerCase() === 'yes'
-                  ? 'Beginner friendly'
-                  : `Beginner class ${event.beginnerClass}`}
-              </span>
-            </div>
-          )}
         </div>
 
-        {/* Music type + who's playing — one line per performer (band, DJ),
+        {/* Music type + who's playing + beginner info — one line per row,
             below the pill row. Music is always set, so at least one row shows. */}
-        {musicRows.length > 0 && (
+        {(musicRows.length > 0 || event.beginnerClass) && (
           <div className="mt-2.5 space-y-1.5 font-sans">
             {musicRows.map((row) => (
               <div key={row.type} className="flex items-center gap-2 min-w-0">
@@ -227,6 +217,20 @@ export function EventCard({ event, isThisWeek, currentDate, currentTime }: Event
                 )}
               </div>
             ))}
+
+            {event.beginnerClass && (
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-green-50 text-green-800 border border-green-200 text-[10px] uppercase font-bold tracking-wider whitespace-nowrap shrink-0">
+                  <GraduationCap className="w-3 h-3" />
+                  Beginner
+                </span>
+                <span className="text-xs text-[var(--outline)] font-medium truncate">
+                  {event.beginnerClass.toLowerCase() === 'yes'
+                    ? 'Friendly'
+                    : `Class ${event.beginnerClass}`}
+                </span>
+              </div>
+            )}
           </div>
         )}
       </div>

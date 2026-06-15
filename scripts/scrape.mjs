@@ -18,6 +18,7 @@ import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
 import Papa from 'papaparse';
 import { validateData } from './validate-data.mjs';
+import { isSwingRelevant } from './scrapers/lib/genre.mjs';
 import { ONEOFF_FIELDS, candidateToRow, formatRow } from './scrapers/lib/candidate.mjs';
 import * as staclara from './scrapers/sources/staclara.mjs';
 
@@ -103,9 +104,21 @@ async function main() {
   for (const src of SOURCES) {
     try {
       const got = await src.scrape();
-      sourceNotes.push(`${src.label}: ${got.length} event(s)`);
-      if (got.length === 0) sourceNotes.push(`⚠️ ${src.label}: returned 0 events — check the source`);
-      candidates.push(...got);
+      if (got.length === 0) {
+        sourceNotes.push(`⚠️ ${src.label}: returned 0 events — check the source`);
+      }
+      // Relevance is declared per source, not global. A swing-dedicated venue
+      // ('all') keeps every event; a mixed venue ('genre') is filtered to
+      // swing/jazz nights. Defaulting an undeclared source to 'genre' is the
+      // safe choice — better to drop than to flood the calendar with non-dance.
+      const filtered = src.relevance === 'all'
+        ? got
+        : got.filter((c) => isSwingRelevant(`${c.name} ${c.description ?? ''}`));
+      const dropped = got.length - filtered.length;
+      sourceNotes.push(
+        `${src.label}: ${filtered.length} event(s)${dropped ? ` (${dropped} filtered as non-dance)` : ''}`
+      );
+      candidates.push(...filtered);
     } catch (e) {
       sourceNotes.push(`⚠️ ${src.label}: scrape failed — ${e.message}`);
     }

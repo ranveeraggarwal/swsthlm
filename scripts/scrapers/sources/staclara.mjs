@@ -8,17 +8,18 @@
 //     <p>SWING MAGNIFIQUE 19-22<BR>Django Reinhardt Swing Jazz!</p>
 //   </calendar-event>
 //
-// S:ta Clara is a jazz/blues pub, so most nights aren't swing dance. We keep
-// only genre-relevant ones (see lib/genre.mjs) — the rest (quizzes, jams,
-// rock/folk gigs) are dropped before they reach the review PR.
+// S:ta Clara is a jazz/blues pub, so most nights aren't swing dance. It declares
+// relevance 'genre' so the runner applies the shared genre filter (lib/genre.mjs),
+// dropping quizzes, jams, and rock/folk gigs. (A swing-dedicated venue would
+// declare 'all' and keep everything — see the runner.)
 
 import * as cheerio from 'cheerio';
-import { isSwingRelevant, } from '../lib/genre.mjs';
 import { titleCase } from '../lib/candidate.mjs';
 
 export const id = 'staclara';
 export const label = 'S:ta Clara Bierhaus';
 export const url = 'https://www.staclara.se/calendar.html';
+export const relevance = 'genre';
 
 const VENUE_ID = 'staclara';
 const ORGANIZER = 'S:ta Clara Bierhaus';
@@ -92,8 +93,8 @@ export function parse(html) {
       .trim();
     if (!title) return;
 
-    if (!isSwingRelevant(`${title} ${genre}`)) return;
-
+    // No relevance filtering here — the runner applies it per the declared
+    // `relevance` policy. The parser's job is to extract, not to judge.
     events.push({
       id: `${VENUE_ID}-${date}`,
       name: titleCase(title),

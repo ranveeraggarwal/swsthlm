@@ -22,8 +22,9 @@ import { isSwingRelevant, looksLikeNoise } from './scrapers/lib/genre.mjs';
 import { loadBands, classify, normalizeBand, slugifyBand } from './scrapers/lib/bands.mjs';
 import { ONEOFF_FIELDS, candidateToRow, formatRow } from './scrapers/lib/candidate.mjs';
 import * as staclara from './scrapers/sources/staclara.mjs';
+import * as chicago from './scrapers/sources/chicago.mjs';
 
-const SOURCES = [staclara];
+const SOURCES = [staclara, chicago];
 
 const DATA_DIR = path.join(process.cwd(), 'data');
 const ONEOFFS_PATH = path.join(DATA_DIR, 'oneoffs.csv');

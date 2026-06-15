@@ -33,9 +33,10 @@ export const ONEOFF_FIELDS = [
 
 // Uppercase source text -> display case. "JESSES JAZZ BAND" -> "Jesses Jazz Band".
 export function titleCase(str) {
+  const ALPHA = 'a-zà-ÿ';
   return (str ?? '')
     .toLowerCase()
-    .replace(/\b([a-zà-ö])/g, (m) => m.toUpperCase())
+    .replace(new RegExp(`(?<![${ALPHA}])[${ALPHA}]`, 'gu'), (m) => m.toUpperCase())
     .trim();
 }
 

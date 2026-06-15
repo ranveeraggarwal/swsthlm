@@ -21,9 +21,11 @@ import { validateData } from './validate-data.mjs';
 import { isSwingRelevant, looksLikeNoise } from './scrapers/lib/genre.mjs';
 import { loadBands, classify, normalizeBand, slugifyBand } from './scrapers/lib/bands.mjs';
 import { ONEOFF_FIELDS, candidateToRow, formatRow } from './scrapers/lib/candidate.mjs';
+import { addDays, weekdayOf, buildCoverage } from './scrapers/lib/coverage.mjs';
 import * as staclara from './scrapers/sources/staclara.mjs';
+import * as chicago from './scrapers/sources/chicago.mjs';
 
-const SOURCES = [staclara];
+const SOURCES = [staclara, chicago];
 
 const DATA_DIR = path.join(process.cwd(), 'data');
 const ONEOFFS_PATH = path.join(DATA_DIR, 'oneoffs.csv');
@@ -53,45 +55,6 @@ function readDataset(file) {
   return { fields: parsed.meta.fields ?? [], rows: parsed.data };
 }
 
-function addDays(iso, days) {
-  const d = new Date(`${iso}T00:00:00Z`);
-  d.setUTCDate(d.getUTCDate() + days);
-  return d.toISOString().slice(0, 10);
-}
-
-const WEEKDAY_BY_INDEX = [
-  'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday',
-];
-const weekdayOf = (iso) => WEEKDAY_BY_INDEX[new Date(`${iso}T00:00:00Z`).getUTCDay()];
-
-// Every (venue_id|date) already on the calendar: one-off date ranges, plus
-// series occurrences (a series occupies a date iff venue+weekday match and the
-// date is inside [valid_from, valid_to] and it isn't ended/draft). This mirrors
-// expand.ts's notion of coverage without stepping, so there's no DST exposure.
-function buildCoverage(oneoffs, series) {
-  const covered = new Set();
-  for (const r of oneoffs.rows) {
-    const v = val(r, 'venue_id');
-    const start = val(r, 'date');
-    const end = val(r, 'end_date') || start;
-    if (!v || !start) continue;
-    for (let d = start; d <= end; d = addDays(d, 1)) covered.add(`${v}|${d}`);
-  }
-  return {
-    has(venueId, date) {
-      if (covered.has(`${venueId}|${date}`)) return true;
-      return series.rows.some((s) => {
-        if (val(s, 'venue_id') !== venueId) return false;
-        if (['ended', 'draft'].includes(val(s, 'status'))) return false;
-        if (val(s, 'weekday') !== weekdayOf(date)) return false;
-        if (date < val(s, 'valid_from')) return false;
-        const to = val(s, 'valid_to');
-        if (to && date > to) return false;
-        return true;
-      });
-    },
-  };
-}
 
 async function main() {
   const venues = readDataset('venues');

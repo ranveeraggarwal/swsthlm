@@ -23,11 +23,11 @@ export default async function Page() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
       {/* Compact Hero */}
-      <div className="text-center max-w-2xl mx-auto mb-6 mt-2">
-        <h1 className="font-serif text-3xl md:text-4xl lg:text-5xl font-black tracking-tight text-[var(--on-surface)] leading-tight">
+      <div className="text-center max-w-2xl mx-auto mb-4 mt-0">
+        <h1 className="font-serif text-2xl md:text-3xl font-black tracking-tight text-[var(--on-surface)] leading-tight">
           Swing Dance <span className="italic font-normal">This Week</span>
         </h1>
-        <p className="mt-2 font-sans text-sm md:text-base text-[var(--on-surface-variant)] leading-relaxed max-w-md mx-auto">
+        <p className="mt-1 font-sans text-xs md:text-sm text-[var(--on-surface-variant)] leading-relaxed max-w-md mx-auto">
           Your guide to Lindy Hop, Balboa, Shag, and Blues social dancing in Stockholm.
         </p>
       </div>

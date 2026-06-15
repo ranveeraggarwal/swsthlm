@@ -175,9 +175,112 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
 
   return (
     <div className="w-full">
+      {/* Top Status and Anchor to Filters */}
+      <div className="flex items-center justify-between mb-8 pb-4 border-b border-[var(--surface-container-highest)] font-sans text-xs text-zinc-500 uppercase tracking-wider font-semibold">
+        <span>{filterStatusMessage}</span>
+        <div className="flex items-center gap-4">
+          <a
+            href="#filters"
+            className="flex items-center gap-1.5 text-[var(--secondary)] hover:underline font-bold transition-colors"
+          >
+            <SlidersHorizontal className="w-3.5 h-3.5" />
+            Filter & Search
+          </a>
+          {hasActiveFilters && (
+            <button
+              onClick={() => {
+                setSearchQuery('');
+                setSelectedStyle('all');
+                setSelectedVenue('all');
+                setLiveMusicOnly(false);
+              }}
+              className="text-[var(--primary)] hover:underline font-bold cursor-pointer"
+            >
+              Reset
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Events Results Section */}
+      <div className="space-y-12">
+        {totalCount === 0 ? (
+          <div className="text-center py-16 border border-dashed border-[var(--surface-container-highest)] rounded bg-[var(--surface-container-low)] p-8">
+            <SlidersHorizontal className="w-12 h-12 text-zinc-400 mx-auto mb-4" />
+            <h3 className="font-serif text-xl font-bold text-[var(--on-surface)] mb-1">No events match your filters</h3>
+            <p className="font-sans font-body-md text-zinc-500 max-w-sm mx-auto">
+              Try adjusting your search terms or filters to find dance events.
+            </p>
+          </div>
+        ) : (
+          <>
+            {/* THIS WEEK EVENTS SECTION */}
+            {eventSections.hasThisWeek && (
+              <div>
+                <div className="flex items-center gap-3 mb-6 border-b border-[var(--surface-container-highest)] pb-3">
+                  <CalendarDays className="w-5 h-5 text-[var(--primary)]" />
+                  <h2 className="font-serif text-3xl font-bold tracking-tight text-[var(--on-surface)]">
+                    Happening <span className="italic">This Week</span>
+                  </h2>
+                </div>
+
+                <div className="space-y-8">
+                  {Object.entries(eventSections.thisWeek).map(([date, dateEvents]) => (
+                    <div key={date} className="space-y-4">
+                      <h3 className="font-sans text-xs font-bold text-[var(--primary)] uppercase tracking-widest bg-[var(--primary)]/10 py-1.5 px-3 rounded inline-block border border-[var(--primary)]/15">
+                        {formatEventDate(date)}
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
+                        {dateEvents.map((event) => (
+                          <EventCard key={event.id} event={event} isThisWeek={true} currentDate={currentDate} currentTime={currentTime} />
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* UPCOMING EVENTS SECTION */}
+            {eventSections.hasUpcoming && (
+              <div className="pt-4">
+                <div className="flex items-center gap-3 mb-6 border-b border-[var(--surface-container-highest)] pb-3">
+                  <CalendarDays className="w-5 h-5 text-zinc-600" />
+                  <h2 className="font-serif text-3xl font-bold tracking-tight text-[var(--on-surface)]">
+                    Upcoming <span className="italic">Events</span>
+                  </h2>
+                </div>
+
+                <div className="space-y-8">
+                  {Object.entries(eventSections.upcoming).map(([date, dateEvents]) => (
+                    <div key={date} className="space-y-4">
+                      <h3 className="font-sans text-xs font-bold text-zinc-600 uppercase tracking-widest bg-[var(--surface-container-low)] py-1.5 px-3 rounded inline-block border border-[var(--surface-container-highest)]">
+                        {formatEventDate(date)}
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
+                        {dateEvents.map((event) => (
+                          <EventCard key={event.id} event={event} isThisWeek={false} currentDate={currentDate} currentTime={currentTime} />
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+
       {/* Search and Filters panel */}
-      <div className="border border-[var(--surface-container-highest)] bg-[var(--surface-container-low)] rounded-lg p-6 mb-10 shadow-sm">
+      <div id="filters" className="border border-[var(--surface-container-highest)] bg-[var(--surface-container-low)] rounded-lg p-6 mt-16 shadow-sm scroll-mt-24">
         <div className="flex flex-col gap-6">
+          <div className="flex items-center gap-3 border-b border-[var(--surface-container-highest)] pb-4 mb-2">
+            <SlidersHorizontal className="w-5 h-5 text-[var(--secondary)]" />
+            <h2 className="font-serif text-2xl font-bold tracking-tight text-[var(--on-surface)]">
+              Filters <span className="italic">& Search</span>
+            </h2>
+          </div>
+
           {/* Search Bar - Premium Neobrutalist Block Container */}
           <div className="relative w-full bg-[var(--surface-container-lowest)] border-2 border-[var(--on-surface)] rounded shadow-[2px_2px_0px_var(--on-surface)] transition-all focus-within:shadow-[4px_4px_0px_var(--primary)] focus-within:-translate-x-0.5 focus-within:-translate-y-0.5">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--outline)]" />
@@ -257,93 +360,6 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
             </div>
           </div>
         </div>
-
-        {/* Smart filter status bar */}
-        <div className="flex items-center justify-between mt-6 pt-4 border-t border-[var(--surface-container-highest)] font-sans text-xs text-zinc-500 uppercase tracking-wider font-semibold">
-          <span>{filterStatusMessage}</span>
-          {hasActiveFilters && (
-            <button
-              onClick={() => {
-                setSearchQuery('');
-                setSelectedStyle('all');
-                setSelectedVenue('all');
-                setLiveMusicOnly(false);
-              }}
-              className="text-[var(--primary)] hover:underline font-bold"
-            >
-              Reset Filters
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Events Results Section */}
-      <div className="space-y-12">
-        {totalCount === 0 ? (
-          <div className="text-center py-16 border border-dashed border-[var(--surface-container-highest)] rounded bg-[var(--surface-container-low)] p-8">
-            <SlidersHorizontal className="w-12 h-12 text-zinc-400 mx-auto mb-4" />
-            <h3 className="font-serif text-xl font-bold text-[var(--on-surface)] mb-1">No events match your filters</h3>
-            <p className="font-sans font-body-md text-zinc-500 max-w-sm mx-auto">
-              Try adjusting your search terms or filters to find dance events.
-            </p>
-          </div>
-        ) : (
-          <>
-            {/* THIS WEEK EVENTS SECTION */}
-            {eventSections.hasThisWeek && (
-              <div>
-                <div className="flex items-center gap-3 mb-6 border-b border-[var(--surface-container-highest)] pb-3">
-                  <CalendarDays className="w-5 h-5 text-[var(--primary)]" />
-                  <h2 className="font-serif text-3xl font-bold tracking-tight text-[var(--on-surface)]">
-                    Happening <span className="italic">This Week</span>
-                  </h2>
-                </div>
-
-                <div className="space-y-8">
-                  {Object.entries(eventSections.thisWeek).map(([date, dateEvents]) => (
-                    <div key={date} className="space-y-4">
-                      <h3 className="font-sans text-xs font-bold text-[var(--primary)] uppercase tracking-widest bg-[var(--primary)]/10 py-1.5 px-3 rounded inline-block border border-[var(--primary)]/15">
-                        {formatEventDate(date)}
-                      </h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
-                        {dateEvents.map((event) => (
-                          <EventCard key={event.id} event={event} isThisWeek={true} currentDate={currentDate} currentTime={currentTime} />
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* UPCOMING EVENTS SECTION */}
-            {eventSections.hasUpcoming && (
-              <div className="pt-4">
-                <div className="flex items-center gap-3 mb-6 border-b border-[var(--surface-container-highest)] pb-3">
-                  <CalendarDays className="w-5 h-5 text-zinc-600" />
-                  <h2 className="font-serif text-3xl font-bold tracking-tight text-[var(--on-surface)]">
-                    Upcoming <span className="italic">Events</span>
-                  </h2>
-                </div>
-
-                <div className="space-y-8">
-                  {Object.entries(eventSections.upcoming).map(([date, dateEvents]) => (
-                    <div key={date} className="space-y-4">
-                      <h3 className="font-sans text-xs font-bold text-zinc-600 uppercase tracking-widest bg-[var(--surface-container-low)] py-1.5 px-3 rounded inline-block border border-[var(--surface-container-highest)]">
-                        {formatEventDate(date)}
-                      </h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
-                        {dateEvents.map((event) => (
-                          <EventCard key={event.id} event={event} isThisWeek={false} currentDate={currentDate} currentTime={currentTime} />
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </>
-        )}
       </div>
     </div>
   );

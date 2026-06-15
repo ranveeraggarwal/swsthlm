@@ -30,7 +30,7 @@ training data assumes.)
 | Doc | What it governs |
 |---|---|
 | [`docs/PROJECT.md`](PROJECT.md) | Roadmap, the repo-as-database architecture decision, the milestones (M1–M5), the 31-issue backlog with priorities, "won't build" list, operating cadence. |
-| [`docs/DATA.md`](DATA.md) | **The data contract.** Full schema for the four CSVs, enums, validation rules, worked examples. **Read this before editing anything under `/data/` or writing code that consumes it.** |
+| [`docs/DATA.md`](DATA.md) | **The data contract.** Full schema for the five CSVs, enums, validation rules, worked examples. **Read this before editing anything under `/data/` or writing code that consumes it.** |
 | [`docs/CONTRIBUTING.md`](CONTRIBUTING.md) | Contributor-facing rules, PR conventions, branch naming, local setup. |
 | [`docs/architecture/SCRAPERS.md`](architecture/SCRAPERS.md) | **The intake-automation subsystem.** The nightly scraper: source-module interface, relevance policy, dedup, the surgical-write + delta-validation design, source inventory, and decisions. Read this before touching anything under `scripts/scrapers/` or `scripts/scrape.mjs`. |
 | `HANDOVER.md` | Operational ownership (domain, Vercel, secrets). Mostly TODO placeholders today. |
@@ -47,6 +47,7 @@ DATA.md):
 | `data/series.csv` | Recurring weekly events (P-Tzz-Dah, Chicago Wednesdays, Zinken's…). |
 | `data/exceptions.csv` | Per-date overrides for a series (different DJ, a cancellation, a time change). |
 | `data/oneoffs.csv` | Genuine single- or multi-day events. |
+| `data/bands.csv` | Band registry — trust status (`swing=yes/no/unknown`) used by the scraper to classify acts. |
 
 ### Structured data is truth; prose is decoration
 
@@ -78,8 +79,11 @@ the page reloads. There is no separate data build step locally.
 - **Badges landed:** price, beginner, music (live vs DJ), and a "just-ended"
   badge. The event card was redesigned to **collapse to a summary** with an
   expandable details section.
-- **Current thrust:** the **scraper subsystem** (PR #55 merged the runner + the
-  S:ta Clara source). See SCRAPERS.md.
+- **Scraper subsystem live:** PR #55 introduced the runner + S:ta Clara source
+  (genre mode). PR #65 added the band-trust roster mode and flipped S:ta Clara
+  to `relevance:'roster'`. The nightly Action now opens **two** review PRs:
+  `bot/scrape` (event proposals → `oneoffs.csv`) and `bot/new-bands` (unknown
+  acts for human vetting → `bands.csv`). See SCRAPERS.md for the full design.
 
 ## Conventions
 
@@ -144,9 +148,16 @@ leave it `live`.
 ## The intake-automation subsystem
 
 Event intake from public, non-Facebook sources is automated by a **nightly
-GitHub Action that opens one review PR** — robots produce diffs, humans merge
-them. The full design (source interface, per-source relevance policy, the genre
-filter, dedup against series + one-offs, the surgical-write and
-delta-validation gate, the source inventory, and the deferred Facebook path)
-lives in **[`docs/architecture/SCRAPERS.md`](architecture/SCRAPERS.md)**. Read it
-before touching `scripts/scrape.mjs` or anything under `scripts/scrapers/`.
+GitHub Action that opens two review PRs** — robots produce diffs, humans merge
+them:
+
+- **`bot/scrape`** — event proposals staged to `data/oneoffs.csv`.
+- **`bot/new-bands`** — acts not in `data/bands.csv` (or flagged `swing=unknown`)
+  surfaced for human vetting; merging adds them to the band registry.
+
+The full design (source interface, per-source relevance policy — `'all'`,
+`'roster'`, `'genre'` — the band-trust matcher, dedup against series + one-offs,
+the surgical-write and delta-validation gate, source inventory, and deferred
+Facebook path) lives in
+**[`docs/architecture/SCRAPERS.md`](architecture/SCRAPERS.md)**. Read it before
+touching `scripts/scrape.mjs` or anything under `scripts/scrapers/`.

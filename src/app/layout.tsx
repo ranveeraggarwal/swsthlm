@@ -17,8 +17,9 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: 'Stockholm Swing',
-  description: 'A lightweight, optimized guide to swing dance events in Stockholm.',
+  title: 'Stockholm Swing Dance Calendar',
+  description:
+    'The complete guide to swing dancing in Stockholm. Find upcoming Lindy Hop, Balboa, Shag, and Blues socials, live music, and workshops across the city.',
 };
 
 export default function RootLayout({

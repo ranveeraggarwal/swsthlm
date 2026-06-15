@@ -10,9 +10,14 @@ import type { Metadata } from 'next';
 export const dynamic = 'force-static';
 
 export const metadata: Metadata = {
-  title: 'This Week in Swing Dance Stockholm | Stockholm Swing',
+  title: 'Stockholm Swing Dance Calendar | Lindy Hop, Balboa & Blues Events',
   description:
-    'A lightweight, optimized guide to Lindy Hop, Balboa, Shag, and Blues social dancing and workshops in Stockholm. Real-time updates and edge-cached schedule.',
+    'The complete guide to swing dancing in Stockholm. Find upcoming Lindy Hop, Balboa, Shag, and Blues socials, live music, and workshops across the city.',
+  openGraph: {
+    title: 'Stockholm Swing Dance Calendar | Lindy Hop, Balboa & Blues Events',
+    description:
+      'The complete guide to swing dancing in Stockholm. Find upcoming Lindy Hop, Balboa, Shag, and Blues socials, live music, and workshops across the city.',
+  },
 };
 
 export default async function Page() {
@@ -28,7 +33,7 @@ export default async function Page() {
           Swing Dance <span className="italic font-normal">This Week</span>
         </h1>
         <p className="mt-1 font-sans text-xs md:text-sm text-[var(--on-surface-variant)] leading-relaxed max-w-md mx-auto">
-          Your guide to Lindy Hop, Balboa, Shag, and Blues social dancing in Stockholm.
+          The complete guide to swing dancing in Stockholm. Find upcoming Lindy Hop, Balboa, Shag, and Blues socials, live music, and workshops across the city.
         </p>
       </div>
 

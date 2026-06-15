@@ -38,6 +38,7 @@ scripts/scrapers/
   sources/<venue>.test.mjs          # fixture-driven parser test
   lib/genre.mjs                     # shared swing-relevance keyword filter
   lib/candidate.mjs                 # CandidateEvent shape, ONEOFF_FIELDS, titleCase, candidateToRow, formatRow
+  lib/exceptions.mjs                # resolveOccurrence, computeExceptionChanges — exception-proposal helpers
   fixtures/<venue>.html             # saved source snapshot for tests
 .github/workflows/scrape.yml        # nightly cron + manual dispatch
 ```
@@ -148,15 +149,27 @@ In order:
 6. **Classify each surviving candidate:**
    - Scraper-owned id already exists **and a field changed** → **UPDATE** (record
      the field-level `old → new`).
-   - `(venue_id, date)` already covered by another id or a series → **SKIP**.
+   - `(venue_id, date)` is covered by a **series** and at least one of `{music,
+     dj, band, start, end}` differs from the resolved occurrence (series defaults
+     merged with any existing exception for that date) → **EXCEPTION**. Deduped
+     on `(series_id, date)`: if an exception row already exists, it is updated
+     in place (changed fields only); otherwise a new row is proposed. Only
+     **non-empty** candidate fields are compared — an empty field means "unknown
+     to the scraper," not "should be blank," so it never proposes to blank a
+     human-curated band or DJ.
+   - `(venue_id, date)` covered by an existing one-off under a different id, or
+     by a series with no field differences → **SKIP**.
    - Otherwise → **NEW**.
 7. **Surgical text write (critical).** Append NEW rows and replace only CHANGED
-   lines, **as text.** Do **not** `Papa.parse → mutate → Papa.unparse` the whole
-   file — that re-quotes every existing row and makes the nightly diff *the
-   entire file*, defeating human review. Single rows are formatted with
-   `Papa.unparse([row], { header: false, columns: ONEOFF_FIELDS })` so a scraped
-   line is byte-shaped exactly like a hand-written one. (Verified: 4 new events
-   produce exactly `4 insertions(+)`, zero churn on existing rows.)
+   lines, **as text**, for both `oneoffs.csv` and `exceptions.csv`. Do **not**
+   `Papa.parse → mutate → Papa.unparse` the whole file — that re-quotes every
+   existing row and makes the nightly diff *the entire file*, defeating human
+   review. Single rows are formatted with
+   `Papa.unparse([row], { header: false, columns: <FIELDS> })` so a scraped
+   line is byte-shaped exactly like a hand-written one. Exception rows are
+   located by their composite key (`series_id,date,` prefix) for in-place
+   replacement. (Verified: 4 new events produce exactly `4 insertions(+)`, zero
+   churn on existing rows.)
 8. **Delta validation gate.** Validate the **baseline** file and the **after**
    file with `validateData`, and **block (exit 1, write nothing) only on errors
    the scrape *introduces*** (`afterErrors − baseErrors`). Pre-existing errors are
@@ -167,10 +180,11 @@ In order:
    under append + in-place replace, so comparing the *error strings* isolates the
    delta.
 9. **Write `scrape-report.md`** (used as the PR body) and the same content to
-   stdout, with sections: **New / Updated (⚠ review) / skipped / past-filtered /
-   pre-existing data issues.** A `--dry-run` flag does everything except write
-   (no `oneoffs.csv`, no `scrape-report.md` side effects beyond the report it
-   always emits for inspection).
+   stdout, with sections: **New / Updated (⚠ review) / Exception proposals /
+   skipped / past-filtered / pre-existing data issues.** A `--dry-run` flag
+   does everything except write (no `oneoffs.csv`, no `exceptions.csv`, no
+   `scrape-report.md` side effects beyond the report it always emits for
+   inspection).
 
 ## Data-safety rules
 
@@ -179,8 +193,8 @@ In order:
   — never invented, never smuggled into the description. (`candidateToRow` emits
   empty strings for everything the scraper can't know.)
 - **Never touch `series.csv`.** Recurring definitions stay hand-curated; the
-  scraper only *reads* them to dedup. The blast radius of a scrape is
-  **`oneoffs.csv` only.**
+  scraper only *reads* them to dedup and compare. The blast radius of a scrape
+  is **`oneoffs.csv` and `exceptions.csv` only.**
 - **Never invent a venue.** A source whose location doesn't map to an existing
   `venue_id` must **flag it** in the report ("needs a `venues.csv` row"), not
   silently create one. Adding a venue is a deliberate, separate step per DATA.md.
@@ -330,6 +344,10 @@ screenshot parser. Both are **manual-assist** paths.
 
 - **PR1** (`feat/scraper-v1`, PR #55 — merged): scaffold + runner + S:ta Clara
   source.
-- **PR2:** Chicago (`relevance: 'all'`) + the series-dedup test.
+- **PR2** (`feat/chicago-scraper`, PR #79 — merged): Chicago source
+  (`relevance: 'all'`) + series-dedup test.
+- **PR3** (`feat/exception-proposals`, PR #83 — merged): EXCEPTION
+  classification bucket; `exceptions.csv` surgical write; DJ name extraction
+  from Chicago titles; `lib/exceptions.mjs` helpers.
 - **Band/aggregator source:** its own later PR — it introduces the venue-map
   concern.

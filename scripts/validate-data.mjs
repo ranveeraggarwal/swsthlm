@@ -26,6 +26,9 @@ const WEEKDAYS = new Set([
 ]);
 const SERIES_STATUS = new Set(['draft', 'live', 'ended']);
 const ONEOFF_STATUS = new Set(['draft', 'live', 'ended', 'cancelled']);
+// Band-roster trust flag: yes = trusted swing band, no = known not-swing
+// (suppressed), unknown = surfaced and awaiting a human decision.
+const SWING = new Set(['yes', 'no', 'unknown']);
 
 // required = must be present AND non-empty; optional = may be absent/empty.
 const SCHEMA = {
@@ -50,6 +53,10 @@ const SCHEMA = {
       'organizer', 'url', 'status',
     ],
     optional: ['end_date', 'price', 'payment', 'beginner_class', 'dj', 'band', 'description'],
+  },
+  bands: {
+    required: ['id', 'name', 'style', 'swing'],
+    optional: ['aliases', 'notes'],
   },
 };
 
@@ -257,6 +264,21 @@ export function validateData(datasets, opts = {}) {
     checkTba('oneoffs', n, row);
   });
 
+  // --- bands (trusted-roster registry; read by the scraper) ---
+  const seenBand = new Set();
+  (datasets.bands?.rows ?? []).forEach((row, i) => {
+    const n = i + 2;
+    checkRequiredNonEmpty('bands', row, n);
+    const id = val(row, 'id');
+    if (id && seenBand.has(id)) err('bands', n, `duplicate id "${id}"`);
+    seenBand.add(id);
+
+    const style = val(row, 'style');
+    if (style && !STYLES.has(style)) err('bands', n, `invalid style "${style}"`);
+    const swing = val(row, 'swing');
+    if (swing && !SWING.has(swing)) err('bands', n, `invalid swing "${swing}" (yes|no|unknown)`);
+  });
+
   return { errors, warnings };
 }
 
@@ -314,6 +336,7 @@ async function main() {
     series: readDataset('series'),
     exceptions: readDataset('exceptions'),
     oneoffs: readDataset('oneoffs'),
+    bands: readDataset('bands'),
   };
 
   const { errors, warnings } = validateData(datasets);

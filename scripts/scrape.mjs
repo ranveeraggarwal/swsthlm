@@ -92,6 +92,7 @@ async function main() {
   const series = readDataset('series');
   const exceptions = readDataset('exceptions');
   const oneoffs = readDataset('oneoffs');
+  const bands = readDataset('bands');
 
   const today = stockholmToday();
   const coverage = buildCoverage(oneoffs, series);
@@ -167,11 +168,11 @@ async function main() {
   // under append + in-place replace, so comparing error strings isolates the
   // delta. Pre-existing errors are surfaced as warnings, not a hard stop.
   const baseErrors = new Set(
-    validateData({ venues, series, exceptions, oneoffs }, { today }).errors
+    validateData({ venues, series, exceptions, oneoffs, bands }, { today }).errors
   );
   const reparsed = Papa.parse(newText, { header: true, skipEmptyLines: true });
   const afterErrors = validateData({
-    venues, series, exceptions,
+    venues, series, exceptions, bands,
     oneoffs: { fields: reparsed.meta.fields ?? [], rows: reparsed.data },
   }, { today }).errors;
   const newErrors = afterErrors.filter((e) => !baseErrors.has(e));

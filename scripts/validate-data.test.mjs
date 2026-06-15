@@ -9,18 +9,20 @@ const FIELDS = {
   series: ['id', 'name', 'style', 'venue_id', 'weekday', 'start', 'end', 'price', 'payment', 'beginner_class', 'music', 'dj', 'band', 'organizer', 'url', 'description', 'status', 'valid_from', 'valid_to'],
   exceptions: ['series_id', 'date', 'cancelled', 'start', 'end', 'dj', 'band', 'music', 'price', 'note', 'description'],
   oneoffs: ['id', 'name', 'style', 'venue_id', 'date', 'end_date', 'start', 'end', 'price', 'payment', 'beginner_class', 'music', 'dj', 'band', 'organizer', 'url', 'description', 'status'],
+  bands: ['id', 'name', 'aliases', 'style', 'swing', 'notes'],
 };
 
 const venue = (o = {}) => ({ id: 'chicago', name: 'Chicago', address: 'Hornsgatan 75', neighborhood: 'Söder', ...o });
 const series = (o = {}) => ({ id: 's1', name: 'S1', style: 'all', venue_id: 'chicago', weekday: 'wednesday', start: '19:00', end: '23:00', price: '100 kr', music: 'live', organizer: 'Org', url: 'https://x.test', status: 'live', valid_from: '2026-06-03', ...o });
 const oneoff = (o = {}) => ({ id: 'o1', name: 'O1', style: 'all', venue_id: 'chicago', date: '2026-06-28', start: '19:00', end: '22:00', music: 'live', organizer: 'Org', url: 'https://x.test', status: 'live', ...o });
+const band = (o = {}) => ({ id: 'b1', name: 'Some Swing Band', aliases: '', style: 'all', swing: 'yes', notes: '', ...o });
 
 // Build a datasets object, defaulting fields to the full header set. venues
 // defaults to a single chicago row so the common venue_id reference resolves
 // unless a test overrides it.
 function ds(parts) {
   const out = {};
-  for (const file of ['venues', 'series', 'exceptions', 'oneoffs']) {
+  for (const file of ['venues', 'series', 'exceptions', 'oneoffs', 'bands']) {
     const p = parts[file] ?? {};
     const defaultRows = file === 'venues' ? [venue()] : [];
     out[file] = { fields: p.fields ?? FIELDS[file], rows: p.rows ?? defaultRows };
@@ -180,6 +182,29 @@ describe('warnings (non-failing)', () => {
   it('warns on TBA dj/band', () => {
     const { warnings } = run({ series: { rows: [series({ band: 'TBA' })] } });
     expect(joined(warnings)).toMatch(/"band" is TBA/);
+  });
+});
+
+describe('bands registry', () => {
+  it('accepts a valid band row', () => {
+    expect(run({ bands: { rows: [band()] } }).errors).toEqual([]);
+  });
+
+  it('rejects an invalid swing flag', () => {
+    const { errors } = run({ bands: { rows: [band({ swing: 'maybe' })] } });
+    expect(joined(errors)).toMatch(/invalid swing "maybe"/);
+  });
+
+  it('rejects an invalid style and a duplicate id', () => {
+    const { errors } = run({ bands: { rows: [band({ style: 'tango' }), band({ id: 'b1' })] } });
+    const j = joined(errors);
+    expect(j).toMatch(/invalid style "tango"/);
+    expect(j).toMatch(/duplicate id "b1"/);
+  });
+
+  it('errors on an empty required field (swing)', () => {
+    const { errors } = run({ bands: { rows: [band({ swing: '' })] } });
+    expect(joined(errors)).toMatch(/required field "swing" is empty/);
   });
 });
 

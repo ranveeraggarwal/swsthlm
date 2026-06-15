@@ -1,6 +1,6 @@
 # Data contract
 
-The source of truth is four CSV files under `/data/`. The site is built from them; nothing else feeds the calendar at runtime. This document is the contract: what each column means, what values are valid, and how the pieces fit together. CI validates every PR against this schema, so if you stay inside it your change will land.
+The source of truth for the calendar is four CSV files under `/data/`. The site is built from them; nothing else feeds the calendar at runtime. A fifth file, `bands.csv`, is an auxiliary registry (the swing-band trust roster the scraper reads) — it never produces calendar entries. This document is the contract: what each column means, what values are valid, and how the pieces fit together. CI validates every PR against this schema, so if you stay inside it your change will land.
 
 Two principles before the columns:
 
@@ -15,6 +15,7 @@ Two principles before the columns:
 | `series.csv` | Recurring weekly events (P-Tzz-Dah, Chicago Wednesdays, Zinken's…). |
 | `exceptions.csv` | Per-date overrides for a series — a different DJ this week, a cancelled Thursday, a one-off time change. |
 | `oneoffs.csv` | Genuine single-occurrence events (Danshuset, a workshop social, a touring band's night). |
+| `bands.csv` | Auxiliary: the swing-band registry / scraper trust roster. Not expanded into occurrences. |
 
 A build step expands `series` plus `exceptions` into concrete occurrences for the next ~10 weeks, then merges with `oneoffs`. That's what the site, the ICS feed, and the JSON-LD all consume.
 
@@ -102,6 +103,21 @@ Same shape as `series.csv` minus the recurrence columns, plus explicit dates.
 For multi-day events with different content per day (e.g. a festival with separate band lineups), use one row per day with distinct IDs. The dedupe-collapse logic on the renderer only merges rows that share an ID.
 
 **Past one-offs are retained, not deleted.** Once an event is over, set its `status` to `ended` rather than removing the row — we keep the history for a future archive view. The build excludes anything that isn't `live` from the calendar, so an `ended` row is invisible today but available later. (Leaving a past event as `live` fails CI — see the validation rules.)
+
+## `bands.csv`
+
+The swing-band registry. One row per band the project has an opinion about. Its job today is the **scraper trust roster**: at mixed venues (jazz/blues pubs that also host non-dance acts) the nightly scraper only auto-proposes a night if its band is trusted here. It's a `/data` file with stable ids — rather than throwaway scraper config — because it's also the seed of a future band entity (band pages, event→band links, JSON-LD performers).
+
+| Column | Required | Type / values | Notes |
+|---|---|---|---|
+| `id` | yes | slug | Stable, immutable. `tommy-lobel-swing-band`. |
+| `name` | yes | string | Display name. "Tommy Löbel Swing Band". |
+| `aliases` | no | `\|`-separated strings | Alternate spellings the scraper should also recognise. `Tommy Löbel\|Tommy Lobel`. |
+| `style` | yes | style enum | Same set as elsewhere: `lindy-hop` \| `balboa` \| `blues` \| `shag` \| `all`. |
+| `swing` | yes | `yes` \| `no` \| `unknown` | The trust gate. `yes` = trusted swing band; `no` = known not-swing (scraper suppresses it); `unknown` = surfaced, awaiting a human decision. |
+| `notes` | no | string | Free-form. |
+
+**The `swing` flag is how the scraper decides.** At a mixed venue it classifies each act: `yes` → propose the event; `no` → drop silently; band absent from the file → it's new, surfaced in a separate "new bands" review PR (proposed as a row with `swing=unknown`). Set it to `yes`/`no` and merge that PR to record your decision — `no` is what stops a non-dance act being re-surfaced every night. Swing-dedicated venues (a Lindy studio) don't consult the roster at all. Full mechanics in `docs/architecture/SCRAPERS.md`.
 
 ## Description hygiene
 

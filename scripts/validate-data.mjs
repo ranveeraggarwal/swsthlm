@@ -125,8 +125,17 @@ export function validateData(datasets, opts = {}) {
   };
   const checkDescription = (file, n, row) => {
     const d = val(row, 'description');
-    if (d && /\b\d{1,2}\/\d{1,2}\b/.test(d)) {
-      warn(file, n, 'description contains a date-like "DD/MM" — structured date should be the source of truth');
+    if (!d) return;
+    // DD/MM slash form ("14/3") or number adjacent to a month name in sv/en
+    // ("14 mars", "March 14"). Bare weekday names like "every Saturday" are
+    // intentionally excluded — they appear in valid recurring-series descriptions.
+    const MONTHS = '(?:januari|februari|mars|april|maj|juni|juli|augusti|september|oktober|november|december|january|february|march|may|june|july|august|october)';
+    const STALE_DATE_RE = new RegExp(
+      `\\b\\d{1,2}\\/\\d{1,2}\\b|\\b\\d{1,2}\\s+${MONTHS}\\b|\\b${MONTHS}\\s+\\d{1,2}\\b`,
+      'i'
+    );
+    if (STALE_DATE_RE.test(d)) {
+      warn(file, n, 'description contains a date-like string (DD/MM or number + month name) — structured date should be the source of truth');
     }
   };
   const checkTba = (file, n, row) => {

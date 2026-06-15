@@ -168,10 +168,25 @@ describe('past live one-off', () => {
 });
 
 describe('warnings (non-failing)', () => {
-  it('warns on a date-like string in a description', () => {
+  it('warns on a DD/MM date in a description', () => {
     const { errors, warnings } = run({ series: { rows: [series({ description: 'Kom på lördag 14/3!' })] } });
     expect(errors).toEqual([]);
     expect(joined(warnings)).toMatch(/date-like/);
+  });
+
+  it('warns on a textual sv date (number + month name)', () => {
+    const { warnings } = run({ oneoffs: { rows: [oneoff({ description: 'Vi ses den 14 mars för dans!' })] } });
+    expect(joined(warnings)).toMatch(/date-like/);
+  });
+
+  it('warns on a textual en date (month name + number)', () => {
+    const { warnings } = run({ oneoffs: { rows: [oneoff({ description: 'Join us March 14 for dancing' })] } });
+    expect(joined(warnings)).toMatch(/date-like/);
+  });
+
+  it('does not warn on bare weekday names (valid recurring-series language)', () => {
+    const { warnings } = run({ series: { rows: [series({ description: 'Dance every Saturday and Wednesday night' })] } });
+    expect(joined(warnings)).not.toMatch(/date-like/);
   });
 
   it('warns when valid_to is within 4 weeks', () => {

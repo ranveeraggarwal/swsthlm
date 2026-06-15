@@ -71,9 +71,8 @@ export default function AboutPage() {
 
           <section className="bg-[var(--surface-container-low)] p-6 rounded-lg border-2 border-[var(--on-surface)] shadow-[3px_3px_0px_0px_var(--on-surface)]">
             <h3 className="font-serif text-xl font-bold text-[var(--on-surface)] mb-2">Are you an organizer?</h3>
-            <p className="text-sm leading-relaxed">
-              If you host Lindy Hop, Balboa, Blues, or Shag dancing events in the Stockholm area and want your schedule
-              integrated into this calendar, fill in our{' '}
+            <p className="text-sm leading-relaxed mb-3">
+              If you host a one-time or occasional Lindy Hop, Balboa, Blues, or Shag event in Stockholm, fill in our{' '}
               <a
                 href="https://docs.google.com/forms/d/e/1FAIpQLSd87pOy31N_3xKthqalT-sDrFB2yoe74Z8HGr8q1HSs6Pis2g/viewform"
                 target="_blank"
@@ -83,6 +82,13 @@ export default function AboutPage() {
                 event submission form
               </a>
               . A bot turns submissions into pull requests; a maintainer reviews and merges. You don&apos;t need a GitHub account.
+            </p>
+            <p className="text-sm leading-relaxed">
+              Running a recurring weekly series?{' '}
+              <a href="mailto:swing@walagran.com" className="text-[var(--primary)] hover:underline font-bold">
+                Contact us directly
+              </a>{' '}
+              and we&apos;ll get it set up.
             </p>
           </section>
         </div>

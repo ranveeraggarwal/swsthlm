@@ -21,6 +21,7 @@ import { validateData } from './validate-data.mjs';
 import { isSwingRelevant, looksLikeNoise } from './scrapers/lib/genre.mjs';
 import { loadBands, classify, normalizeBand, slugifyBand } from './scrapers/lib/bands.mjs';
 import { ONEOFF_FIELDS, candidateToRow, formatRow } from './scrapers/lib/candidate.mjs';
+import { EXCEPTION_FIELDS, resolveOccurrence, computeExceptionChanges } from './scrapers/lib/exceptions.mjs';
 import * as staclara from './scrapers/sources/staclara.mjs';
 import * as chicago from './scrapers/sources/chicago.mjs';
 
@@ -28,6 +29,7 @@ const SOURCES = [staclara, chicago];
 
 const DATA_DIR = path.join(process.cwd(), 'data');
 const ONEOFFS_PATH = path.join(DATA_DIR, 'oneoffs.csv');
+const EXCEPTIONS_PATH = path.join(DATA_DIR, 'exceptions.csv');
 const BANDS_PATH = path.join(DATA_DIR, 'bands.csv');
 const REPORT_PATH = path.join(process.cwd(), 'scrape-report.md');
 const NEWBANDS_REPORT_PATH = path.join(process.cwd(), 'new-bands-report.md');
@@ -78,18 +80,28 @@ function buildCoverage(oneoffs, series) {
     if (!v || !start) continue;
     for (let d = start; d <= end; d = addDays(d, 1)) covered.add(`${v}|${d}`);
   }
+  function findSeries(venueId, date) {
+    return series.rows.find((s) => {
+      if (val(s, 'venue_id') !== venueId) return false;
+      if (['ended', 'draft'].includes(val(s, 'status'))) return false;
+      if (val(s, 'weekday') !== weekdayOf(date)) return false;
+      if (date < val(s, 'valid_from')) return false;
+      const to = val(s, 'valid_to');
+      if (to && date > to) return false;
+      return true;
+    });
+  }
   return {
     has(venueId, date) {
       if (covered.has(`${venueId}|${date}`)) return true;
-      return series.rows.some((s) => {
-        if (val(s, 'venue_id') !== venueId) return false;
-        if (['ended', 'draft'].includes(val(s, 'status'))) return false;
-        if (val(s, 'weekday') !== weekdayOf(date)) return false;
-        if (date < val(s, 'valid_from')) return false;
-        const to = val(s, 'valid_to');
-        if (to && date > to) return false;
-        return true;
-      });
+      return !!findSeries(venueId, date);
+    },
+    // Returns the series_id when a series is the sole reason for coverage, or
+    // null when the date is covered by a one-off (or not covered at all).
+    seriesIdFor(venueId, date) {
+      if (covered.has(`${venueId}|${date}`)) return null;
+      const s = findSeries(venueId, date);
+      return s ? val(s, 'id') : null;
     },
   };
 }
@@ -169,6 +181,8 @@ async function main() {
 
   const added = [];
   const updated = [];
+  const addedExceptions = [];
+  const updatedExceptions = [];
   let skipped = 0;
 
   for (const c of candidates) {
@@ -181,14 +195,43 @@ async function main() {
         .map((f) => `${f}: "${val(prior, f)}" → "${row[f]}"`);
       if (changes.length) updated.push({ row, changes });
       else skipped += 1;
-    } else if (coverage.has(c.venueId, c.date)) {
-      skipped += 1; // already on the calendar under a different id / a series
     } else {
-      added.push(row);
+      const seriesId = coverage.seriesIdFor(c.venueId, c.date);
+      if (seriesId) {
+        // Date covered by a series: compare scraped fields to the resolved
+        // occurrence (series defaults + any existing exception) and propose an
+        // exception only when something material changed.
+        const resolved = resolveOccurrence(seriesId, c.date, series, exceptions);
+        const changes = computeExceptionChanges(row, resolved);
+        if (changes.length) {
+          const exRow = Object.fromEntries(EXCEPTION_FIELDS.map((f) => [f, '']));
+          exRow.series_id = seriesId;
+          exRow.date = c.date;
+          for (const { field, to } of changes) exRow[field] = to;
+
+          const existingEx = exceptions.rows.find(
+            (e) => val(e, 'series_id') === seriesId && val(e, 'date') === c.date,
+          );
+          const changeLabels = changes.map(({ field, from, to }) => `${field}: "${from}" → "${to}"`);
+          if (existingEx) {
+            const mergedEx = { ...existingEx };
+            for (const { field, to } of changes) mergedEx[field] = to;
+            updatedExceptions.push({ row: mergedEx, changes: changeLabels });
+          } else {
+            addedExceptions.push({ row: exRow, changes: changeLabels });
+          }
+        } else {
+          skipped += 1;
+        }
+      } else if (coverage.has(c.venueId, c.date)) {
+        skipped += 1; // covered by a one-off under a different id
+      } else {
+        added.push(row);
+      }
     }
   }
 
-  // --- surgical text writes (events + new acts), append/replace as text ---
+  // --- surgical text writes (events + exceptions + new acts), append/replace as text ---
   const oneoffsLines = readFileSync(ONEOFFS_PATH, 'utf-8').replace(/\n+$/, '').split('\n');
   for (const { row } of updated) {
     const i = oneoffsLines.findIndex((ln) => ln.startsWith(`${row.id},`));
@@ -196,6 +239,16 @@ async function main() {
   }
   for (const row of added) oneoffsLines.push(formatRow(row));
   const oneoffsText = `${oneoffsLines.join('\n')}\n`;
+
+  // exceptions.csv: replace changed lines in-place, append new rows.
+  // Composite key is (series_id, date) = first two CSV fields.
+  const exceptionsLines = readFileSync(EXCEPTIONS_PATH, 'utf-8').replace(/\n+$/, '').split('\n');
+  for (const { row } of updatedExceptions) {
+    const i = exceptionsLines.findIndex((ln) => ln.startsWith(`${row.series_id},${row.date},`));
+    if (i >= 0) exceptionsLines[i] = formatCsvRow(row, EXCEPTION_FIELDS);
+  }
+  for (const { row } of addedExceptions) exceptionsLines.push(formatCsvRow(row, EXCEPTION_FIELDS));
+  const exceptionsText = `${exceptionsLines.join('\n')}\n`;
 
   // New acts -> proposed bands.csv rows (swing=unknown), append-only with unique
   // slug ids. The human sets swing=yes/no when reviewing the new-bands PR.
@@ -227,16 +280,18 @@ async function main() {
     validateData({ venues, series, exceptions, oneoffs, bands }, { today }).errors
   );
   const reOneoffs = Papa.parse(oneoffsText, { header: true, skipEmptyLines: true });
+  const reExceptions = Papa.parse(exceptionsText, { header: true, skipEmptyLines: true });
   const reBands = Papa.parse(bandsText, { header: true, skipEmptyLines: true });
   const afterErrors = validateData({
-    venues, series, exceptions,
+    venues, series,
+    exceptions: { fields: reExceptions.meta.fields ?? [], rows: reExceptions.data },
     oneoffs: { fields: reOneoffs.meta.fields ?? [], rows: reOneoffs.data },
     bands: { fields: reBands.meta.fields ?? [], rows: reBands.data },
   }, { today }).errors;
   const newErrors = afterErrors.filter((e) => !baseErrors.has(e));
   const preexisting = afterErrors.filter((e) => baseErrors.has(e));
 
-  const report = buildReport({ added, updated, skipped, pastFiltered, sourceNotes, errors: newErrors, preexisting });
+  const report = buildReport({ added, updated, addedExceptions, updatedExceptions, skipped, pastFiltered, sourceNotes, errors: newErrors, preexisting });
   const newBandsReport = buildNewBandsReport(newBandRows);
   writeFileSync(REPORT_PATH, report);
   writeFileSync(NEWBANDS_REPORT_PATH, newBandsReport);
@@ -249,21 +304,23 @@ async function main() {
   }
 
   const eventChanges = added.length + updated.length;
+  const exceptionChanges = addedExceptions.length + updatedExceptions.length;
   const bandChanges = newBandRows.length;
-  if (eventChanges === 0 && bandChanges === 0) {
-    console.log('\nNo new events or acts.');
+  if (eventChanges === 0 && exceptionChanges === 0 && bandChanges === 0) {
+    console.log('\nNo new events, exceptions, or acts.');
     return;
   }
   if (DRY_RUN) {
-    console.log(`\n[dry-run] ${eventChanges} event change(s), ${bandChanges} new act(s) — nothing written.`);
+    console.log(`\n[dry-run] ${eventChanges} event change(s), ${exceptionChanges} exception change(s), ${bandChanges} new act(s) — nothing written.`);
     return;
   }
   if (eventChanges) writeFileSync(ONEOFFS_PATH, oneoffsText);
+  if (exceptionChanges) writeFileSync(EXCEPTIONS_PATH, exceptionsText);
   if (bandChanges) writeFileSync(BANDS_PATH, bandsText);
-  console.log(`\nWrote ${added.length} new + ${updated.length} updated event(s); ${bandChanges} new act(s) to data/bands.csv`);
+  console.log(`\nWrote ${added.length} new + ${updated.length} updated event(s); ${exceptionChanges} exception change(s); ${bandChanges} new act(s) to data/bands.csv`);
 }
 
-function buildReport({ added, updated, skipped, pastFiltered, sourceNotes, errors, preexisting }) {
+function buildReport({ added, updated, addedExceptions, updatedExceptions, skipped, pastFiltered, sourceNotes, errors, preexisting }) {
   const lines = ['## Scraped events — review', ''];
   lines.push(...sourceNotes.map((n) => `- ${n}`), '');
 
@@ -277,6 +334,18 @@ function buildReport({ added, updated, skipped, pastFiltered, sourceNotes, error
   for (const u of updated) {
     lines.push(`- \`${u.row.id}\``);
     for (const c of u.changes) lines.push(`  - ${c}`);
+  }
+  lines.push('');
+
+  const exTotal = addedExceptions.length + updatedExceptions.length;
+  lines.push(`### Exception proposals (${exTotal})`);
+  for (const { row, changes } of addedExceptions) {
+    lines.push(`- NEW \`${row.series_id}\` ${row.date}`);
+    for (const c of changes) lines.push(`  - ${c}`);
+  }
+  for (const { row, changes } of updatedExceptions) {
+    lines.push(`- UPDATE \`${row.series_id}\` ${row.date} ⚠ review`);
+    for (const c of changes) lines.push(`  - ${c}`);
   }
   lines.push('', `_Skipped ${skipped} already on the calendar; ${pastFiltered} past-dated._`);
 

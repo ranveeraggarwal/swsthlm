@@ -84,8 +84,11 @@ export function parse(html) {
   const slug = $('html').attr('data-wf-item-slug');
   const eventUrl = slug ? `${BASE}/evenemang/${slug}` : url;
 
-  // "DJs The Hot Shots", "DJ-kväll" → dj; everything else defaults to live.
-  const music = /\bDJs?\b/i.test(name) ? 'dj' : 'live';
+  // "DJs The Hot Shots" → music:'dj', dj:'The Hot Shots'
+  // "DJ-kväll"         → music:'dj', no dj name (no space after DJs?)
+  const djMatch = /\bDJs?\s+(.+)/i.exec(name);
+  const music = djMatch || /\bDJs?\b/i.test(name) ? 'dj' : 'live';
+  const dj = djMatch?.[1].trim();
 
   return [{
     id: `${VENUE_ID}-${date}`,
@@ -96,6 +99,7 @@ export function parse(html) {
     start: time.start,
     end: time.end,
     music,
+    dj,
     organizer: ORGANIZER,
     url: eventUrl,
     description: '',

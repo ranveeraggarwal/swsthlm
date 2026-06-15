@@ -44,6 +44,19 @@ describe('chicago parser', () => {
     expect(djEvents[0]?.music).toBe('dj');
   });
 
+  it('extracts DJ name from "DJs [Name]" title', () => {
+    const djHtml = html.replaceAll('Chicago Elevdans', 'Chicago Swing Wednesdays - DJs The Hot Shots');
+    const djEvents = parse(djHtml);
+    expect(djEvents[0]?.dj).toBe('The Hot Shots');
+  });
+
+  it('detects DJ night without a named DJ ("DJ-kväll")', () => {
+    const djHtml = html.replaceAll('Chicago Elevdans', 'Onsdag DJ-kväll');
+    const djEvents = parse(djHtml);
+    expect(djEvents[0]?.music).toBe('dj');
+    expect(djEvents[0]?.dj).toBeFalsy();
+  });
+
   it('returns [] when there is no parseable time', () => {
     const noTime = html.replace(
       /Mellan \d{2}:\d{2} [–-] \d{2}:\d{2}[^""]*/,

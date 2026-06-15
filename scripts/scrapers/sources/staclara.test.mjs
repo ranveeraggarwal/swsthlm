@@ -3,17 +3,11 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse, relevance } from './staclara.mjs';
-import { isSwingRelevant } from '../lib/genre.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const html = readFileSync(path.join(here, '../fixtures/staclara.html'), 'utf-8');
 const events = parse(html);
 const byDate = Object.fromEntries(events.map((e) => [e.date, e]));
-
-// The runner applies the genre filter for 'genre'-relevance sources; mirror
-// that here to assert what actually reaches the calendar.
-const kept = events.filter((e) => isSwingRelevant(`${e.name} ${e.description ?? ''}`));
-const keptNames = kept.map((e) => e.name.toLowerCase()).join(' | ');
 
 describe('staclara parser', () => {
   it('extracts a swing night with the right fields', () => {
@@ -38,19 +32,14 @@ describe('staclara parser', () => {
     expect(byDate['2026-06-01']?.name).toBe('Mats Lundmark Jazz Quartet');
   });
 
-  it('declares genre relevance (mixed venue)', () => {
-    expect(relevance).toBe('genre');
+  it('declares roster relevance (mixed venue)', () => {
+    expect(relevance).toBe('roster');
   });
 
-  it('genre filter drops non-dance noise: quiz, jams, rock, folk', () => {
-    // parse() extracts everything; the genre filter is what reaches the calendar.
-    expect(keptNames).not.toMatch(/quiz/);
-    expect(keptNames).not.toMatch(/jam/); // Blues Jam, Trad-Jazz Jam
-    expect(keptNames).not.toMatch(/veres/); // Finnish Folk & Psychadelica
-    expect(keptNames).not.toMatch(/blues men/); // Blues, Soul, Rock
-    // …while keeping the swing/jazz nights.
-    expect(keptNames).toMatch(/swing magnifique/);
-    expect(keptNames).toMatch(/jesses jazz band/);
+  it('extracts the band as the event title (used for roster matching)', () => {
+    // The parser only extracts; the runner classifies c.band against the roster.
+    expect(byDate['2026-06-17']?.band).toBe('Swing Magnifique');
+    expect(byDate['2026-06-18']?.band).toBe('Webop Kvintett');
   });
 
   it('skips entries with no bookable time (TBC)', () => {

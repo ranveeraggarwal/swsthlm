@@ -39,3 +39,10 @@ export function isSwingRelevant(text) {
   if (EXCLUDE_RE.some((re) => re.test(t))) return false;
   return INCLUDE_RE.some((re) => re.test(t));
 }
+
+// Just the EXCLUDE half: "is this non-dance noise?" (quiz, jam, rock, folk…).
+// Roster-mode sources use this to drop obvious non-music before band-matching,
+// WITHOUT requiring a swing keyword (the band roster decides swing-relevance).
+export function looksLikeNoise(text) {
+  return EXCLUDE_RE.some((re) => re.test(text ?? ''));
+}

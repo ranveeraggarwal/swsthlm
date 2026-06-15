@@ -25,7 +25,7 @@ jobs:
       - run: npm ci
       - name: Run scrapers
         run: node scripts/scrape.mjs
-      - name: Open / update review PR
+      - name: Open / update events review PR
         uses: peter-evans/create-pull-request@v6
         with:
           branch: bot/scrape
@@ -34,5 +34,19 @@ jobs:
           commit-message: 'chore(data): scraped event proposals'
           title: 'Scraped events: review'
           body-path: scrape-report.md
+          labels: data
+          delete-branch: false
+
+      # Separate PR for roster curation: unknown acts proposed as swing=unknown
+      # rows. Merging it (with swing set to yes/no) records the trust decision.
+      - name: Open / update new-bands review PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: bot/new-bands
+          base: main
+          add-paths: data/bands.csv
+          commit-message: 'chore(data): new band candidates for the roster'
+          title: 'New acts: add to the band roster?'
+          body-path: new-bands-report.md
           labels: data
           delete-branch: false

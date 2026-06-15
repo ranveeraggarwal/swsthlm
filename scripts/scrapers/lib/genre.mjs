@@ -9,8 +9,8 @@
 
 export const INCLUDE = [
   'jazz', 'swing', 'lindy', 'balboa', 'shag', 'blues', 'django', 'manouche',
-  'gypsy', 'bop', 'blue note', 'dixieland', 'big band', 'boogie', 'hot club',
-  'charleston',
+  'gypsy', 'bop', 'hardbop', 'blue note', 'dixieland', 'big band', 'boogie',
+  'hot club', 'charleston',
 ];
 
 // EXCLUDE wins over INCLUDE. "Trad Jazz Jam" -> jam excludes; "Blues, Soul,
@@ -21,8 +21,21 @@ export const EXCLUDE = [
   'techno', 'house', 'disco',
 ];
 
+// Match whole words only. Substring matching silently drops legit events
+// ('jam' in "Jamboree", 'pop' in "Popcorn Jazz") — and because the review PR
+// only shows additions, such false-excludes are invisible. Word boundaries
+// favour visible false-includes (a human culls them) over invisible misses.
+// Boundaries use Latin-letter lookarounds (not \b) so accented Swedish band
+// names don't create spurious edges.
+const ALPHA = 'a-zà-ÿ';
+const wordRe = (k) =>
+  new RegExp(`(?<![${ALPHA}])${k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![${ALPHA}])`, 'i');
+
+const INCLUDE_RE = INCLUDE.map(wordRe);
+const EXCLUDE_RE = EXCLUDE.map(wordRe);
+
 export function isSwingRelevant(text) {
-  const t = (text ?? '').toLowerCase();
-  if (EXCLUDE.some((k) => t.includes(k))) return false;
-  return INCLUDE.some((k) => t.includes(k));
+  const t = text ?? '';
+  if (EXCLUDE_RE.some((re) => re.test(t))) return false;
+  return INCLUDE_RE.some((re) => re.test(t));
 }

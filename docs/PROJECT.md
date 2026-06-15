@@ -14,7 +14,7 @@ Three principles govern every decision below:
 
 ## 2. Architecture decision: repo-as-database
 
-**Decision:** Migrate the source of truth from the Google Sheet to CSV files in this repository under `/data/`. The Google Form remains the organizer-facing intake; its responses sheet becomes an inbox that an Action drains into pull requests. The site reads `/data/` at build time and is fully static; a Vercel deploy hook rebuilds on every push to `main`.
+**Decision:** Migrate the source of truth from the Google Sheet to CSV files in this repository under `/data/`. The [Google Form](https://docs.google.com/forms/d/e/1FAIpQLSd87pOy31N_3xKthqalT-sDrFB2yoe74Z8HGr8q1HSs6Pis2g/viewform) remains the organizer-facing intake; its responses sheet becomes an inbox that an Action drains into pull requests. The site reads `/data/` at build time and is fully static; a Vercel deploy hook rebuilds on every push to `main`.
 
 **Why:** Every planned automation (scraper PRs, CI validation, weekly health checks, diff-based review) requires a pull-request workflow, which a sheet cannot provide. Sheet edits are live instantly with no review gate, history is opaque, validation can only run after publication, and the published-CSV endpoint is coupled to one personal Google account — the worst possible bus-factor. The sheet's only real advantage, friction-free entry for non-technical people, is preserved through the form. Direct quick edits move to GitHub's web editor, which is adequate.
 

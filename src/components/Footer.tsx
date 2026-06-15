@@ -12,6 +12,14 @@ export function Footer() {
         </div>
         <div className="flex gap-6 uppercase font-bold tracking-wider text-[11px] text-[var(--on-surface-variant)]">
           <span>Stockholm, Sweden</span>
+          <a
+            href="https://docs.google.com/forms/d/e/1FAIpQLSd87pOy31N_3xKthqalT-sDrFB2yoe74Z8HGr8q1HSs6Pis2g/viewform"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-[var(--primary)] transition-colors"
+          >
+            Submit an event
+          </a>
         </div>
       </div>
     </footer>

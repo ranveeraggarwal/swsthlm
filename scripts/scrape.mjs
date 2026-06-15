@@ -140,18 +140,19 @@ async function main() {
         let newCount = 0;
         let dropped = 0;
         for (const c of future) {
-          if (looksLikeNoise(`${c.name} ${c.description ?? ''}`)) { dropped += 1; continue; }
           const res = classify(c.band || c.name, roster);
           if (res.status === 'trusted') {
-            kept.push(c);
-          } else if (res.status === 'new') {
-            newCount += 1;
-            const key = normalizeBand(c.band || c.name);
-            if (key && !newActs.has(key)) {
-              newActs.set(key, { name: c.band || c.name, venueId: c.venueId, date: c.date, genre: c.description ?? '' });
-            }
-          } else {
-            dropped += 1; // rejected (swing=no) or pending (already proposed)
+            kept.push(c); // trust the band regardless of how the night is billed
+            continue;
+          }
+          if (res.status !== 'new') { dropped += 1; continue; } // rejected or pending
+          // Unknown act: only worth surfacing if it isn't non-music noise
+          // (quiz/jam/rock/folk). The noise cut applies to discovery only.
+          if (looksLikeNoise(`${c.name} ${c.description ?? ''}`)) { dropped += 1; continue; }
+          newCount += 1;
+          const key = normalizeBand(c.band || c.name);
+          if (key && !newActs.has(key)) {
+            newActs.set(key, { name: c.band || c.name, venueId: c.venueId, date: c.date, genre: c.description ?? '' });
           }
         }
         sourceNotes.push(`${src.label}: ${kept.length} trusted event(s), ${newCount} new act(s) for review, ${dropped} dropped`);

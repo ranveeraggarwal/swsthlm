@@ -39,32 +39,23 @@ The dev server reads from `/data/*.csv` directly. Edit a CSV, save, and the page
 ## Repository layout
 
 ```
-data/               # source of truth — series.csv, exceptions.csv, oneoffs.csv, venues.csv, bands.csv
-src/                # Next.js app (App Router)
-public/             # static assets, manifest, OG images
+data/           # source of truth — series.csv, exceptions.csv, oneoffs.csv, venues.csv
+src/            # Next.js app (App Router)
+public/         # static assets, manifest, OG images
 scrapers/
-  chromeext/        # Chrome extension, used only for Facebook-walled events
-scripts/
-  scrape.mjs        # nightly scraper runner (opened as a GitHub Action)
-  scrapers/
-    sources/        # per-site scraper modules (staclara.mjs, …)
-    lib/            # shared helpers (bands.mjs, genre.mjs, candidate.mjs)
-    fixtures/       # saved HTML for parser unit tests
-.github/workflows/
-  scrape.yml        # nightly Action: runs scrape.mjs, opens bot/scrape + bot/new-bands PRs
+  chromeext/    # Chrome extension, used only for Facebook-walled events
+  actions/      # scheduled scrapers that open PRs (chicago75, norrport, sss…)
 docs/
-  PROJECT.md        # roadmap, architecture decisions, "we won't build" list
-  DATA.md           # the data contract — read this before editing CSVs
-  architecture/
-    SCRAPERS.md     # intake-automation design — read before touching scraper code
-HANDOVER.md         # who owns what (domain, Vercel, form). For maintainers.
+  PROJECT.md    # roadmap, architecture decisions, "we won't build" list
+  DATA.md       # the data contract — read this before editing CSVs
+HANDOVER.md     # who owns what (domain, Vercel, form). For maintainers.
 ```
 
 ## Working with data
 
 Most contributions touch `/data/`, not `/src/`. A few rules:
 
-- **Use the right file.** Recurring events go in `series.csv`. Per-date overrides for a series (a one-week cancellation, a different DJ this Thursday) go in `exceptions.csv`. Genuine single-occurrence events go in `oneoffs.csv`. Adding a venue means a new row in `venues.csv`, not a free-text address on the event. `bands.csv` is the trusted-band registry used by the scraper — edit it via the `bot/new-bands` review PR or directly to set a band's `swing` status.
+- **Use the right file.** Recurring events go in `series.csv`. Per-date overrides for a series (a one-week cancellation, a different DJ this Thursday) go in `exceptions.csv`. Genuine single-occurrence events go in `oneoffs.csv`. Adding a venue means a new row in `venues.csv`, not a free-text address on the event.
 - **Don't paste dates into descriptions.** The structured date is the date. If a description contains "Lördag 14/3", strip it; the renderer will format the date itself.
 - **Cancellations are exceptions, not deletions.** Add a row to `exceptions.csv` with the cancelled flag — the site shows the cancellation, the calendar feed emits `STATUS:CANCELLED`, subscribers find out. Deleting the row hides the cancellation from everyone who needed to see it.
 - **Drafts are fine.** Set `status=draft` to commit data you're not ready to publish; it won't render on the site or in feeds.

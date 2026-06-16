@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MapPin, Music, Disc, Ticket, Banknote, GraduationCap, ChevronDown, Moon } from 'lucide-react';
+import { MapPin, Music, Disc, Ticket, GraduationCap, ChevronDown, Moon } from 'lucide-react';
 import { SwingEvent } from '@/types/event';
 import { getTemporalBadge, formatEventDateRange, TemporalBadge } from '@/lib/datetime';
 import { ShareButton } from '@/components/ShareButton';
@@ -58,6 +58,18 @@ function TemporalBadgeDisplay({ badge }: { badge: TemporalBadge }) {
   }
 }
 
+function MusicHint({ type }: { type: 'live' | 'dj' }) {
+  const Icon = type === 'live' ? Music : Disc;
+  return (
+    <span
+      className="text-[var(--on-surface-variant)] flex items-center"
+      aria-label={type === 'live' ? 'Live music' : 'DJ set'}
+    >
+      <Icon className="w-3.5 h-3.5" />
+    </span>
+  );
+}
+
 export function EventCard({ event, dates, nightCount, isThisWeek, currentDate, currentTime }: EventCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -70,7 +82,6 @@ export function EventCard({ event, dates, nightCount, isThisWeek, currentDate, c
     isThisWeek
   );
 
-  // Normalize style display name
   const getStyleLabel = (style: string) => {
     switch (style.toLowerCase()) {
       case 'lindy':
@@ -89,9 +100,9 @@ export function EventCard({ event, dates, nightCount, isThisWeek, currentDate, c
   const getStyleColor = (style: string) => {
     switch (style.toLowerCase()) {
       case 'lindy':
-        return 'bg-[var(--tertiary)]/10 text-[var(--tertiary)] border-[var(--tertiary)]/20'; // Warm Gold/Amber
+        return 'bg-[var(--tertiary)]/10 text-[var(--tertiary)] border-[var(--tertiary)]/20';
       case 'balboa':
-        return 'bg-[var(--secondary)]/10 text-[var(--secondary)] border-[var(--secondary)]/20'; // Soft Navy/Blue
+        return 'bg-[var(--secondary)]/10 text-[var(--secondary)] border-[var(--secondary)]/20';
       case 'blues':
         return 'bg-[var(--surface-container-high)] text-[var(--on-surface-variant)] border-[var(--outline-variant)]';
       default:
@@ -99,22 +110,6 @@ export function EventCard({ event, dates, nightCount, isThisWeek, currentDate, c
     }
   };
 
-  // One badge per performer type. 'mixed' is expressed as two rows (a Live
-  // Music line and a DJ line) rather than a combined badge.
-  const musicTypeBadge = (type: 'live' | 'dj') =>
-    type === 'live' ? (
-      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider border bg-amber-50 text-amber-800 border-amber-200 whitespace-nowrap shrink-0">
-        <Music className="w-3 h-3" />
-        Live Music
-      </span>
-    ) : (
-      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider border bg-[var(--surface-container)] text-[var(--on-surface-variant)] border-[var(--surface-container-highest)] whitespace-nowrap shrink-0">
-        <Disc className="w-3 h-3" />
-        DJ
-      </span>
-    );
-
-  // Accent stripe color based on badge
   const getStripeColor = () => {
     switch (badge) {
       case 'happening-now':
@@ -133,9 +128,7 @@ export function EventCard({ event, dates, nightCount, isThisWeek, currentDate, c
   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${event.venue} ${event.address}`)}`;
 
   const priceDisplay = event.price ? `${event.price}${event.payment ? ` (${event.payment})` : ''}` : null;
-  // One row per performer (band first, then DJ) on the card face, so the
-  // Details panel needn't repeat them. When no performer is named, fall back
-  // to the bare type badge(s) implied by the music field.
+
   const musicRows: { type: 'live' | 'dj'; name?: string }[] = [];
   if (event.band) musicRows.push({ type: 'live', name: event.band });
   if (event.dj) musicRows.push({ type: 'dj', name: event.dj });
@@ -144,8 +137,9 @@ export function EventCard({ event, dates, nightCount, isThisWeek, currentDate, c
     else if (event.music === 'dj') musicRows.push({ type: 'dj' });
     else if (event.music === 'mixed') musicRows.push({ type: 'live' }, { type: 'dj' });
   }
+
   const byLine = [event.organizer && `By ${event.organizer}`, event.address].filter(Boolean).join(' · ');
-  const hasDetails = !!(event.body || byLine || event.ticket);
+  const hasPills = nightCount > 1 || !!event.beginnerClass;
 
   return (
     <div className={`relative lift-card rounded border-2 overflow-hidden flex flex-col text-[var(--on-surface)] ${event.cancelled ? 'border-red-400 bg-red-50/40' : 'border-[var(--on-surface)] bg-[var(--surface-container-low)]'} ${!event.cancelled && badge === 'happening-now' ? 'ring-2 ring-red-500/30' : ''}`}>
@@ -156,157 +150,153 @@ export function EventCard({ event, dates, nightCount, isThisWeek, currentDate, c
         <div className={`absolute top-0 left-0 right-0 h-1.5 ${getStripeColor()}`} />
       )}
 
-      {/* ---------- Card interior: opacity-60 for cancelled covers summary + details ---------- */}
       <div className={event.cancelled ? 'opacity-60' : ''}>
-      {/* ---------- Collapsed summary: when · what · where · for-whom · how-much ---------- */}
-      <div className="p-5">
-        {/* Time + temporal status. The date lives in the day header above the grid. */}
-        <div className="flex items-start justify-between gap-3 mb-2">
-          <div>
-            <span className={`font-sans font-bold text-base tabular-nums tracking-tight text-[var(--on-surface)] ${event.cancelled ? 'line-through' : ''}`}>
-              {event.start} – {event.end}
-            </span>
-            {/* Date range for multi-night cards — makes the card self-describing. */}
-            {nightCount > 1 && (
-              <div className="font-sans text-xs text-[var(--on-surface-variant)] mt-0.5 font-medium">
-                {formatEventDateRange(dates[0], dates[dates.length - 1])}
+        {/* ---------- Collapsed summary ---------- */}
+        <div className="p-5">
+          {/* Time + music hints + temporal status */}
+          <div className="flex items-start justify-between gap-3 mb-2">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className={`font-sans font-bold text-base tabular-nums tracking-tight text-[var(--on-surface)] ${event.cancelled ? 'line-through' : ''}`}>
+                  {event.start} – {event.end}
+                </span>
+                {musicRows.map((row) => (
+                  <MusicHint key={row.type} type={row.type} />
+                ))}
               </div>
-            )}
+              {nightCount > 1 && (
+                <div className="font-sans text-xs text-[var(--on-surface-variant)] mt-0.5 font-medium">
+                  {formatEventDateRange(dates[0], dates[dates.length - 1])}
+                </div>
+              )}
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              {event.cancelled && (
+                <span className="px-2.5 py-0.5 rounded bg-red-600 text-white text-[10px] uppercase font-bold tracking-wider">
+                  Cancelled
+                </span>
+              )}
+              {event.status === 'draft' && (
+                <span className="px-2 py-0.5 rounded bg-red-100 text-red-800 border border-red-200 text-[10px] uppercase font-bold tracking-wider">
+                  Draft Preview
+                </span>
+              )}
+              {!event.cancelled && <TemporalBadgeDisplay badge={badge} />}
+            </div>
           </div>
-          <div className="flex items-center gap-2 shrink-0">
-            {event.cancelled && (
-              <span className="px-2.5 py-0.5 rounded bg-red-600 text-white text-[10px] uppercase font-bold tracking-wider">
-                Cancelled
-              </span>
-            )}
-            {event.status === 'draft' && (
-              <span className="px-2 py-0.5 rounded bg-red-100 text-red-800 border border-red-200 text-[10px] uppercase font-bold tracking-wider">
-                Draft Preview
-              </span>
-            )}
-            {!event.cancelled && <TemporalBadgeDisplay badge={badge} />}
-          </div>
-        </div>
 
-        {/* Title — kept to a single line so card heights stay even; full name
-            on hover and always visible in Details below. */}
-        <h3
-          title={event.title}
-          className={`font-serif text-xl font-bold tracking-tight text-[var(--on-surface)] leading-snug mb-1.5 truncate ${event.cancelled ? 'line-through' : ''}`}
-        >
-          {event.title}
-        </h3>
-
-        {/* Venue + neighborhood (address moves into Details) */}
-        <div className="text-sm mb-3.5">
-          <a
-            href={mapsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`font-bold text-[var(--on-surface)] underline decoration-[var(--outline)] underline-offset-4 hover:text-[var(--primary)] transition-colors ${event.cancelled ? 'line-through' : ''}`}
+          {/* Title */}
+          <h3
+            title={event.title}
+            className={`font-serif text-xl font-bold tracking-tight text-[var(--on-surface)] leading-snug mb-1.5 truncate ${event.cancelled ? 'line-through' : ''}`}
           >
-            {event.venue}
-          </a>
-          {event.neighborhood && (
-            <span className="text-[var(--outline)]"> · {event.neighborhood}</span>
+            {event.title}
+          </h3>
+
+          {/* Venue · neighborhood · price (all inline) */}
+          <div className={`text-sm ${hasPills ? 'mb-3.5' : 'mb-1'}`}>
+            <a
+              href={mapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`font-bold text-[var(--on-surface)] underline decoration-[var(--outline)] underline-offset-4 hover:text-[var(--primary)] transition-colors ${event.cancelled ? 'line-through' : ''}`}
+            >
+              {event.venue}
+            </a>
+            {event.neighborhood && (
+              <span className="text-[var(--outline)]"> · {event.neighborhood}</span>
+            )}
+            {priceDisplay && (
+              <span className="text-[var(--outline)]"> · {priceDisplay}</span>
+            )}
+          </div>
+
+          {/* Pills: multi-night + beginner only */}
+          {hasPills && (
+            <div className="flex flex-wrap items-center gap-2 font-sans">
+              {nightCount > 1 && (
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-indigo-50 text-indigo-800 border border-indigo-200 text-[10px] uppercase font-bold tracking-wider whitespace-nowrap shrink-0">
+                  <Moon className="w-3 h-3" />
+                  {nightCount} nights
+                </span>
+              )}
+              {event.beginnerClass && (
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-green-50 text-green-800 border border-green-200 text-[10px] uppercase font-bold tracking-wider">
+                  <GraduationCap className="w-3 h-3" />
+                  {event.beginnerClass.toLowerCase() === 'yes'
+                    ? 'Beginner friendly'
+                    : `Beginner class ${event.beginnerClass}`}
+                </span>
+              )}
+            </div>
           )}
         </div>
 
-        {/* Compact pill row: style / for-whom / how-much / nights */}
-        <div className="flex flex-wrap items-center gap-2 font-sans">
-          <span className={`px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider border ${getStyleColor(event.style)}`}>
-            {getStyleLabel(event.style)}
-          </span>
-          {nightCount > 1 && (
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-indigo-50 text-indigo-800 border border-indigo-200 text-[10px] uppercase font-bold tracking-wider whitespace-nowrap shrink-0">
-              <Moon className="w-3 h-3" />
-              {nightCount} nights
-            </span>
-          )}
-          {event.beginnerClass && (
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-green-50 text-green-800 border border-green-200 text-[10px] uppercase font-bold tracking-wider">
-              <GraduationCap className="w-3 h-3" />
-              {event.beginnerClass.toLowerCase() === 'yes'
-                ? 'Beginner friendly'
-                : `Beginner class ${event.beginnerClass}`}
-            </span>
-          )}
-          {priceDisplay && (
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-[var(--surface-container)] text-[var(--on-surface-variant)] border border-[var(--surface-container-highest)] text-[11px] font-bold uppercase tracking-wider">
-              <Banknote className="w-3.5 h-3.5" />
-              {priceDisplay}
-            </span>
-          )}
-        </div>
+        {/* ---------- Expandable details (style always shown here) ---------- */}
+        <button
+          type="button"
+          onClick={() => setIsExpanded((v) => !v)}
+          aria-expanded={isExpanded}
+          className="flex items-center gap-1.5 w-full border-t-2 border-[var(--on-surface)] px-5 py-2.5 font-sans text-xs font-bold uppercase tracking-wider text-[var(--on-surface-variant)] hover:bg-[var(--surface-container)] transition-colors cursor-pointer"
+        >
+          <ChevronDown className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+          {isExpanded ? 'Hide details' : 'Details'}
+        </button>
 
-        {/* Music type + who's playing — one line per performer (band, DJ),
-            below the pill row. Music is always set, so at least one row shows. */}
-        {musicRows.length > 0 && (
-          <div className="mt-2.5 space-y-1.5 font-sans">
-            {musicRows.map((row) => (
-              <div key={row.type} className="flex items-center gap-2 min-w-0">
-                {musicTypeBadge(row.type)}
-                {row.name && (
-                  <span className="text-xs text-[var(--outline)] font-medium truncate">
-                    {row.name}
-                  </span>
-                )}
+        {isExpanded && (
+          <div className="border-t-2 border-[var(--on-surface)] p-5 space-y-3 font-sans">
+            {/* Style */}
+            <div>
+              <span className={`px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider border ${getStyleColor(event.style)}`}>
+                {getStyleLabel(event.style)}
+              </span>
+            </div>
+
+            {/* Performers */}
+            {musicRows.some((r) => r.name) && (
+              <div className="space-y-1 font-sans">
+                {musicRows.filter((r) => r.name).map((row) => (
+                  <div key={row.type} className="flex items-center gap-2 text-sm text-[var(--on-surface-variant)]">
+                    {row.type === 'live' ? <Music className="w-3.5 h-3.5 shrink-0" /> : <Disc className="w-3.5 h-3.5 shrink-0" />}
+                    <span>{row.name}</span>
+                  </div>
+                ))}
               </div>
-            ))}
+            )}
+
+            {/* Organizer + address */}
+            {byLine && (
+              <div className="flex items-start gap-2 text-xs text-[var(--outline)] font-medium">
+                <MapPin className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+                <span>{byLine}</span>
+              </div>
+            )}
+
+            {/* Description */}
+            {event.body && (
+              <p className="text-sm text-[var(--on-surface-variant)] leading-relaxed whitespace-pre-line">
+                {event.body}
+              </p>
+            )}
+
+            {/* Ticket CTA + Share */}
+            <div className="flex items-center gap-2">
+              {event.ticket && (
+                <a
+                  href={event.ticket}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded border border-[var(--on-surface)] bg-[var(--primary)] text-white hover:bg-[var(--primary-container)] font-bold uppercase tracking-wider text-xs lift-btn-primary"
+                >
+                  <Ticket className="w-4 h-4" />
+                  Get Tickets / Info
+                </a>
+              )}
+              <ShareButton eventId={event.id} eventDate={event.date} eventTitle={event.title} />
+            </div>
           </div>
         )}
       </div>
-
-      {/* ---------- Expandable details ---------- */}
-      {hasDetails && (
-        <>
-          <button
-            type="button"
-            onClick={() => setIsExpanded((v) => !v)}
-            aria-expanded={isExpanded}
-            className="flex items-center gap-1.5 w-full border-t-2 border-[var(--on-surface)] px-5 py-2.5 font-sans text-xs font-bold uppercase tracking-wider text-[var(--on-surface-variant)] hover:bg-[var(--surface-container)] transition-colors cursor-pointer"
-          >
-            <ChevronDown className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
-            {isExpanded ? 'Hide details' : 'Details'}
-          </button>
-
-          {isExpanded && (
-            <div className="border-t-2 border-[var(--on-surface)] p-5 space-y-3 font-sans">
-              {/* Organizer + address */}
-              {byLine && (
-                <div className="flex items-start gap-2 text-xs text-[var(--outline)] font-medium">
-                  <MapPin className="w-3.5 h-3.5 mt-0.5 shrink-0" />
-                  <span>{byLine}</span>
-                </div>
-              )}
-
-              {/* Description */}
-              {event.body && (
-                <p className="text-sm text-[var(--on-surface-variant)] leading-relaxed whitespace-pre-line">
-                  {event.body}
-                </p>
-              )}
-
-              {/* Ticket CTA + Share */}
-              <div className="flex items-center gap-2">
-                {event.ticket && (
-                  <a
-                    href={event.ticket}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded border border-[var(--on-surface)] bg-[var(--primary)] text-white hover:bg-[var(--primary-container)] font-bold uppercase tracking-wider text-xs lift-btn-primary"
-                  >
-                    <Ticket className="w-4 h-4" />
-                    Get Tickets / Info
-                  </a>
-                )}
-                <ShareButton eventId={event.id} eventDate={event.date} eventTitle={event.title} />
-              </div>
-            </div>
-          )}
-        </>
-      )}
-      </div>{/* end opacity wrapper */}
     </div>
   );
 }

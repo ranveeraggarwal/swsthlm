@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { MapPin, Music, Disc, Ticket, GraduationCap, Moon, ChevronDown } from 'lucide-react';
+import { MapPin, Music, Disc, Ticket, GraduationCap, Moon, ChevronDown, Banknote } from 'lucide-react';
 import { SwingEvent } from '@/types/event';
 import { formatEventDateRange } from '@/lib/datetime';
 import { ShareButton } from '@/components/ShareButton';
@@ -75,13 +75,16 @@ export function EventRow({ event, dates, nightCount }: EventRowProps) {
         aria-expanded={isExpanded}
         className="w-full text-left py-2.5 px-1 hover:bg-[var(--surface-container-low)] transition-colors cursor-pointer"
       >
-        {/* Primary line: date · title · cancelled · chevron */}
+        {/* Primary line: date · title · style · cancelled · chevron */}
         <div className="flex items-baseline gap-2">
           <span className="shrink-0 w-24 whitespace-nowrap font-sans text-xs font-medium text-[var(--on-surface-variant)]">
             {compactDateLabel}
           </span>
           <span className={`flex-1 min-w-0 font-serif font-bold text-sm text-[var(--on-surface)] truncate ${event.cancelled ? 'line-through' : ''}`}>
             {event.title}
+          </span>
+          <span className={`shrink-0 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${getStyleColor(event.style)}`}>
+            {getStyleLabel(event.style)}
           </span>
           {event.cancelled && (
             <span className="shrink-0 px-2 py-0.5 rounded bg-red-600 text-white text-[10px] uppercase font-bold tracking-wider">
@@ -91,10 +94,14 @@ export function EventRow({ event, dates, nightCount }: EventRowProps) {
           <ChevronDown className={`w-4 h-4 shrink-0 text-[var(--on-surface-variant)] transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
         </div>
 
-        {/* Secondary line: time · dj/live · venue · style */}
+        {/* Secondary line: time · venue+neighborhood · dj/live · price */}
         <div className="flex items-center gap-2 mt-0.5 pl-[calc(6rem+8px)]">
           <span className={`shrink-0 font-sans font-bold text-xs tabular-nums text-[var(--on-surface-variant)] ${event.cancelled ? 'line-through' : ''}`}>
             {event.start}–{event.end}
+          </span>
+          <span className="hidden sm:block text-[var(--outline)] text-xs">·</span>
+          <span className="hidden sm:block font-sans text-xs text-[var(--on-surface-variant)] truncate">
+            {event.venue}{event.neighborhood ? ` · ${event.neighborhood}` : ''}
           </span>
           <span className="shrink-0 flex items-center gap-1 text-[var(--on-surface-variant)]">
             {musicRows.map((r) =>
@@ -103,13 +110,12 @@ export function EventRow({ event, dates, nightCount }: EventRowProps) {
                 : <Disc key="dj" className="w-3.5 h-3.5" />
             )}
           </span>
-          <span className="hidden sm:block text-[var(--outline)] text-xs">·</span>
-          <span className="hidden sm:block font-sans text-xs text-[var(--on-surface-variant)] truncate">
-            {event.venue}{event.neighborhood ? ` · ${event.neighborhood}` : ''}
-          </span>
-          <span className={`hidden md:block shrink-0 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${getStyleColor(event.style)}`}>
-            {getStyleLabel(event.style)}
-          </span>
+          {priceDisplay && (
+            <span className="shrink-0 inline-flex items-center gap-1 font-sans text-xs font-medium text-[var(--on-surface-variant)]">
+              <Banknote className="w-3.5 h-3.5" />
+              {priceDisplay}
+            </span>
+          )}
         </div>
       </button>
 

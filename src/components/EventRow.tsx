@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { MapPin, Music, Disc, Ticket, GraduationCap, Moon, ChevronDown, Banknote } from 'lucide-react';
+import { MapPin, Music, Disc, Ticket, GraduationCap, Moon, ChevronDown } from 'lucide-react';
 import { SwingEvent } from '@/types/event';
 import { formatEventDateRange } from '@/lib/datetime';
 import { ShareButton } from '@/components/ShareButton';
@@ -110,12 +110,6 @@ export function EventRow({ event, dates, nightCount }: EventRowProps) {
                 : <Disc key="dj" className="w-3.5 h-3.5" />
             )}
           </span>
-          {priceDisplay && (
-            <span className="shrink-0 inline-flex items-center gap-1 font-sans text-xs font-medium text-[var(--on-surface-variant)]">
-              <Banknote className="w-3.5 h-3.5" />
-              {priceDisplay}
-            </span>
-          )}
         </div>
       </button>
 

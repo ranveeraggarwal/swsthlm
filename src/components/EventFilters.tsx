@@ -2,14 +2,16 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { Search, CalendarDays, SlidersHorizontal, MapPin, Sparkles, Music } from 'lucide-react';
-import { SwingEvent } from '@/types/event';
+import { SwingEvent, EventCard as EventCardType } from '@/types/event';
 import { EventCard } from './EventCard';
 import {
   isCurrentWeek,
   formatEventDate,
+  formatEventDateRange,
   getStockholmCurrentDate,
   getStockholmCurrentTime,
 } from '@/lib/datetime';
+import { groupMultiDayOneoffs } from '@/lib/events-grouping';
 
 interface EventFiltersProps {
   events: SwingEvent[];
@@ -107,44 +109,51 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
     });
   }, [events, searchQuery, selectedStyle, selectedVenue, liveMusicOnly]);
 
-  // Group events by date into "This Week" vs "Upcoming"
+  // Collapse multi-day one-offs into single cards (presentation layer only).
+  // groupMultiDayOneoffs expects events sorted ascending by date, which
+  // filteredEvents already is (expandAll sorts them).
+  const groupedCards = useMemo(() => groupMultiDayOneoffs(filteredEvents), [filteredEvents]);
+
+  // Group event cards by their representative date (first night) into
+  // "This Week" vs "Upcoming".
   const eventSections = useMemo(() => {
-    // Current date reference for "This Week" detection (local time)
     const REFERENCE_DATE = currentDate;
 
-    const thisWeekEvents: SwingEvent[] = [];
-    const upcomingEvents: SwingEvent[] = [];
+    const thisWeekCards: EventCardType[] = [];
+    const upcomingCards: EventCardType[] = [];
 
-    filteredEvents.forEach((event) => {
-      if (isCurrentWeek(event.date, REFERENCE_DATE)) {
-        thisWeekEvents.push(event);
+    groupedCards.forEach((card) => {
+      // Use first night's date as the representative date for section placement.
+      if (isCurrentWeek(card.dates[0], REFERENCE_DATE)) {
+        thisWeekCards.push(card);
       } else {
-        upcomingEvents.push(event);
+        upcomingCards.push(card);
       }
     });
 
-    // Helper to group by date
-    const groupByDate = (list: SwingEvent[]) => {
-      const groups: Record<string, SwingEvent[]> = {};
-      list.forEach((event) => {
-        if (!groups[event.date]) {
-          groups[event.date] = [];
+    // Helper to group cards by their representative date (first night).
+    const groupByDate = (list: EventCardType[]) => {
+      const groups: Record<string, EventCardType[]> = {};
+      list.forEach((card) => {
+        const key = card.dates[0];
+        if (!groups[key]) {
+          groups[key] = [];
         }
-        groups[event.date].push(event);
+        groups[key].push(card);
       });
       return groups;
     };
 
     return {
-      thisWeek: groupByDate(thisWeekEvents),
-      upcoming: groupByDate(upcomingEvents),
-      hasThisWeek: thisWeekEvents.length > 0,
-      hasUpcoming: upcomingEvents.length > 0,
+      thisWeek: groupByDate(thisWeekCards),
+      upcoming: groupByDate(upcomingCards),
+      hasThisWeek: thisWeekCards.length > 0,
+      hasUpcoming: upcomingCards.length > 0,
     };
-  }, [filteredEvents, currentDate]);
+  }, [groupedCards, currentDate]);
 
-  // Total count for filters label
-  const totalCount = filteredEvents.length;
+  // Total count for filters label (cards, not raw occurrences).
+  const totalCount = groupedCards.length;
   const hasActiveFilters = selectedStyle !== 'all' || selectedVenue !== 'all' || !!searchQuery || liveMusicOnly;
 
   // Smart filter status message
@@ -321,14 +330,25 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
                 </div>
 
                 <div className="space-y-8">
-                  {Object.entries(eventSections.thisWeek).map(([date, dateEvents]) => (
+                  {Object.entries(eventSections.thisWeek).map(([date, dateCards]) => (
                     <div key={date} className="space-y-4">
                       <h3 className="font-sans text-xs font-bold text-[var(--primary)] uppercase tracking-widest bg-[var(--primary)]/10 py-1.5 px-3 rounded inline-block border border-[var(--primary)]/15">
-                        {formatEventDate(date)}
+                        {/* For multi-day cards, show the range in the section header. */}
+                        {dateCards.length === 1 && dateCards[0].nightCount > 1
+                          ? formatEventDateRange(dateCards[0].dates[0], dateCards[0].dates[dateCards[0].dates.length - 1])
+                          : formatEventDate(date)}
                       </h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
-                        {dateEvents.map((event) => (
-                          <EventCard key={event.id} event={event} isThisWeek={true} currentDate={currentDate} currentTime={currentTime} />
+                        {dateCards.map((card) => (
+                          <EventCard
+                            key={card.event.id}
+                            event={card.event}
+                            dates={card.dates}
+                            nightCount={card.nightCount}
+                            isThisWeek={true}
+                            currentDate={currentDate}
+                            currentTime={currentTime}
+                          />
                         ))}
                       </div>
                     </div>
@@ -348,14 +368,25 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
                 </div>
 
                 <div className="space-y-8">
-                  {Object.entries(eventSections.upcoming).map(([date, dateEvents]) => (
+                  {Object.entries(eventSections.upcoming).map(([date, dateCards]) => (
                     <div key={date} className="space-y-4">
                       <h3 className="font-sans text-xs font-bold text-zinc-600 uppercase tracking-widest bg-[var(--surface-container-low)] py-1.5 px-3 rounded inline-block border border-[var(--surface-container-highest)]">
-                        {formatEventDate(date)}
+                        {/* For multi-day cards, show the range in the section header. */}
+                        {dateCards.length === 1 && dateCards[0].nightCount > 1
+                          ? formatEventDateRange(dateCards[0].dates[0], dateCards[0].dates[dateCards[0].dates.length - 1])
+                          : formatEventDate(date)}
                       </h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
-                        {dateEvents.map((event) => (
-                          <EventCard key={event.id} event={event} isThisWeek={false} currentDate={currentDate} currentTime={currentTime} />
+                        {dateCards.map((card) => (
+                          <EventCard
+                            key={card.event.id}
+                            event={card.event}
+                            dates={card.dates}
+                            nightCount={card.nightCount}
+                            isThisWeek={false}
+                            currentDate={currentDate}
+                            currentTime={currentTime}
+                          />
                         ))}
                       </div>
                     </div>

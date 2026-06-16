@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
-import { MapPin, Music, Disc, Ticket, Banknote, GraduationCap, ChevronDown } from 'lucide-react';
+import { MapPin, Music, Disc, Ticket, Banknote, GraduationCap, ChevronDown, Moon } from 'lucide-react';
 import { SwingEvent } from '@/types/event';
 import { getTemporalBadge, TemporalBadge } from '@/lib/datetime';
 
 interface EventCardProps {
   event: SwingEvent;
+  /** All dates covered by this card (ascending). Length > 1 means multi-night. */
+  dates: string[];
+  /** Number of nights remaining in the expansion (1 for single-night cards). */
+  nightCount: number;
   isThisWeek: boolean;
   currentDate: string;
   currentTime: string;
@@ -53,7 +57,7 @@ function TemporalBadgeDisplay({ badge }: { badge: TemporalBadge }) {
   }
 }
 
-export function EventCard({ event, isThisWeek, currentDate, currentTime }: EventCardProps) {
+export function EventCard({ event, dates, nightCount, isThisWeek, currentDate, currentTime }: EventCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const badge = getTemporalBadge(
@@ -190,11 +194,17 @@ export function EventCard({ event, isThisWeek, currentDate, currentTime }: Event
           )}
         </div>
 
-        {/* Compact pill row: style / for-whom / how-much */}
+        {/* Compact pill row: style / for-whom / how-much / nights */}
         <div className="flex flex-wrap items-center gap-2 font-sans">
           <span className={`px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider border ${getStyleColor(event.style)}`}>
             {getStyleLabel(event.style)}
           </span>
+          {nightCount > 1 && (
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-indigo-50 text-indigo-800 border border-indigo-200 text-[10px] uppercase font-bold tracking-wider whitespace-nowrap shrink-0">
+              <Moon className="w-3 h-3" />
+              {nightCount} nights
+            </span>
+          )}
           {event.beginnerClass && (
             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-green-50 text-green-800 border border-green-200 text-[10px] uppercase font-bold tracking-wider">
               <GraduationCap className="w-3 h-3" />

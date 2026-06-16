@@ -175,6 +175,8 @@ export async function getEvents(): Promise<SwingEvent[]> {
       ticket: occ.url,
       body: occ.description ?? '',
       beginnerClass: occ.beginnerClass,
+      sourceType: occ.sourceType,
+      sourceId: occ.sourceId,
     };
   });
 }

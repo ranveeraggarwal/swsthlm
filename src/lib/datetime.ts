@@ -73,6 +73,33 @@ export function formatEventDate(dateStr: string): string {
 }
 
 /**
+ * Formats two YYYY-MM-DD strings into a compact date-range label.
+ * Same month:  "Fri 28 & Sat 29 Aug"
+ * Cross-month: "Fri 28 Aug & Sat 1 Sep"
+ * If firstDate === lastDate, falls back to formatEventDate.
+ */
+export function formatEventDateRange(firstDate: string, lastDate: string): string {
+  if (firstDate === lastDate) return formatEventDate(firstDate);
+  try {
+    const first = new Date(firstDate);
+    const last = new Date(lastDate);
+    if (isNaN(first.getTime()) || isNaN(last.getTime())) return formatEventDate(firstDate);
+
+    const fmtDay = (d: Date) =>
+      d.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric' });
+    const fmtMonth = (d: Date) => d.toLocaleDateString('en-US', { month: 'short' });
+
+    const sameMonth = first.getUTCMonth() === last.getUTCMonth();
+    if (sameMonth) {
+      return `${fmtDay(first)} & ${fmtDay(last)} ${fmtMonth(last)}`;
+    }
+    return `${fmtDay(first)} ${fmtMonth(first)} & ${fmtDay(last)} ${fmtMonth(last)}`;
+  } catch {
+    return formatEventDate(firstDate);
+  }
+}
+
+/**
  * Checks if a YYYY-MM-DD date string is today relative to the reference date.
  */
 export function isToday(dateStr: string, referenceDateStr: string): boolean {

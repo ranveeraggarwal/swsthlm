@@ -48,7 +48,8 @@ export function EventRow({ event, dates, nightCount }: EventRowProps) {
     else if (event.music === 'mixed') musicRows.push({ type: 'live' }, { type: 'dj' });
   }
 
-  const byLine = [event.organizer && `By ${event.organizer}`, event.address].filter(Boolean).join(' · ');
+  const venueLabel = [event.venue, event.neighborhood].filter(Boolean).join(' · ');
+  const byLine = [venueLabel, event.organizer && `By ${event.organizer}`, event.address].filter(Boolean).join(' · ');
 
   // Compact row date: "Wed 26 Aug" for single, "26–27 Aug" / "26 Aug–1 Sep" for multi-night.
   // Uses en-GB (no comma, day-first) and UTC day extraction to avoid timezone shifts.
@@ -75,11 +76,13 @@ export function EventRow({ event, dates, nightCount }: EventRowProps) {
         aria-expanded={isExpanded}
         className="w-full text-left py-2.5 px-1 hover:bg-[var(--surface-container-low)] transition-colors cursor-pointer"
       >
-        {/* Primary line: date · title · cancelled · chevron */}
+        {/* Primary line */}
         <div className="flex items-baseline gap-2">
-          <span className="shrink-0 w-24 whitespace-nowrap font-sans text-xs font-medium text-[var(--on-surface-variant)]">
+          {/* Date col: desktop only — on mobile it moves to the secondary line */}
+          <span className="hidden sm:block shrink-0 w-24 whitespace-nowrap font-sans text-xs font-medium text-[var(--on-surface-variant)]">
             {compactDateLabel}
           </span>
+          {/* Title gets full width on mobile (~340px), narrowed on desktop by the date col */}
           <span className={`flex-1 min-w-0 font-serif font-bold text-sm text-[var(--on-surface)] truncate ${event.cancelled ? 'line-through' : ''}`}>
             {event.title}
           </span>
@@ -91,12 +94,17 @@ export function EventRow({ event, dates, nightCount }: EventRowProps) {
           <ChevronDown className={`w-4 h-4 shrink-0 text-[var(--on-surface-variant)] transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
         </div>
 
-        {/* Secondary line: time · venue · dj/live · style */}
-        <div className="flex items-center gap-x-2 gap-y-0 mt-0.5 pl-[calc(6rem+8px)] flex-wrap">
+        {/* Secondary line: aligns under the title on desktop */}
+        <div className="flex items-center gap-2 mt-0.5 sm:pl-[calc(6rem+8px)] overflow-hidden">
+          {/* Date: mobile only (desktop shows it in the primary line) */}
+          <span className="sm:hidden shrink-0 font-sans text-xs font-medium text-[var(--on-surface-variant)] whitespace-nowrap">
+            {compactDateLabel}
+          </span>
           <span className={`shrink-0 font-sans font-bold text-xs tabular-nums text-[var(--on-surface-variant)] ${event.cancelled ? 'line-through' : ''}`}>
             {event.start}–{event.end}
           </span>
-          <span className="shrink-0 font-sans text-xs text-[var(--on-surface-variant)] truncate max-w-[40%]">
+          {/* Venue: desktop only — saves space on mobile for date+time+style */}
+          <span className="hidden sm:block min-w-0 font-sans text-xs text-[var(--on-surface-variant)] truncate">
             {event.venue}{event.neighborhood ? ` · ${event.neighborhood}` : ''}
           </span>
           <span className="shrink-0 flex items-center gap-1 text-[var(--on-surface-variant)]">
@@ -106,7 +114,7 @@ export function EventRow({ event, dates, nightCount }: EventRowProps) {
                 : <Disc key="dj" className="w-3 h-3" />
             )}
           </span>
-          <span className={`shrink-0 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${getStyleColor(event.style)}`}>
+          <span className={`ml-auto shrink-0 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${getStyleColor(event.style)}`}>
             {getStyleLabel(event.style)}
           </span>
         </div>

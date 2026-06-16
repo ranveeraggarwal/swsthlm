@@ -143,26 +143,33 @@ export function EventCard({ event, isThisWeek, currentDate, currentTime }: Event
   const hasDetails = !!(event.body || byLine || event.ticket);
 
   return (
-    <div className={`relative lift-card rounded border-2 border-[var(--on-surface)] bg-[var(--surface-container-low)] overflow-hidden flex flex-col text-[var(--on-surface)] ${badge === 'happening-now' ? 'ring-2 ring-red-500/30' : ''}`}>
-      {/* Highlighting border/accent stripe */}
-      {(isThisWeek || badge) && (
+    <div className={`relative lift-card rounded border-2 overflow-hidden flex flex-col text-[var(--on-surface)] ${event.cancelled ? 'border-red-400 bg-red-50/40' : 'border-[var(--on-surface)] bg-[var(--surface-container-low)]'} ${badge === 'happening-now' ? 'ring-2 ring-red-500/30' : ''}`}>
+      {/* Highlighting border/accent stripe — red for cancelled, temporal colour otherwise */}
+      {event.cancelled ? (
+        <div className="absolute top-0 left-0 right-0 h-1.5 bg-red-500" />
+      ) : (isThisWeek || badge) && (
         <div className={`absolute top-0 left-0 right-0 h-1.5 ${getStripeColor()}`} />
       )}
 
       {/* ---------- Collapsed summary: when · what · where · for-whom · how-much ---------- */}
-      <div className="p-5">
+      <div className={`p-5 ${event.cancelled ? 'opacity-60' : ''}`}>
         {/* Time + temporal status. The date lives in the day header above the grid. */}
         <div className="flex items-start justify-between gap-3 mb-2">
-          <span className="font-sans font-bold text-base tabular-nums tracking-tight text-[var(--on-surface)]">
+          <span className={`font-sans font-bold text-base tabular-nums tracking-tight text-[var(--on-surface)] ${event.cancelled ? 'line-through' : ''}`}>
             {event.start} – {event.end}
           </span>
           <div className="flex items-center gap-2 shrink-0">
+            {event.cancelled && (
+              <span className="px-2.5 py-0.5 rounded bg-red-600 text-white text-[10px] uppercase font-bold tracking-wider">
+                Cancelled
+              </span>
+            )}
             {event.status === 'draft' && (
               <span className="px-2 py-0.5 rounded bg-red-100 text-red-800 border border-red-200 text-[10px] uppercase font-bold tracking-wider">
                 Draft Preview
               </span>
             )}
-            <TemporalBadgeDisplay badge={badge} />
+            {!event.cancelled && <TemporalBadgeDisplay badge={badge} />}
           </div>
         </div>
 
@@ -170,7 +177,7 @@ export function EventCard({ event, isThisWeek, currentDate, currentTime }: Event
             on hover and always visible in Details below. */}
         <h3
           title={event.title}
-          className="font-serif text-xl font-bold tracking-tight text-[var(--on-surface)] leading-snug mb-1.5 truncate"
+          className={`font-serif text-xl font-bold tracking-tight text-[var(--on-surface)] leading-snug mb-1.5 truncate ${event.cancelled ? 'line-through' : ''}`}
         >
           {event.title}
         </h3>

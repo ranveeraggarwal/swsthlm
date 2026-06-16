@@ -143,7 +143,7 @@ export function EventCard({ event, isThisWeek, currentDate, currentTime }: Event
   const hasDetails = !!(event.body || byLine || event.ticket);
 
   return (
-    <div className={`relative lift-card rounded border-2 overflow-hidden flex flex-col text-[var(--on-surface)] ${event.cancelled ? 'border-red-400 bg-red-50/40' : 'border-[var(--on-surface)] bg-[var(--surface-container-low)]'} ${badge === 'happening-now' ? 'ring-2 ring-red-500/30' : ''}`}>
+    <div className={`relative lift-card rounded border-2 overflow-hidden flex flex-col text-[var(--on-surface)] ${event.cancelled ? 'border-red-400 bg-red-50/40' : 'border-[var(--on-surface)] bg-[var(--surface-container-low)]'} ${!event.cancelled && badge === 'happening-now' ? 'ring-2 ring-red-500/30' : ''}`}>
       {/* Highlighting border/accent stripe — red for cancelled, temporal colour otherwise */}
       {event.cancelled ? (
         <div className="absolute top-0 left-0 right-0 h-1.5 bg-red-500" />
@@ -151,8 +151,10 @@ export function EventCard({ event, isThisWeek, currentDate, currentTime }: Event
         <div className={`absolute top-0 left-0 right-0 h-1.5 ${getStripeColor()}`} />
       )}
 
+      {/* ---------- Card interior: opacity-60 for cancelled covers summary + details ---------- */}
+      <div className={event.cancelled ? 'opacity-60' : ''}>
       {/* ---------- Collapsed summary: when · what · where · for-whom · how-much ---------- */}
-      <div className={`p-5 ${event.cancelled ? 'opacity-60' : ''}`}>
+      <div className="p-5">
         {/* Time + temporal status. The date lives in the day header above the grid. */}
         <div className="flex items-start justify-between gap-3 mb-2">
           <span className={`font-sans font-bold text-base tabular-nums tracking-tight text-[var(--on-surface)] ${event.cancelled ? 'line-through' : ''}`}>
@@ -188,7 +190,7 @@ export function EventCard({ event, isThisWeek, currentDate, currentTime }: Event
             href={mapsUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="font-bold text-[var(--on-surface)] underline decoration-[var(--outline)] underline-offset-4 hover:text-[var(--primary)] transition-colors"
+            className={`font-bold text-[var(--on-surface)] underline decoration-[var(--outline)] underline-offset-4 hover:text-[var(--primary)] transition-colors ${event.cancelled ? 'line-through' : ''}`}
           >
             {event.venue}
           </a>
@@ -282,6 +284,7 @@ export function EventCard({ event, isThisWeek, currentDate, currentTime }: Event
           )}
         </>
       )}
+      </div>{/* end opacity wrapper */}
     </div>
   );
 }

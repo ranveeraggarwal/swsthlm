@@ -4,7 +4,7 @@ Stockholm Swing is built and maintained by the local swing community. Whether yo
 
 ## The fastest paths
 
-**You organize a dance and want it listed.** Fill in the [organizer form](https://forms.example/TODO). A bot turns submissions into pull requests; a maintainer reviews and merges. You don't need a GitHub account. The same form is also how you tell us about a new series, a cancellation, or a venue change.
+**You organize a dance and want it listed.** Fill in the [organizer form](https://docs.google.com/forms/d/e/1FAIpQLSd87pOy31N_3xKthqalT-sDrFB2yoe74Z8HGr8q1HSs6Pis2g/viewform). A bot turns submissions into pull requests; a maintainer reviews and merges. You don't need a GitHub account. The same form is also how you tell us about a new series, a cancellation, or a venue change.
 
 **You spotted wrong info.** Every event card has a "Wrong info?" link that opens a prefilled report. If you can't find it, [open an issue](https://github.com/ranveeraggarwal/swsthlm/issues/new/choose) with the event name, date, and what's off. Things we get wrong most often: stale DJ names, price changes, weeks where a regular series doesn't run.
 

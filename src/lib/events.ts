@@ -159,6 +159,7 @@ export async function getEvents(): Promise<SwingEvent[]> {
       id: occ.occurrenceId,
       title: occ.name,
       status: 'published',
+      cancelled: occ.cancelled,
       date: occ.date,
       start: occ.start,
       end: occ.end,

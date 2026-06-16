@@ -1,6 +1,6 @@
 # Stockholm Swing — Project Plan
 
-**Repo:** `ranveeraggarwal/swsthlm` · **Site:** stockholmswing.com · **Last revised:** 2026-06-09
+**Repo:** `ranveeraggarwal/swsthlm` · **Site:** stockholmswing.com · **Last revised:** 2026-06-15
 
 ## 1. Vision
 
@@ -14,7 +14,7 @@ Three principles govern every decision below:
 
 ## 2. Architecture decision: repo-as-database
 
-**Decision:** Migrate the source of truth from the Google Sheet to CSV files in this repository under `/data/`. The Google Form remains the organizer-facing intake; its responses sheet becomes an inbox that an Action drains into pull requests. The site reads `/data/` at build time and is fully static; a Vercel deploy hook rebuilds on every push to `main`.
+**Decision:** Migrate the source of truth from the Google Sheet to CSV files in this repository under `/data/`. The [Google Form](https://docs.google.com/forms/d/e/1FAIpQLSd87pOy31N_3xKthqalT-sDrFB2yoe74Z8HGr8q1HSs6Pis2g/viewform) remains the organizer-facing intake; its responses sheet becomes an inbox that an Action drains into pull requests. The site reads `/data/` at build time and is fully static; a Vercel deploy hook rebuilds on every push to `main`.
 
 **Why:** Every planned automation (scraper PRs, CI validation, weekly health checks, diff-based review) requires a pull-request workflow, which a sheet cannot provide. Sheet edits are live instantly with no review gate, history is opaque, validation can only run after publication, and the published-CSV endpoint is coupled to one personal Google account — the worst possible bus-factor. The sheet's only real advantage, friction-free entry for non-technical people, is preserved through the form. Direct quick edits move to GitHub's web editor, which is adequate.
 
@@ -63,41 +63,53 @@ User accounts, an organizer dashboard, a database, machine translation of descri
 
 ## 5. Issue index
 
-Created by `scripts/create_issues.sh`. Priorities: P0 = do first, P1 = high value, P2 = when convenient.
+GitHub issue numbers are authoritative. Priorities: P0 = do first, P1 = high value, P2 = when convenient. ✓ = merged/closed.
 
-| # | Issue | Milestone | Priority |
-|---|---|---|---|
-| 1 | Migrate source of truth from Google Sheet to /data CSVs | M4 | P0 |
-| 2 | Series + exceptions expansion at build time | M4 | P0 |
-| 3 | Server-side data loading; remove runtime CSV fetch | M2 | P0 |
-| 4 | ICS subscription feed (webcal) | M2 | P0 |
-| 5 | Per-event "Add to calendar" (.ics) | M2 | P1 |
-| 6 | Strip/flag stale dates in scraped descriptions | M1 | P0 |
-| 7 | Collapse multi-day duplicates into one card | M1 | P1 |
-| 8 | Hide TBA fields | M1 | P1 · good first issue |
-| 9 | Structured price field + badge | M1 | P0 |
-| 10 | Beginner-class / beginner-friendly badge | M1 | P0 |
-| 11 | Promote live-band vs DJ to badge | M1 | P1 · good first issue |
-| 12 | Cancelled event state | M1 | P1 |
-| 13 | Rename "All Swing Styles" tag | M1 | P2 · good first issue |
-| 14 | JSON-LD Event structured data | M2 | P1 |
-| 15 | Event permalinks + share button | M2 | P1 |
-| 16 | OG image for link unfurls | M2 | P2 |
-| 17 | Filter state in URL | M3 | P1 |
-| 18 | Day filter / day-jump strip | M3 | P2 |
-| 19 | Designed empty states | M3 | P2 · good first issue |
-| 20 | "Updated X ago" freshness signal | M3 | P2 |
-| 21 | Neighborhood tags on venues | M3 | P2 · good first issue |
-| 22 | Accessibility & heading-hierarchy pass | M3 | P1 |
-| 23 | PWA manifest + icons | M3 | P2 |
-| 24 | CI schema validation for /data | M4 | P0 |
-| 25 | Nightly scraper Actions → PRs | M4 | P1 |
-| 26 | Weekly health-report Action | M4 | P2 |
-| 27 | Google Form → PR sync Action | M4 | P1 |
-| 28 | "Wrong info?" report link per card | M5 | P1 |
-| 29 | CONTRIBUTING.md + data contract docs | M5 | P1 |
-| 30 | HANDOVER.md, org migration, second maintainer | M5 | P1 |
-| 31 | Recruit per-venue stewards | M5 | P2 |
+**State as of 2026-06-15:** M4 foundation complete (CSV migration, series expansion, CI validation, server-side rendering, Chrome extension retired). M1 substantially complete (price/beginner/music badges, stale-date lint, hide TBA, style rename, Just Ended badge). Nightly scraper live for S:ta Clara and Chicago, with exception-proposal logic. Google Form live (linked in §2); Form → PR sync Action (#5) still to build. ICS feed (#8) is the highest-leverage open feature.
+
+| # | Issue | Milestone | Priority | |
+|---|---|---|---|---|
+| 1 | Migrate source of truth from Google Sheet to /data CSVs | M4 | P0 | ✓ |
+| 2 | Series + exceptions expansion at build time | M4 | P0 | ✓ |
+| 3 | CI schema validation for /data | M4 | P0 | ✓ |
+| 4 | Nightly scraper Actions → PRs | M4 | P1 | open |
+| 5 | Google Form → PR sync Action | M4 | P1 | open |
+| 6 | Weekly health-report Action | M4 | P2 | open |
+| 7 | Server-side data loading; remove runtime CSV fetch | M2 | P0 | ✓ |
+| 8 | ICS subscription feed (webcal) | M2 | P0 | open |
+| 9 | Per-event "Add to calendar" (.ics) | M2 | P1 | open |
+| 10 | JSON-LD Event structured data | M2 | P1 | open |
+| 11 | Event permalinks + share button | M2 | P1 | open |
+| 12 | OG image for link unfurls | M2 | P2 | open |
+| 13 | Strip/flag stale dates in scraped descriptions | M1 | P0 | ✓ |
+| 14 | Collapse multi-day runs of the same event into one card | M1 | P1 | open |
+| 15 | Hide TBA fields | M1 | P1 | ✓ |
+| 16 | Structured price field + badge | M1 | P0 | ✓ |
+| 17 | Beginner-class / beginner-friendly badge | M1 | P0 | ✓ |
+| 18 | Promote live-band vs DJ to badge | M1 | P1 | ✓ |
+| 19 | Cancelled event state | M1 | P1 | open |
+| 20 | Rename "All Swing Styles" tag | M1 | P2 | ✓ |
+| 21 | Filter state in URL | M3 | P1 | open |
+| 22 | Day filter / day-jump strip | M3 | P2 | open |
+| 23 | Designed empty states | M3 | P2 | open |
+| 24 | "Updated X ago" freshness signal | M3 | P2 | open |
+| 25 | Neighborhood tags on venues | M3 | P2 | open |
+| 26 | Accessibility & heading-hierarchy pass | M3 | P1 | open |
+| 27 | PWA manifest + icons | M3 | P2 | open |
+| 28 | "Wrong info?" report link per card | M5 | P1 | open |
+| 29 | CONTRIBUTING.md + data contract docs | M5 | P1 | ✓ |
+| 30 | HANDOVER.md, org migration, second maintainer | M5 | P1 | open |
+| 31 | Recruit per-venue stewards | M5 | P2 | open |
+| 44 | "Just Ended" badge for events earlier today | M1 | P1 | ✓ |
+| 45 | Open-source / GitHub section on About page | M5 | P2 | ✓ |
+| 48 | Merge multi-day one-offs into a single card | M1 | P1 | open |
+| 56 | Move Beginner Class badge position | M1 | P2 | open |
+| 61 | Events visible before filter/hero section (layout fix) | M1 | P1 | ✓ |
+| 66 | Field-level provenance for scraper-owned rows | M4 | P1 | open |
+| 69 | Chicago scraper source | M4 | P1 | ✓ |
+| 73 | Dynamic rotating H1 on homepage | M3 | P1 | ✓ |
+| 74 | SEO: homepage `<title>` and `<meta description>` | M3 | P2 | ✓ |
+| 82 | Scraper proposes exceptions when a series event changes | M4 | P1 | ✓ |
 
 ## 6. Operating cadence (post-M4 steady state)
 

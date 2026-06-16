@@ -2,6 +2,7 @@ export interface SwingEvent {
   id: string;
   title: string;
   status: 'published' | 'draft';
+  cancelled: boolean; // true when a series exception or oneoff status is cancelled
   date: string;       // YYYY-MM-DD
   start: string;      // HH:MM
   end: string;        // HH:MM

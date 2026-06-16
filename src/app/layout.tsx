@@ -17,6 +17,7 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://stockholmswing.com'),
   title: 'Stockholm Swing',
   description: 'Lindy Hop, Balboa, Shag, and Blues social dancing in Stockholm.',
 };

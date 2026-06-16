@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { MapPin, Music, Disc, Ticket, Banknote, GraduationCap, ChevronDown } from 'lucide-react';
 import { SwingEvent } from '@/types/event';
 import { getTemporalBadge, TemporalBadge } from '@/lib/datetime';
+import { ShareButton } from '@/components/ShareButton';
 
 interface EventCardProps {
   event: SwingEvent;
@@ -163,6 +164,7 @@ export function EventCard({ event, isThisWeek, currentDate, currentTime }: Event
               </span>
             )}
             <TemporalBadgeDisplay badge={badge} />
+            <ShareButton eventId={event.id} eventDate={event.date} eventTitle={event.title} />
           </div>
         </div>
 

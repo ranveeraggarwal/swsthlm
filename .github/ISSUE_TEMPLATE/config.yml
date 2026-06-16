@@ -1,7 +1,7 @@
 blank_issues_enabled: false
 contact_links:
   - name: I organize an event and want it listed
-    url: https://forms.example/TODO
+    url: https://docs.google.com/forms/d/e/1FAIpQLSd87pOy31N_3xKthqalT-sDrFB2yoe74Z8HGr8q1HSs6Pis2g/viewform
     about: Use the organizer form. Your submission becomes a pull request that a maintainer reviews — no GitHub account needed.
   - name: Ask a question or start a discussion
     url: https://github.com/ranveeraggarwal/swsthlm/discussions

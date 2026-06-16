@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { MapPin, Music, Disc, Ticket, GraduationCap, Moon, ChevronDown } from 'lucide-react';
+import { MapPin, Music, Disc, Ticket, GraduationCap, Moon, ChevronDown, Banknote } from 'lucide-react';
 import { SwingEvent } from '@/types/event';
 import { formatEventDateRange } from '@/lib/datetime';
 import { ShareButton } from '@/components/ShareButton';
@@ -118,7 +118,10 @@ export function EventRow({ event, dates, nightCount }: EventRowProps) {
         <div className="px-1 pb-4 pt-1 space-y-3 font-sans border-t border-[var(--surface-container-highest)] bg-[var(--surface-container-low)]">
           <div className="flex flex-wrap items-center gap-2 pt-2 px-1">
             {priceDisplay && (
-              <span className="text-xs text-[var(--on-surface-variant)] font-medium">{priceDisplay}</span>
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-xs font-bold border bg-[var(--surface-container)] text-[var(--on-surface-variant)] border-[var(--surface-container-highest)]">
+                <Banknote className="w-3.5 h-3.5 shrink-0" />
+                {priceDisplay}
+              </span>
             )}
             {nightCount > 1 && (
               <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-indigo-50 text-indigo-800 border border-indigo-200 text-[10px] uppercase font-bold tracking-wider">

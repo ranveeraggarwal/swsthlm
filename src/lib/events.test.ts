@@ -61,4 +61,53 @@ describe('getEvents', () => {
     expect(event?.dj).toBe('DJ Name');
     expect(event?.band).toBe('Band Name');
   });
+
+  it('propagates cancelled=true from a series exception and still includes the occurrence', async () => {
+    const mockVenues = 'id,name,address,neighborhood\nchicago,Chicago,Hornsgatan 75,Södermalm';
+    // A single-week series on Wednesday 2026-06-03
+    const mockSeries = 'id,name,style,venue_id,weekday,start,end,price,payment,beginner_class,music,dj,band,organizer,url,description,status,valid_from,valid_to\n' +
+      'series-cancel,Cancel Series,lindy-hop,chicago,wednesday,19:00,23:00,,,, dj,,,Organizer,https://example.com,,live,2026-06-03,2026-06-03';
+    // Exception cancels the sole occurrence
+    const mockExceptions = 'series_id,date,cancelled,start,end,dj,band,music,price,note,description\n' +
+      'series-cancel,2026-06-03,yes,,,,,,,Venue closed,';
+    const mockOneoffs = '';
+
+    vi.mocked(fs.readFileSync).mockImplementation((path: string | number | URL | Buffer) => {
+      const p = path.toString();
+      if (p.endsWith('venues.csv')) return mockVenues;
+      if (p.endsWith('series.csv')) return mockSeries;
+      if (p.endsWith('exceptions.csv')) return mockExceptions;
+      if (p.endsWith('oneoffs.csv')) return mockOneoffs;
+      return '';
+    });
+
+    const events = await getEvents();
+    // The cancelled occurrence must still be present (not hidden)
+    const event = events.find(e => e.id.startsWith('series-cancel'));
+    expect(event).toBeDefined();
+    expect(event?.cancelled).toBe(true);
+  });
+
+  it('propagates cancelled=true from a oneoff with status=cancelled and still includes it', async () => {
+    const mockVenues = 'id,name,address,neighborhood\nchicago,Chicago,Hornsgatan 75,Södermalm';
+    const mockSeries = 'id,name,style,venue_id,weekday,start,end,price,payment,beginner_class,music,dj,band,organizer,url,description,status,valid_from,valid_to';
+    const mockExceptions = 'series_id,date,cancelled,start,end,dj,band,music,price,note,description';
+    const mockOneoffs = 'id,name,style,venue_id,date,end_date,start,end,price,payment,beginner_class,music,dj,band,organizer,url,description,status\n' +
+      'cancelled-oneoff,Cancelled Oneoff,lindy-hop,chicago,2026-06-10,,19:00,22:00,,,,dj,,,Organizer,https://example.com,,cancelled';
+
+    vi.mocked(fs.readFileSync).mockImplementation((path: string | number | URL | Buffer) => {
+      const p = path.toString();
+      if (p.endsWith('venues.csv')) return mockVenues;
+      if (p.endsWith('series.csv')) return mockSeries;
+      if (p.endsWith('exceptions.csv')) return mockExceptions;
+      if (p.endsWith('oneoffs.csv')) return mockOneoffs;
+      return '';
+    });
+
+    const events = await getEvents();
+    // Cancelled oneoff must still appear in the list
+    const event = events.find(e => e.id.startsWith('cancelled-oneoff'));
+    expect(event).toBeDefined();
+    expect(event?.cancelled).toBe(true);
+  });
 });

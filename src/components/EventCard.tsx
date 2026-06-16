@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
-import { MapPin, Music, Disc, Ticket, Banknote, GraduationCap, ChevronDown } from 'lucide-react';
+import { MapPin, Music, Disc, Ticket, Banknote, GraduationCap, ChevronDown, Moon } from 'lucide-react';
 import { SwingEvent } from '@/types/event';
-import { getTemporalBadge, TemporalBadge } from '@/lib/datetime';
+import { getTemporalBadge, formatEventDateRange, TemporalBadge } from '@/lib/datetime';
 import { ShareButton } from '@/components/ShareButton';
 
 interface EventCardProps {
   event: SwingEvent;
+  /** All dates covered by this card (ascending). Length > 1 means multi-night. */
+  dates: string[];
+  /** Number of nights remaining in the expansion (1 for single-night cards). */
+  nightCount: number;
   isThisWeek: boolean;
   currentDate: string;
   currentTime: string;
@@ -54,7 +58,7 @@ function TemporalBadgeDisplay({ badge }: { badge: TemporalBadge }) {
   }
 }
 
-export function EventCard({ event, isThisWeek, currentDate, currentTime }: EventCardProps) {
+export function EventCard({ event, dates, nightCount, isThisWeek, currentDate, currentTime }: EventCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const badge = getTemporalBadge(
@@ -144,26 +148,43 @@ export function EventCard({ event, isThisWeek, currentDate, currentTime }: Event
   const hasDetails = !!(event.body || byLine || event.ticket);
 
   return (
-    <div className={`relative lift-card rounded border-2 border-[var(--on-surface)] bg-[var(--surface-container-low)] overflow-hidden flex flex-col text-[var(--on-surface)] ${badge === 'happening-now' ? 'ring-2 ring-red-500/30' : ''}`}>
-      {/* Highlighting border/accent stripe */}
-      {(isThisWeek || badge) && (
+    <div className={`relative lift-card rounded border-2 overflow-hidden flex flex-col text-[var(--on-surface)] ${event.cancelled ? 'border-red-400 bg-red-50/40' : 'border-[var(--on-surface)] bg-[var(--surface-container-low)]'} ${!event.cancelled && badge === 'happening-now' ? 'ring-2 ring-red-500/30' : ''}`}>
+      {/* Highlighting border/accent stripe — red for cancelled, temporal colour otherwise */}
+      {event.cancelled ? (
+        <div className="absolute top-0 left-0 right-0 h-1.5 bg-red-500" />
+      ) : (isThisWeek || badge) && (
         <div className={`absolute top-0 left-0 right-0 h-1.5 ${getStripeColor()}`} />
       )}
 
+      {/* ---------- Card interior: opacity-60 for cancelled covers summary + details ---------- */}
+      <div className={event.cancelled ? 'opacity-60' : ''}>
       {/* ---------- Collapsed summary: when · what · where · for-whom · how-much ---------- */}
       <div className="p-5">
         {/* Time + temporal status. The date lives in the day header above the grid. */}
         <div className="flex items-start justify-between gap-3 mb-2">
-          <span className="font-sans font-bold text-base tabular-nums tracking-tight text-[var(--on-surface)]">
-            {event.start} – {event.end}
-          </span>
+          <div>
+            <span className={`font-sans font-bold text-base tabular-nums tracking-tight text-[var(--on-surface)] ${event.cancelled ? 'line-through' : ''}`}>
+              {event.start} – {event.end}
+            </span>
+            {/* Date range for multi-night cards — makes the card self-describing. */}
+            {nightCount > 1 && (
+              <div className="font-sans text-xs text-[var(--on-surface-variant)] mt-0.5 font-medium">
+                {formatEventDateRange(dates[0], dates[dates.length - 1])}
+              </div>
+            )}
+          </div>
           <div className="flex items-center gap-2 shrink-0">
+            {event.cancelled && (
+              <span className="px-2.5 py-0.5 rounded bg-red-600 text-white text-[10px] uppercase font-bold tracking-wider">
+                Cancelled
+              </span>
+            )}
             {event.status === 'draft' && (
               <span className="px-2 py-0.5 rounded bg-red-100 text-red-800 border border-red-200 text-[10px] uppercase font-bold tracking-wider">
                 Draft Preview
               </span>
             )}
-            <TemporalBadgeDisplay badge={badge} />
+            {!event.cancelled && <TemporalBadgeDisplay badge={badge} />}
           </div>
         </div>
 
@@ -171,7 +192,7 @@ export function EventCard({ event, isThisWeek, currentDate, currentTime }: Event
             on hover and always visible in Details below. */}
         <h3
           title={event.title}
-          className="font-serif text-xl font-bold tracking-tight text-[var(--on-surface)] leading-snug mb-1.5 truncate"
+          className={`font-serif text-xl font-bold tracking-tight text-[var(--on-surface)] leading-snug mb-1.5 truncate ${event.cancelled ? 'line-through' : ''}`}
         >
           {event.title}
         </h3>
@@ -182,7 +203,7 @@ export function EventCard({ event, isThisWeek, currentDate, currentTime }: Event
             href={mapsUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="font-bold text-[var(--on-surface)] underline decoration-[var(--outline)] underline-offset-4 hover:text-[var(--primary)] transition-colors"
+            className={`font-bold text-[var(--on-surface)] underline decoration-[var(--outline)] underline-offset-4 hover:text-[var(--primary)] transition-colors ${event.cancelled ? 'line-through' : ''}`}
           >
             {event.venue}
           </a>
@@ -191,11 +212,17 @@ export function EventCard({ event, isThisWeek, currentDate, currentTime }: Event
           )}
         </div>
 
-        {/* Compact pill row: style / for-whom / how-much */}
+        {/* Compact pill row: style / for-whom / how-much / nights */}
         <div className="flex flex-wrap items-center gap-2 font-sans">
           <span className={`px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider border ${getStyleColor(event.style)}`}>
             {getStyleLabel(event.style)}
           </span>
+          {nightCount > 1 && (
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-indigo-50 text-indigo-800 border border-indigo-200 text-[10px] uppercase font-bold tracking-wider whitespace-nowrap shrink-0">
+              <Moon className="w-3 h-3" />
+              {nightCount} nights
+            </span>
+          )}
           {event.beginnerClass && (
             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-green-50 text-green-800 border border-green-200 text-[10px] uppercase font-bold tracking-wider">
               <GraduationCap className="w-3 h-3" />
@@ -279,6 +306,7 @@ export function EventCard({ event, isThisWeek, currentDate, currentTime }: Event
           )}
         </>
       )}
+      </div>{/* end opacity wrapper */}
     </div>
   );
 }

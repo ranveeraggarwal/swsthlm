@@ -22,7 +22,7 @@ body:
     id: event_date
     attributes:
       label: Event date (YYYY-MM-DD)
-      placeholder: 2026-06-11
+      placeholder: "2026-06-11"
     validations:
       required: true
 

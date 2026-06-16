@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getTemporalBadge } from './datetime';
+import { getTemporalBadge, formatEventDateRange } from './datetime';
 
 describe('getTemporalBadge', () => {
   const today = '2025-05-20';
@@ -45,5 +45,30 @@ describe('getTemporalBadge', () => {
 
   it('returns null for future events not in the current week', () => {
     expect(getTemporalBadge('2025-05-30', '19:00', '22:00', today, '17:00', false)).toBe(null);
+  });
+});
+
+describe('formatEventDateRange', () => {
+  it('returns single-date format when both dates are equal', () => {
+    // Falls back to formatEventDate; result contains "Fri" and "Aug" for 2026-08-28.
+    const result = formatEventDateRange('2026-08-28', '2026-08-28');
+    expect(result).toContain('Aug');
+    expect(result).toContain('28');
+  });
+
+  it('formats same-month range as "Fri 28 & Sat 29 Aug"', () => {
+    const result = formatEventDateRange('2026-08-28', '2026-08-29');
+    // Should contain both days and the shared month abbreviation once at the end.
+    expect(result).toContain('28');
+    expect(result).toContain('29');
+    expect(result).toContain('Aug');
+    expect(result).toContain('&');
+  });
+
+  it('formats cross-month range with both month abbreviations', () => {
+    const result = formatEventDateRange('2026-07-31', '2026-08-01');
+    expect(result).toContain('Jul');
+    expect(result).toContain('Aug');
+    expect(result).toContain('&');
   });
 });

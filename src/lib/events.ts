@@ -160,6 +160,7 @@ const buildFeed = cache(async (lookbackDays: number): Promise<SwingEvent[]> => {
       id: occ.occurrenceId,
       title: occ.name,
       status: 'published',
+      cancelled: occ.cancelled,
       date: occ.date,
       start: occ.start,
       end: occ.end,
@@ -176,6 +177,8 @@ const buildFeed = cache(async (lookbackDays: number): Promise<SwingEvent[]> => {
       ticket: occ.url,
       body: occ.description ?? '',
       beginnerClass: occ.beginnerClass,
+      sourceType: occ.sourceType,
+      sourceId: occ.sourceId,
     };
   });
 });

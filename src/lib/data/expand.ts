@@ -80,8 +80,8 @@ export function expandSeries(
   if (series.status === 'draft' && !includeDrafts) return [];
 
   const windowEnd = addDays(opts.today, weeks * 7);
-  // Don't generate the past: clamp the lower bound to today.
-  const startBound = maxISO(series.validFrom, opts.today);
+  const lookbackStart = opts.lookbackDays ? addDays(opts.today, -opts.lookbackDays) : opts.today;
+  const startBound = maxISO(series.validFrom, lookbackStart);
   const endBound = minISO(series.validTo ?? windowEnd, windowEnd);
   if (startBound > endBound) return [];
 
@@ -135,13 +135,14 @@ export function expandOneoff(
 
   const cancelled = oneoff.status === 'cancelled';
   const last = oneoff.endDate ?? oneoff.date;
+  const lookbackStart = opts.lookbackDays ? addDays(opts.today, -opts.lookbackDays) : opts.today;
 
   const occurrences: Occurrence[] = [];
   let cursor = oneoff.date;
   while (cursor <= last) {
-    // Drop days already in the past; keep today and forward (no upper window —
-    // a one-off further out than the series horizon should still show).
-    if (cursor >= opts.today) {
+    // Drop days before the lookback window; keep today and forward (no upper
+    // window — a one-off further out than the series horizon should still show).
+    if (cursor >= lookbackStart) {
       occurrences.push({
         occurrenceId: `${oneoff.id}:${cursor}`,
         sourceId: oneoff.id,

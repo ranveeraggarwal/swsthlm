@@ -114,4 +114,5 @@ export interface ExpandOptions {
   today: string; // YYYY-MM-DD reference date (Europe/Stockholm)
   weeks?: number; // series expansion horizon; default 10
   includeDrafts?: boolean; // dev only; default false
+  lookbackDays?: number; // include past occurrences up to N days ago; default 0
 }

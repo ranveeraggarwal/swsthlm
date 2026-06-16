@@ -6,6 +6,7 @@
 
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
+import { cache } from 'react';
 import Papa from 'papaparse';
 import { SwingEvent } from '@/types/event';
 import { getStockholmCurrentDate } from '@/lib/datetime';
@@ -141,16 +142,16 @@ function styleForUi(style: Style): string {
   return style === 'lindy-hop' ? 'lindy' : style;
 }
 
-/**
- * Build-time event feed: expand /data into concrete occurrences and adapt them
- * to SwingEvent for the renderer. Past occurrences are already dropped by the
- * expansion (relative to the build date); the site rebuilds on push to main.
- */
-export async function getEvents(): Promise<SwingEvent[]> {
+// How far back to include past occurrences when pre-rendering permalink pages.
+// Keeps recently-shared URLs alive for 30 days after the event passes.
+const PERMALINK_LOOKBACK_DAYS = 30;
+
+const buildFeed = cache(async (lookbackDays: number): Promise<SwingEvent[]> => {
   const venues = loadVenues();
   const occurrences = expandAll(loadSeries(), loadExceptions(), loadOneoffs(), {
     today: getStockholmCurrentDate(),
     weeks: EXPANSION_WEEKS,
+    lookbackDays,
   });
 
   return occurrences.map((occ) => {
@@ -177,4 +178,11 @@ export async function getEvents(): Promise<SwingEvent[]> {
       beginnerClass: occ.beginnerClass,
     };
   });
-}
+});
+
+/** Upcoming events only — used by the homepage. */
+export const getEvents = () => buildFeed(0);
+
+/** Upcoming + recent past — used by permalink pages so recently-shared URLs
+ *  remain valid for PERMALINK_LOOKBACK_DAYS days after the event. */
+export const getPermalinkEvents = () => buildFeed(PERMALINK_LOOKBACK_DAYS);

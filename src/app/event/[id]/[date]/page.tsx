@@ -11,7 +11,7 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, MapPin, Music, Disc, Ticket, Banknote, GraduationCap } from 'lucide-react';
-import { getEvents } from '@/lib/events';
+import { getPermalinkEvents } from '@/lib/events';
 import { formatEventDate } from '@/lib/datetime';
 import type { Metadata } from 'next';
 import type { SwingEvent } from '@/types/event';
@@ -20,7 +20,7 @@ import type { SwingEvent } from '@/types/event';
 export const dynamicParams = false;
 
 export async function generateStaticParams() {
-  const events = await getEvents();
+  const events = await getPermalinkEvents();
   return events.map((event) => ({
     // occurrenceId is `${sourceId}:${date}`; split into the two route segments.
     id: event.id.split(':')[0],
@@ -34,7 +34,7 @@ export async function generateMetadata({
   params: Promise<{ id: string; date: string }>;
 }): Promise<Metadata> {
   const { id, date } = await params;
-  const events = await getEvents();
+  const events = await getPermalinkEvents();
   const event = events.find(
     (e) => e.id.split(':')[0] === id && e.date === date
   );
@@ -94,7 +94,7 @@ export default async function EventPage({
   params: Promise<{ id: string; date: string }>;
 }) {
   const { id, date } = await params;
-  const events = await getEvents();
+  const events = await getPermalinkEvents();
   const event: SwingEvent | undefined = events.find(
     (e) => e.id.split(':')[0] === id && e.date === date
   );

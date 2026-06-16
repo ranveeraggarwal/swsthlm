@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { MapPin, Music, Disc, Ticket, Banknote, GraduationCap, ChevronDown, Moon } from 'lucide-react';
 import { SwingEvent } from '@/types/event';
-import { getTemporalBadge, TemporalBadge } from '@/lib/datetime';
+import { getTemporalBadge, formatEventDateRange, TemporalBadge } from '@/lib/datetime';
 
 interface EventCardProps {
   event: SwingEvent;
@@ -157,9 +157,17 @@ export function EventCard({ event, dates, nightCount, isThisWeek, currentDate, c
       <div className="p-5">
         {/* Time + temporal status. The date lives in the day header above the grid. */}
         <div className="flex items-start justify-between gap-3 mb-2">
-          <span className="font-sans font-bold text-base tabular-nums tracking-tight text-[var(--on-surface)]">
-            {event.start} – {event.end}
-          </span>
+          <div>
+            <span className="font-sans font-bold text-base tabular-nums tracking-tight text-[var(--on-surface)]">
+              {event.start} – {event.end}
+            </span>
+            {/* Date range for multi-night cards — makes the card self-describing. */}
+            {nightCount > 1 && (
+              <div className="font-sans text-xs text-[var(--on-surface-variant)] mt-0.5 font-medium">
+                {formatEventDateRange(dates[0], dates[dates.length - 1])}
+              </div>
+            )}
+          </div>
           <div className="flex items-center gap-2 shrink-0">
             {event.status === 'draft' && (
               <span className="px-2 py-0.5 rounded bg-red-100 text-red-800 border border-red-200 text-[10px] uppercase font-bold tracking-wider">

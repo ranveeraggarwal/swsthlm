@@ -4,10 +4,13 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Search, CalendarDays, SlidersHorizontal, MapPin, Sparkles, Music } from 'lucide-react';
 import { SwingEvent, EventCard as EventCardType } from '@/types/event';
 import { EventCard } from './EventCard';
+import { EventRow } from './EventRow';
 import {
   isCurrentWeek,
   formatEventDate,
   formatEventDateRange,
+  getMonthKey,
+  formatMonthHeading,
   getStockholmCurrentDate,
   getStockholmCurrentTime,
 } from '@/lib/datetime';
@@ -131,14 +134,11 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
       }
     });
 
-    // Helper to group cards by their representative date (first night).
     const groupByDate = (list: EventCardType[]) => {
       const groups: Record<string, EventCardType[]> = {};
       list.forEach((card) => {
         const key = card.dates[0];
-        if (!groups[key]) {
-          groups[key] = [];
-        }
+        if (!groups[key]) groups[key] = [];
         groups[key].push(card);
       });
       return groups;
@@ -146,7 +146,7 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
 
     return {
       thisWeek: groupByDate(thisWeekCards),
-      upcoming: groupByDate(upcomingCards),
+      upcomingCards,
       hasThisWeek: thisWeekCards.length > 0,
       hasUpcoming: upcomingCards.length > 0,
     };
@@ -367,30 +367,35 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
                   </h2>
                 </div>
 
-                <div className="space-y-8">
-                  {Object.entries(eventSections.upcoming).map(([date, dateCards]) => (
-                    <div key={date} className="space-y-4">
-                      <h3 className="font-sans text-xs font-bold text-zinc-600 uppercase tracking-widest bg-[var(--surface-container-low)] py-1.5 px-3 rounded inline-block border border-[var(--surface-container-highest)]">
-                        {/* For multi-day cards, show the range in the section header. */}
-                        {dateCards.length === 1 && dateCards[0].nightCount > 1
-                          ? formatEventDateRange(dateCards[0].dates[0], dateCards[0].dates[dateCards[0].dates.length - 1])
-                          : formatEventDate(date)}
-                      </h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
-                        {dateCards.map((card) => (
-                          <EventCard
-                            key={card.event.id}
-                            event={card.event}
-                            dates={card.dates}
-                            nightCount={card.nightCount}
-                            isThisWeek={false}
-                            currentDate={currentDate}
-                            currentTime={currentTime}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  ))}
+                <div>
+                  {eventSections.upcomingCards.reduce<{ month: string; rows: React.ReactNode[] }>(
+                    (acc, card) => {
+                      const month = getMonthKey(card.dates[0]);
+                      if (month !== acc.month) {
+                        acc.rows.push(
+                          <div key={`month-${month}`} className="flex items-center gap-3 mt-6 first:mt-0 mb-2">
+                            <span className="font-sans text-xs font-bold text-zinc-400 uppercase tracking-widest whitespace-nowrap">
+                              {formatMonthHeading(month)}
+                            </span>
+                            <div className="flex-1 h-px bg-[var(--surface-container-highest)]" />
+                          </div>
+                        );
+                        acc.month = month;
+                      }
+                      acc.rows.push(
+                        <EventRow
+                          key={card.event.id}
+                          event={card.event}
+                          dates={card.dates}
+                          nightCount={card.nightCount}
+                          currentDate={currentDate}
+                          currentTime={currentTime}
+                        />
+                      );
+                      return acc;
+                    },
+                    { month: '', rows: [] }
+                  ).rows}
                 </div>
               </div>
             )}

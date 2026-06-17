@@ -255,8 +255,8 @@ venue registry.
 | Source | URL | Type → relevance | Notes |
 |---|---|---|---|
 | **Chicago** | `chicago75.se/evenemang` | swing-dance studio → `'all'` | Keep every event. (PR2 — see sequencing.) |
-| **S:ta Clara Bierhaus** | `staclara.se/calendar.html` | jazz/blues pub → `'genre'` | Implemented first (PR1). Events live in custom `<calendar-event>` elements under a month `<h2>` header; `BAND 19-22<BR>genre` lines. |
-| **Norrport** | `norrport.se/norrportlive` | venue | Live-music listings. |
+| **S:ta Clara Bierhaus** | `staclara.se/calendar.html` | jazz/blues pub → `'roster'` | Implemented (PR1). Events live in custom `<calendar-event>` elements under a month `<h2>` header; `BAND 19-22<BR>genre` lines. |
+| **Norrport** | `norrport.se/kalender/` | mixed venue → `'roster'` | Implemented (PR4). Grid of `.np-grid-card` divs; date from booking-button onclick; band name from title before `\|`. |
 | **Årstaliden** | `arstablick.com/Lindyhop.html` | Lindy night → `'all'` | Static list. |
 | **Swing Magnifique (band)** | `swingmagnifique.com/gigs` | band gig list → `'all'` | **Cross-venue** band aggregator — see below. |
 
@@ -349,5 +349,8 @@ screenshot parser. Both are **manual-assist** paths.
 - **PR3** (`feat/exception-proposals`, PR #83 — merged): EXCEPTION
   classification bucket; `exceptions.csv` surgical write; DJ name extraction
   from Chicago titles; `lib/exceptions.mjs` helpers.
+- **PR4** (`feat/norrport-scraper`): Norrport source (`relevance: 'roster'`);
+  date from booking-button onclick; curly-quote normalization; Old Boy Stompers
+  + Josefin's New Orleans Gang pre-seeded in `bands.csv`.
 - **Band/aggregator source:** its own later PR — it introduces the venue-map
   concern.

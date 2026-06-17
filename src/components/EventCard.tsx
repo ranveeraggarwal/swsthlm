@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { MapPin, Music, Disc, Ticket, GraduationCap, ChevronDown, Moon } from 'lucide-react';
 import { SwingEvent } from '@/types/event';
-import { getTemporalBadge, formatEventDateRange, TemporalBadge } from '@/lib/datetime';
+import { getTemporalBadge, formatEventDateRange, formatEventDateShort, TemporalBadge } from '@/lib/datetime';
 import { ShareButton } from '@/components/ShareButton';
 
 interface EventCardProps {
@@ -11,6 +11,7 @@ interface EventCardProps {
   /** Number of nights remaining in the expansion (1 for single-night cards). */
   nightCount: number;
   isThisWeek: boolean;
+  showDate?: boolean;
   currentDate: string;
   currentTime: string;
 }
@@ -70,7 +71,7 @@ function MusicHint({ type }: { type: 'live' | 'dj' }) {
   );
 }
 
-export function EventCard({ event, dates, nightCount, isThisWeek, currentDate, currentTime }: EventCardProps) {
+export function EventCard({ event, dates, nightCount, isThisWeek, showDate, currentDate, currentTime }: EventCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const badge = getTemporalBadge(
@@ -156,6 +157,13 @@ export function EventCard({ event, dates, nightCount, isThisWeek, currentDate, c
           {/* Time + music hints + temporal status */}
           <div className="flex items-start justify-between gap-3 mb-2">
             <div>
+              {(nightCount > 1 || showDate) && (
+                <div className="font-sans text-xs text-[var(--on-surface-variant)] mb-0.5 font-medium">
+                  {nightCount > 1
+                    ? formatEventDateRange(dates[0], dates[dates.length - 1])
+                    : formatEventDateShort(dates[0])}
+                </div>
+              )}
               <div className="flex items-center gap-2">
                 <span className={`font-sans font-bold text-base tabular-nums tracking-tight text-[var(--on-surface)] ${event.cancelled ? 'line-through' : ''}`}>
                   {event.start} – {event.end}
@@ -164,11 +172,6 @@ export function EventCard({ event, dates, nightCount, isThisWeek, currentDate, c
                   <MusicHint key={row.type} type={row.type} />
                 ))}
               </div>
-              {nightCount > 1 && (
-                <div className="font-sans text-xs text-[var(--on-surface-variant)] mt-0.5 font-medium">
-                  {formatEventDateRange(dates[0], dates[dates.length - 1])}
-                </div>
-              )}
             </div>
             <div className="flex items-center gap-2 shrink-0">
               {event.cancelled && (

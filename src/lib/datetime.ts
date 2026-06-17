@@ -56,6 +56,39 @@ export function isCurrentWeek(dateStr: string, referenceDateStr?: string): boole
 }
 
 /**
+ * Returns a "YYYY-MM" month key for grouping upcoming events by month.
+ */
+export function getMonthKey(dateStr: string): string {
+  return dateStr.slice(0, 7);
+}
+
+/**
+ * Formats a "YYYY-MM" month key into a heading, e.g. "June 2026".
+ */
+export function formatMonthHeading(monthKey: string): string {
+  try {
+    const date = new Date(`${monthKey}-01`);
+    if (isNaN(date.getTime())) return monthKey;
+    return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  } catch {
+    return monthKey;
+  }
+}
+
+/**
+ * Formats a YYYY-MM-DD string into a short date, e.g. "Wed 24 Jun".
+ */
+export function formatEventDateShort(dateStr: string): string {
+  try {
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return dateStr;
+    return date.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short' });
+  } catch {
+    return dateStr;
+  }
+}
+
+/**
  * Formats a YYYY-MM-DD string into a readable date, e.g. "Wednesday, Jun 3".
  */
 export function formatEventDate(dateStr: string): string {

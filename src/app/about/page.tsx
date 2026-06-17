@@ -1,11 +1,11 @@
 import React from 'react';
-import { Sparkles, Code } from 'lucide-react';
+import { Code } from 'lucide-react';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'About | Stockholm Swing',
   description:
-    'Stockholm\'s single, optimized calendar and aggregator for Lindy Hop, Balboa, Blues, and Shag dancing events and workshops.',
+    'One place for every Lindy Hop, Balboa, Blues, and Shag social, workshop, and jam in Stockholm.',
 };
 
 export default function AboutPage() {
@@ -13,20 +13,19 @@ export default function AboutPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
       <div className="max-w-2xl mx-auto">
         {/* Hero Title */}
-        <div className="mb-12 text-center">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded border border-[var(--primary)]/20 bg-[var(--primary)]/5 text-[var(--primary)] font-sans text-xs font-bold uppercase tracking-widest mb-4">
-            <Sparkles className="w-3.5 h-3.5" />
-            Stockholm&apos;s Swing Dance Aggregator
-          </div>
-          <h1 className="font-serif text-4xl md:text-5xl font-black tracking-tight text-[var(--on-surface)] leading-tight">
-            About Stockholm Swing
+        <div className="text-center mb-4 mt-0">
+          <h1 className="font-serif text-3xl md:text-4xl lg:text-5xl font-black tracking-tight text-[var(--on-surface)] leading-tight">
+            About <span className="italic font-normal">Stockholm Swing</span>
           </h1>
+          <p className="mt-1 font-sans text-xs md:text-sm text-[var(--on-surface-variant)] leading-relaxed max-w-md mx-auto">
+            One place for every social, workshop, and jam in Stockholm.
+          </p>
         </div>
 
-        {/* Intro Description Card - Static Neobrutalist Shadow */}
+        {/* Intro Description Card */}
         <div className="p-8 rounded-lg border-2 border-[var(--on-surface)] bg-[var(--surface-container-lowest)] shadow-[4px_4px_0px_0px_var(--on-surface)] mb-10 text-center">
-          <p className="font-serif text-xl md:text-2xl text-[var(--on-surface)] leading-relaxed italic text-[var(--on-surface-variant)]">
-            &ldquo;Your single, optimized calendar for Lindy Hop, Balboa, Blues, and Shag dancing events in Stockholm. Evoking the warm, tactile energy of vintage jazz halls.&rdquo;
+          <p className="font-serif text-xl md:text-2xl leading-relaxed italic text-[var(--on-surface-variant)]">
+            &ldquo;Every Lindy Hop, Balboa, Blues, and Shag event in Stockholm, so you spend less time scrolling and more time dancing.&rdquo;
           </p>
         </div>
 
@@ -53,8 +52,8 @@ export default function AboutPage() {
           <section>
             <h3 className="font-serif text-2xl font-bold text-[var(--on-surface)] mb-3">Open Source</h3>
             <p className="text-[15px] sm:text-base mb-4">
-              We love open source. Stockholm Swing is built in the open and released under the MIT License —
-              the entire site, its data, and the tools that maintain it live in a public GitHub repository.
+              We love open source. Stockholm Swing is built in the open and released under the MIT License.
+              The entire site, its data, and the tools that maintain it live in a public GitHub repository.
               If you&apos;d like to fix a listing, add a feature, or just see how it works, the code is right there.
               Contributions are welcome.
             </p>

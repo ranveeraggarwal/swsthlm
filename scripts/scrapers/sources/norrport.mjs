@@ -37,9 +37,12 @@ function parseTimeRange(text) {
 }
 
 function extractBand(title) {
-  return title.split('|')[0].trim()
+  let name = title.split('|')[0].trim()
     .replace(/[‘’]/g, "'")
     .replace(/[“”]/g, '"');
+  name = name.replace(/\s*(live\s+)?(at|på)\s+norrport!?\s*$/i, '');
+  name = name.replace(/^konsert\s+med\s+/i, '');
+  return name.trim();
 }
 
 export function parse(html) {

@@ -43,6 +43,13 @@ describe('norrport parser', () => {
   it('strips the venue suffix from titles', () => {
     expect(byDate['2026-06-18']?.band).toBe('Old Boy Stompers');
     expect(byDate['2026-06-17']?.band).toBe('Weyleyd');
+    // "på Norrport" suffix
+    expect(byDate['2026-07-04']?.band).toBe('En annan femma');
+    expect(byDate['2026-07-11']?.band).toBe('Bluesväder');
+    // "live at Norrport" suffix
+    expect(byDate['2026-07-15']?.band).toBe('Siberian Hotheads');
+    // "Konsert med" prefix
+    expect(byDate['2026-06-24']?.band).toBe('Larmet och Beckius, Bratt & Hansson');
   });
 
   it('skips cards without a booking button (STÄNGT/closed)', () => {

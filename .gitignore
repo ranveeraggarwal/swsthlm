@@ -42,3 +42,10 @@ next-env.d.ts
 
 # agent images
 *.png
+
+# claude code
+.claude/
+
+# scraper reports
+new-bands-report.md
+scrape-report.md

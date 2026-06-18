@@ -156,7 +156,10 @@ async function main() {
         for (const c of future) {
           const res = classify(c.band || c.name, roster);
           if (res.status === 'trusted') {
-            kept.push(c); // trust the band regardless of how the night is billed
+            if (res.band?.style && res.band.style !== 'all') {
+              c.style = res.band.style;
+            }
+            kept.push(c);
             continue;
           }
           if (res.status !== 'new') { dropped += 1; continue; } // rejected or pending

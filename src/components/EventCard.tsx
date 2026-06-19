@@ -30,10 +30,10 @@ function TemporalBadgeDisplay({ badge }: { badge: TemporalBadge }) {
           Happening Now
         </span>
       );
-    case 'just-ended':
+    case 'ended':
       return (
-        <span className="px-2.5 py-0.5 rounded bg-[var(--surface-container-high)] text-[var(--on-surface-variant)] text-[11px] uppercase font-bold tracking-wider border border-[var(--outline-variant)]">
-          Just Ended
+        <span className="px-2.5 py-0.5 rounded bg-zinc-200 text-zinc-500 text-[11px] uppercase font-bold tracking-wider border border-zinc-300">
+          Ended
         </span>
       );
     case 'tonight':
@@ -115,8 +115,8 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
     switch (badge) {
       case 'happening-now':
         return 'bg-red-600';
-      case 'just-ended':
-        return '';
+      case 'ended':
+        return 'bg-zinc-300';
       case 'tonight':
         return 'bg-[var(--primary)]';
       case 'tomorrow':
@@ -143,7 +143,7 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
   const hasPills = nightCount > 1 || !!event.beginnerClass;
 
   return (
-    <div className={`relative lift-card rounded border-2 overflow-hidden flex flex-col text-[var(--on-surface)] ${event.cancelled ? 'border-red-400 bg-red-50/40' : 'border-[var(--on-surface)] bg-[var(--surface-container-low)]'} ${!event.cancelled && badge === 'happening-now' ? 'ring-2 ring-red-500/30' : ''}`}>
+    <div className={`relative lift-card rounded border-2 overflow-hidden flex flex-col text-[var(--on-surface)] ${event.cancelled ? 'border-red-400 bg-red-50/40' : badge === 'ended' ? 'border-zinc-300 bg-zinc-50' : 'border-[var(--on-surface)] bg-[var(--surface-container-low)]'} ${!event.cancelled && badge === 'happening-now' ? 'ring-2 ring-red-500/30' : ''}`}>
       {/* Highlighting border/accent stripe — red for cancelled, temporal colour otherwise */}
       {event.cancelled ? (
         <div className="absolute top-0 left-0 right-0 h-1.5 bg-red-500" />
@@ -151,7 +151,7 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
         <div className={`absolute top-0 left-0 right-0 h-1.5 ${getStripeColor()}`} />
       )}
 
-      <div className={event.cancelled ? 'opacity-60' : ''}>
+      <div className={event.cancelled ? 'opacity-60' : badge === 'ended' ? 'opacity-50' : ''}>
         {/* ---------- Collapsed summary ---------- */}
         <div className="p-5">
           {/* Time + music hints + temporal status */}

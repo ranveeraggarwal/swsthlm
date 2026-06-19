@@ -17,12 +17,19 @@ describe('getTemporalBadge', () => {
     expect(getTemporalBadge(today, '20:00', '01:00', today, '00:30', true)).toBe('happening-now');
   });
 
-  it('returns "just-ended" when the event finished earlier today', () => {
+  it('returns "ended" when the event finished earlier today', () => {
     // Finished at 17:00, current time 18:00
-    expect(getTemporalBadge(today, '14:00', '17:00', today, '18:00', true)).toBe('just-ended');
+    expect(getTemporalBadge(today, '14:00', '17:00', today, '18:00', true)).toBe('ended');
   });
 
-  it('does NOT return "just-ended" for overnight events that have not passed midnight', () => {
+  it('returns "ended" for events on past dates', () => {
+    // Yesterday's event
+    expect(getTemporalBadge('2025-05-19', '19:00', '22:00', today, '17:00', true)).toBe('ended');
+    // Earlier in the week
+    expect(getTemporalBadge('2025-05-18', '19:00', '22:00', today, '17:00', true)).toBe('ended');
+  });
+
+  it('does NOT return "ended" for overnight events that have not passed midnight', () => {
     // 20:00 - 01:00 event, at 22:00 today. It is "happening-now".
     expect(getTemporalBadge(today, '20:00', '01:00', today, '22:00', true)).toBe('happening-now');
 

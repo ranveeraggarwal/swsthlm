@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { MapPin, Music, Disc, Ticket, GraduationCap, Moon, ChevronDown, Banknote } from 'lucide-react';
 import { SwingEvent } from '@/types/event';
-import { formatEventDateRange } from '@/lib/datetime';
 import { ShareButton } from '@/components/ShareButton';
 
 interface EventRowProps {

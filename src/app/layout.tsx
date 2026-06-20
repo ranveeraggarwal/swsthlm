@@ -3,6 +3,7 @@ import { Playfair_Display, Plus_Jakarta_Sans } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
+import { InstallToast } from '@/components/InstallToast';
 import './globals.css';
 
 const playfair = Playfair_Display({
@@ -60,6 +61,7 @@ export default function RootLayout({
           </main>
           <Footer />
         </div>
+        <InstallToast />
         <Analytics />
       </body>
     </html>

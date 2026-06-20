@@ -1,4 +1,5 @@
 import React from 'react';
+import { FreshnessSignal } from './FreshnessSignal';
 
 export function Footer() {
   return (
@@ -10,8 +11,9 @@ export function Footer() {
             Not affiliated with any specific studio. Built to support the local Stockholm swing dance community.
           </p>
         </div>
-        <div className="flex gap-6 uppercase font-bold tracking-wider text-[11px] text-[var(--on-surface-variant)]">
+        <div className="flex flex-col items-end gap-2 uppercase font-bold tracking-wider text-[11px] text-[var(--on-surface-variant)]">
           <span>Stockholm, Sweden</span>
+          <FreshnessSignal />
         </div>
       </div>
     </footer>

@@ -13,6 +13,7 @@ import Link from 'next/link';
 import { ArrowLeft, MapPin, Music, Disc, Ticket, Banknote, GraduationCap } from 'lucide-react';
 import { getPermalinkEvents } from '@/lib/events';
 import { formatEventDate } from '@/lib/datetime';
+import { singleEventJsonLd } from '@/lib/jsonld';
 import type { Metadata } from 'next';
 import type { SwingEvent } from '@/types/event';
 
@@ -117,6 +118,10 @@ export default async function EventPage({
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 w-full">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: singleEventJsonLd(event) }}
+      />
       {/* Back navigation */}
       <Link
         href="/"

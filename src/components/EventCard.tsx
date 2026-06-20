@@ -143,7 +143,15 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
   const hasPills = nightCount > 1 || !!event.beginnerClass;
 
   return (
-    <div className={`relative lift-card rounded border-2 overflow-hidden flex flex-col text-[var(--on-surface)] ${event.cancelled ? 'border-red-400 bg-red-50/40' : badge === 'ended' ? 'border-zinc-300 bg-zinc-50' : 'border-[var(--on-surface)] bg-[var(--surface-container-low)]'} ${!event.cancelled && badge === 'happening-now' ? 'ring-2 ring-red-500/30' : ''}`}>
+    <div
+      className={`relative lift-card rounded border-2 overflow-hidden flex flex-col text-[var(--on-surface)] cursor-pointer ${event.cancelled ? 'border-red-400 bg-red-50/40' : badge === 'ended' ? 'border-zinc-300 bg-zinc-50' : 'border-[var(--on-surface)] bg-[var(--surface-container-low)]'} ${!event.cancelled && badge === 'happening-now' ? 'ring-2 ring-red-500/30' : ''}`}
+      onClick={() => setIsExpanded((v) => !v)}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setIsExpanded((v) => !v); } }}
+      role="button"
+      tabIndex={0}
+      aria-expanded={isExpanded}
+      aria-label={`${event.title}, ${isExpanded ? 'hide' : 'show'} details`}
+    >
       {/* Highlighting border/accent stripe — red for cancelled, temporal colour otherwise */}
       {event.cancelled ? (
         <div className="absolute top-0 left-0 right-0 h-1.5 bg-red-500" />
@@ -202,6 +210,7 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
               href={mapsUrl}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
               className={`font-bold text-[var(--on-surface)] underline decoration-[var(--outline)] underline-offset-4 hover:text-[var(--primary)] transition-colors ${event.cancelled ? 'line-through' : ''}`}
             >
               {event.venue}
@@ -233,21 +242,16 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
               )}
             </div>
           )}
+
+          {/* Inline expand/collapse indicator */}
+          <div className="flex items-center gap-1.5 mt-3 font-sans text-xs font-bold uppercase tracking-wider text-[var(--on-surface-variant)]">
+            <ChevronDown className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+            {isExpanded ? 'Hide details' : 'Details'}
+          </div>
         </div>
 
-        {/* ---------- Expandable details (style always shown here) ---------- */}
-        <button
-          type="button"
-          onClick={() => setIsExpanded((v) => !v)}
-          aria-expanded={isExpanded}
-          className="flex items-center gap-1.5 w-full border-t-2 border-[var(--on-surface)] px-5 py-2.5 font-sans text-xs font-bold uppercase tracking-wider text-[var(--on-surface-variant)] hover:bg-[var(--surface-container)] transition-colors cursor-pointer"
-        >
-          <ChevronDown className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
-          {isExpanded ? 'Hide details' : 'Details'}
-        </button>
-
         {isExpanded && (
-          <div className="border-t-2 border-[var(--on-surface)] p-5 space-y-3 font-sans">
+          <div className="border-t-2 border-[var(--on-surface)] p-5 space-y-3 font-sans" onClick={(e) => e.stopPropagation()}>
             {/* Style */}
             <div>
               <span className={`px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider border ${getStyleColor(event.style)}`}>

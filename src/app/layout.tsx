@@ -19,7 +19,19 @@ const jakarta = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   metadataBase: new URL('https://stockholmswing.com'),
   title: 'Stockholm Swing',
+  themeColor: '#a03b00',
   description: 'Lindy Hop, Balboa, Shag, and Blues social dancing in Stockholm.',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'STHLM Swing',
+  },
+  other: {
+    'mobile-web-app-capable': 'yes',
+  },
+  icons: {
+    apple: '/icons/apple-touch-icon.png',
+  },
   openGraph: {
     siteName: 'Stockholm Swing',
     locale: 'en',

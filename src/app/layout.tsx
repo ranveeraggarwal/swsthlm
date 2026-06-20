@@ -20,6 +20,14 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://stockholmswing.com'),
   title: 'Stockholm Swing',
   description: 'Lindy Hop, Balboa, Shag, and Blues social dancing in Stockholm.',
+  openGraph: {
+    siteName: 'Stockholm Swing',
+    locale: 'en',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+  },
 };
 
 export default function RootLayout({

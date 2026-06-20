@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';
-import { Search, CalendarDays, SlidersHorizontal, MapPin, Sparkles, Music } from 'lucide-react';
+import { Search, CalendarDays, SlidersHorizontal, MapPin, Sparkles, Music, X } from 'lucide-react';
 import { SwingEvent, EventCard as EventCardType } from '@/types/event';
 import { EventCard } from './EventCard';
 import { EventRow } from './EventRow';
@@ -181,7 +181,7 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
     }
 
     return <>Showing <strong>{message}</strong></>;
-  }, [totalCount, selectedStyle, selectedVenue, searchQuery, hasActiveFilters]);
+  }, [totalCount, selectedStyle, selectedVenue, searchQuery, hasActiveFilters, liveMusicOnly]);
 
   return (
     <div className="w-full">
@@ -233,8 +233,18 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
                 placeholder="Search by band, DJ, venue, title..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-11 pr-4 py-3.5 bg-transparent border-0 text-[var(--on-surface)] placeholder-[var(--outline)] focus:outline-none focus:ring-0 font-sans font-body-md"
+                className="w-full pl-11 pr-10 py-3.5 bg-transparent border-0 text-[var(--on-surface)] placeholder-[var(--outline)] focus:outline-none focus:ring-0 font-sans font-body-md"
               />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  aria-label="Clear search"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--outline)] hover:text-[var(--on-surface)] transition-colors cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              )}
             </div>
 
             {/* Style & Music Filters */}

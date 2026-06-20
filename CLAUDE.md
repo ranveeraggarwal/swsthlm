@@ -24,5 +24,4 @@ If anything in this file conflicts with `docs/DATA.md` or `docs/PROJECT.md`, tho
 
 ## Known user-visible bugs (verify against live site first — caching lies)
 
-- Danshuset renders twice as two identical ~400-word cards (should be one card, Fri+Sat). Tracked as `#48`.
-- Event cards only clickable via the "Expand" text, not the full card surface. Tracked as `#87`.
+None currently tracked. (Previously: #48 Danshuset duplicate cards — fixed; #87 card clickability — fixed.)

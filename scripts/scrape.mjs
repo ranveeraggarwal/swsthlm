@@ -25,8 +25,9 @@ import { EXCEPTION_FIELDS, resolveOccurrence, computeExceptionChanges } from './
 import * as staclara from './scrapers/sources/staclara.mjs';
 import * as chicago from './scrapers/sources/chicago.mjs';
 import * as norrport from './scrapers/sources/norrport.mjs';
+import * as arstaliden from './scrapers/sources/arstaliden.mjs';
 
-const SOURCES = [staclara, chicago, norrport];
+const SOURCES = [staclara, chicago, norrport, arstaliden];
 
 const DATA_DIR = path.join(process.cwd(), 'data');
 const ONEOFFS_PATH = path.join(DATA_DIR, 'oneoffs.csv');

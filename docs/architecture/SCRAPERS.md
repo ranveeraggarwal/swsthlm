@@ -257,8 +257,8 @@ venue registry.
 | **Chicago** | `chicago75.se/evenemang` | swing-dance studio → `'all'` | Keep every event. (PR2 — see sequencing.) |
 | **S:ta Clara Bierhaus** | `staclara.se/calendar.html` | jazz/blues pub → `'roster'` | Implemented (PR1). Events live in custom `<calendar-event>` elements under a month `<h2>` header; `BAND 19-22<BR>genre` lines. |
 | **Norrport** | `norrport.se/kalender/` | mixed venue → `'roster'` | Implemented (PR4). Grid of `.np-grid-card` divs; date from booking-button onclick; band name from title before `\|`. |
-| **Årstaliden** | `arstablick.com/Lindyhop.html` | Lindy night → `'all'` | Static list. |
-| **Swing Magnifique (band)** | `swingmagnifique.com/gigs` | band gig list → `'all'` | **Cross-venue** band aggregator — see below. |
+| **Årstaliden** | `arstablick.com/Lindyhop.html` | Lindy night → `'all'` | Implemented (PR5). Static `<li>` list; year from page text ("sommaren 2026"); `parse(html, refDate)` for test determinism. |
+| **Swing Magnifique (band)** | `swingmagnifique.com/gigs` | band gig list → `'all'` | **Hand-entered** — Bandzoogle page structure is complex and fragile; gigs added directly to `oneoffs.csv`. Cross-venue (Georgian House, S:t Eriks Jazzbar). |
 
 None of these expose a usable ICS/iCal feed, so **v1 is HTML parsing**.
 
@@ -352,5 +352,7 @@ screenshot parser. Both are **manual-assist** paths.
 - **PR4** (`feat/norrport-scraper`): Norrport source (`relevance: 'roster'`);
   date from booking-button onclick; curly-quote normalization; Old Boy Stompers
   + Josefin's New Orleans Gang pre-seeded in `bands.csv`.
-- **Band/aggregator source:** its own later PR — it introduces the venue-map
-  concern.
+- **PR5** (`feat/arstaliden-magnifique-scrapers`): Årstaliden source
+  (`relevance: 'all'`, year from page text). Swing Magnifique gigs added as
+  hand-entered one-offs (Georgian House + S:t Eriks Jazzbar venues added).
+  Workflow updated to include `exceptions.csv` in the events PR's `add-paths`.

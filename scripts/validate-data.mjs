@@ -65,6 +65,7 @@ const SCHEMA = {
 const SOFT_EMPTY = {
   series: new Set(['price']),
   venues: new Set(['neighborhood']),
+  oneoffs: new Set(['end']),
 };
 
 const WEEKDAY_BY_INDEX = [

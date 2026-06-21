@@ -30,7 +30,9 @@ jobs:
         with:
           branch: bot/scrape
           base: main
-          add-paths: data/oneoffs.csv
+          add-paths: |
+            data/oneoffs.csv
+            data/exceptions.csv
           commit-message: 'chore(data): scraped event proposals'
           title: 'Scraped events: review'
           body-path: scrape-report.md

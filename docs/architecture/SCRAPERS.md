@@ -257,8 +257,8 @@ venue registry.
 | **Chicago** | `chicago75.se/evenemang` | swing-dance studio → `'all'` | Keep every event. (PR2 — see sequencing.) |
 | **S:ta Clara Bierhaus** | `staclara.se/calendar.html` | jazz/blues pub → `'roster'` | Implemented (PR1). Events live in custom `<calendar-event>` elements under a month `<h2>` header; `BAND 19-22<BR>genre` lines. |
 | **Norrport** | `norrport.se/kalender/` | mixed venue → `'roster'` | Implemented (PR4). Grid of `.np-grid-card` divs; date from booking-button onclick; band name from title before `\|`. |
-| **Årstaliden** | `arstablick.com/Lindyhop.html` | Lindy night → `'all'` | Static list. |
-| **Swing Magnifique (band)** | `swingmagnifique.com/gigs` | band gig list → `'all'` | **Cross-venue** band aggregator — see below. |
+| **Årstaliden** | `arstablick.com/Lindyhop.html` | Lindy night → `'all'` | Implemented (PR5). Static `<li>` list; year from page text ("sommaren 2026"); `parse(html, refDate)` for test determinism. |
+| **Swing Magnifique (band)** | `swingmagnifique.com/gigs` | band gig list → `'all'` | Implemented (PR5). **Cross-venue** band aggregator with `VENUE_MAP`; unknown venues flagged in report. Bandzoogle calendar table; AM/PM → 24h time; year from ref-month heuristic. |
 
 None of these expose a usable ICS/iCal feed, so **v1 is HTML parsing**.
 
@@ -352,5 +352,8 @@ screenshot parser. Both are **manual-assist** paths.
 - **PR4** (`feat/norrport-scraper`): Norrport source (`relevance: 'roster'`);
   date from booking-button onclick; curly-quote normalization; Old Boy Stompers
   + Josefin's New Orleans Gang pre-seeded in `bands.csv`.
-- **Band/aggregator source:** its own later PR — it introduces the venue-map
-  concern.
+- **PR5** (`feat/arstaliden-magnifique-scrapers`): Årstaliden source
+  (`relevance: 'all'`, year from page text) + Swing Magnifique band-aggregator
+  source (`relevance: 'all'`, cross-venue with `VENUE_MAP`). Introduces the
+  venue-map pattern and unmapped-venue reporting in the runner. Workflow updated
+  to include `exceptions.csv` in the events PR's `add-paths`.

@@ -395,7 +395,9 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
                 <div className="flex items-center gap-3 mb-6 border-b border-[var(--surface-container-highest)] pb-3">
                   <CalendarDays className="w-5 h-5 text-zinc-600" />
                   <h2 className="font-serif text-3xl font-bold tracking-tight text-[var(--on-surface)]">
-                    Upcoming <span className="italic">Events</span>
+                    {eventSections.showNextWeek
+                      ? <><span className="italic">Later</span></>
+                      : <>Upcoming <span className="italic">Events</span></>}
                   </h2>
                 </div>
 

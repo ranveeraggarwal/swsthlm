@@ -26,9 +26,8 @@ import * as staclara from './scrapers/sources/staclara.mjs';
 import * as chicago from './scrapers/sources/chicago.mjs';
 import * as norrport from './scrapers/sources/norrport.mjs';
 import * as arstaliden from './scrapers/sources/arstaliden.mjs';
-import * as swingmagnifique from './scrapers/sources/swingmagnifique.mjs';
 
-const SOURCES = [staclara, chicago, norrport, arstaliden, swingmagnifique];
+const SOURCES = [staclara, chicago, norrport, arstaliden];
 
 const DATA_DIR = path.join(process.cwd(), 'data');
 const ONEOFFS_PATH = path.join(DATA_DIR, 'oneoffs.csv');
@@ -127,21 +126,13 @@ async function main() {
   const candidates = [];
   const sourceNotes = [];
   const newActs = new Map(); // normalized band name -> { name, venueId, date, genre }
-  const unmappedVenues = []; // band-aggregator sources flag venues not in venues.csv
   let pastFiltered = 0;
 
   for (const src of SOURCES) {
     try {
       const got = await src.scrape();
-      if (got.unknownVenues?.length) {
-        for (const v of got.unknownVenues) {
-          unmappedVenues.push({ source: src.label, ...v });
-        }
-      }
-      if (got.length === 0 && !got.unknownVenues?.length) {
+      if (got.length === 0) {
         sourceNotes.push(`⚠️ ${src.label}: returned 0 events — check the source`);
-      } else if (got.length === 0) {
-        // Got events but all at unmapped venues — not a dead source.
       }
       // Drop past candidates up front — neither events nor new-act discovery
       // should surface anything already over.
@@ -158,11 +149,7 @@ async function main() {
       let kept;
       if (src.relevance === 'all') {
         kept = future;
-        const unmappedCount = got.unknownVenues?.length ?? 0;
-        const note = unmappedCount
-          ? `${src.label}: ${kept.length} event(s) + ${unmappedCount} at unmapped venue(s)`
-          : `${src.label}: ${kept.length} event(s) [trusted venue]`;
-        sourceNotes.push(note);
+        sourceNotes.push(`${src.label}: ${kept.length} event(s) [trusted venue]`);
       } else if (src.relevance === 'roster') {
         kept = [];
         let newCount = 0;
@@ -306,7 +293,7 @@ async function main() {
   const newErrors = afterErrors.filter((e) => !baseErrors.has(e));
   const preexisting = afterErrors.filter((e) => baseErrors.has(e));
 
-  const report = buildReport({ added, updated, addedExceptions, updatedExceptions, skipped, pastFiltered, sourceNotes, errors: newErrors, preexisting, unmappedVenues });
+  const report = buildReport({ added, updated, addedExceptions, updatedExceptions, skipped, pastFiltered, sourceNotes, errors: newErrors, preexisting });
   const newBandsReport = buildNewBandsReport(newBandRows);
   writeFileSync(REPORT_PATH, report);
   writeFileSync(NEWBANDS_REPORT_PATH, newBandsReport);
@@ -335,7 +322,7 @@ async function main() {
   console.log(`\nWrote ${added.length} new + ${updated.length} updated event(s); ${exceptionChanges} exception change(s); ${bandChanges} new act(s) to data/bands.csv`);
 }
 
-function buildReport({ added, updated, addedExceptions, updatedExceptions, skipped, pastFiltered, sourceNotes, errors, preexisting, unmappedVenues }) {
+function buildReport({ added, updated, addedExceptions, updatedExceptions, skipped, pastFiltered, sourceNotes, errors, preexisting }) {
   const lines = ['## Scraped events — review', ''];
   lines.push(...sourceNotes.map((n) => `- ${n}`), '');
 
@@ -363,13 +350,6 @@ function buildReport({ added, updated, addedExceptions, updatedExceptions, skipp
     for (const c of changes) lines.push(`  - ${c}`);
   }
   lines.push('', `_Skipped ${skipped} already on the calendar; ${pastFiltered} past-dated._`);
-
-  if (unmappedVenues?.length) {
-    lines.push('', `### 📍 Unmapped venues (${unmappedVenues.length}) — need \`venues.csv\` rows`);
-    for (const v of unmappedVenues) {
-      lines.push(`- "${v.location}" (${v.source}, ${v.date}) — \`${v.eventName}\``);
-    }
-  }
 
   if (errors.length) {
     lines.push('', '### ❌ Schema errors introduced by this scrape (not written)');

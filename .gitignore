@@ -42,6 +42,7 @@ next-env.d.ts
 
 # agent images
 *.png
+!public/icons/*.png
 
 # claude code
 .claude/

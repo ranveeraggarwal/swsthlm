@@ -1,6 +1,7 @@
 import React from 'react';
 import { getEvents } from '@/lib/events';
 import { getStockholmCurrentDate, getStockholmCurrentTime } from '@/lib/datetime';
+import { eventsJsonLd } from '@/lib/jsonld';
 import { EventFilters } from '@/components/EventFilters';
 import type { Metadata } from 'next';
 
@@ -27,6 +28,10 @@ export default async function Page() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: eventsJsonLd(events) }}
+      />
       {/* Compact Hero */}
       <div className="text-center max-w-2xl mx-auto mb-4 mt-0">
         <h1 className="font-serif text-3xl md:text-4xl lg:text-5xl font-black tracking-tight text-[var(--on-surface)] leading-tight">

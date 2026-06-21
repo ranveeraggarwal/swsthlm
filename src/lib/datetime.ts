@@ -56,6 +56,46 @@ export function isCurrentWeek(dateStr: string, referenceDateStr?: string): boole
 }
 
 /**
+ * Checks if a YYYY-MM-DD date falls within "Next Week" (the Monday–Sunday
+ * block immediately following the current week).
+ */
+export function isNextWeek(dateStr: string, referenceDateStr?: string): boolean {
+  try {
+    const refDate = referenceDateStr ? new Date(referenceDateStr) : new Date();
+    refDate.setHours(0, 0, 0, 0);
+
+    const targetDate = new Date(dateStr);
+    targetDate.setHours(0, 0, 0, 0);
+
+    if (isNaN(targetDate.getTime())) return false;
+
+    const day = refDate.getDay();
+    const diffToMonday = day === 0 ? -6 : 1 - day;
+    const startOfThisWeek = new Date(refDate);
+    startOfThisWeek.setDate(refDate.getDate() + diffToMonday);
+
+    const startOfNextWeek = new Date(startOfThisWeek);
+    startOfNextWeek.setDate(startOfThisWeek.getDate() + 7);
+
+    const endOfNextWeek = new Date(startOfNextWeek);
+    endOfNextWeek.setDate(startOfNextWeek.getDate() + 6);
+    endOfNextWeek.setHours(23, 59, 59, 999);
+
+    return targetDate >= startOfNextWeek && targetDate <= endOfNextWeek;
+  } catch (error) {
+    console.error('Error calculating isNextWeek:', error);
+    return false;
+  }
+}
+
+/**
+ * Returns true if the reference date is a Sunday.
+ */
+export function isSunday(referenceDateStr: string): boolean {
+  return new Date(referenceDateStr).getDay() === 0;
+}
+
+/**
  * Returns a "YYYY-MM" month key for grouping upcoming events by month.
  */
 export function getMonthKey(dateStr: string): string {
@@ -177,11 +217,11 @@ export function isHappeningNow(
 /**
  * Temporal badge types in priority order.
  */
-export type TemporalBadge = 'happening-now' | 'just-ended' | 'tonight' | 'tomorrow' | 'this-week' | null;
+export type TemporalBadge = 'happening-now' | 'ended' | 'tonight' | 'tomorrow' | 'this-week' | null;
 
 /**
  * Returns the appropriate temporal badge for an event.
- * Priority: HAPPENING NOW > JUST ENDED > TONIGHT > TOMORROW > THIS WEEK > null
+ * Priority: ENDED (past date) > HAPPENING NOW > ENDED (today, finished) > TONIGHT > TOMORROW > THIS WEEK > null
  */
 export function getTemporalBadge(
   dateStr: string,
@@ -191,16 +231,19 @@ export function getTemporalBadge(
   referenceTime: string,
   isThisWeek: boolean
 ): TemporalBadge {
+  if (dateStr < referenceDateStr) {
+    return 'ended';
+  }
   if (isToday(dateStr, referenceDateStr)) {
     if (isHappeningNow(dateStr, startTime, endTime, referenceDateStr, referenceTime)) {
       return 'happening-now';
     }
 
-    // Just Ended: today, not happening now, and the end time has passed.
+    // Ended: today, not happening now, and the end time has passed.
     // We only flag this for same-day events (endTime >= startTime);
-    // overnight events are treated as not-yet-ended for the "Just Ended" badge.
+    // overnight events are treated as not-yet-ended.
     if (endTime >= startTime && referenceTime > endTime) {
-      return 'just-ended';
+      return 'ended';
     }
 
     return 'tonight';

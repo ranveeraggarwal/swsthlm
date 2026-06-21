@@ -1,12 +1,15 @@
 'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';
-import { Search, CalendarDays, SlidersHorizontal, MapPin, Sparkles, Music } from 'lucide-react';
+import { Search, CalendarDays, SlidersHorizontal, MapPin, Sparkles, Music, X } from 'lucide-react';
 import { SwingEvent, EventCard as EventCardType } from '@/types/event';
 import { EventCard } from './EventCard';
 import { EventRow } from './EventRow';
+import { SubscribeButton } from './SubscribeButton';
 import {
   isCurrentWeek,
+  isNextWeek,
+  isSunday,
   formatEventDate,
   formatEventDateRange,
   getMonthKey,
@@ -118,21 +121,32 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
   const groupedCards = useMemo(() => groupMultiDayOneoffs(filteredEvents), [filteredEvents]);
 
   // Group event cards by their representative date (first night) into
-  // "This Week" vs "Upcoming".
+  // "This Week" / "Next Week" vs "Upcoming".
+  // On Sundays, or when the current week has zero events, we promote next
+  // week's events into the highlighted section so people can plan ahead.
   const eventSections = useMemo(() => {
     const REFERENCE_DATE = currentDate;
 
     const thisWeekCards: EventCardType[] = [];
+    const nextWeekCards: EventCardType[] = [];
     const upcomingCards: EventCardType[] = [];
 
     groupedCards.forEach((card) => {
-      // Use first night's date as the representative date for section placement.
-      if (isCurrentWeek(card.dates[0], REFERENCE_DATE)) {
+      const d = card.dates[0];
+      if (isCurrentWeek(d, REFERENCE_DATE)) {
         thisWeekCards.push(card);
+      } else if (isNextWeek(d, REFERENCE_DATE)) {
+        nextWeekCards.push(card);
       } else {
         upcomingCards.push(card);
       }
     });
+
+    const showNextWeek = isSunday(REFERENCE_DATE) || thisWeekCards.length === 0;
+    const highlightedCards = showNextWeek
+      ? [...thisWeekCards, ...nextWeekCards]
+      : thisWeekCards;
+    const finalUpcoming = showNextWeek ? upcomingCards : [...nextWeekCards, ...upcomingCards];
 
     const groupByDate = (list: EventCardType[]) => {
       const groups: Record<string, EventCardType[]> = {};
@@ -145,10 +159,11 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
     };
 
     return {
-      thisWeek: groupByDate(thisWeekCards),
-      upcomingCards,
-      hasThisWeek: thisWeekCards.length > 0,
-      hasUpcoming: upcomingCards.length > 0,
+      thisWeek: groupByDate(highlightedCards),
+      upcomingCards: finalUpcoming,
+      hasThisWeek: highlightedCards.length > 0,
+      hasUpcoming: finalUpcoming.length > 0,
+      showNextWeek,
     };
   }, [groupedCards, currentDate]);
 
@@ -181,16 +196,19 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
     }
 
     return <>Showing <strong>{message}</strong></>;
-  }, [totalCount, selectedStyle, selectedVenue, searchQuery, hasActiveFilters]);
+  }, [totalCount, selectedStyle, selectedVenue, searchQuery, hasActiveFilters, liveMusicOnly]);
 
   return (
     <div className="w-full">
       {/* Top Status and Toggle for Filters */}
       <div className="flex items-center justify-between mb-8 pb-4 border-b border-[var(--surface-container-highest)] font-sans text-xs text-zinc-500 uppercase tracking-wider font-semibold">
         <span>{filterStatusMessage}</span>
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-1">
+          <SubscribeButton />
           <button
             onClick={() => setIsFilterExpanded(!isFilterExpanded)}
+            aria-expanded={isFilterExpanded}
+            aria-controls="filters-panel"
             className={`flex items-center gap-1.5 hover:underline font-bold transition-colors cursor-pointer ${
               isFilterExpanded ? 'text-[var(--primary)]' : 'text-[var(--secondary)]'
             }`}
@@ -216,7 +234,7 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
 
       {/* Search and Filters panel - Collapsible */}
       {isFilterExpanded && (
-        <div className="border border-[var(--surface-container-highest)] bg-[var(--surface-container-low)] rounded-lg p-6 mb-12 shadow-sm animate-in fade-in slide-in-from-top-2 duration-200">
+        <div id="filters-panel" className="border border-[var(--surface-container-highest)] bg-[var(--surface-container-low)] rounded-lg p-6 mb-12 shadow-sm animate-in fade-in slide-in-from-top-2 duration-200">
           <div className="flex flex-col gap-6">
             <div className="flex items-center gap-3 border-b border-[var(--surface-container-highest)] pb-4 mb-2">
               <SlidersHorizontal className="w-5 h-5 text-[var(--secondary)]" />
@@ -227,14 +245,25 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
 
             {/* Search Bar - Premium Neobrutalist Block Container */}
             <div className="relative w-full bg-[var(--surface-container-lowest)] border-2 border-[var(--on-surface)] rounded shadow-[2px_2px_0px_var(--on-surface)] transition-all focus-within:shadow-[4px_4px_0px_var(--primary)] focus-within:-translate-x-0.5 focus-within:-translate-y-0.5">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--outline)]" />
+              <Search aria-hidden="true" className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--outline)]" />
               <input
                 type="text"
+                aria-label="Search events"
                 placeholder="Search by band, DJ, venue, title..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-11 pr-4 py-3.5 bg-transparent border-0 text-[var(--on-surface)] placeholder-[var(--outline)] focus:outline-none focus:ring-0 font-sans font-body-md"
+                className="w-full pl-11 pr-10 py-3.5 bg-transparent border-0 text-[var(--on-surface)] placeholder-[var(--outline)] focus:outline-none focus:ring-0 font-sans font-body-md"
               />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  aria-label="Clear search"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--outline)] hover:text-[var(--on-surface)] transition-colors cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              )}
             </div>
 
             {/* Style & Music Filters */}
@@ -249,6 +278,7 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
                       <button
                         key={style}
                         onClick={() => setSelectedStyle(style)}
+                        aria-pressed={selectedStyle === style}
                         className={`snap-start whitespace-nowrap px-4 py-2 rounded text-xs font-bold uppercase tracking-wider border-2 border-[var(--on-surface)] transition-all cursor-pointer ${
                           selectedStyle === style
                             ? 'bg-[var(--primary)] text-white font-bold shadow-[2px_2px_0px_0px_var(--on-surface)] -translate-y-0.5 -translate-x-0.5'
@@ -268,6 +298,7 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
                 </span>
                 <button
                   onClick={() => setLiveMusicOnly(!liveMusicOnly)}
+                  aria-pressed={liveMusicOnly}
                   className={`w-full whitespace-nowrap px-4 py-2 rounded text-xs font-bold uppercase tracking-wider border-2 border-[var(--on-surface)] transition-all cursor-pointer flex items-center justify-center gap-2 ${
                     liveMusicOnly
                       ? 'bg-amber-500 text-white font-bold shadow-[2px_2px_0px_0px_var(--on-surface)] -translate-y-0.5 -translate-x-0.5'
@@ -291,6 +322,7 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
                     <button
                       key={venue}
                       onClick={() => setSelectedVenue(venue)}
+                      aria-pressed={selectedVenue === venue}
                       className={`snap-start whitespace-nowrap px-4 py-2 rounded text-xs font-bold uppercase tracking-wider border-2 border-[var(--on-surface)] transition-all cursor-pointer ${
                         selectedVenue === venue
                           ? 'bg-[var(--secondary)] text-white font-bold shadow-[2px_2px_0px_0px_var(--on-surface)] -translate-y-0.5 -translate-x-0.5'
@@ -325,7 +357,9 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
                 <div className="flex items-center gap-3 mb-6 border-b border-[var(--surface-container-highest)] pb-3">
                   <CalendarDays className="w-5 h-5 text-[var(--primary)]" />
                   <h2 className="font-serif text-3xl font-bold tracking-tight text-[var(--on-surface)]">
-                    Happening <span className="italic">This Week</span>
+                    {eventSections.showNextWeek
+                      ? <><span className="italic">Coming Up</span></>
+                      : <>Happening <span className="italic">This Week</span></>}
                   </h2>
                 </div>
 
@@ -345,7 +379,7 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
                             event={card.event}
                             dates={card.dates}
                             nightCount={card.nightCount}
-                            isThisWeek={true}
+                            isThisWeek={isCurrentWeek(card.dates[0], currentDate)}
                             currentDate={currentDate}
                             currentTime={currentTime}
                           />
@@ -363,7 +397,9 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
                 <div className="flex items-center gap-3 mb-6 border-b border-[var(--surface-container-highest)] pb-3">
                   <CalendarDays className="w-5 h-5 text-zinc-600" />
                   <h2 className="font-serif text-3xl font-bold tracking-tight text-[var(--on-surface)]">
-                    Upcoming <span className="italic">Events</span>
+                    {eventSections.showNextWeek
+                      ? <><span className="italic">Later</span></>
+                      : <>Upcoming <span className="italic">Events</span></>}
                   </h2>
                 </div>
 

@@ -3,6 +3,7 @@ import { Playfair_Display, Plus_Jakarta_Sans } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
+import { InstallToast } from '@/components/InstallToast';
 import './globals.css';
 
 const playfair = Playfair_Display({
@@ -19,7 +20,27 @@ const jakarta = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   metadataBase: new URL('https://stockholmswing.com'),
   title: 'Stockholm Swing',
+  themeColor: '#a03b00',
   description: 'Lindy Hop, Balboa, Shag, and Blues social dancing in Stockholm.',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'STHLM Swing',
+  },
+  other: {
+    'mobile-web-app-capable': 'yes',
+  },
+  icons: {
+    apple: '/icons/apple-touch-icon.png',
+  },
+  openGraph: {
+    siteName: 'Stockholm Swing',
+    locale: 'en',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+  },
 };
 
 export default function RootLayout({
@@ -40,6 +61,7 @@ export default function RootLayout({
           </main>
           <Footer />
         </div>
+        <InstallToast />
         <Analytics />
       </body>
     </html>

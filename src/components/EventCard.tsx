@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MapPin, Music, Disc, Ticket, GraduationCap, ChevronDown, Moon } from 'lucide-react';
+import { MapPin, Music, Disc, Ticket, GraduationCap, ChevronDown, Moon, Banknote } from 'lucide-react';
 import { SwingEvent } from '@/types/event';
 import { getTemporalBadge, formatEventDateRange, formatEventDateShort, TemporalBadge } from '@/lib/datetime';
 import { ShareButton } from '@/components/ShareButton';
@@ -30,10 +30,10 @@ function TemporalBadgeDisplay({ badge }: { badge: TemporalBadge }) {
           Happening Now
         </span>
       );
-    case 'just-ended':
+    case 'ended':
       return (
-        <span className="px-2.5 py-0.5 rounded bg-[var(--surface-container-high)] text-[var(--on-surface-variant)] text-[11px] uppercase font-bold tracking-wider border border-[var(--outline-variant)]">
-          Just Ended
+        <span className="px-2.5 py-0.5 rounded bg-zinc-200 text-zinc-500 text-[11px] uppercase font-bold tracking-wider border border-zinc-300">
+          Ended
         </span>
       );
     case 'tonight':
@@ -115,8 +115,8 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
     switch (badge) {
       case 'happening-now':
         return 'bg-red-600';
-      case 'just-ended':
-        return '';
+      case 'ended':
+        return 'bg-zinc-300';
       case 'tonight':
         return 'bg-[var(--primary)]';
       case 'tomorrow':
@@ -140,10 +140,17 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
   }
 
   const byLine = [event.organizer && `By ${event.organizer}`, event.address].filter(Boolean).join(' · ');
-  const hasPills = nightCount > 1 || !!event.beginnerClass;
 
   return (
-    <div className={`relative lift-card rounded border-2 overflow-hidden flex flex-col text-[var(--on-surface)] ${event.cancelled ? 'border-red-400 bg-red-50/40' : 'border-[var(--on-surface)] bg-[var(--surface-container-low)]'} ${!event.cancelled && badge === 'happening-now' ? 'ring-2 ring-red-500/30' : ''}`}>
+    <div
+      className={`relative lift-card rounded border-2 overflow-hidden flex flex-col text-[var(--on-surface)] cursor-pointer ${event.cancelled ? 'border-red-400 bg-red-50/40' : badge === 'ended' ? 'border-zinc-300 bg-zinc-50' : 'border-[var(--on-surface)] bg-[var(--surface-container-low)]'} ${!event.cancelled && badge === 'happening-now' ? 'ring-2 ring-red-500/30' : ''}`}
+      onClick={() => setIsExpanded((v) => !v)}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setIsExpanded((v) => !v); } }}
+      role="button"
+      tabIndex={0}
+      aria-expanded={isExpanded}
+      aria-label={`${event.title}, ${isExpanded ? 'hide' : 'show'} details`}
+    >
       {/* Highlighting border/accent stripe — red for cancelled, temporal colour otherwise */}
       {event.cancelled ? (
         <div className="absolute top-0 left-0 right-0 h-1.5 bg-red-500" />
@@ -151,7 +158,7 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
         <div className={`absolute top-0 left-0 right-0 h-1.5 ${getStripeColor()}`} />
       )}
 
-      <div className={event.cancelled ? 'opacity-60' : ''}>
+      <div className={event.cancelled ? 'opacity-60' : badge === 'ended' ? 'opacity-50' : ''}>
         {/* ---------- Collapsed summary ---------- */}
         <div className="p-5">
           {/* Time + music hints + temporal status */}
@@ -196,12 +203,13 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
             {event.title}
           </h3>
 
-          {/* Venue · neighborhood · price (all inline) */}
-          <div className={`text-sm ${hasPills ? 'mb-3.5' : 'mb-1'}`}>
+          {/* Venue · neighborhood */}
+          <div className="text-sm mb-3.5">
             <a
               href={mapsUrl}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
               className={`font-bold text-[var(--on-surface)] underline decoration-[var(--outline)] underline-offset-4 hover:text-[var(--primary)] transition-colors ${event.cancelled ? 'line-through' : ''}`}
             >
               {event.venue}
@@ -209,52 +217,44 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
             {event.neighborhood && (
               <span className="text-[var(--outline)]"> · {event.neighborhood}</span>
             )}
+          </div>
+
+          {/* Chips: style, price, multi-night, beginner */}
+          <div className="flex flex-wrap items-center gap-2 font-sans">
+            <span className={`inline-flex items-center px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${getStyleColor(event.style)}`}>
+              {getStyleLabel(event.style)}
+            </span>
             {priceDisplay && (
-              <span className="text-[var(--outline)]"> · {priceDisplay}</span>
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-[var(--surface-container)] text-[var(--on-surface-variant)] border border-[var(--surface-container-highest)] text-[10px] font-bold uppercase tracking-wider">
+                <Banknote className="w-3 h-3" />
+                {priceDisplay}
+              </span>
+            )}
+            {nightCount > 1 && (
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-indigo-50 text-indigo-800 border border-indigo-200 text-[10px] uppercase font-bold tracking-wider whitespace-nowrap shrink-0">
+                <Moon className="w-3 h-3" />
+                {nightCount} nights
+              </span>
+            )}
+            {event.beginnerClass && (
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-green-50 text-green-800 border border-green-200 text-[10px] uppercase font-bold tracking-wider">
+                <GraduationCap className="w-3 h-3" />
+                {event.beginnerClass.toLowerCase() === 'yes'
+                  ? 'Beginner friendly'
+                  : `Beginner class ${event.beginnerClass}`}
+              </span>
             )}
           </div>
 
-          {/* Pills: multi-night + beginner only */}
-          {hasPills && (
-            <div className="flex flex-wrap items-center gap-2 font-sans">
-              {nightCount > 1 && (
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-indigo-50 text-indigo-800 border border-indigo-200 text-[10px] uppercase font-bold tracking-wider whitespace-nowrap shrink-0">
-                  <Moon className="w-3 h-3" />
-                  {nightCount} nights
-                </span>
-              )}
-              {event.beginnerClass && (
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-green-50 text-green-800 border border-green-200 text-[10px] uppercase font-bold tracking-wider">
-                  <GraduationCap className="w-3 h-3" />
-                  {event.beginnerClass.toLowerCase() === 'yes'
-                    ? 'Beginner friendly'
-                    : `Beginner class ${event.beginnerClass}`}
-                </span>
-              )}
-            </div>
-          )}
+          {/* Inline expand/collapse indicator */}
+          <div className="flex items-center gap-1.5 mt-3 font-sans text-xs font-bold uppercase tracking-wider text-[var(--on-surface-variant)]">
+            <ChevronDown className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+            {isExpanded ? 'Hide details' : 'Details'}
+          </div>
         </div>
 
-        {/* ---------- Expandable details (style always shown here) ---------- */}
-        <button
-          type="button"
-          onClick={() => setIsExpanded((v) => !v)}
-          aria-expanded={isExpanded}
-          className="flex items-center gap-1.5 w-full border-t-2 border-[var(--on-surface)] px-5 py-2.5 font-sans text-xs font-bold uppercase tracking-wider text-[var(--on-surface-variant)] hover:bg-[var(--surface-container)] transition-colors cursor-pointer"
-        >
-          <ChevronDown className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
-          {isExpanded ? 'Hide details' : 'Details'}
-        </button>
-
         {isExpanded && (
-          <div className="border-t-2 border-[var(--on-surface)] p-5 space-y-3 font-sans">
-            {/* Style */}
-            <div>
-              <span className={`px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider border ${getStyleColor(event.style)}`}>
-                {getStyleLabel(event.style)}
-              </span>
-            </div>
-
+          <div className="border-t-2 border-[var(--on-surface)] p-5 space-y-3 font-sans" onClick={(e) => e.stopPropagation()}>
             {/* Performers */}
             {musicRows.some((r) => r.name) && (
               <div className="space-y-1 font-sans">

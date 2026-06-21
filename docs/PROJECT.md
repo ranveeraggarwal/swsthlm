@@ -1,6 +1,6 @@
 # Stockholm Swing — Project Plan
 
-**Repo:** `ranveeraggarwal/swsthlm` · **Site:** stockholmswing.com · **Last revised:** 2026-06-15
+**Repo:** `ranveeraggarwal/swsthlm` · **Site:** stockholmswing.com · **Last revised:** 2026-06-20
 
 ## 1. Vision
 
@@ -65,7 +65,7 @@ User accounts, an organizer dashboard, a database, machine translation of descri
 
 GitHub issue numbers are authoritative. Priorities: P0 = do first, P1 = high value, P2 = when convenient. ✓ = merged/closed.
 
-**State as of 2026-06-15:** M4 foundation complete (CSV migration, series expansion, CI validation, server-side rendering, Chrome extension retired). M1 substantially complete (price/beginner/music badges, stale-date lint, hide TBA, style rename, Just Ended badge). Nightly scraper live for S:ta Clara and Chicago, with exception-proposal logic. Google Form live (linked in §2); Form → PR sync Action (#5) still to build. ICS feed (#8) is the highest-leverage open feature.
+**State as of 2026-06-20:** M1 complete. M2 substantially complete — JSON-LD (#10), event permalinks + share (#11), and OG image (#12) all shipped; only ICS feed (#8) and per-event add-to-calendar (#9) remain. M3 progressing — filter state in URL (#21) and neighborhood tags (#25) done alongside the earlier H1/SEO work. M4 foundation complete; nightly scraper live for S:ta Clara and Chicago with exception-proposal logic; Form → PR sync (#5) still to build. M5 partially started (CONTRIBUTING.md, open-source About section). Next highest-leverage open items: ICS feed (#8), per-event calendar (#9), Form → PR sync (#5).
 
 | # | Issue | Milestone | Priority | |
 |---|---|---|---|---|
@@ -76,40 +76,50 @@ GitHub issue numbers are authoritative. Priorities: P0 = do first, P1 = high val
 | 5 | Google Form → PR sync Action | M4 | P1 | open |
 | 6 | Weekly health-report Action | M4 | P2 | open |
 | 7 | Server-side data loading; remove runtime CSV fetch | M2 | P0 | ✓ |
-| 8 | ICS subscription feed (webcal) | M2 | P0 | open |
+| 8 | ICS subscription feed (webcal) | M2 | P2 | open |
 | 9 | Per-event "Add to calendar" (.ics) | M2 | P1 | open |
-| 10 | JSON-LD Event structured data | M2 | P1 | open |
-| 11 | Event permalinks + share button | M2 | P1 | open |
-| 12 | OG image for link unfurls | M2 | P2 | open |
+| 10 | JSON-LD Event structured data | M2 | P2 | ✓ |
+| 11 | Event permalinks + share button | M2 | P1 | ✓ |
+| 12 | OG image for link unfurls | M2 | P1 | ✓ |
 | 13 | Strip/flag stale dates in scraped descriptions | M1 | P0 | ✓ |
-| 14 | Collapse multi-day runs of the same event into one card | M1 | P1 | open |
+| 14 | Collapse multi-day runs of the same event into one card | M1 | P1 | ✓ |
 | 15 | Hide TBA fields | M1 | P1 | ✓ |
 | 16 | Structured price field + badge | M1 | P0 | ✓ |
 | 17 | Beginner-class / beginner-friendly badge | M1 | P0 | ✓ |
 | 18 | Promote live-band vs DJ to badge | M1 | P1 | ✓ |
-| 19 | Cancelled event state | M1 | P1 | open |
+| 19 | Cancelled event state | M1 | P1 | ✓ |
 | 20 | Rename "All Swing Styles" tag | M1 | P2 | ✓ |
-| 21 | Filter state in URL | M3 | P1 | open |
+| 21 | Filter state in URL | M3 | P2 | ✓ |
 | 22 | Day filter / day-jump strip | M3 | P2 | open |
 | 23 | Designed empty states | M3 | P2 | open |
 | 24 | "Updated X ago" freshness signal | M3 | P2 | open |
-| 25 | Neighborhood tags on venues | M3 | P2 | open |
-| 26 | Accessibility & heading-hierarchy pass | M3 | P1 | open |
+| 25 | Neighborhood tags on venues | M3 | P2 | ✓ |
+| 26 | Accessibility & heading-hierarchy pass | M3 | P2 | open |
 | 27 | PWA manifest + icons | M3 | P2 | open |
 | 28 | "Wrong info?" report link per card | M5 | P1 | open |
 | 29 | CONTRIBUTING.md + data contract docs | M5 | P1 | ✓ |
-| 30 | HANDOVER.md, org migration, second maintainer | M5 | P1 | open |
+| 30 | HANDOVER.md, org migration, second maintainer | M5 | P2 | open |
 | 31 | Recruit per-venue stewards | M5 | P2 | open |
 | 44 | "Just Ended" badge for events earlier today | M1 | P1 | ✓ |
 | 45 | Open-source / GitHub section on About page | M5 | P2 | ✓ |
-| 48 | Merge multi-day one-offs into a single card | M1 | P1 | open |
-| 56 | Move Beginner Class badge position | M1 | P2 | open |
+| 48 | Merge multi-day one-offs into a single card | M1 | P1 | ✓ |
+| 50 | Add Lindyhop events from Årstaliden | M4 | P1 | ✓ |
+| 52 | Sprallen neighborhood fix | M1 | P2 | ✓ |
+| 56 | Move Beginner Class badge position | M1 | P2 | ✓ |
+| 58 | Swingout scrolling animation | M3 | P2 | open |
+| 59 | Dancefloor size tags on venues | M3 | P2 | open |
+| 60 | Resources page | M3 | P1 | open |
 | 61 | Events visible before filter/hero section (layout fix) | M1 | P1 | ✓ |
 | 66 | Field-level provenance for scraper-owned rows | M4 | P1 | open |
 | 69 | Chicago scraper source | M4 | P1 | ✓ |
 | 73 | Dynamic rotating H1 on homepage | M3 | P1 | ✓ |
 | 74 | SEO: homepage `<title>` and `<meta description>` | M3 | P2 | ✓ |
 | 82 | Scraper proposes exceptions when a series event changes | M4 | P1 | ✓ |
+| 87 | Event cards should be fully clickable | M1 | P1 | ✓ |
+| 88 | Meta fixes (issue template form link) | M5 | P0 | ✓ |
+| 93 | Clash detection between overlapping events | M4 | P2 | open |
+| 94 | Easier SSS event addition workflow | M4 | P1 | open |
+| 107 | Fix ended events so data validation succeeds | M4 | P0 | ✓ |
 
 ## 6. Operating cadence (post-M4 steady state)
 

@@ -189,3 +189,12 @@ export const getEvents = () => buildFeed(0);
 /** Upcoming + recent past — used by permalink pages so recently-shared URLs
  *  remain valid for PERMALINK_LOOKBACK_DAYS days after the event. */
 export const getPermalinkEvents = () => buildFeed(PERMALINK_LOOKBACK_DAYS);
+
+// How far back the ICS subscription feed keeps past occurrences. A calendar
+// subscription syncs both ways: if an event drops out of the feed, the client
+// deletes it. So we keep a year of history — events a subscriber has already
+// seen stay put in their calendar instead of vanishing on the next refresh.
+const CALENDAR_LOOKBACK_DAYS = 365;
+
+/** Upcoming + a year of past occurrences — used by the ICS subscription feed. */
+export const getCalendarEvents = () => buildFeed(CALENDAR_LOOKBACK_DAYS);

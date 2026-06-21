@@ -86,6 +86,12 @@ body {
   overflow-x: hidden;
 }
 
+/* Global focus-visible indicator for keyboard accessibility */
+*:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
 /* Custom Scrollbar for Vintage Palette */
 ::-webkit-scrollbar {
   width: 8px;
@@ -133,7 +139,8 @@ body {
   box-shadow: 2px 2px 0px 0px var(--on-surface);
 }
 
-.lift-card:hover {
+.lift-card:hover,
+.lift-card:focus-visible {
   transform: translate(-4px, -4px);
   box-shadow: 6px 6px 0px 0px var(--on-surface);
   border-color: var(--on-surface);
@@ -145,7 +152,8 @@ body {
   box-shadow: 2px 2px 0px 0px var(--on-surface);
 }
 
-.lift-btn-primary:hover {
+.lift-btn-primary:hover,
+.lift-btn-primary:focus-visible {
   transform: translate(-2px, -2px);
   box-shadow: 4px 4px 0px 0px var(--on-surface);
 }

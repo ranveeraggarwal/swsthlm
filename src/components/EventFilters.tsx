@@ -5,6 +5,7 @@ import { Search, CalendarDays, SlidersHorizontal, MapPin, Sparkles, Music, X } f
 import { SwingEvent, EventCard as EventCardType } from '@/types/event';
 import { EventCard } from './EventCard';
 import { EventRow } from './EventRow';
+import { SubscribeButton } from './SubscribeButton';
 import {
   isCurrentWeek,
   isNextWeek,
@@ -202,7 +203,8 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
       {/* Top Status and Toggle for Filters */}
       <div className="flex items-center justify-between mb-8 pb-4 border-b border-[var(--surface-container-highest)] font-sans text-xs text-zinc-500 uppercase tracking-wider font-semibold">
         <span>{filterStatusMessage}</span>
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-1">
+          <SubscribeButton />
           <button
             onClick={() => setIsFilterExpanded(!isFilterExpanded)}
             aria-expanded={isFilterExpanded}

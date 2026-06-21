@@ -56,6 +56,46 @@ export function isCurrentWeek(dateStr: string, referenceDateStr?: string): boole
 }
 
 /**
+ * Checks if a YYYY-MM-DD date falls within "Next Week" (the Monday–Sunday
+ * block immediately following the current week).
+ */
+export function isNextWeek(dateStr: string, referenceDateStr?: string): boolean {
+  try {
+    const refDate = referenceDateStr ? new Date(referenceDateStr) : new Date();
+    refDate.setHours(0, 0, 0, 0);
+
+    const targetDate = new Date(dateStr);
+    targetDate.setHours(0, 0, 0, 0);
+
+    if (isNaN(targetDate.getTime())) return false;
+
+    const day = refDate.getDay();
+    const diffToMonday = day === 0 ? -6 : 1 - day;
+    const startOfThisWeek = new Date(refDate);
+    startOfThisWeek.setDate(refDate.getDate() + diffToMonday);
+
+    const startOfNextWeek = new Date(startOfThisWeek);
+    startOfNextWeek.setDate(startOfThisWeek.getDate() + 7);
+
+    const endOfNextWeek = new Date(startOfNextWeek);
+    endOfNextWeek.setDate(startOfNextWeek.getDate() + 6);
+    endOfNextWeek.setHours(23, 59, 59, 999);
+
+    return targetDate >= startOfNextWeek && targetDate <= endOfNextWeek;
+  } catch (error) {
+    console.error('Error calculating isNextWeek:', error);
+    return false;
+  }
+}
+
+/**
+ * Returns true if the reference date is a Sunday.
+ */
+export function isSunday(referenceDateStr: string): boolean {
+  return new Date(referenceDateStr).getDay() === 0;
+}
+
+/**
  * Returns a "YYYY-MM" month key for grouping upcoming events by month.
  */
 export function getMonthKey(dateStr: string): string {

@@ -7,6 +7,8 @@ import { EventCard } from './EventCard';
 import { EventRow } from './EventRow';
 import {
   isCurrentWeek,
+  isNextWeek,
+  isSunday,
   formatEventDate,
   formatEventDateRange,
   getMonthKey,
@@ -118,21 +120,32 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
   const groupedCards = useMemo(() => groupMultiDayOneoffs(filteredEvents), [filteredEvents]);
 
   // Group event cards by their representative date (first night) into
-  // "This Week" vs "Upcoming".
+  // "This Week" / "Next Week" vs "Upcoming".
+  // On Sundays, or when the current week has zero events, we promote next
+  // week's events into the highlighted section so people can plan ahead.
   const eventSections = useMemo(() => {
     const REFERENCE_DATE = currentDate;
 
     const thisWeekCards: EventCardType[] = [];
+    const nextWeekCards: EventCardType[] = [];
     const upcomingCards: EventCardType[] = [];
 
     groupedCards.forEach((card) => {
-      // Use first night's date as the representative date for section placement.
-      if (isCurrentWeek(card.dates[0], REFERENCE_DATE)) {
+      const d = card.dates[0];
+      if (isCurrentWeek(d, REFERENCE_DATE)) {
         thisWeekCards.push(card);
+      } else if (isNextWeek(d, REFERENCE_DATE)) {
+        nextWeekCards.push(card);
       } else {
         upcomingCards.push(card);
       }
     });
+
+    const showNextWeek = isSunday(REFERENCE_DATE) || thisWeekCards.length === 0;
+    const highlightedCards = showNextWeek
+      ? [...thisWeekCards, ...nextWeekCards]
+      : thisWeekCards;
+    const finalUpcoming = showNextWeek ? upcomingCards : [...nextWeekCards, ...upcomingCards];
 
     const groupByDate = (list: EventCardType[]) => {
       const groups: Record<string, EventCardType[]> = {};
@@ -145,10 +158,11 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
     };
 
     return {
-      thisWeek: groupByDate(thisWeekCards),
-      upcomingCards,
-      hasThisWeek: thisWeekCards.length > 0,
-      hasUpcoming: upcomingCards.length > 0,
+      thisWeek: groupByDate(highlightedCards),
+      upcomingCards: finalUpcoming,
+      hasThisWeek: highlightedCards.length > 0,
+      hasUpcoming: finalUpcoming.length > 0,
+      showNextWeek,
     };
   }, [groupedCards, currentDate]);
 
@@ -341,7 +355,7 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
                 <div className="flex items-center gap-3 mb-6 border-b border-[var(--surface-container-highest)] pb-3">
                   <CalendarDays className="w-5 h-5 text-[var(--primary)]" />
                   <h2 className="font-serif text-3xl font-bold tracking-tight text-[var(--on-surface)]">
-                    Happening <span className="italic">This Week</span>
+                    Happening <span className="italic">{eventSections.showNextWeek ? 'Next Week' : 'This Week'}</span>
                   </h2>
                 </div>
 
@@ -361,7 +375,7 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
                             event={card.event}
                             dates={card.dates}
                             nightCount={card.nightCount}
-                            isThisWeek={true}
+                            isThisWeek={isCurrentWeek(card.dates[0], currentDate)}
                             currentDate={currentDate}
                             currentTime={currentTime}
                           />

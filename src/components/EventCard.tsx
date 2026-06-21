@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MapPin, Music, Disc, Ticket, GraduationCap, ChevronDown, Moon } from 'lucide-react';
+import { MapPin, Music, Disc, Ticket, GraduationCap, ChevronDown, Moon, Banknote } from 'lucide-react';
 import { SwingEvent } from '@/types/event';
 import { getTemporalBadge, formatEventDateRange, formatEventDateShort, TemporalBadge } from '@/lib/datetime';
 import { ShareButton } from '@/components/ShareButton';
@@ -140,7 +140,6 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
   }
 
   const byLine = [event.organizer && `By ${event.organizer}`, event.address].filter(Boolean).join(' · ');
-  const hasPills = nightCount > 1 || !!event.beginnerClass;
 
   return (
     <div
@@ -204,8 +203,8 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
             {event.title}
           </h3>
 
-          {/* Venue · neighborhood · price (all inline) */}
-          <div className={`text-sm ${hasPills ? 'mb-3.5' : 'mb-1'}`}>
+          {/* Venue · neighborhood */}
+          <div className="text-sm mb-3.5">
             <a
               href={mapsUrl}
               target="_blank"
@@ -218,30 +217,34 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
             {event.neighborhood && (
               <span className="text-[var(--outline)]"> · {event.neighborhood}</span>
             )}
-            {priceDisplay && (
-              <span className="text-[var(--outline)]"> · {priceDisplay}</span>
-            )}
           </div>
 
-          {/* Pills: multi-night + beginner only */}
-          {hasPills && (
-            <div className="flex flex-wrap items-center gap-2 font-sans">
-              {nightCount > 1 && (
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-indigo-50 text-indigo-800 border border-indigo-200 text-[10px] uppercase font-bold tracking-wider whitespace-nowrap shrink-0">
-                  <Moon className="w-3 h-3" />
-                  {nightCount} nights
-                </span>
-              )}
-              {event.beginnerClass && (
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-green-50 text-green-800 border border-green-200 text-[10px] uppercase font-bold tracking-wider">
-                  <GraduationCap className="w-3 h-3" />
-                  {event.beginnerClass.toLowerCase() === 'yes'
-                    ? 'Beginner friendly'
-                    : `Beginner class ${event.beginnerClass}`}
-                </span>
-              )}
-            </div>
-          )}
+          {/* Chips: style, price, multi-night, beginner */}
+          <div className="flex flex-wrap items-center gap-2 font-sans">
+            <span className={`inline-flex items-center px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${getStyleColor(event.style)}`}>
+              {getStyleLabel(event.style)}
+            </span>
+            {priceDisplay && (
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-[var(--surface-container)] text-[var(--on-surface-variant)] border border-[var(--surface-container-highest)] text-[10px] font-bold uppercase tracking-wider">
+                <Banknote className="w-3 h-3" />
+                {priceDisplay}
+              </span>
+            )}
+            {nightCount > 1 && (
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-indigo-50 text-indigo-800 border border-indigo-200 text-[10px] uppercase font-bold tracking-wider whitespace-nowrap shrink-0">
+                <Moon className="w-3 h-3" />
+                {nightCount} nights
+              </span>
+            )}
+            {event.beginnerClass && (
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-green-50 text-green-800 border border-green-200 text-[10px] uppercase font-bold tracking-wider">
+                <GraduationCap className="w-3 h-3" />
+                {event.beginnerClass.toLowerCase() === 'yes'
+                  ? 'Beginner friendly'
+                  : `Beginner class ${event.beginnerClass}`}
+              </span>
+            )}
+          </div>
 
           {/* Inline expand/collapse indicator */}
           <div className="flex items-center gap-1.5 mt-3 font-sans text-xs font-bold uppercase tracking-wider text-[var(--on-surface-variant)]">
@@ -252,13 +255,6 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
 
         {isExpanded && (
           <div className="border-t-2 border-[var(--on-surface)] p-5 space-y-3 font-sans" onClick={(e) => e.stopPropagation()}>
-            {/* Style */}
-            <div>
-              <span className={`px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider border ${getStyleColor(event.style)}`}>
-                {getStyleLabel(event.style)}
-              </span>
-            </div>
-
             {/* Performers */}
             {musicRows.some((r) => r.name) && (
               <div className="space-y-1 font-sans">

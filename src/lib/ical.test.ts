@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildCalendar } from './ical';
+import { buildCalendar, buildSingleEventCalendar } from './ical';
 import type { SwingEvent } from '@/types/event';
 
 const baseEvent = (overrides: Partial<SwingEvent> = {}): SwingEvent => ({
@@ -128,5 +128,44 @@ describe('buildCalendar', () => {
     });
     expect(ics.match(/BEGIN:VEVENT/g)).toHaveLength(2);
     expect(ics.match(/END:VEVENT/g)).toHaveLength(2);
+  });
+});
+
+describe('buildSingleEventCalendar', () => {
+  const buildSingle = (e: SwingEvent) =>
+    buildSingleEventCalendar(e, { siteUrl: SITE, now: new Date('2026-06-17T00:00:00Z') });
+
+  it('wraps one event in a valid VCALENDAR', () => {
+    const ics = buildSingle(baseEvent());
+    expect(ics).toContain('BEGIN:VCALENDAR');
+    expect(ics).toContain('VERSION:2.0');
+    expect(ics.match(/BEGIN:VEVENT/g)).toHaveLength(1);
+    expect(ics.match(/END:VEVENT/g)).toHaveLength(1);
+    expect(ics.endsWith('END:VCALENDAR\r\n')).toBe(true);
+  });
+
+  it('omits subscription-specific headers', () => {
+    const ics = buildSingle(baseEvent());
+    expect(ics).not.toContain('REFRESH-INTERVAL');
+    expect(ics).not.toContain('X-PUBLISHED-TTL');
+    expect(ics).not.toContain('X-WR-CALNAME');
+  });
+
+  it('includes the VTIMEZONE for Europe/Stockholm', () => {
+    const ics = buildSingle(baseEvent());
+    expect(ics).toContain('BEGIN:VTIMEZONE');
+    expect(ics).toContain('TZID:Europe/Stockholm');
+    expect(ics).toContain('END:VTIMEZONE');
+  });
+
+  it('uses the same UID scheme as the feed', () => {
+    const ics = buildSingle(baseEvent());
+    expect(ics).toContain('UID:chicago-friday:2026-07-03@stockholmswing.com');
+  });
+
+  it('uses CRLF line endings', () => {
+    const ics = buildSingle(baseEvent());
+    expect(ics).toContain('\r\n');
+    expect(/[^\r]\n/.test(ics)).toBe(false);
   });
 });

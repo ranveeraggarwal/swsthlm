@@ -11,6 +11,8 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, MapPin, Music, Disc, Ticket, Banknote, GraduationCap } from 'lucide-react';
+import { AddToCalendarButton } from '@/components/AddToCalendarButton';
+import { ShareButton } from '@/components/ShareButton';
 import { getPermalinkEvents } from '@/lib/events';
 import { formatEventDate } from '@/lib/datetime';
 import { singleEventJsonLd } from '@/lib/jsonld';
@@ -228,7 +230,7 @@ export default async function EventPage({
             </p>
           )}
 
-          {/* Ticket CTA */}
+          {/* Ticket CTA + actions */}
           {event.ticket && (
             <a
               href={event.ticket}
@@ -240,6 +242,10 @@ export default async function EventPage({
               Get Tickets / Info
             </a>
           )}
+          <div className="flex items-center gap-2">
+            <AddToCalendarButton event={event} />
+            <ShareButton eventId={event.id} eventDate={event.date} eventTitle={event.title} />
+          </div>
         </div>
       </article>
     </div>

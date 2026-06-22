@@ -141,6 +141,32 @@ function buildEvent(event: SwingEvent, dtstamp: string, siteUrl: string): string
 }
 
 /**
+ * Build a single-event VCALENDAR for one-shot .ics download (issue #9).
+ *
+ * Same VTIMEZONE and field mapping as the subscription feed, but omits
+ * REFRESH-INTERVAL / X-PUBLISHED-TTL (this is a snapshot, not a feed).
+ */
+export function buildSingleEventCalendar(
+  event: SwingEvent,
+  opts: { siteUrl: string; now?: Date }
+): string {
+  const dtstamp = formatUtc(opts.now ?? new Date());
+
+  const lines: string[] = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    `PRODID:${PRODID}`,
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    ...VTIMEZONE,
+    ...buildEvent(event, dtstamp, opts.siteUrl),
+    'END:VCALENDAR',
+  ];
+
+  return lines.map(foldLine).join('\r\n') + '\r\n';
+}
+
+/**
  * Build the full VCALENDAR document for the given events.
  *
  * @param events  Occurrences to publish (already expanded + merged).

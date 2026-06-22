@@ -3,6 +3,7 @@ import { MapPin, Music, Disc, Ticket, GraduationCap, ChevronDown, Moon, Banknote
 import { SwingEvent } from '@/types/event';
 import { getTemporalBadge, formatEventDateRange, formatEventDateShort, TemporalBadge } from '@/lib/datetime';
 import { ShareButton } from '@/components/ShareButton';
+import { AddToCalendarButton } from '@/components/AddToCalendarButton';
 
 interface EventCardProps {
   event: SwingEvent;
@@ -295,6 +296,7 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
                   Get Tickets / Info
                 </a>
               )}
+              <AddToCalendarButton event={event} />
               <ShareButton eventId={event.id} eventDate={event.date} eventTitle={event.title} />
             </div>
           </div>

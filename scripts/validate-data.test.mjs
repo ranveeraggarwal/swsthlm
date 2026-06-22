@@ -84,6 +84,11 @@ describe('required emptiness', () => {
     expect(joined(warnings)).toMatch(/"price" is empty/);
     expect(joined(warnings)).toMatch(/"neighborhood" is empty/);
   });
+
+  it('errors on empty end time in a oneoff', () => {
+    const { errors } = run({ oneoffs: { rows: [oneoff({ end: '' })] } });
+    expect(joined(errors)).toMatch(/required field "end" is empty/);
+  });
 });
 
 describe('dates and times', () => {

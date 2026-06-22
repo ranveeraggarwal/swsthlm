@@ -11,6 +11,8 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, MapPin, Music, Disc, Ticket, Banknote, GraduationCap } from 'lucide-react';
+import { AddToCalendarButton } from '@/components/AddToCalendarButton';
+import { ShareButton } from '@/components/ShareButton';
 import { getPermalinkEvents } from '@/lib/events';
 import { formatEventDate } from '@/lib/datetime';
 import { singleEventJsonLd } from '@/lib/jsonld';
@@ -228,18 +230,22 @@ export default async function EventPage({
             </p>
           )}
 
-          {/* Ticket CTA */}
-          {event.ticket && (
-            <a
-              href={event.ticket}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded border border-[var(--on-surface)] bg-[var(--primary)] text-white hover:bg-[var(--primary-container)] font-bold uppercase tracking-wider text-xs lift-btn-primary"
-            >
-              <Ticket className="w-4 h-4" />
-              Get Tickets / Info
-            </a>
-          )}
+          {/* Actions */}
+          <div className="flex items-center gap-2">
+            {event.ticket && (
+              <a
+                href={event.ticket}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded border border-[var(--on-surface)] bg-[var(--primary)] text-white hover:bg-[var(--primary-container)] font-bold uppercase tracking-wider text-xs lift-btn-primary"
+              >
+                <Ticket className="w-4 h-4" />
+                Tickets / Info
+              </a>
+            )}
+            <AddToCalendarButton event={event} />
+            <ShareButton eventId={event.id} eventDate={event.date} eventTitle={event.title} />
+          </div>
         </div>
       </article>
     </div>

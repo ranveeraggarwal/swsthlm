@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildCalendar } from './ical';
+import { buildCalendar, buildSingleEventCalendar } from './ical';
 import type { SwingEvent } from '@/types/event';
 
 const baseEvent = (overrides: Partial<SwingEvent> = {}): SwingEvent => ({
@@ -128,5 +128,108 @@ describe('buildCalendar', () => {
     });
     expect(ics.match(/BEGIN:VEVENT/g)).toHaveLength(2);
     expect(ics.match(/END:VEVENT/g)).toHaveLength(2);
+  });
+});
+
+describe('buildSingleEventCalendar', () => {
+  const buildSingle = (e: SwingEvent) =>
+    buildSingleEventCalendar(e, { siteUrl: SITE, now: new Date('2026-06-17T00:00:00Z') });
+
+  it('wraps one event in a valid VCALENDAR', () => {
+    const ics = buildSingle(baseEvent());
+    expect(ics).toContain('BEGIN:VCALENDAR');
+    expect(ics).toContain('VERSION:2.0');
+    expect(ics.match(/BEGIN:VEVENT/g)).toHaveLength(1);
+    expect(ics.match(/END:VEVENT/g)).toHaveLength(1);
+    expect(ics.endsWith('END:VCALENDAR\r\n')).toBe(true);
+  });
+
+  it('omits subscription-specific headers', () => {
+    const ics = buildSingle(baseEvent());
+    expect(ics).not.toContain('REFRESH-INTERVAL');
+    expect(ics).not.toContain('X-PUBLISHED-TTL');
+    expect(ics).not.toContain('X-WR-CALNAME');
+  });
+
+  it('includes the VTIMEZONE for Europe/Stockholm', () => {
+    const ics = buildSingle(baseEvent());
+    expect(ics).toContain('BEGIN:VTIMEZONE');
+    expect(ics).toContain('TZID:Europe/Stockholm');
+    expect(ics).toContain('END:VTIMEZONE');
+  });
+
+  it('uses the same UID scheme as the feed', () => {
+    const ics = buildSingle(baseEvent());
+    expect(ics).toContain('UID:chicago-friday:2026-07-03@stockholmswing.com');
+  });
+
+  it('uses CRLF line endings', () => {
+    const ics = buildSingle(baseEvent());
+    expect(ics).toContain('\r\n');
+    expect(/[^\r]\n/.test(ics)).toBe(false);
+  });
+
+  it('rolls DTEND to the next day for overnight events', () => {
+    const ics = buildSingle(baseEvent({ start: '22:00', end: '02:00' }));
+    expect(ics).toContain('DTSTART;TZID=Europe/Stockholm:20260703T220000');
+    expect(ics).toContain('DTEND;TZID=Europe/Stockholm:20260704T020000');
+  });
+
+  it('produces valid .ics when all optional fields are empty', () => {
+    const minimal = baseEvent({
+      band: undefined,
+      dj: undefined,
+      price: undefined,
+      ticket: undefined,
+      body: '',
+      beginnerClass: undefined,
+      neighborhood: undefined,
+    });
+    const ics = buildSingle(minimal);
+    expect(ics).toContain('BEGIN:VEVENT');
+    expect(ics).toContain('END:VEVENT');
+    expect(ics).toContain('SUMMARY:Friday Social');
+    expect(ics).toContain('LOCATION:Chicago Swing Dance Studio\\, Hornsgatan 75');
+    // URL falls back to permalink when no ticket
+    expect(ics).toContain('URL:https://stockholmswing.com/event/chicago-friday/2026-07-03');
+  });
+
+  it('handles Unicode characters in title and venue', () => {
+    const ics = buildSingle(baseEvent({
+      title: "Zinken's Rhythm Café — Balboa",
+      venue: 'Språllan',
+      address: 'Hälsingegatan 3',
+    }));
+    expect(ics).toContain("SUMMARY:Zinken's Rhythm Caf");
+    expect(ics).toContain('LOCATION:Spr');
+    // Structurally valid
+    expect(ics).toContain('BEGIN:VEVENT');
+    expect(ics).toContain('END:VEVENT');
+  });
+
+  it('escapes newlines in the body to iCal \\n', () => {
+    const ics = buildSingle(baseEvent({ body: 'Line one\nLine two\nLine three' }));
+    expect(ics).toContain('\\n');
+    // No bare LF inside the VEVENT
+    const vevent = ics.split('BEGIN:VEVENT')[1].split('END:VEVENT')[0];
+    for (const line of vevent.split('\r\n')) {
+      expect(line).not.toMatch(/[^\r]\n/);
+    }
+  });
+
+  it('marks cancelled events correctly', () => {
+    const ics = buildSingle(baseEvent({ cancelled: true }));
+    expect(ics).toContain('STATUS:CANCELLED');
+    expect(ics).toContain('SUMMARY:CANCELLED: Friday Social');
+  });
+
+  it('folds long lines to stay within 75-octet limit', () => {
+    const ics = buildSingle(baseEvent({
+      title: 'A '.repeat(50).trim(),
+      body: 'B '.repeat(200).trim(),
+    }));
+    for (const line of ics.split('\r\n')) {
+      expect(line.length).toBeLessThanOrEqual(75);
+    }
   });
 });

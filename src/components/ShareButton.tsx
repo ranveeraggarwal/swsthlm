@@ -50,18 +50,12 @@ export function ShareButton({ eventId, eventDate, eventTitle }: ShareButtonProps
       onClick={handleShare}
       title={copied ? 'Link copied!' : 'Share event'}
       aria-label={copied ? 'Link copied!' : 'Share event'}
-      className="inline-flex items-center gap-2 px-4 py-2.5 rounded border border-[var(--on-surface)] bg-[var(--surface-container)] text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] font-bold uppercase tracking-wider text-xs transition-colors cursor-pointer shrink-0"
+      className="inline-flex items-center justify-center w-10 h-10 rounded border border-[var(--on-surface)] bg-[var(--surface-container)] text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors cursor-pointer shrink-0"
     >
       {copied ? (
-        <>
-          <Check className="w-4 h-4" />
-          Copied!
-        </>
+        <Check className="w-4 h-4" />
       ) : (
-        <>
-          <Share2 className="w-4 h-4" />
-          Share
-        </>
+        <Share2 className="w-4 h-4" />
       )}
     </button>
   );

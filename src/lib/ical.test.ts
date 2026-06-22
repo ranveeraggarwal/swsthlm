@@ -168,4 +168,68 @@ describe('buildSingleEventCalendar', () => {
     expect(ics).toContain('\r\n');
     expect(/[^\r]\n/.test(ics)).toBe(false);
   });
+
+  it('rolls DTEND to the next day for overnight events', () => {
+    const ics = buildSingle(baseEvent({ start: '22:00', end: '02:00' }));
+    expect(ics).toContain('DTSTART;TZID=Europe/Stockholm:20260703T220000');
+    expect(ics).toContain('DTEND;TZID=Europe/Stockholm:20260704T020000');
+  });
+
+  it('produces valid .ics when all optional fields are empty', () => {
+    const minimal = baseEvent({
+      band: undefined,
+      dj: undefined,
+      price: undefined,
+      ticket: undefined,
+      body: '',
+      beginnerClass: undefined,
+      neighborhood: undefined,
+    });
+    const ics = buildSingle(minimal);
+    expect(ics).toContain('BEGIN:VEVENT');
+    expect(ics).toContain('END:VEVENT');
+    expect(ics).toContain('SUMMARY:Friday Social');
+    expect(ics).toContain('LOCATION:Chicago Swing Dance Studio\\, Hornsgatan 75');
+    // URL falls back to permalink when no ticket
+    expect(ics).toContain('URL:https://stockholmswing.com/event/chicago-friday/2026-07-03');
+  });
+
+  it('handles Unicode characters in title and venue', () => {
+    const ics = buildSingle(baseEvent({
+      title: "Zinken's Rhythm Café — Balboa",
+      venue: 'Språllan',
+      address: 'Hälsingegatan 3',
+    }));
+    expect(ics).toContain("SUMMARY:Zinken's Rhythm Caf");
+    expect(ics).toContain('LOCATION:Spr');
+    // Structurally valid
+    expect(ics).toContain('BEGIN:VEVENT');
+    expect(ics).toContain('END:VEVENT');
+  });
+
+  it('escapes newlines in the body to iCal \\n', () => {
+    const ics = buildSingle(baseEvent({ body: 'Line one\nLine two\nLine three' }));
+    expect(ics).toContain('\\n');
+    // No bare LF inside the VEVENT
+    const vevent = ics.split('BEGIN:VEVENT')[1].split('END:VEVENT')[0];
+    for (const line of vevent.split('\r\n')) {
+      expect(line).not.toMatch(/[^\r]\n/);
+    }
+  });
+
+  it('marks cancelled events correctly', () => {
+    const ics = buildSingle(baseEvent({ cancelled: true }));
+    expect(ics).toContain('STATUS:CANCELLED');
+    expect(ics).toContain('SUMMARY:CANCELLED: Friday Social');
+  });
+
+  it('folds long lines to stay within 75-octet limit', () => {
+    const ics = buildSingle(baseEvent({
+      title: 'A '.repeat(50).trim(),
+      body: 'B '.repeat(200).trim(),
+    }));
+    for (const line of ics.split('\r\n')) {
+      expect(line.length).toBeLessThanOrEqual(75);
+    }
+  });
 });

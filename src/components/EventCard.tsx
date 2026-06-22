@@ -283,21 +283,23 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
               </p>
             )}
 
-            {/* Ticket CTA + Share */}
-            <div className="flex items-center gap-2">
+            {/* Ticket CTA + secondary actions */}
+            <div className="space-y-2">
               {event.ticket && (
                 <a
                   href={event.ticket}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded border border-[var(--on-surface)] bg-[var(--primary)] text-white hover:bg-[var(--primary-container)] font-bold uppercase tracking-wider text-xs lift-btn-primary"
+                  className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded border border-[var(--on-surface)] bg-[var(--primary)] text-white hover:bg-[var(--primary-container)] font-bold uppercase tracking-wider text-xs lift-btn-primary"
                 >
                   <Ticket className="w-4 h-4" />
                   Get Tickets / Info
                 </a>
               )}
-              <AddToCalendarButton event={event} />
-              <ShareButton eventId={event.id} eventDate={event.date} eventTitle={event.title} />
+              <div className="flex items-center gap-2">
+                <AddToCalendarButton event={event} />
+                <ShareButton eventId={event.id} eventDate={event.date} eventTitle={event.title} />
+              </div>
             </div>
           </div>
         )}

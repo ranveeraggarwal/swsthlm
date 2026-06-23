@@ -54,9 +54,10 @@ export default function RootLayout({
       className={`${playfair.variable} ${jakarta.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:p-4 focus:bg-[var(--surface-container-lowest)] focus:text-[var(--primary)] focus:font-bold focus:underline outline-none">Skip to content</a>
         <div className="min-h-screen flex flex-col relative bg-[var(--background)] text-[var(--on-surface)]">
           <Header />
-          <main className="flex-grow">
+          <main id="main-content" className="flex-grow">
             {children}
           </main>
           <Footer />

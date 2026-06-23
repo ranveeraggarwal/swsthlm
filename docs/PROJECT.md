@@ -65,19 +65,19 @@ User accounts, an organizer dashboard, a database, machine translation of descri
 
 GitHub issue numbers are authoritative. Priorities: P0 = do first, P1 = high value, P2 = when convenient. ✓ = merged/closed.
 
-**State as of 2026-06-20:** M1 complete. M2 substantially complete — JSON-LD (#10), event permalinks + share (#11), and OG image (#12) all shipped; only ICS feed (#8) and per-event add-to-calendar (#9) remain. M3 progressing — filter state in URL (#21) and neighborhood tags (#25) done alongside the earlier H1/SEO work. M4 foundation complete; nightly scraper live for S:ta Clara and Chicago with exception-proposal logic; Form → PR sync (#5) still to build. M5 partially started (CONTRIBUTING.md, open-source About section). Next highest-leverage open items: ICS feed (#8), per-event calendar (#9), Form → PR sync (#5).
+**State as of 2026-06-23:** M1 complete. M2 complete — ICS feed (#8) and per-event add-to-calendar (#9) shipped alongside the earlier JSON-LD, permalinks, and OG image work. M3 well along — day filter (#22), "updated X ago" (#24), PWA manifest (#27) all shipped in addition to earlier filter-URL (#21), neighborhood tags (#25), H1/SEO work; remaining: designed empty states (#23), accessibility pass (#26), scrolling animation (#58), dancefloor tags (#59), resources page (#60). M4 nightly scrapers complete (#4) with exception-proposal logic (#82); new P0 issues filed for Facebook/Instagram intake (#133, #134) covering SSS and remaining venues; Form → PR sync (#5) still to build. M5 partially started (CONTRIBUTING.md, open-source About section). Next highest-leverage open items: Facebook/Instagram intake (#133, #134), Form → PR sync (#5), resources page (#60), "Wrong info?" link (#28).
 
 | # | Issue | Milestone | Priority | |
 |---|---|---|---|---|
 | 1 | Migrate source of truth from Google Sheet to /data CSVs | M4 | P0 | ✓ |
 | 2 | Series + exceptions expansion at build time | M4 | P0 | ✓ |
 | 3 | CI schema validation for /data | M4 | P0 | ✓ |
-| 4 | Nightly scraper Actions → PRs | M4 | P1 | open |
+| 4 | Nightly scraper Actions → PRs | M4 | P1 | ✓ |
 | 5 | Google Form → PR sync Action | M4 | P1 | open |
 | 6 | Weekly health-report Action | M4 | P2 | open |
 | 7 | Server-side data loading; remove runtime CSV fetch | M2 | P0 | ✓ |
-| 8 | ICS subscription feed (webcal) | M2 | P2 | open |
-| 9 | Per-event "Add to calendar" (.ics) | M2 | P1 | open |
+| 8 | ICS subscription feed (webcal) | M2 | P2 | ✓ |
+| 9 | Per-event "Add to calendar" (.ics) | M2 | P1 | ✓ |
 | 10 | JSON-LD Event structured data | M2 | P2 | ✓ |
 | 11 | Event permalinks + share button | M2 | P1 | ✓ |
 | 12 | OG image for link unfurls | M2 | P1 | ✓ |
@@ -90,12 +90,12 @@ GitHub issue numbers are authoritative. Priorities: P0 = do first, P1 = high val
 | 19 | Cancelled event state | M1 | P1 | ✓ |
 | 20 | Rename "All Swing Styles" tag | M1 | P2 | ✓ |
 | 21 | Filter state in URL | M3 | P2 | ✓ |
-| 22 | Day filter / day-jump strip | M3 | P2 | open |
+| 22 | Day filter / day-jump strip | M3 | P2 | ✓ |
 | 23 | Designed empty states | M3 | P2 | open |
-| 24 | "Updated X ago" freshness signal | M3 | P2 | open |
+| 24 | "Updated X ago" freshness signal | M3 | P2 | ✓ |
 | 25 | Neighborhood tags on venues | M3 | P2 | ✓ |
 | 26 | Accessibility & heading-hierarchy pass | M3 | P2 | open |
-| 27 | PWA manifest + icons | M3 | P2 | open |
+| 27 | PWA manifest + icons | M3 | P2 | ✓ |
 | 28 | "Wrong info?" report link per card | M5 | P1 | open |
 | 29 | CONTRIBUTING.md + data contract docs | M5 | P1 | ✓ |
 | 30 | HANDOVER.md, org migration, second maintainer | M5 | P2 | open |
@@ -120,6 +120,8 @@ GitHub issue numbers are authoritative. Priorities: P0 = do first, P1 = high val
 | 93 | Clash detection between overlapping events | M4 | P2 | open |
 | 94 | Easier SSS event addition workflow | M4 | P1 | open |
 | 107 | Fix ended events so data validation succeeds | M4 | P0 | ✓ |
+| 133 | SSS event intake — Facebook-only source | M4 | P0 | open |
+| 134 | Facebook & Instagram event intake for remaining venues | M4 | P0 | open |
 
 ## 6. Operating cadence (post-M4 steady state)
 

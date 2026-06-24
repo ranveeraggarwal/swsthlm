@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { MapPin, Music, Disc, Ticket, GraduationCap, Moon, ChevronDown, Banknote } from 'lucide-react';
 import { SwingEvent } from '@/types/event';
 import { ShareButton } from '@/components/ShareButton';
+import { AddToCalendarButton } from '@/components/AddToCalendarButton';
 
 interface EventRowProps {
   event: SwingEvent;
@@ -180,6 +181,7 @@ export function EventRow({ event, dates, nightCount }: EventRowProps) {
                 Get Tickets / Info
               </a>
             )}
+            <AddToCalendarButton event={event} />
             <ShareButton eventId={event.id} eventDate={event.date} eventTitle={event.title} />
           </div>
         </div>

@@ -345,9 +345,20 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
           <div className="text-center py-16 border border-dashed border-[var(--surface-container-highest)] rounded bg-[var(--surface-container-low)] p-8">
             <SlidersHorizontal className="w-12 h-12 text-zinc-400 mx-auto mb-4" />
             <h3 className="font-serif text-xl font-bold text-[var(--on-surface)] mb-1">No events match your filters</h3>
-            <p className="font-sans font-body-md text-zinc-500 max-w-sm mx-auto">
+            <p className="font-sans font-body-md text-zinc-500 max-w-sm mx-auto mb-6">
               Try adjusting your search terms or filters to find dance events.
             </p>
+            <button
+              onClick={() => {
+                setSearchQuery('');
+                setSelectedStyle('all');
+                setSelectedVenue('all');
+                setLiveMusicOnly(false);
+              }}
+              className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded border-2 border-[var(--on-surface)] bg-[var(--primary)] text-white hover:bg-[var(--primary-container)] hover:-translate-y-0.5 hover:-translate-x-0.5 hover:shadow-[2px_2px_0px_0px_var(--on-surface)] transition-all font-bold uppercase tracking-wider text-xs cursor-pointer"
+            >
+              Clear all filters
+            </button>
           </div>
         ) : (
           <>

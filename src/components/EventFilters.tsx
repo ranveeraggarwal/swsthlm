@@ -348,6 +348,20 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
             <p className="font-sans font-body-md text-zinc-500 max-w-sm mx-auto">
               Try adjusting your search terms or filters to find dance events.
             </p>
+            {hasActiveFilters && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchQuery('');
+                  setSelectedStyle('all');
+                  setSelectedVenue('all');
+                  setLiveMusicOnly(false);
+                }}
+                className="mt-6 inline-flex items-center justify-center px-4 py-2.5 rounded border border-[var(--on-surface)] bg-[var(--primary)] text-white hover:bg-[var(--primary-container)] font-bold uppercase tracking-wider text-xs lift-btn-primary cursor-pointer"
+              >
+                Clear all filters
+              </button>
+            )}
           </div>
         ) : (
           <>

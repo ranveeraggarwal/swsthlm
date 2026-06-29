@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { CalendarPlus, Download, X } from 'lucide-react';
 import { buildSingleEventCalendar } from '@/lib/ical';
 import { addDays } from '@/lib/data/expand';
@@ -134,7 +135,7 @@ export function AddToCalendarButton({ event }: AddToCalendarButtonProps) {
         <CalendarPlus className="w-4 h-4" />
       </button>
 
-      {open && (
+      {open && createPortal(
         <div
           className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center sm:p-4 bg-[var(--on-surface)]/40 animate-in fade-in duration-150"
           onClick={() => setOpen(false)}
@@ -210,7 +211,8 @@ export function AddToCalendarButton({ event }: AddToCalendarButtonProps) {
               Download .ics file
             </button>
           </div>
-        </div>
+        </div>,
+        document.body,
       )}
     </>
   );

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Search, CalendarDays, SlidersHorizontal, MapPin, Sparkles, Music, X } from 'lucide-react';
 import { SwingEvent, EventCard as EventCardType } from '@/types/event';
 import { EventCard } from './EventCard';
@@ -29,6 +29,7 @@ interface EventFiltersProps {
 
 export function EventFilters({ events, currentDate: initialDate, currentTime: initialTime }: EventFiltersProps) {
   const [searchQuery, setSearchQuery] = useState('');
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const [selectedStyle, setSelectedStyle] = useState('all');
   const [selectedVenue, setSelectedVenue] = useState('all');
   const [liveMusicOnly, setLiveMusicOnly] = useState(false);
@@ -247,6 +248,7 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
             <div className="relative w-full bg-[var(--surface-container-lowest)] border-2 border-[var(--on-surface)] rounded shadow-[2px_2px_0px_var(--on-surface)] transition-all focus-within:shadow-[4px_4px_0px_var(--primary)] focus-within:-translate-x-0.5 focus-within:-translate-y-0.5">
               <Search aria-hidden="true" className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--outline)]" />
               <input
+                ref={searchInputRef}
                 type="text"
                 aria-label="Search events"
                 placeholder="Search by band, DJ, venue, title..."
@@ -257,7 +259,10 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
               {searchQuery && (
                 <button
                   type="button"
-                  onClick={() => setSearchQuery('')}
+                  onClick={() => {
+                    setSearchQuery('');
+                    searchInputRef.current?.focus();
+                  }}
                   aria-label="Clear search"
                   className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--outline)] hover:text-[var(--on-surface)] transition-colors cursor-pointer"
                 >

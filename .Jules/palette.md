@@ -9,3 +9,6 @@
 ## 2024-06-24 - Accessible Read-Only Inputs
 **Learning:** Read-only inputs used for displaying copyable text (like URLs) often lack an associated `<label>` because they are purely functional UI elements. Without an `aria-label`, screen readers announce "text, read only", leaving users confused about the content.
 **Action:** Always add descriptive `aria-label` attributes to read-only inputs that lack visible labels.
+## 2024-06-25 - Maintain Focus During Component Unmount
+**Learning:** When a user interacts with a UI element (like a "Clear search" button) that causes the element itself to unmount, keyboard focus is often lost and dropped back to the `<body>`. This forces keyboard users to tab through the entire page again.
+**Action:** When creating components that unmount on interaction, always use a `useRef` to explicitly shift focus to a logical neighboring element (e.g., shifting focus back to the search input when the "clear" button is pressed).

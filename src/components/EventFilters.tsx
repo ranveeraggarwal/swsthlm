@@ -29,6 +29,7 @@ interface EventFiltersProps {
 
 export function EventFilters({ events, currentDate: initialDate, currentTime: initialTime }: EventFiltersProps) {
   const [searchQuery, setSearchQuery] = useState('');
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const [selectedStyle, setSelectedStyle] = useState('all');
   const [selectedVenue, setSelectedVenue] = useState('all');
   const [liveMusicOnly, setLiveMusicOnly] = useState(false);

@@ -203,7 +203,7 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
     <div className="w-full">
       {/* Top Status and Toggle for Filters */}
       <div className="flex items-center justify-between mb-8 pb-4 border-b border-[var(--surface-container-highest)] font-sans text-xs text-zinc-500 uppercase tracking-wider font-semibold">
-        <span>{filterStatusMessage}</span>
+        <span aria-live="polite" aria-atomic="true">{filterStatusMessage}</span>
         <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-1">
           <SubscribeButton />
           <button
@@ -214,7 +214,7 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
               isFilterExpanded ? 'text-[var(--primary)]' : 'text-[var(--secondary)]'
             }`}
           >
-            <SlidersHorizontal className="w-3.5 h-3.5" />
+            <SlidersHorizontal aria-hidden="true" className="w-3.5 h-3.5" />
             {isFilterExpanded ? 'Hide Filters' : 'Filter & Search'}
           </button>
           {hasActiveFilters && (
@@ -238,7 +238,7 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
         <div id="filters-panel" className="border border-[var(--surface-container-highest)] bg-[var(--surface-container-low)] rounded-lg p-6 mb-12 shadow-sm animate-in fade-in slide-in-from-top-2 duration-200">
           <div className="flex flex-col gap-6">
             <div className="flex items-center gap-3 border-b border-[var(--surface-container-highest)] pb-4 mb-2">
-              <SlidersHorizontal className="w-5 h-5 text-[var(--secondary)]" />
+              <SlidersHorizontal aria-hidden="true" className="w-5 h-5 text-[var(--secondary)]" />
               <h2 className="font-serif text-2xl font-bold tracking-tight text-[var(--on-surface)]">
                 Filters <span className="italic">& Search</span>
               </h2>
@@ -275,7 +275,7 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
             <div className="flex flex-col md:flex-row gap-6">
               <div className="flex-1">
                 <span className="flex items-center gap-2 font-sans text-xs font-bold text-zinc-500 uppercase tracking-widest mb-3">
-                  <Sparkles className="w-3.5 h-3.5 text-[var(--primary)]" /> Filter by Style
+                  <Sparkles aria-hidden="true" className="w-3.5 h-3.5 text-[var(--primary)]" /> Filter by Style
                 </span>
                 <div className="filter-scroll-container">
                   <div className="flex overflow-x-auto pb-2 -mb-2 gap-2.5 snap-x md:flex-wrap [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
@@ -299,7 +299,7 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
 
               <div className="md:w-48">
                 <span className="flex items-center gap-2 font-sans text-xs font-bold text-zinc-500 uppercase tracking-widest mb-3">
-                  <Music className="w-3.5 h-3.5 text-amber-600" /> Music
+                  <Music aria-hidden="true" className="w-3.5 h-3.5 text-amber-600" /> Music
                 </span>
                 <button
                   onClick={() => setLiveMusicOnly(!liveMusicOnly)}
@@ -310,7 +310,7 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
                       : 'bg-[var(--surface-container)] hover:bg-[var(--surface-container-high)] text-[var(--on-surface)] shadow-[0px_0px_0px_0px_var(--on-surface)]'
                   }`}
                 >
-                  <Music className="w-3.5 h-3.5" />
+                  <Music aria-hidden="true" className="w-3.5 h-3.5" />
                   Live Music Only
                 </button>
               </div>
@@ -319,7 +319,7 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
             {/* Venue Filters */}
             <div>
               <span className="flex items-center gap-2 font-sans text-xs font-bold text-zinc-500 uppercase tracking-widest mb-3">
-                <MapPin className="w-3.5 h-3.5 text-[var(--secondary)]" /> Filter by Venue
+                <MapPin aria-hidden="true" className="w-3.5 h-3.5 text-[var(--secondary)]" /> Filter by Venue
               </span>
               <div className="filter-scroll-container">
                 <div className="flex overflow-x-auto pb-2 -mb-2 gap-2.5 snap-x md:flex-wrap [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
@@ -348,7 +348,7 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
       <div className="space-y-12">
         {totalCount === 0 ? (
           <div className="text-center py-16 border border-dashed border-[var(--surface-container-highest)] rounded bg-[var(--surface-container-low)] p-8">
-            <SlidersHorizontal className="w-12 h-12 text-zinc-400 mx-auto mb-4" />
+            <SlidersHorizontal aria-hidden="true" className="w-12 h-12 text-zinc-400 mx-auto mb-4" />
             <h3 className="font-serif text-xl font-bold text-[var(--on-surface)] mb-1">No events match your filters</h3>
             <p className="font-sans font-body-md text-zinc-500 max-w-sm mx-auto mb-6">
               Try adjusting your search terms or filters to find dance events.
@@ -374,7 +374,7 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
             {eventSections.hasThisWeek && (
               <div>
                 <div className="flex items-center gap-3 mb-6 border-b border-[var(--surface-container-highest)] pb-3">
-                  <CalendarDays className="w-5 h-5 text-[var(--primary)]" />
+                  <CalendarDays aria-hidden="true" className="w-5 h-5 text-[var(--primary)]" />
                   <h2 className="font-serif text-3xl font-bold tracking-tight text-[var(--on-surface)]">
                     {eventSections.showNextWeek
                       ? <><span className="italic">Coming Up</span></>
@@ -414,7 +414,7 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
             {eventSections.hasUpcoming && (
               <div className="pt-4">
                 <div className="flex items-center gap-3 mb-6 border-b border-[var(--surface-container-highest)] pb-3">
-                  <CalendarDays className="w-5 h-5 text-zinc-600" />
+                  <CalendarDays aria-hidden="true" className="w-5 h-5 text-zinc-600" />
                   <h2 className="font-serif text-3xl font-bold tracking-tight text-[var(--on-surface)]">
                     {eventSections.showNextWeek
                       ? <><span className="italic">Later</span></>

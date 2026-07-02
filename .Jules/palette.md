@@ -12,3 +12,6 @@
 ## 2024-06-25 - Maintain Focus During Component Unmount
 **Learning:** When a user interacts with a UI element (like a "Clear search" button) that causes the element itself to unmount, keyboard focus is often lost and dropped back to the `<body>`. This forces keyboard users to tab through the entire page again.
 **Action:** When creating components that unmount on interaction, always use a `useRef` to explicitly shift focus to a logical neighboring element (e.g., shifting focus back to the search input when the "clear" button is pressed).
+## 2026-07-02 - Screen Reader Repetition in Icons
+**Learning:** Many SVG icons from libraries like lucide-react don't automatically hide themselves from screen readers, leading to confusing or redundant announcements.
+**Action:** Proactively search for purely decorative icons and apply `aria-hidden="true"`.

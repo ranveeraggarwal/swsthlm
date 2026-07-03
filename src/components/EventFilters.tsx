@@ -203,7 +203,7 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
     <div className="w-full">
       {/* Top Status and Toggle for Filters */}
       <div className="flex items-center justify-between mb-8 pb-4 border-b border-[var(--surface-container-highest)] font-sans text-xs text-zinc-500 uppercase tracking-wider font-semibold">
-        <span>{filterStatusMessage}</span>
+        <span aria-live="polite" aria-atomic="true">{filterStatusMessage}</span>
         <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-1">
           <SubscribeButton />
           <button

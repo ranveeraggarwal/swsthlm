@@ -12,3 +12,7 @@
 ## 2024-06-25 - Maintain Focus During Component Unmount
 **Learning:** When a user interacts with a UI element (like a "Clear search" button) that causes the element itself to unmount, keyboard focus is often lost and dropped back to the `<body>`. This forces keyboard users to tab through the entire page again.
 **Action:** When creating components that unmount on interaction, always use a `useRef` to explicitly shift focus to a logical neighboring element (e.g., shifting focus back to the search input when the "clear" button is pressed).
+
+## 2024-07-03 - Announce Dynamic Filter Counts
+**Learning:** When users adjust filters or search inputs, the UI dynamically updates a status message (e.g., "Showing 5 events"). Sighted users see this change immediately, but screen reader users get no feedback that the results have updated unless the content is explicitly marked.
+**Action:** Wrap dynamic text updates (such as filter result summaries or live counts) in an `aria-live="polite"` and `aria-atomic="true"` region to ensure screen readers automatically announce the new state without interrupting the user.

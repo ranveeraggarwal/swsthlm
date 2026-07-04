@@ -109,7 +109,7 @@ export function formatMonthHeading(monthKey: string): string {
   try {
     const date = new Date(`${monthKey}-01`);
     if (isNaN(date.getTime())) return monthKey;
-    return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' });
   } catch {
     return monthKey;
   }
@@ -122,7 +122,7 @@ export function formatEventDateShort(dateStr: string): string {
   try {
     const date = new Date(dateStr);
     if (isNaN(date.getTime())) return dateStr;
-    return date.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short' });
+    return date.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' });
   } catch {
     return dateStr;
   }
@@ -139,6 +139,7 @@ export function formatEventDate(dateStr: string): string {
       weekday: 'long',
       month: 'short',
       day: 'numeric',
+      timeZone: 'UTC',
     });
   } catch {
     return dateStr;
@@ -159,8 +160,8 @@ export function formatEventDateRange(firstDate: string, lastDate: string): strin
     if (isNaN(first.getTime()) || isNaN(last.getTime())) return formatEventDate(firstDate);
 
     const fmtDay = (d: Date) =>
-      d.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric' });
-    const fmtMonth = (d: Date) => d.toLocaleDateString('en-US', { month: 'short' });
+      d.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', timeZone: 'UTC' });
+    const fmtMonth = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', timeZone: 'UTC' });
 
     const sameMonth = first.getUTCMonth() === last.getUTCMonth();
     if (sameMonth) {

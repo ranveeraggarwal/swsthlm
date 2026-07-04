@@ -46,7 +46,7 @@ Adding a new venue is a separate PR from the event that needed it — keeps the 
 - **`studio`** — a dedicated dance studio or sprung floor, no furniture to dodge (Chicago Swing Dance Studio).
 - **`hall`** — a big multi-use room cleared/set up for dancing: a community hall, theater, or ballroom (Stockholms stadshus, Scalateatern, Kulturhuset Stadsteatern, Augustas Folksalong).
 - **`bar`** — dancing happens among tables, stools, or a bar counter; a real dance floor isn't the room's main purpose (S:ta Clara Bierhaus, Nomad, S:t Eriks Jazzbar, Norrport).
-- **`outdoor`** — grass, patio, or other open-air space (Vintervikens Trädgård).
+- **`outdoor`** — grass, patio, or other open-air space (Vintervikens Trädgård, Sprallen — a roofless public dance floor run by the Söders dansbana association).
 
 The anchor question for the `hall`-vs-`bar` judgment call: *can you do a full swing-out without dodging furniture?* Yes → `hall`. No → `bar`. This is a venue-level fact, not a per-event one — if a normally-small venue is transformed for a one-off (e.g. a ball at a hired hall), that's out of scope for now; don't relabel the venue for one exceptional night.
 

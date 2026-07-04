@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { MapPin, Music, Disc, Ticket, GraduationCap, ChevronDown, Moon, Banknote } from 'lucide-react';
 import { SwingEvent } from '@/types/event';
+import { FloorTypeBadge } from '@/components/FloorTypeBadge';
 import { getTemporalBadge, formatEventDateRange, formatEventDateShort, TemporalBadge } from '@/lib/datetime';
 import { ShareButton } from '@/components/ShareButton';
 import { AddToCalendarButton } from '@/components/AddToCalendarButton';
@@ -245,6 +246,7 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
                   : `Beginner class ${event.beginnerClass}`}
               </span>
             )}
+            <FloorTypeBadge floorType={event.floorType} />
           </div>
 
           {/* Inline expand/collapse indicator */}

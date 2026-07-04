@@ -5,7 +5,7 @@ const TODAY = '2026-06-13';
 
 // Full header sets so row tests don't trip the column checks.
 const FIELDS = {
-  venues: ['id', 'name', 'address', 'neighborhood', 'lat', 'lng', 'maps_url'],
+  venues: ['id', 'name', 'address', 'neighborhood', 'lat', 'lng', 'maps_url', 'floor_type'],
   series: ['id', 'name', 'style', 'venue_id', 'weekday', 'start', 'end', 'price', 'payment', 'beginner_class', 'music', 'dj', 'band', 'organizer', 'url', 'description', 'status', 'valid_from', 'valid_to'],
   exceptions: ['series_id', 'date', 'cancelled', 'start', 'end', 'dj', 'band', 'music', 'price', 'note', 'description'],
   oneoffs: ['id', 'name', 'style', 'venue_id', 'date', 'end_date', 'start', 'end', 'price', 'payment', 'beginner_class', 'music', 'dj', 'band', 'organizer', 'url', 'description', 'status'],
@@ -66,6 +66,21 @@ describe('enums', () => {
     expect(j).toMatch(/invalid music "orchestra"/);
     expect(j).toMatch(/invalid status "published"/);
     expect(j).toMatch(/invalid weekday "someday"/);
+  });
+
+  it('rejects a bad venue floor_type but allows it blank', () => {
+    const { errors } = run({ venues: { rows: [venue({ floor_type: 'huge' })] } });
+    expect(joined(errors)).toMatch(/invalid floor_type "huge"/);
+
+    const { errors: okErrors } = run({ venues: { rows: [venue({ floor_type: '' })] } });
+    expect(okErrors).toEqual([]);
+  });
+
+  it('accepts every valid floor_type', () => {
+    for (const floorType of ['studio', 'hall', 'bar', 'outdoor']) {
+      const { errors } = run({ venues: { rows: [venue({ floor_type: floorType })] } });
+      expect(errors).toEqual([]);
+    }
   });
 });
 

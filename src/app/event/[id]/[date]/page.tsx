@@ -13,6 +13,7 @@ import Link from 'next/link';
 import { ArrowLeft, MapPin, Music, Disc, Ticket, Banknote, GraduationCap } from 'lucide-react';
 import { AddToCalendarButton } from '@/components/AddToCalendarButton';
 import { ShareButton } from '@/components/ShareButton';
+import { FloorTypeBadge } from '@/components/FloorTypeBadge';
 import { getPermalinkEvents } from '@/lib/events';
 import { formatEventDate } from '@/lib/datetime';
 import { singleEventJsonLd } from '@/lib/jsonld';
@@ -183,6 +184,7 @@ export default async function EventPage({
                 {priceDisplay}
               </span>
             )}
+            <FloorTypeBadge floorType={event.floorType} />
           </div>
 
           {/* Music rows */}

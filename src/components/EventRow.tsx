@@ -5,6 +5,7 @@ import { MapPin, Music, Disc, Ticket, GraduationCap, Moon, ChevronDown, Banknote
 import { SwingEvent } from '@/types/event';
 import { ShareButton } from '@/components/ShareButton';
 import { AddToCalendarButton } from '@/components/AddToCalendarButton';
+import { FloorTypeBadge } from '@/components/FloorTypeBadge';
 
 interface EventRowProps {
   event: SwingEvent;
@@ -141,6 +142,7 @@ export function EventRow({ event, dates, nightCount }: EventRowProps) {
                 {event.beginnerClass.toLowerCase() === 'yes' ? 'Beginner friendly' : `Beginner class ${event.beginnerClass}`}
               </span>
             )}
+            <FloorTypeBadge floorType={event.floorType} />
           </div>
 
           {musicRows.some((r) => r.name) && (

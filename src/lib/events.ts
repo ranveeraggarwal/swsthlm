@@ -13,6 +13,7 @@ import { getStockholmCurrentDate } from '@/lib/datetime';
 import { expandAll } from '@/lib/data/expand';
 import type {
   Exception,
+  FloorType,
   Music,
   Oneoff,
   OneoffStatus,
@@ -62,6 +63,7 @@ function loadVenues(): Map<string, Venue> {
       lat: opt(r.lat),
       lng: opt(r.lng),
       mapsUrl: opt(r.maps_url),
+      floorType: opt(r.floor_type) as FloorType | undefined,
     });
   }
   return map;
@@ -167,6 +169,7 @@ const buildFeed = cache(async (lookbackDays: number): Promise<SwingEvent[]> => {
       venue: venue?.name ?? occ.venueId,
       address: venue?.address ?? '',
       neighborhood: venue?.neighborhood,
+      floorType: venue?.floorType,
       style: styleForUi(occ.style),
       music: occ.music,
       organizer: occ.organizer,

@@ -37,8 +37,18 @@ A build step expands `series` plus `exceptions` into concrete occurrences for th
 | `neighborhood` | yes | string | "Söder", "Vasastan", "Norrmalm", "Hammarby Sjöstad", "Skanstull", "Östermalm", "Solna". |
 | `lat`, `lng` | no | float | For future map use. Skip if unknown. |
 | `maps_url` | no | URL | Override the default Maps link. Usually leave empty. |
+| `floor_type` | no | `studio` \| `hall` \| `bar` \| `outdoor` | What kind of space the dancing happens in. Empty = unknown — leave it blank rather than guess; a venue steward who's actually danced there should fill it in. See below for how to pick. |
 
 Adding a new venue is a separate PR from the event that needed it — keeps the diff focused.
+
+**Picking a `floor_type`.** This isn't about square meters — nobody has a floor plan, and a numeric capacity guess is worse than no data. It's a single gut call answering "what kind of place is this to dance in":
+
+- **`studio`** — a dedicated dance studio or sprung floor, no furniture to dodge (Chicago Swing Dance Studio).
+- **`hall`** — a big multi-use room cleared/set up for dancing: a community hall, theater, or ballroom (Stockholms stadshus, Scalateatern, Kulturhuset Stadsteatern, Augustas Folksalong).
+- **`bar`** — dancing happens among tables, stools, or a bar counter; a real dance floor isn't the room's main purpose (S:ta Clara Bierhaus, Nomad, S:t Eriks Jazzbar, Norrport).
+- **`outdoor`** — grass, patio, or other open-air space (Vintervikens Trädgård).
+
+The anchor question for the `hall`-vs-`bar` judgment call: *can you do a full swing-out without dodging furniture?* Yes → `hall`. No → `bar`. This is a venue-level fact, not a per-event one — if a normally-small venue is transformed for a one-off (e.g. a ball at a hired hall), that's out of scope for now; don't relabel the venue for one exceptional night.
 
 ## `series.csv`
 

@@ -17,6 +17,9 @@ export type SeriesStatus = 'draft' | 'live' | 'ended';
 // `ended` is terminal: the event happened and is retained for the archive,
 // but never renders on the live calendar.
 export type OneoffStatus = 'draft' | 'live' | 'ended' | 'cancelled';
+// What kind of space the dancing happens in — a venue-level fact, not
+// per-event. See docs/DATA.md for the picking criteria.
+export type FloorType = 'studio' | 'hall' | 'bar' | 'outdoor';
 
 export interface Venue {
   id: string;
@@ -26,6 +29,7 @@ export interface Venue {
   lat?: string;
   lng?: string;
   mapsUrl?: string;
+  floorType?: FloorType;
 }
 
 export interface Series {

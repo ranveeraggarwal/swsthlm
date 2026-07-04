@@ -1,5 +1,12 @@
-import { describe, expect, it } from 'vitest';
-import { getTemporalBadge, formatEventDateRange, isNextWeek, isSunday } from './datetime';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import {
+  getTemporalBadge,
+  formatEventDateRange,
+  formatEventDateShort,
+  formatMonthHeading,
+  isNextWeek,
+  isSunday,
+} from './datetime';
 
 describe('getTemporalBadge', () => {
   const today = '2025-05-20';
@@ -117,5 +124,39 @@ describe('formatEventDateRange', () => {
     expect(result).toContain('Jul');
     expect(result).toContain('Aug');
     expect(result).toContain('&');
+  });
+});
+
+// Date-only strings (YYYY-MM-DD) parse as UTC midnight. Formatting them with
+// toLocaleDateString and no explicit timeZone rolls back a calendar day for
+// any negative-UTC-offset viewer (all of the Americas), showing the wrong
+// month/day. These pin the fix by running under such a timezone.
+describe('timezone-safe formatting', () => {
+  const originalTz = process.env.TZ;
+
+  beforeEach(() => {
+    process.env.TZ = 'America/Los_Angeles';
+  });
+
+  afterEach(() => {
+    process.env.TZ = originalTz;
+  });
+
+  it('formatMonthHeading is not shifted back a month', () => {
+    expect(formatMonthHeading('2026-08')).toBe('August 2026');
+  });
+
+  it('formatEventDateShort is not shifted back a day', () => {
+    const result = formatEventDateShort('2026-08-01');
+    expect(result).toContain('Aug');
+    expect(result).toContain('1');
+    expect(result).not.toContain('31');
+    expect(result).not.toContain('Jul');
+  });
+
+  it('formatEventDateRange month abbreviations are not shifted back', () => {
+    const result = formatEventDateRange('2026-08-01', '2026-08-02');
+    expect(result).toContain('Aug');
+    expect(result).not.toContain('Jul');
   });
 });

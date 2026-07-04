@@ -55,7 +55,7 @@ export function EventRow({ event, dates, nightCount }: EventRowProps) {
   // Compact row date: "Wed 26 Aug" for single, "26–27 Aug" / "26 Aug–1 Sep" for multi-night.
   // Uses en-GB (no comma, day-first) and UTC day extraction to avoid timezone shifts.
   const compactDateLabel = (() => {
-    const fmtMonth = (d: Date) => d.toLocaleDateString('en-GB', { month: 'short' });
+    const fmtMonth = (d: Date) => d.toLocaleDateString('en-GB', { month: 'short', timeZone: 'UTC' });
     if (nightCount > 1) {
       const first = new Date(dates[0]);
       const last = new Date(dates[dates.length - 1]);
@@ -65,7 +65,7 @@ export function EventRow({ event, dates, nightCount }: EventRowProps) {
         : `${first.getUTCDate()} ${fmtMonth(first)}–${last.getUTCDate()} ${fmtMonth(last)}`;
     }
     const d = new Date(dates[0]);
-    return d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+    return d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' });
   })();
 
   return (

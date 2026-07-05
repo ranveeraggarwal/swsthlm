@@ -26,6 +26,7 @@ const WEEKDAYS = new Set([
 ]);
 const SERIES_STATUS = new Set(['draft', 'live', 'ended']);
 const ONEOFF_STATUS = new Set(['draft', 'live', 'ended', 'cancelled']);
+const FLOOR_TYPES = new Set(['studio', 'hall', 'bar', 'outdoor']);
 // Band-roster trust flag: yes = trusted swing band, no = known not-swing
 // (suppressed), unknown = surfaced and awaiting a human decision.
 const SWING = new Set(['yes', 'no', 'unknown']);
@@ -34,7 +35,7 @@ const SWING = new Set(['yes', 'no', 'unknown']);
 const SCHEMA = {
   venues: {
     required: ['id', 'name', 'address', 'neighborhood'],
-    optional: ['lat', 'lng', 'maps_url'],
+    optional: ['lat', 'lng', 'maps_url', 'floor_type'],
   },
   series: {
     required: [
@@ -152,6 +153,9 @@ export function validateData(datasets, opts = {}) {
     const id = val(row, 'id');
     if (id && seenVenue.has(id)) err('venues', n, `duplicate id "${id}"`);
     seenVenue.add(id);
+
+    const floorType = val(row, 'floor_type');
+    if (floorType && !FLOOR_TYPES.has(floorType)) err('venues', n, `invalid floor_type "${floorType}"`);
   });
 
   // --- series ---

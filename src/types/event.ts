@@ -9,6 +9,7 @@ export interface SwingEvent {
   venue: string;      // e.g., "Chicago Swing Dance Studio"
   address: string;    // e.g., "Hornsgatan 75"
   neighborhood?: string; // e.g., "Söder"
+  floorType?: 'studio' | 'hall' | 'bar' | 'outdoor'; // what kind of space the dancing happens in
   style: string;      // e.g., "lindy", "balboa", "blues", "all"
   music: 'live' | 'dj' | 'mixed';
   organizer: string;

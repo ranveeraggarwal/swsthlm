@@ -1,5 +1,5 @@
 import React from 'react';
-import { Music, Disc, Ticket, Moon, GraduationCap, Banknote, Wallet } from 'lucide-react';
+import { Music, Disc, Ticket, Moon, GraduationCap } from 'lucide-react';
 import { SwingEvent } from '@/types/event';
 import { FloorTypeBadge } from '@/components/FloorTypeBadge';
 import { getTemporalBadge, formatEventDateRange, formatEventDateShort, TemporalBadge } from '@/lib/datetime';
@@ -177,18 +177,23 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
             {event.title}
           </h3>
 
-          {/* Venue · neighborhood */}
+          {/* Venue · neighborhood, organizer */}
           <div className="text-sm mb-3.5">
-            <a
-              href={mapsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`font-bold text-[var(--on-surface)] underline decoration-[var(--outline)] underline-offset-4 hover:text-[var(--primary)] transition-colors ${event.cancelled ? 'line-through' : ''}`}
-            >
-              {event.venue}
-            </a>
-            {event.neighborhood && (
-              <span className="text-[var(--outline)]"> · {event.neighborhood}</span>
+            <div>
+              <a
+                href={mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`font-bold text-[var(--on-surface)] underline decoration-[var(--outline)] underline-offset-4 hover:text-[var(--primary)] transition-colors ${event.cancelled ? 'line-through' : ''}`}
+              >
+                {event.venue}
+              </a>
+              {event.neighborhood && (
+                <span className="text-[var(--outline)]"> · {event.neighborhood}</span>
+              )}
+            </div>
+            {event.organizer && (
+              <div className="text-xs text-[var(--outline)]">By {event.organizer}</div>
             )}
           </div>
 
@@ -197,31 +202,22 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
             <div className="space-y-1 font-sans mb-3.5">
               {musicRows.map((row) => (
                 <div key={row.type} className="flex items-center gap-2 text-sm text-[var(--on-surface-variant)]">
-                  {row.type === 'live' ? <Music className="w-3.5 h-3.5 -mt-px shrink-0" /> : <Disc className="w-3.5 h-3.5 -mt-px shrink-0" />}
-                  <span>{row.name ?? (row.type === 'live' ? 'Live music' : 'DJ set')}</span>
+                  {row.type === 'live' ? <Music className="w-3.5 h-3.5 -mt-px shrink-0" aria-hidden="true" /> : <Disc className="w-3.5 h-3.5 -mt-px shrink-0" aria-hidden="true" />}
+                  <span>
+                    <span className="sr-only">{row.type === 'live' ? 'Live: ' : 'DJ: '}</span>
+                    {row.name ?? (row.type === 'live' ? 'Live music' : 'DJ set')}
+                  </span>
                 </div>
               ))}
             </div>
           )}
 
-          {/* Chips: style, floor, price, payment, multi-night, beginner */}
-          <div className="flex flex-wrap items-center gap-2 font-sans">
+          {/* Identity chips: style, floor, beginner, multi-night */}
+          <div className="flex flex-wrap items-center gap-2 font-sans mb-2">
             <span className={`inline-flex items-center px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${getStyleColor(event.style)}`}>
               {getStyleLabel(event.style)}
             </span>
             <FloorTypeBadge floorType={event.floorType} />
-            {priceDisplay && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-[var(--surface-container)] text-[var(--on-surface-variant)] border border-[var(--surface-container-highest)] text-[10px] font-bold uppercase tracking-wider">
-                <Banknote className="w-3 h-3" />
-                {priceDisplay}
-              </span>
-            )}
-            {event.payment && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-[var(--surface-container)] text-[var(--on-surface-variant)] border border-[var(--surface-container-highest)] text-[10px] font-bold uppercase tracking-wider">
-                <Wallet className="w-3 h-3" />
-                {event.payment}
-              </span>
-            )}
             {nightCount > 1 && (
               <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-indigo-50 text-indigo-800 border border-indigo-200 text-[10px] uppercase font-bold tracking-wider whitespace-nowrap shrink-0">
                 <Moon className="w-3 h-3" />
@@ -237,6 +233,15 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
               </span>
             )}
           </div>
+
+          {/* Logistics: price, payment */}
+          {(priceDisplay || event.payment) && (
+            <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 font-sans text-xs text-[var(--on-surface-variant)]">
+              {priceDisplay && <span>{priceDisplay}</span>}
+              {priceDisplay && event.payment && <span>·</span>}
+              {event.payment && <span>{event.payment}</span>}
+            </div>
+          )}
         </div>
 
         <div className="border-t-2 border-[var(--on-surface)] p-5 space-y-3 font-sans">

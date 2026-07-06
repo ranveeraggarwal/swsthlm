@@ -178,7 +178,7 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
           </h3>
 
           {/* Facts: venue, performers, price/payment — one consistent icon+text list */}
-          <div className="space-y-2.5 font-sans text-sm mb-3.5">
+          <div className="space-y-3 font-sans text-sm mb-4">
             <div className="flex items-center gap-2 leading-none">
               <MapPin className="w-3.5 h-3.5 shrink-0 text-[var(--on-surface-variant)]" aria-hidden="true" />
               <span>
@@ -244,7 +244,7 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
         <div className="border-t-2 border-[var(--on-surface)] p-5 space-y-3 font-sans">
           {/* Description */}
           {event.body && (
-            <p className="text-sm text-[var(--on-surface-variant)] leading-relaxed whitespace-pre-line">
+            <p className="text-sm text-[var(--on-surface-variant)] leading-relaxed whitespace-pre-line line-clamp-2">
               {event.body}
             </p>
           )}

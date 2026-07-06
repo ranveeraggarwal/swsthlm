@@ -196,8 +196,8 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
           {musicRows.length > 0 && (
             <div className="space-y-1 font-sans mb-3.5">
               {musicRows.map((row) => (
-                <div key={row.type} className="flex items-start gap-2 text-sm text-[var(--on-surface-variant)]">
-                  {row.type === 'live' ? <Music className="w-3.5 h-3.5 mt-0.5 shrink-0" /> : <Disc className="w-3.5 h-3.5 mt-0.5 shrink-0" />}
+                <div key={row.type} className="flex items-center gap-2 text-sm text-[var(--on-surface-variant)]">
+                  {row.type === 'live' ? <Music className="w-3.5 h-3.5 -mt-px shrink-0" /> : <Disc className="w-3.5 h-3.5 -mt-px shrink-0" />}
                   <span>{row.name ?? (row.type === 'live' ? 'Live music' : 'DJ set')}</span>
                 </div>
               ))}

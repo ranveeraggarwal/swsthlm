@@ -258,16 +258,6 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
 
         {isExpanded && (
           <div className="border-t-2 border-[var(--on-surface)] p-5 space-y-3 font-sans" onClick={(e) => e.stopPropagation()}>
-            {/* Payment method */}
-            {event.payment && (
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-[var(--surface-container)] text-[var(--on-surface-variant)] border border-[var(--surface-container-highest)] text-[10px] font-bold uppercase tracking-wider">
-                  <Wallet className="w-3 h-3" />
-                  {event.payment}
-                </span>
-              </div>
-            )}
-
             {/* Performers */}
             {musicRows.some((r) => r.name) && (
               <div className="space-y-1 font-sans">
@@ -285,6 +275,16 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
               <div className="flex items-start gap-2 text-xs text-[var(--outline)] font-medium">
                 <MapPin className="w-3.5 h-3.5 mt-0.5 shrink-0" />
                 <span>{byLine}</span>
+              </div>
+            )}
+
+            {/* Payment method */}
+            {event.payment && (
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-[var(--surface-container)] text-[var(--on-surface-variant)] border border-[var(--surface-container-highest)] text-[10px] font-bold uppercase tracking-wider">
+                  <Wallet className="w-3 h-3" />
+                  {event.payment}
+                </span>
               </div>
             )}
 

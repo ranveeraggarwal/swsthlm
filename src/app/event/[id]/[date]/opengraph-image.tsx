@@ -40,6 +40,13 @@ const STYLE_LABELS: Record<string, string> = {
   shag: 'Shag',
 };
 
+const FLOOR_TYPE_LABELS: Record<string, string> = {
+  studio: 'Dance studio',
+  hall: 'Dance hall',
+  bar: 'Bar / restaurant',
+  outdoor: 'Outdoor',
+};
+
 export default async function Image({
   params,
 }: {
@@ -84,6 +91,20 @@ export default async function Image({
   const dateFormatted = formatEventDate(event.date);
   const titleTruncated =
     event.title.length > 60 ? event.title.slice(0, 57) + '…' : event.title;
+
+  const performer = event.band
+    ? `🎷 ${event.band}`
+    : event.dj
+      ? `🎧 ${event.dj}`
+      : event.music === 'live'
+        ? '🎷 Live music'
+        : event.music === 'dj'
+          ? '🎧 DJ set'
+          : null;
+
+  const logistics = [event.price, event.payment].filter(Boolean).join(' · ');
+
+  const floorLabel = FLOOR_TYPE_LABELS[event.floorType ?? ''];
 
   return new ImageResponse(
     (
@@ -135,7 +156,7 @@ export default async function Image({
             padding: '40px 60px',
           }}
         >
-          {/* Style badge */}
+          {/* Identity chips: style, floor type, beginner */}
           <div style={{ display: 'flex', marginBottom: 20 }}>
             <span
               style={{
@@ -149,10 +170,48 @@ export default async function Image({
                 letterSpacing: '0.08em',
                 textTransform: 'uppercase',
                 display: 'flex',
+                marginRight: 12,
               }}
             >
               {styleLabel}
             </span>
+            {floorLabel && (
+              <span
+                style={{
+                  fontFamily: 'Plus Jakarta Sans',
+                  fontSize: 14,
+                  fontWeight: 600,
+                  color: '#594138',
+                  backgroundColor: '#f0eee3',
+                  padding: '6px 16px',
+                  borderRadius: 4,
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                  display: 'flex',
+                  marginRight: 12,
+                }}
+              >
+                {floorLabel}
+              </span>
+            )}
+            {event.beginnerClass && (
+              <span
+                style={{
+                  fontFamily: 'Plus Jakarta Sans',
+                  fontSize: 14,
+                  fontWeight: 600,
+                  color: '#2f5934',
+                  backgroundColor: '#e5f3e6',
+                  padding: '6px 16px',
+                  borderRadius: 4,
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                  display: 'flex',
+                }}
+              >
+                Beginner friendly
+              </span>
+            )}
           </div>
 
           {/* Event title */}
@@ -207,11 +266,45 @@ export default async function Image({
               color: '#8d7166',
               display: 'flex',
               alignItems: 'center',
+              marginBottom: performer || logistics ? 8 : 0,
             }}
           >
             📍 {event.venue}
             {event.neighborhood ? ` · ${event.neighborhood}` : ''}
           </div>
+
+          {/* Performer */}
+          {performer && (
+            <div
+              style={{
+                fontSize: 20,
+                fontFamily: 'Plus Jakarta Sans',
+                fontWeight: 600,
+                color: '#8d7166',
+                display: 'flex',
+                alignItems: 'center',
+                marginBottom: logistics ? 8 : 0,
+              }}
+            >
+              {performer}
+            </div>
+          )}
+
+          {/* Price / payment */}
+          {logistics && (
+            <div
+              style={{
+                fontSize: 18,
+                fontFamily: 'Plus Jakarta Sans',
+                fontWeight: 600,
+                color: '#8d7166',
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
+              💳 {logistics}
+            </div>
+          )}
         </div>
 
         {/* Bottom accent bar */}

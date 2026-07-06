@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-import { MapPin, Music, Disc, Ticket, GraduationCap, ChevronDown, Moon, Banknote } from 'lucide-react';
+'use client';
+
+import React, { useEffect, useRef, useState } from 'react';
+import { MapPin, Music, Disc, Ticket, Moon, GraduationCap, Banknote } from 'lucide-react';
 import { SwingEvent } from '@/types/event';
 import { FloorTypeBadge } from '@/components/FloorTypeBadge';
 import { getTemporalBadge, formatEventDateRange, formatEventDateShort, TemporalBadge } from '@/lib/datetime';
@@ -61,20 +63,16 @@ function TemporalBadgeDisplay({ badge }: { badge: TemporalBadge }) {
   }
 }
 
-function MusicHint({ type }: { type: 'live' | 'dj' }) {
-  const Icon = type === 'live' ? Music : Disc;
-  return (
-    <span
-      className="text-[var(--on-surface-variant)] flex items-center"
-      aria-label={type === 'live' ? 'Live music' : 'DJ set'}
-    >
-      <Icon className="w-3.5 h-3.5" />
-    </span>
-  );
-}
-
 export function EventCard({ event, dates, nightCount, isThisWeek, showDate, currentDate, currentTime }: EventCardProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [descriptionExpanded, setDescriptionExpanded] = useState(false);
+  const [descriptionTruncated, setDescriptionTruncated] = useState(false);
+  const descriptionRef = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    const el = descriptionRef.current;
+    if (!el || descriptionExpanded) return;
+    setDescriptionTruncated(el.scrollHeight > el.clientHeight + 1);
+  }, [event.body, descriptionExpanded]);
 
   const badge = getTemporalBadge(
     event.date,
@@ -130,7 +128,7 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
 
   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${event.venue} ${event.address}`)}`;
 
-  const priceDisplay = event.price ? `${event.price}${event.payment ? ` (${event.payment})` : ''}` : null;
+  const priceDisplay = event.price ?? null;
 
   const musicRows: { type: 'live' | 'dj'; name?: string }[] = [];
   if (event.band) musicRows.push({ type: 'live', name: event.band });
@@ -141,17 +139,9 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
     else if (event.music === 'mixed') musicRows.push({ type: 'live' }, { type: 'dj' });
   }
 
-  const byLine = [event.organizer && `By ${event.organizer}`, event.address].filter(Boolean).join(' · ');
-
   return (
     <div
-      className={`relative lift-card rounded border-2 overflow-hidden flex flex-col text-[var(--on-surface)] cursor-pointer ${event.cancelled ? 'border-red-400 bg-red-50/40' : badge === 'ended' ? 'border-zinc-300 bg-zinc-50' : 'border-[var(--on-surface)] bg-[var(--surface-container-low)]'} ${!event.cancelled && badge === 'happening-now' ? 'ring-2 ring-red-500/30' : ''}`}
-      onClick={() => setIsExpanded((v) => !v)}
-      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setIsExpanded((v) => !v); } }}
-      role="button"
-      tabIndex={0}
-      aria-expanded={isExpanded}
-      aria-label={`${event.title}, ${isExpanded ? 'hide' : 'show'} details`}
+      className={`relative lift-card rounded border-2 overflow-hidden flex flex-col text-[var(--on-surface)] ${event.cancelled ? 'border-red-400 bg-red-50/40' : badge === 'ended' ? 'border-zinc-300 bg-zinc-50' : 'border-[var(--on-surface)] bg-[var(--surface-container-low)]'} ${!event.cancelled && badge === 'happening-now' ? 'ring-2 ring-red-500/30' : ''}`}
     >
       {/* Highlighting border/accent stripe — red for cancelled, temporal colour otherwise */}
       {event.cancelled ? (
@@ -161,9 +151,8 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
       )}
 
       <div className={event.cancelled ? 'opacity-60' : badge === 'ended' ? 'opacity-50' : ''}>
-        {/* ---------- Collapsed summary ---------- */}
         <div className="p-5">
-          {/* Time + music hints + temporal status */}
+          {/* Time + temporal status */}
           <div className="flex items-start justify-between gap-3 mb-2">
             <div>
               {(nightCount > 1 || showDate) && (
@@ -173,14 +162,9 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
                     : formatEventDateShort(dates[0])}
                 </div>
               )}
-              <div className="flex items-center gap-2">
-                <span className={`font-sans font-bold text-base tabular-nums tracking-tight text-[var(--on-surface)] ${event.cancelled ? 'line-through' : ''}`}>
-                  {event.start} – {event.end}
-                </span>
-                {musicRows.map((row) => (
-                  <MusicHint key={row.type} type={row.type} />
-                ))}
-              </div>
+              <span className={`font-sans font-bold text-base tabular-nums tracking-tight text-[var(--on-surface)] ${event.cancelled ? 'line-through' : ''}`}>
+                {event.start} – {event.end}
+              </span>
             </div>
             <div className="flex items-center gap-2 shrink-0">
               {event.cancelled && (
@@ -205,33 +189,53 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
             {event.title}
           </h3>
 
-          {/* Venue · neighborhood */}
-          <div className="text-sm mb-3.5">
-            <a
-              href={mapsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(e) => e.stopPropagation()}
-              className={`font-bold text-[var(--on-surface)] underline decoration-[var(--outline)] underline-offset-4 hover:text-[var(--primary)] transition-colors ${event.cancelled ? 'line-through' : ''}`}
-            >
-              {event.venue}
-            </a>
-            {event.neighborhood && (
-              <span className="text-[var(--outline)]"> · {event.neighborhood}</span>
+          {/* Facts: venue, performers, price/payment — one consistent icon+text list */}
+          <div className="space-y-3 font-sans text-sm mb-4">
+            <div className="flex items-center gap-2 leading-none">
+              <MapPin className="w-3.5 h-3.5 shrink-0 text-[var(--on-surface-variant)]" aria-hidden="true" />
+              <span>
+                <a
+                  href={mapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`font-bold text-[var(--on-surface)] underline decoration-[var(--outline)] underline-offset-4 hover:text-[var(--primary)] transition-colors ${event.cancelled ? 'line-through' : ''}`}
+                >
+                  {event.venue}
+                </a>
+                {event.neighborhood && (
+                  <span className="text-[var(--outline)]"> · {event.neighborhood}</span>
+                )}
+              </span>
+            </div>
+
+            {musicRows.map((row) => (
+              <div key={row.type} className="flex items-center gap-2 leading-none text-[var(--on-surface-variant)]">
+                {row.type === 'live' ? <Music className="w-3.5 h-3.5 shrink-0" aria-hidden="true" /> : <Disc className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />}
+                <span>
+                  <span className="sr-only">{row.type === 'live' ? 'Live: ' : 'DJ: '}</span>
+                  {row.name ?? (row.type === 'live' ? 'Live music' : 'DJ set')}
+                </span>
+              </div>
+            ))}
+
+            {(priceDisplay || event.payment) && (
+              <div className="flex items-center gap-2 leading-none text-[var(--on-surface-variant)]">
+                <Banknote className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                <span>
+                  {priceDisplay}
+                  {priceDisplay && event.payment && ' · '}
+                  {event.payment}
+                </span>
+              </div>
             )}
           </div>
 
-          {/* Chips: style, price, multi-night, beginner */}
+          {/* Identity chips: style, floor, beginner, multi-night */}
           <div className="flex flex-wrap items-center gap-2 font-sans">
             <span className={`inline-flex items-center px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${getStyleColor(event.style)}`}>
               {getStyleLabel(event.style)}
             </span>
-            {priceDisplay && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-[var(--surface-container)] text-[var(--on-surface-variant)] border border-[var(--surface-container-highest)] text-[10px] font-bold uppercase tracking-wider">
-                <Banknote className="w-3 h-3" />
-                {priceDisplay}
-              </span>
-            )}
+            <FloorTypeBadge floorType={event.floorType} />
             {nightCount > 1 && (
               <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-indigo-50 text-indigo-800 border border-indigo-200 text-[10px] uppercase font-bold tracking-wider whitespace-nowrap shrink-0">
                 <Moon className="w-3 h-3" />
@@ -246,63 +250,48 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
                   : `Beginner class ${event.beginnerClass}`}
               </span>
             )}
-            <FloorTypeBadge floorType={event.floorType} />
-          </div>
-
-          {/* Inline expand/collapse indicator */}
-          <div className="flex items-center gap-1.5 mt-3 font-sans text-xs font-bold uppercase tracking-wider text-[var(--on-surface-variant)]">
-            <ChevronDown className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
-            {isExpanded ? 'Hide details' : 'Details'}
           </div>
         </div>
 
-        {isExpanded && (
-          <div className="border-t-2 border-[var(--on-surface)] p-5 space-y-3 font-sans" onClick={(e) => e.stopPropagation()}>
-            {/* Performers */}
-            {musicRows.some((r) => r.name) && (
-              <div className="space-y-1 font-sans">
-                {musicRows.filter((r) => r.name).map((row) => (
-                  <div key={row.type} className="flex items-center gap-2 text-sm text-[var(--on-surface-variant)]">
-                    {row.type === 'live' ? <Music className="w-3.5 h-3.5 shrink-0" /> : <Disc className="w-3.5 h-3.5 shrink-0" />}
-                    <span>{row.name}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* Organizer + address */}
-            {byLine && (
-              <div className="flex items-start gap-2 text-xs text-[var(--outline)] font-medium">
-                <MapPin className="w-3.5 h-3.5 mt-0.5 shrink-0" />
-                <span>{byLine}</span>
-              </div>
-            )}
-
-            {/* Description */}
-            {event.body && (
-              <p className="text-sm text-[var(--on-surface-variant)] leading-relaxed whitespace-pre-line">
+        <div className="border-t-2 border-[var(--on-surface)] p-5 space-y-3 font-sans">
+          {/* Description */}
+          {event.body && (
+            <div>
+              <p
+                ref={descriptionRef}
+                className={`text-sm text-[var(--on-surface-variant)] leading-relaxed whitespace-pre-line ${descriptionExpanded ? '' : 'line-clamp-2'}`}
+              >
                 {event.body}
               </p>
-            )}
-
-            {/* Actions */}
-            <div className="flex items-center gap-2">
-              {event.ticket && (
-                <a
-                  href={event.ticket}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded border border-[var(--on-surface)] bg-[var(--primary)] text-white hover:bg-[var(--primary-container)] font-bold uppercase tracking-wider text-xs lift-btn-primary"
+              {descriptionTruncated && (
+                <button
+                  type="button"
+                  onClick={() => setDescriptionExpanded((v) => !v)}
+                  className="mt-1 font-sans text-xs font-bold uppercase tracking-wider text-[var(--primary)] hover:underline"
                 >
-                  <Ticket className="w-4 h-4" />
-                  Tickets / Info
-                </a>
+                  {descriptionExpanded ? 'Show less' : 'Read more'}
+                </button>
               )}
-              <AddToCalendarButton event={event} />
-              <ShareButton eventId={event.id} eventDate={event.date} eventTitle={event.title} />
             </div>
+          )}
+
+          {/* Actions */}
+          <div className="flex items-center gap-2">
+            {event.ticket && (
+              <a
+                href={event.ticket}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded border border-[var(--on-surface)] bg-[var(--primary)] text-white hover:bg-[var(--primary-container)] font-bold uppercase tracking-wider text-xs lift-btn-primary"
+              >
+                <Ticket className="w-4 h-4" />
+                Tickets / Info
+              </a>
+            )}
+            <AddToCalendarButton event={event} />
+            <ShareButton eventId={event.id} eventDate={event.date} eventTitle={event.title} />
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapPin, Music, Disc, Ticket, Moon, GraduationCap, Banknote, Wallet } from 'lucide-react';
+import { Music, Disc, Ticket, Moon, GraduationCap, Banknote, Wallet } from 'lucide-react';
 import { SwingEvent } from '@/types/event';
 import { FloorTypeBadge } from '@/components/FloorTypeBadge';
 import { getTemporalBadge, formatEventDateRange, formatEventDateShort, TemporalBadge } from '@/lib/datetime';
@@ -59,18 +59,6 @@ function TemporalBadgeDisplay({ badge }: { badge: TemporalBadge }) {
     default:
       return null;
   }
-}
-
-function MusicHint({ type }: { type: 'live' | 'dj' }) {
-  const Icon = type === 'live' ? Music : Disc;
-  return (
-    <span
-      className="text-[var(--on-surface-variant)] flex items-center"
-      aria-label={type === 'live' ? 'Live music' : 'DJ set'}
-    >
-      <Icon className="w-3.5 h-3.5" />
-    </span>
-  );
 }
 
 export function EventCard({ event, dates, nightCount, isThisWeek, showDate, currentDate, currentTime }: EventCardProps) {
@@ -139,8 +127,6 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
     else if (event.music === 'mixed') musicRows.push({ type: 'live' }, { type: 'dj' });
   }
 
-  const byLine = [event.organizer && `By ${event.organizer}`, event.address].filter(Boolean).join(' · ');
-
   return (
     <div
       className={`relative lift-card rounded border-2 overflow-hidden flex flex-col text-[var(--on-surface)] ${event.cancelled ? 'border-red-400 bg-red-50/40' : badge === 'ended' ? 'border-zinc-300 bg-zinc-50' : 'border-[var(--on-surface)] bg-[var(--surface-container-low)]'} ${!event.cancelled && badge === 'happening-now' ? 'ring-2 ring-red-500/30' : ''}`}
@@ -154,7 +140,7 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
 
       <div className={event.cancelled ? 'opacity-60' : badge === 'ended' ? 'opacity-50' : ''}>
         <div className="p-5">
-          {/* Time + music hints + temporal status */}
+          {/* Time + temporal status */}
           <div className="flex items-start justify-between gap-3 mb-2">
             <div>
               {(nightCount > 1 || showDate) && (
@@ -164,14 +150,9 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
                     : formatEventDateShort(dates[0])}
                 </div>
               )}
-              <div className="flex items-center gap-2">
-                <span className={`font-sans font-bold text-base tabular-nums tracking-tight text-[var(--on-surface)] ${event.cancelled ? 'line-through' : ''}`}>
-                  {event.start} – {event.end}
-                </span>
-                {musicRows.map((row) => (
-                  <MusicHint key={row.type} type={row.type} />
-                ))}
-              </div>
+              <span className={`font-sans font-bold text-base tabular-nums tracking-tight text-[var(--on-surface)] ${event.cancelled ? 'line-through' : ''}`}>
+                {event.start} – {event.end}
+              </span>
             </div>
             <div className="flex items-center gap-2 shrink-0">
               {event.cancelled && (
@@ -211,7 +192,7 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
             )}
           </div>
 
-          {/* Chips: style, price, multi-night, beginner */}
+          {/* Chips: style, price, payment, multi-night, beginner, floor */}
           <div className="flex flex-wrap items-center gap-2 font-sans">
             <span className={`inline-flex items-center px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${getStyleColor(event.style)}`}>
               {getStyleLabel(event.style)}
@@ -220,6 +201,12 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
               <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-[var(--surface-container)] text-[var(--on-surface-variant)] border border-[var(--surface-container-highest)] text-[10px] font-bold uppercase tracking-wider">
                 <Banknote className="w-3 h-3" />
                 {priceDisplay}
+              </span>
+            )}
+            {event.payment && (
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-[var(--surface-container)] text-[var(--on-surface-variant)] border border-[var(--surface-container-highest)] text-[10px] font-bold uppercase tracking-wider">
+                <Wallet className="w-3 h-3" />
+                {event.payment}
               </span>
             )}
             {nightCount > 1 && (
@@ -242,32 +229,14 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
 
         <div className="border-t-2 border-[var(--on-surface)] p-5 space-y-3 font-sans">
           {/* Performers */}
-          {musicRows.some((r) => r.name) && (
+          {musicRows.length > 0 && (
             <div className="space-y-1 font-sans">
-              {musicRows.filter((r) => r.name).map((row) => (
+              {musicRows.map((row) => (
                 <div key={row.type} className="flex items-center gap-2 text-sm text-[var(--on-surface-variant)]">
                   {row.type === 'live' ? <Music className="w-3.5 h-3.5 shrink-0" /> : <Disc className="w-3.5 h-3.5 shrink-0" />}
-                  <span>{row.name}</span>
+                  <span>{row.name ?? (row.type === 'live' ? 'Live music' : 'DJ set')}</span>
                 </div>
               ))}
-            </div>
-          )}
-
-          {/* Organizer + address */}
-          {byLine && (
-            <div className="flex items-start gap-2 text-xs text-[var(--outline)] font-medium">
-              <MapPin className="w-3.5 h-3.5 mt-0.5 shrink-0" />
-              <span>{byLine}</span>
-            </div>
-          )}
-
-          {/* Payment method */}
-          {event.payment && (
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-[var(--surface-container)] text-[var(--on-surface-variant)] border border-[var(--surface-container-highest)] text-[10px] font-bold uppercase tracking-wider">
-                <Wallet className="w-3 h-3" />
-                {event.payment}
-              </span>
             </div>
           )}
 

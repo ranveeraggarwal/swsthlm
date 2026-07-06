@@ -1,4 +1,6 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect, useRef, useState } from 'react';
 import { MapPin, Music, Disc, Ticket, Moon, GraduationCap, Banknote } from 'lucide-react';
 import { SwingEvent } from '@/types/event';
 import { FloorTypeBadge } from '@/components/FloorTypeBadge';
@@ -62,6 +64,16 @@ function TemporalBadgeDisplay({ badge }: { badge: TemporalBadge }) {
 }
 
 export function EventCard({ event, dates, nightCount, isThisWeek, showDate, currentDate, currentTime }: EventCardProps) {
+  const [descriptionExpanded, setDescriptionExpanded] = useState(false);
+  const [descriptionTruncated, setDescriptionTruncated] = useState(false);
+  const descriptionRef = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    const el = descriptionRef.current;
+    if (!el || descriptionExpanded) return;
+    setDescriptionTruncated(el.scrollHeight > el.clientHeight + 1);
+  }, [event.body, descriptionExpanded]);
+
   const badge = getTemporalBadge(
     event.date,
     event.start,
@@ -244,9 +256,23 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
         <div className="border-t-2 border-[var(--on-surface)] p-5 space-y-3 font-sans">
           {/* Description */}
           {event.body && (
-            <p className="text-sm text-[var(--on-surface-variant)] leading-relaxed whitespace-pre-line line-clamp-2">
-              {event.body}
-            </p>
+            <div>
+              <p
+                ref={descriptionRef}
+                className={`text-sm text-[var(--on-surface-variant)] leading-relaxed whitespace-pre-line ${descriptionExpanded ? '' : 'line-clamp-2'}`}
+              >
+                {event.body}
+              </p>
+              {descriptionTruncated && (
+                <button
+                  type="button"
+                  onClick={() => setDescriptionExpanded((v) => !v)}
+                  className="mt-1 font-sans text-xs font-bold uppercase tracking-wider text-[var(--primary)] hover:underline"
+                >
+                  {descriptionExpanded ? 'Show less' : 'Read more'}
+                </button>
+              )}
+            </div>
           )}
 
           {/* Actions */}

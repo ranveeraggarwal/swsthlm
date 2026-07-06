@@ -1,5 +1,5 @@
 import React from 'react';
-import { Music, Disc, Ticket, Moon, GraduationCap } from 'lucide-react';
+import { Music, Disc, Ticket, Moon, GraduationCap, Banknote } from 'lucide-react';
 import { SwingEvent } from '@/types/event';
 import { FloorTypeBadge } from '@/components/FloorTypeBadge';
 import { getTemporalBadge, formatEventDateRange, formatEventDateShort, TemporalBadge } from '@/lib/datetime';
@@ -239,6 +239,7 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
           {/* Logistics: price, payment */}
           {(priceDisplay || event.payment) && (
             <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 font-sans text-xs text-[var(--on-surface-variant)]">
+              <Banknote className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
               {priceDisplay && <span>{priceDisplay}</span>}
               {priceDisplay && event.payment && <span>·</span>}
               {event.payment && <span>{event.payment}</span>}

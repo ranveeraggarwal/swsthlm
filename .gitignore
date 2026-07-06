@@ -47,6 +47,7 @@ next-env.d.ts
 # claude code
 .claude/
 
-# scraper reports
+# scraper / form-sync reports
 new-bands-report.md
 scrape-report.md
+form-sync-report.md

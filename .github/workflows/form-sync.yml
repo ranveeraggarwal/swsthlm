@@ -1,0 +1,43 @@
+name: Form sync
+
+# Polls the organizer-intake Google Form's responses sheet (published to the
+# web as CSV — no service account, no secrets) and opens/updates ONE review PR
+# (branch bot/form-sync) with any new submissions as draft events. Idle polls
+# produce no PR. Manual runs via the Actions tab (workflow_dispatch).
+#
+# Setup (one-time): docs/architecture/FORM_SYNC.md.
+
+on:
+  schedule:
+    - cron: '*/30 * * * *' # every 30 minutes
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  form-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Sync form responses
+        env:
+          FORM_RESPONSES_CSV_URL: ${{ secrets.FORM_RESPONSES_CSV_URL }}
+        run: node scripts/form-sync.mjs
+      - name: Open / update form-submissions review PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: bot/form-sync
+          base: main
+          add-paths: data/oneoffs.csv
+          commit-message: 'chore(data): form submissions as draft events'
+          title: 'Form submissions: review'
+          body-path: form-sync-report.md
+          labels: data
+          delete-branch: false

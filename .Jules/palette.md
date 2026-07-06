@@ -12,3 +12,7 @@
 ## 2024-06-25 - Maintain Focus During Component Unmount
 **Learning:** When a user interacts with a UI element (like a "Clear search" button) that causes the element itself to unmount, keyboard focus is often lost and dropped back to the `<body>`. This forces keyboard users to tab through the entire page again.
 **Action:** When creating components that unmount on interaction, always use a `useRef` to explicitly shift focus to a logical neighboring element (e.g., shifting focus back to the search input when the "clear" button is pressed).
+
+## 2024-07-06 - Dynamic Announcement and Focus Restoration
+**Learning:** Screen readers need to be explicitly told about dynamic text updates (like a filter result summary changing) using `aria-live` and `aria-atomic` to prevent silent state changes. Furthermore, interactive elements that unmount upon interaction (like a "Clear filters" button) cause keyboard focus to drop to the document `<body>`, disrupting the navigation flow.
+**Action:** When summarizing results, always wrap the output in a container with `aria-live="polite"` and `aria-atomic="true"`. When an element like a reset button unmounts on click, always use a `useRef` to explicitly restore focus to a logical, persistent neighboring element (e.g., the filter toggle button).

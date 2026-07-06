@@ -123,7 +123,7 @@ so:
 
 ## Cadence
 
-Every 30 minutes (`workflow_dispatch` also available for an on-demand run).
+Every 2 hours (`workflow_dispatch` also available for an on-demand run).
 Cheap — an idle poll produces no diff and no PR, same as the nightly scraper.
 
 ## Corrections — future work

@@ -179,7 +179,7 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
 
           {/* Facts: venue, performers, price/payment — one consistent icon+text list */}
           <div className="space-y-1.5 font-sans text-sm mb-3.5">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 leading-none">
               <MapPin className="w-3.5 h-3.5 shrink-0 text-[var(--on-surface-variant)]" aria-hidden="true" />
               <span>
                 <a
@@ -197,8 +197,8 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
             </div>
 
             {musicRows.map((row) => (
-              <div key={row.type} className="flex items-center gap-2 text-[var(--on-surface-variant)]">
-                {row.type === 'live' ? <Music className="w-3.5 h-3.5 -mt-px shrink-0" aria-hidden="true" /> : <Disc className="w-3.5 h-3.5 -mt-px shrink-0" aria-hidden="true" />}
+              <div key={row.type} className="flex items-center gap-2 leading-none text-[var(--on-surface-variant)]">
+                {row.type === 'live' ? <Music className="w-3.5 h-3.5 shrink-0" aria-hidden="true" /> : <Disc className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />}
                 <span>
                   <span className="sr-only">{row.type === 'live' ? 'Live: ' : 'DJ: '}</span>
                   {row.name ?? (row.type === 'live' ? 'Live music' : 'DJ set')}
@@ -207,7 +207,7 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
             ))}
 
             {(priceDisplay || event.payment) && (
-              <div className="flex items-center gap-2 text-[var(--on-surface-variant)]">
+              <div className="flex items-center gap-2 leading-none text-[var(--on-surface-variant)]">
                 <Banknote className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
                 <span>
                   {priceDisplay}

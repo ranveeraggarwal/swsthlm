@@ -10,7 +10,7 @@
 
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, MapPin, Music, Disc, Ticket, Banknote, GraduationCap, Wallet } from 'lucide-react';
+import { ArrowLeft, MapPin, Music, Disc, Ticket, Banknote, GraduationCap } from 'lucide-react';
 import { AddToCalendarButton } from '@/components/AddToCalendarButton';
 import { ShareButton } from '@/components/ShareButton';
 import { FloorTypeBadge } from '@/components/FloorTypeBadge';
@@ -150,24 +150,51 @@ export default async function EventPage({
             {event.start} – {event.end}
           </p>
 
-          {/* Venue */}
-          <div className="text-sm">
-            <a
-              href={mapsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-bold text-[var(--on-surface)] underline decoration-[var(--outline)] underline-offset-4 hover:text-[var(--primary)] transition-colors"
-            >
-              {event.venue}
-            </a>
-            {event.neighborhood && (
-              <span className="text-[var(--outline)]"> · {event.neighborhood}</span>
+          {/* Facts: venue, performers, price/payment — one consistent icon+text list */}
+          <div className="space-y-3 font-sans text-sm">
+            <div className="flex items-center gap-2 leading-none">
+              <MapPin className="w-3.5 h-3.5 shrink-0 text-[var(--on-surface-variant)]" aria-hidden="true" />
+              <span>
+                <a
+                  href={mapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-bold text-[var(--on-surface)] underline decoration-[var(--outline)] underline-offset-4 hover:text-[var(--primary)] transition-colors"
+                >
+                  {event.venue}
+                </a>
+                {event.neighborhood && (
+                  <span className="text-[var(--outline)]"> · {event.neighborhood}</span>
+                )}
+              </span>
+            </div>
+
+            {musicRows.map((row) => (
+              <div key={row.type} className="flex items-center gap-2 leading-none text-[var(--on-surface-variant)]">
+                {row.type === 'live' ? <Music className="w-3.5 h-3.5 shrink-0" aria-hidden="true" /> : <Disc className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />}
+                <span>
+                  <span className="sr-only">{row.type === 'live' ? 'Live: ' : 'DJ: '}</span>
+                  {row.name ?? (row.type === 'live' ? 'Live music' : 'DJ set')}
+                </span>
+              </div>
+            ))}
+
+            {(priceDisplay || event.payment) && (
+              <div className="flex items-center gap-2 leading-none text-[var(--on-surface-variant)]">
+                <Banknote className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                <span>
+                  {priceDisplay}
+                  {priceDisplay && event.payment && ' · '}
+                  {event.payment}
+                </span>
+              </div>
             )}
           </div>
 
-          {/* Style / beginner / price badges */}
+          {/* Identity chips: style, floor, beginner */}
           <div className="flex flex-wrap items-center gap-2 font-sans">
             <StyleBadge style={event.style} />
+            <FloorTypeBadge floorType={event.floorType} />
             {event.beginnerClass && (
               <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-green-50 text-green-800 border border-green-200 text-[10px] uppercase font-bold tracking-wider">
                 <GraduationCap className="w-3 h-3" />
@@ -176,58 +203,7 @@ export default async function EventPage({
                   : `Beginner class ${event.beginnerClass}`}
               </span>
             )}
-            {priceDisplay && (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-[var(--surface-container)] text-[var(--on-surface-variant)] border border-[var(--surface-container-highest)] text-[11px] font-bold uppercase tracking-wider">
-                <Banknote className="w-3.5 h-3.5" />
-                {priceDisplay}
-              </span>
-            )}
-            {event.payment && (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-[var(--surface-container)] text-[var(--on-surface-variant)] border border-[var(--surface-container-highest)] text-[11px] font-bold uppercase tracking-wider">
-                <Wallet className="w-3.5 h-3.5" />
-                {event.payment}
-              </span>
-            )}
-            <FloorTypeBadge floorType={event.floorType} />
           </div>
-
-          {/* Music rows */}
-          {musicRows.length > 0 && (
-            <div className="space-y-1.5 font-sans">
-              {musicRows.map((row) => (
-                <div key={row.type} className="flex items-center gap-2 min-w-0">
-                  {row.type === 'live' ? (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider border bg-amber-50 text-amber-800 border-amber-200 whitespace-nowrap shrink-0">
-                      <Music className="w-3 h-3" />
-                      Live Music
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider border bg-[var(--surface-container)] text-[var(--on-surface-variant)] border-[var(--surface-container-highest)] whitespace-nowrap shrink-0">
-                      <Disc className="w-3 h-3" />
-                      DJ
-                    </span>
-                  )}
-                  {row.name && (
-                    <span className="text-sm text-[var(--outline)] font-medium">
-                      {row.name}
-                    </span>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Organizer + address */}
-          {(event.organizer || event.address) && (
-            <div className="flex items-start gap-2 text-xs text-[var(--outline)] font-medium font-sans">
-              <MapPin className="w-3.5 h-3.5 mt-0.5 shrink-0" />
-              <span>
-                {[event.organizer && `By ${event.organizer}`, event.address]
-                  .filter(Boolean)
-                  .join(' · ')}
-              </span>
-            </div>
-          )}
 
           {/* Description */}
           {event.body && (

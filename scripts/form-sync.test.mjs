@@ -6,6 +6,7 @@ const VENUES = {
   rows: [
     { id: 'chicago', name: 'Chicago Swing Dance Studio', address: 'Hornsgatan 75', neighborhood: 'Söder' },
     { id: 'norrport', name: 'Norrport', address: 'Roslagsgatan 38', neighborhood: 'Vasastan' },
+    { id: 'vinterviken', name: 'Vintervikens Trädgård', address: 'Vinterviksvägen 30', neighborhood: 'Aspudden' },
   ],
 };
 
@@ -108,6 +109,18 @@ describe('mapResponse', () => {
     expect(issues).toEqual([]);
     expect(correction.reference).toBe('Wrong price on the Tuesday social');
     expect(correction.name).toBe('Midsummer Swing Ball');
+  });
+
+  it('matches a venue by id when the form label is shorter than the CSV name', () => {
+    const { row, issues } = mapResponse(response({ Venue: 'Vinterviken' }), VENUES);
+    expect(issues).toEqual([]);
+    expect(row.venue_id).toBe('vinterviken');
+  });
+
+  it('matches a venue by name-prefix when the form label omits a suffix word', () => {
+    const { row, issues } = mapResponse(response({ Venue: 'Chicago' }), VENUES);
+    expect(issues).toEqual([]);
+    expect(row.venue_id).toBe('chicago');
   });
 
   it('flags an unresolved venue instead of inventing one', () => {

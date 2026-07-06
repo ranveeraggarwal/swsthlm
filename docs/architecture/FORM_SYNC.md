@@ -66,7 +66,7 @@ a clear error rather than silently doing nothing.
 | `id` | derived | `slug(Event Name)-date`, deterministic — see "Idempotency" below. |
 | `name` | Event Name | |
 | `style` | Dance Style | Keyword-normalized to the enum; unrecognized answers default to `all` (the safe "social" fallback) with a report note, rather than failing the row. |
-| `venue_id` | Venue | Matched against `venues.csv` `name`. Never invented — see below. |
+| `venue_id` | Venue | Matched against `venues.csv` by exact `name`, exact `id`, or the answer as a prefix of `name` (form labels are often the short/colloquial name — "Vinterviken" vs. the CSV's "Vintervikens Trädgård"). Never invented — see below. |
 | `date` | Start Date | Tolerant date parser (ISO, `D/M/Y` day-first, named-month). Unparseable → row withheld, flagged. |
 | `end_date` | End Date | Same parser; optional. |
 | `start` | Doors open / Start time | Tolerant time parser (24h, `H:MM AM/PM`). |

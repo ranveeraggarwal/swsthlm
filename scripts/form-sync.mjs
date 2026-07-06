@@ -158,14 +158,20 @@ function mapBeginnerClass(hasClassRaw, startTimeRaw, notes) {
   return /^y/i.test((hasClassRaw ?? '').trim()) ? 'yes' : '';
 }
 
-// Venue answer -> venue_id, by matching against data/venues.csv `name` column
-// (case/whitespace-insensitive). Never invents a venue: an unmatched answer
-// (including the form's "Other" option) comes back null, and the caller flags
-// it for a human rather than writing a venue_id that doesn't exist.
+// Venue answer -> venue_id, matched against data/venues.csv by (in order)
+// exact name, exact id, or the answer being a prefix of the full name — the
+// form's dropdown labels are the short/colloquial name ("Vinterviken"), which
+// is often shorter than the venues.csv display name ("Vintervikens
+// Trädgård") or spelled differently from the id. Never invents a venue: an
+// unmatched answer (including the form's "Other" option) comes back null,
+// and the caller flags it for a human rather than writing a venue_id that
+// doesn't exist.
 function resolveVenue(raw, otherName, otherAddress, otherNeighborhood, venues) {
   const v = norm(raw);
   if (v && v !== 'other') {
-    const hit = venues.rows.find((r) => norm(r.name) === v);
+    const hit = venues.rows.find((r) => norm(r.name) === v)
+      ?? venues.rows.find((r) => norm(r.id) === v)
+      ?? venues.rows.find((r) => v.length >= 3 && norm(r.name).startsWith(v));
     if (hit) return { venueId: hit.id, proposal: null };
   }
   if (otherName?.trim()) {

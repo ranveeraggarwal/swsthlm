@@ -118,6 +118,8 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
 
   const priceDisplay = event.price ?? null;
 
+  const showOrganizer = event.organizer && event.organizer.trim().toLowerCase() !== event.venue.trim().toLowerCase();
+
   const musicRows: { type: 'live' | 'dj'; name?: string }[] = [];
   if (event.band) musicRows.push({ type: 'live', name: event.band });
   if (event.dj) musicRows.push({ type: 'dj', name: event.dj });
@@ -192,8 +194,8 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
                 <span className="text-[var(--outline)]"> · {event.neighborhood}</span>
               )}
             </div>
-            {event.organizer && (
-              <div className="text-xs text-[var(--outline)]">By {event.organizer}</div>
+            {showOrganizer && (
+              <div className="text-xs text-[var(--outline)] mt-0.5">By {event.organizer}</div>
             )}
           </div>
 

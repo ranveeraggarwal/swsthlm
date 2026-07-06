@@ -192,11 +192,24 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
             )}
           </div>
 
-          {/* Chips: style, price, payment, multi-night, beginner, floor */}
+          {/* Performers */}
+          {musicRows.length > 0 && (
+            <div className="space-y-1 font-sans mb-3.5">
+              {musicRows.map((row) => (
+                <div key={row.type} className="flex items-center gap-2 text-sm text-[var(--on-surface-variant)]">
+                  {row.type === 'live' ? <Music className="w-3.5 h-3.5 shrink-0" /> : <Disc className="w-3.5 h-3.5 shrink-0" />}
+                  <span>{row.name ?? (row.type === 'live' ? 'Live music' : 'DJ set')}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Chips: style, floor, price, payment, multi-night, beginner */}
           <div className="flex flex-wrap items-center gap-2 font-sans">
             <span className={`inline-flex items-center px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${getStyleColor(event.style)}`}>
               {getStyleLabel(event.style)}
             </span>
+            <FloorTypeBadge floorType={event.floorType} />
             {priceDisplay && (
               <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-[var(--surface-container)] text-[var(--on-surface-variant)] border border-[var(--surface-container-highest)] text-[10px] font-bold uppercase tracking-wider">
                 <Banknote className="w-3 h-3" />
@@ -223,23 +236,10 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
                   : `Beginner class ${event.beginnerClass}`}
               </span>
             )}
-            <FloorTypeBadge floorType={event.floorType} />
           </div>
         </div>
 
         <div className="border-t-2 border-[var(--on-surface)] p-5 space-y-3 font-sans">
-          {/* Performers */}
-          {musicRows.length > 0 && (
-            <div className="space-y-1 font-sans">
-              {musicRows.map((row) => (
-                <div key={row.type} className="flex items-center gap-2 text-sm text-[var(--on-surface-variant)]">
-                  {row.type === 'live' ? <Music className="w-3.5 h-3.5 shrink-0" /> : <Disc className="w-3.5 h-3.5 shrink-0" />}
-                  <span>{row.name ?? (row.type === 'live' ? 'Live music' : 'DJ set')}</span>
-                </div>
-              ))}
-            </div>
-          )}
-
           {/* Description */}
           {event.body && (
             <p className="text-sm text-[var(--on-surface-variant)] leading-relaxed whitespace-pre-line">

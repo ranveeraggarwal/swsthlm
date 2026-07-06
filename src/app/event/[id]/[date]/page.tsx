@@ -10,7 +10,7 @@
 
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, MapPin, Music, Disc, Ticket, Banknote, GraduationCap } from 'lucide-react';
+import { ArrowLeft, MapPin, Music, Disc, Ticket, Banknote, GraduationCap, Wallet } from 'lucide-react';
 import { AddToCalendarButton } from '@/components/AddToCalendarButton';
 import { ShareButton } from '@/components/ShareButton';
 import { FloorTypeBadge } from '@/components/FloorTypeBadge';
@@ -115,9 +115,7 @@ export default async function EventPage({
     else if (event.music === 'mixed') musicRows.push({ type: 'live' }, { type: 'dj' });
   }
 
-  const priceDisplay = event.price
-    ? `${event.price}${event.payment ? ` (${event.payment})` : ''}`
-    : null;
+  const priceDisplay = event.price ?? null;
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 w-full">
@@ -182,6 +180,12 @@ export default async function EventPage({
               <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-[var(--surface-container)] text-[var(--on-surface-variant)] border border-[var(--surface-container-highest)] text-[11px] font-bold uppercase tracking-wider">
                 <Banknote className="w-3.5 h-3.5" />
                 {priceDisplay}
+              </span>
+            )}
+            {event.payment && (
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-[var(--surface-container)] text-[var(--on-surface-variant)] border border-[var(--surface-container-highest)] text-[11px] font-bold uppercase tracking-wider">
+                <Wallet className="w-3.5 h-3.5" />
+                {event.payment}
               </span>
             )}
             <FloorTypeBadge floorType={event.floorType} />

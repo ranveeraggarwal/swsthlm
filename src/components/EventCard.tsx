@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MapPin, Music, Disc, Ticket, GraduationCap, ChevronDown, Moon, Banknote } from 'lucide-react';
+import { MapPin, Music, Disc, Ticket, GraduationCap, ChevronDown, Moon, Banknote, Wallet } from 'lucide-react';
 import { SwingEvent } from '@/types/event';
 import { FloorTypeBadge } from '@/components/FloorTypeBadge';
 import { getTemporalBadge, formatEventDateRange, formatEventDateShort, TemporalBadge } from '@/lib/datetime';
@@ -130,7 +130,7 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
 
   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${event.venue} ${event.address}`)}`;
 
-  const priceDisplay = event.price ? `${event.price}${event.payment ? ` (${event.payment})` : ''}` : null;
+  const priceDisplay = event.price ?? null;
 
   const musicRows: { type: 'live' | 'dj'; name?: string }[] = [];
   if (event.band) musicRows.push({ type: 'live', name: event.band });
@@ -275,6 +275,16 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
               <div className="flex items-start gap-2 text-xs text-[var(--outline)] font-medium">
                 <MapPin className="w-3.5 h-3.5 mt-0.5 shrink-0" />
                 <span>{byLine}</span>
+              </div>
+            )}
+
+            {/* Payment method */}
+            {event.payment && (
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-[var(--surface-container)] text-[var(--on-surface-variant)] border border-[var(--surface-container-highest)] text-[10px] font-bold uppercase tracking-wider">
+                  <Wallet className="w-3 h-3" />
+                  {event.payment}
+                </span>
               </div>
             )}
 

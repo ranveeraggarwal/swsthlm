@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { MapPin, Music, Disc, Ticket, GraduationCap, Moon, ChevronDown, Banknote } from 'lucide-react';
+import { MapPin, Music, Disc, Ticket, GraduationCap, Moon, ChevronDown, Banknote, Wallet } from 'lucide-react';
 import { SwingEvent } from '@/types/event';
 import { ShareButton } from '@/components/ShareButton';
 import { AddToCalendarButton } from '@/components/AddToCalendarButton';
@@ -19,7 +19,7 @@ export function EventRow({ event, dates, nightCount }: EventRowProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${event.venue} ${event.address}`)}`;
-  const priceDisplay = event.price ? `${event.price}${event.payment ? ` (${event.payment})` : ''}` : null;
+  const priceDisplay = event.price ?? null;
 
   const getStyleLabel = (style: string) => {
     switch (style.toLowerCase()) {
@@ -129,6 +129,12 @@ export function EventRow({ event, dates, nightCount }: EventRowProps) {
               <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-xs font-bold border bg-[var(--surface-container)] text-[var(--on-surface-variant)] border-[var(--surface-container-highest)]">
                 <Banknote className="w-3.5 h-3.5 shrink-0" />
                 {priceDisplay}
+              </span>
+            )}
+            {event.payment && (
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-xs font-bold border bg-[var(--surface-container)] text-[var(--on-surface-variant)] border-[var(--surface-container-highest)]">
+                <Wallet className="w-3.5 h-3.5 shrink-0" />
+                {event.payment}
               </span>
             )}
             {nightCount > 1 && (

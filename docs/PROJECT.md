@@ -65,7 +65,7 @@ User accounts, an organizer dashboard, a database, machine translation of descri
 
 GitHub issue numbers are authoritative. Priorities: P0 = do first, P1 = high value, P2 = when convenient. ✓ = merged/closed.
 
-**State as of 2026-06-23:** M1 complete. M2 complete — ICS feed (#8) and per-event add-to-calendar (#9) shipped alongside the earlier JSON-LD, permalinks, and OG image work. M3 well along — day filter (#22), "updated X ago" (#24), PWA manifest (#27) all shipped in addition to earlier filter-URL (#21), neighborhood tags (#25), H1/SEO work; remaining: designed empty states (#23), accessibility pass (#26), scrolling animation (#58), dancefloor tags (#59), resources page (#60). M4 nightly scrapers complete (#4) with exception-proposal logic (#82); new P0 issues filed for Facebook/Instagram intake (#133, #134) covering SSS and remaining venues; Form → PR sync (#5) still to build. M5 partially started (CONTRIBUTING.md, open-source About section). Next highest-leverage open items: Facebook/Instagram intake (#133, #134), Form → PR sync (#5), resources page (#60), "Wrong info?" link (#28).
+**State as of 2026-07-06:** M1 complete. M2 complete — ICS feed (#8) and per-event add-to-calendar (#9) shipped alongside the earlier JSON-LD, permalinks, and OG image work. M3 well along — day filter (#22), "updated X ago" (#24), PWA manifest (#27) all shipped in addition to earlier filter-URL (#21), neighborhood tags (#25), H1/SEO work; remaining: designed empty states (#23), accessibility pass (#26), scrolling animation (#58), dancefloor tags (#59), resources page (#60). M4 nightly scrapers complete (#4) with exception-proposal logic (#82); new P0 issues filed for Facebook/Instagram intake (#133, #134) covering SSS and remaining venues; Form → PR sync (#5) shipped (`scripts/form-sync.mjs`, `docs/architecture/FORM_SYNC.md`) — published-CSV polling rather than a service account, rows land as `status=draft`; needs the one-time "Publish to web" + `FORM_RESPONSES_CSV_URL` secret setup documented there before it's live. M5 partially started (CONTRIBUTING.md, open-source About section). Next highest-leverage open items: Facebook/Instagram intake (#133, #134), resources page (#60), "Wrong info?" link (#28).
 
 | # | Issue | Milestone | Priority | |
 |---|---|---|---|---|
@@ -73,7 +73,7 @@ GitHub issue numbers are authoritative. Priorities: P0 = do first, P1 = high val
 | 2 | Series + exceptions expansion at build time | M4 | P0 | ✓ |
 | 3 | CI schema validation for /data | M4 | P0 | ✓ |
 | 4 | Nightly scraper Actions → PRs | M4 | P1 | ✓ |
-| 5 | Google Form → PR sync Action | M4 | P1 | open |
+| 5 | Google Form → PR sync Action | M4 | P1 | ✓ |
 | 6 | Weekly health-report Action | M4 | P2 | open |
 | 7 | Server-side data loading; remove runtime CSV fetch | M2 | P0 | ✓ |
 | 8 | ICS subscription feed (webcal) | M2 | P2 | ✓ |

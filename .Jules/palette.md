@@ -12,3 +12,6 @@
 ## 2024-06-25 - Maintain Focus During Component Unmount
 **Learning:** When a user interacts with a UI element (like a "Clear search" button) that causes the element itself to unmount, keyboard focus is often lost and dropped back to the `<body>`. This forces keyboard users to tab through the entire page again.
 **Action:** When creating components that unmount on interaction, always use a `useRef` to explicitly shift focus to a logical neighboring element (e.g., shifting focus back to the search input when the "clear" button is pressed).
+## 2026-07-07 - Focus Restoration on Filter Reset
+**Learning:** When unmounting interactive elements (like a "Reset" button for filters), keyboard focus drops to the `<body>`. Setting focus back to a logical anchor, like the filter toggle button, requires `setTimeout(() => ref.current?.focus(), 0)` to safely wait for React's re-render cycle.
+**Action:** When creating components that unmount on interaction, always use a `useRef` to explicitly shift focus to a logical neighboring element (e.g., shifting focus back to the filter toggle when the "clear" button is pressed). Wrapping the focus call in `setTimeout(() => ref.current?.focus(), 0)` ensures the DOM has updated before focus is applied.

@@ -33,7 +33,7 @@ export function FreshnessSignal() {
   if (!label) return null;
 
   return (
-    <span className="text-[var(--on-surface-variant)]/50">
+    <span className="text-[var(--on-surface-variant)]">
       Schedule updated {label}
     </span>
   );

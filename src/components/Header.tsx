@@ -49,11 +49,11 @@ export function Header() {
             <div className="font-serif text-xl font-bold tracking-tight text-[var(--on-surface)] flex items-center gap-1.5">
               Stockholm <span className="text-[var(--primary)]">Swing</span>
             </div>
-            <p className="font-sans text-[10px] text-[var(--outline)] uppercase tracking-widest font-extrabold mt-0.5">Dance Calendar</p>
+            <p className="font-sans text-[10px] text-[var(--on-surface-variant)] uppercase tracking-widest font-extrabold mt-0.5">Dance Calendar</p>
           </div>
         </Link>
 
-        <nav className="hidden sm:flex items-center gap-2">
+        <nav aria-label="Primary" className="hidden sm:flex items-center gap-2">
           <Link href="/" className={navLinkClass('/')}>
             Calendar
           </Link>
@@ -73,7 +73,7 @@ export function Header() {
       </div>
 
       {menuOpen && (
-        <nav className="sm:hidden border-t border-[var(--surface-container-highest)] bg-[var(--surface)]/95 backdrop-blur-md px-4 py-3 flex flex-col gap-1">
+        <nav aria-label="Primary (mobile)" className="sm:hidden border-t border-[var(--surface-container-highest)] bg-[var(--surface)]/95 backdrop-blur-md px-4 py-3 flex flex-col gap-1">
           <Link href="/" className={mobileNavLinkClass('/')} onClick={() => setMenuOpen(false)}>
             Calendar
           </Link>

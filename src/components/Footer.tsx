@@ -17,7 +17,7 @@ export function Footer() {
           </p>
         </div>
         <div className="flex flex-col items-center sm:items-end gap-3">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
             <a
               href={GITHUB_DISCUSSIONS_URL}
               target="_blank"

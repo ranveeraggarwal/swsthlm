@@ -25,7 +25,6 @@ export function Footer() {
             <DiscordIcon className="w-4 h-4" />
             Discord
           </a>
-          <span>Stockholm, Sweden</span>
           <FreshnessSignal />
         </div>
       </div>

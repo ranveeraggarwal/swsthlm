@@ -1,5 +1,6 @@
 import React from 'react';
 import { Code } from 'lucide-react';
+import { DiscordIcon } from '@/components/DiscordIcon';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -42,11 +43,20 @@ export default function AboutPage() {
 
           <section>
             <h3 className="font-serif text-2xl font-bold text-[var(--on-surface)] mb-3">Community First</h3>
-            <p className="text-[15px] sm:text-base">
+            <p className="text-[15px] sm:text-base mb-4">
               This project is built and maintained by members of the community for the community. We are not
               affiliated with any single dance studio or organization, meaning we showcase events, socials, tea dances,
               and workshops from all organizers across Stockholm fairly and transparently.
             </p>
+            <a
+              href="https://discord.gg/a2CZnSjfD"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-[var(--primary)] hover:underline font-bold"
+            >
+              <DiscordIcon className="w-4 h-4" />
+              Join us on Discord
+            </a>
           </section>
 
           <section>

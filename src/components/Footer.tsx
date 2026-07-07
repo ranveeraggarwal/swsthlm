@@ -1,5 +1,8 @@
 import React from 'react';
 import { FreshnessSignal } from './FreshnessSignal';
+import { DiscordIcon } from './DiscordIcon';
+
+const DISCORD_INVITE_URL = 'https://discord.gg/a2CZnSjfD';
 
 export function Footer() {
   return (
@@ -11,7 +14,17 @@ export function Footer() {
             Not affiliated with any specific studio. Built to support the local Stockholm swing dance community.
           </p>
         </div>
-        <div className="flex flex-col items-center sm:items-end gap-1 uppercase font-bold tracking-wider text-[11px] text-[var(--on-surface-variant)]">
+        <div className="flex flex-col items-center sm:items-end gap-2 uppercase font-bold tracking-wider text-[11px] text-[var(--on-surface-variant)]">
+          <a
+            href={DISCORD_INVITE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Join our Discord"
+            className="flex items-center gap-1.5 hover:text-[var(--primary)] transition-colors"
+          >
+            <DiscordIcon className="w-4 h-4" />
+            Discord
+          </a>
           <span>Stockholm, Sweden</span>
           <FreshnessSignal />
         </div>

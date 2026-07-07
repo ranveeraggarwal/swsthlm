@@ -1,6 +1,7 @@
 import React from 'react';
 import { Code } from 'lucide-react';
 import { DiscordIcon } from '@/components/DiscordIcon';
+import { GitHubIcon } from '@/components/GitHubIcon';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -48,15 +49,26 @@ export default function AboutPage() {
               affiliated with any single dance studio or organization, meaning we showcase events, socials, tea dances,
               and workshops from all organizers across Stockholm fairly and transparently.
             </p>
-            <a
-              href="https://discord.gg/a2CZnSjfD"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-[var(--primary)] hover:underline font-bold"
-            >
-              <DiscordIcon className="w-4 h-4" />
-              Join us on Discord
-            </a>
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-6">
+              <a
+                href="https://discord.gg/a2CZnSjfD"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-[var(--primary)] hover:underline font-bold"
+              >
+                <DiscordIcon className="w-4 h-4" />
+                Join us on Discord
+              </a>
+              <a
+                href="https://github.com/ranveeraggarwal/swsthlm/discussions"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-[var(--primary)] hover:underline font-bold"
+              >
+                <GitHubIcon className="w-4 h-4" />
+                GitHub Community
+              </a>
+            </div>
           </section>
 
           <section>

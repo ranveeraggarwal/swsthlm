@@ -69,7 +69,7 @@ export function EventRow({ event, dates, nightCount }: EventRowProps) {
   })();
 
   return (
-    <div className={`border-b border-[var(--surface-container-highest)] last:border-b-0 ${event.cancelled ? 'opacity-60' : ''}`}>
+    <div className="border-b border-[var(--surface-container-highest)] last:border-b-0">
       {/* Row */}
       <button
         type="button"
@@ -163,7 +163,7 @@ export function EventRow({ event, dates, nightCount }: EventRowProps) {
           )}
 
           {byLine && (
-            <div className="flex items-start gap-2 text-xs text-[var(--outline)] font-medium px-1">
+            <div className="flex items-start gap-2 text-xs text-[var(--on-surface-variant)] font-medium px-1">
               <MapPin className="w-3.5 h-3.5 mt-0.5 shrink-0" />
               <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="hover:text-[var(--primary)] transition-colors">
                 {byLine}

@@ -1,5 +1,10 @@
 import React from 'react';
 import { FreshnessSignal } from './FreshnessSignal';
+import { DiscordIcon } from './DiscordIcon';
+import { GitHubIcon } from './GitHubIcon';
+
+const DISCORD_INVITE_URL = 'https://discord.gg/a2CZnSjfD';
+const GITHUB_DISCUSSIONS_URL = 'https://github.com/ranveeraggarwal/swsthlm/discussions';
 
 export function Footer() {
   return (
@@ -11,8 +16,27 @@ export function Footer() {
             Not affiliated with any specific studio. Built to support the local Stockholm swing dance community.
           </p>
         </div>
-        <div className="flex flex-col items-center sm:items-end gap-1 uppercase font-bold tracking-wider text-[11px] text-[var(--on-surface-variant)]">
-          <span>Stockholm, Sweden</span>
+        <div className="flex flex-col items-center sm:items-end gap-3">
+          <div className="flex items-center gap-2">
+            <a
+              href={GITHUB_DISCUSSIONS_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="GitHub Community"
+              className="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors"
+            >
+              <GitHubIcon className="w-4 h-4" />
+            </a>
+            <a
+              href={DISCORD_INVITE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Join our Discord"
+              className="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors"
+            >
+              <DiscordIcon className="w-4 h-4" />
+            </a>
+          </div>
           <FreshnessSignal />
         </div>
       </div>

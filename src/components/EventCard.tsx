@@ -36,7 +36,7 @@ function TemporalBadgeDisplay({ badge }: { badge: TemporalBadge }) {
       );
     case 'ended':
       return (
-        <span className="px-2.5 py-0.5 rounded bg-zinc-200 text-zinc-500 text-[11px] uppercase font-bold tracking-wider border border-zinc-300">
+        <span className="px-2.5 py-0.5 rounded bg-zinc-200 text-zinc-600 text-[11px] uppercase font-bold tracking-wider border border-zinc-400">
           Ended
         </span>
       );
@@ -67,6 +67,10 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
   const [descriptionExpanded, setDescriptionExpanded] = useState(false);
   const [descriptionTruncated, setDescriptionTruncated] = useState(false);
   const descriptionRef = useRef<HTMLParagraphElement>(null);
+  // Stable id linking the "Read more" toggle to the paragraph it expands.
+  // event.id is an occurrenceId (`sourceId:date`); sanitise the colon so it's
+  // a valid HTML id / IDREF.
+  const descriptionId = `event-desc-${event.id.replace(/[^a-zA-Z0-9_-]/g, '-')}`;
 
   useEffect(() => {
     const el = descriptionRef.current;
@@ -150,7 +154,10 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
         <div className={`absolute top-0 left-0 right-0 h-1.5 ${getStripeColor()}`} />
       )}
 
-      <div className={event.cancelled ? 'opacity-60' : badge === 'ended' ? 'opacity-50' : ''}>
+      {/* Cancelled / ended cards are de-emphasised via border, background tint,
+          stripe, badge and (for cancelled) strikethrough — not opacity, which
+          would drag all descendant text below the WCAG AA contrast threshold. */}
+      <div>
         <div className="p-5">
           {/* Time + temporal status */}
           <div className="flex items-start justify-between gap-3 mb-2">
@@ -203,7 +210,7 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
                   {event.venue}
                 </a>
                 {event.neighborhood && (
-                  <span className="text-[var(--outline)]"> · {event.neighborhood}</span>
+                  <span className="text-[var(--on-surface-variant)]"> · {event.neighborhood}</span>
                 )}
               </span>
             </div>
@@ -259,6 +266,7 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
             <div>
               <p
                 ref={descriptionRef}
+                id={descriptionId}
                 className={`text-sm text-[var(--on-surface-variant)] leading-relaxed whitespace-pre-line ${descriptionExpanded ? '' : 'line-clamp-2'}`}
               >
                 {event.body}
@@ -267,6 +275,8 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
                 <button
                   type="button"
                   onClick={() => setDescriptionExpanded((v) => !v)}
+                  aria-expanded={descriptionExpanded}
+                  aria-controls={descriptionId}
                   className="mt-1 font-sans text-xs font-bold uppercase tracking-wider text-[var(--primary)] hover:underline"
                 >
                   {descriptionExpanded ? 'Show less' : 'Read more'}

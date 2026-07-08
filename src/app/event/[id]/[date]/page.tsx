@@ -164,7 +164,7 @@ export default async function EventPage({
                   {event.venue}
                 </a>
                 {event.neighborhood && (
-                  <span className="text-[var(--outline)]"> · {event.neighborhood}</span>
+                  <span className="text-[var(--on-surface-variant)]"> · {event.neighborhood}</span>
                 )}
               </span>
             </div>

@@ -159,6 +159,7 @@ Lints that open a comment but don't fail:
 - TBA in `dj` or `band` for any live event within 7 days
 - Series approaching `valid_to` (within 4 weeks)
 - A source whose scraper hasn't produced a non-empty diff in 3+ weeks
+- Two live events at the same `venue_id`, same `date`, with overlapping `start`/`end` — usually a duplicate entry (a one-off re-entering a series occurrence, or the same night added twice). A human decides which, if either, to drop; some venues genuinely run two things at once.
 
 ## Examples
 

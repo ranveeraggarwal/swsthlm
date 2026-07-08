@@ -277,6 +277,125 @@ export function validateData(datasets, opts = {}) {
     checkTba('oneoffs', n, row);
   });
 
+  // --- clash detection: same venue + overlapping time, same date (#93) ---
+  // Two live events at the same venue overlapping in time on the same date
+  // are usually the same night entered twice (a one-off duplicating a
+  // series occurrence, or two rows for one event). A warning, not an error:
+  // a human decides which (if either) to keep — some venues genuinely run
+  // two simultaneous things (e.g. two halls).
+  //
+  // Matching is on literal `date` values only — an overnight event (end <=
+  // start) is compared against other rows sharing its start date, not
+  // against next-day rows it technically runs into. A true wall-clock
+  // instant comparison across the date boundary would need the same
+  // DST-aware expansion as expand.ts, which this script deliberately avoids
+  // importing (see file header).
+  {
+    const toMinutes = (t) => {
+      const [h, m] = t.split(':').map(Number);
+      return h * 60 + m;
+    };
+    // Overnight windows (end <= start) extend past midnight, mirroring the
+    // convention used when building calendar entries client-side.
+    const overlaps = (aStart, aEnd, bStart, bEnd) => {
+      const as = toMinutes(aStart);
+      let ae = toMinutes(aEnd);
+      if (ae <= as) ae += 24 * 60;
+      const bs = toMinutes(bStart);
+      let be = toMinutes(bEnd);
+      if (be <= bs) be += 24 * 60;
+      return as < be && bs < ae;
+    };
+    const datesInRange = (start, end) => {
+      const out = [];
+      for (let d = start; d <= end; d = addDays(d, 1)) out.push(d);
+      return out;
+    };
+
+    // Live one-offs with well-formed venue/dates/times, one entry per row
+    // carrying every date it covers (so a multi-day clash is reported once).
+    const liveOneoffs = [];
+    (datasets.oneoffs?.rows ?? []).forEach((row, i) => {
+      const n = i + 2;
+      if (val(row, 'status') !== 'live') return;
+      const venueId = val(row, 'venue_id');
+      const date = val(row, 'date');
+      const endDate = val(row, 'end_date') || date;
+      const start = val(row, 'start');
+      const end = val(row, 'end');
+      if (!venueId || !isRealDate(date) || !isRealDate(endDate) || !isTime(start) || !isTime(end)) return;
+      liveOneoffs.push({ n, id: val(row, 'id'), venueId, start, end, dates: datesInRange(date, endDate) });
+    });
+
+    // Live series, kept alongside their row number for messages.
+    const liveSeries = (datasets.series?.rows ?? [])
+      .map((row, i) => ({ row, n: i + 2 }))
+      .filter(({ row }) => val(row, 'status') === 'live');
+
+    const exceptionByKey = new Map(
+      (datasets.exceptions?.rows ?? []).map((row) => [`${val(row, 'series_id')}|${val(row, 'date')}`, row])
+    );
+
+    // oneoff vs oneoff — same venue, a shared date, overlapping time.
+    for (let i = 0; i < liveOneoffs.length; i++) {
+      for (let j = i + 1; j < liveOneoffs.length; j++) {
+        const a = liveOneoffs[i];
+        const b = liveOneoffs[j];
+        if (a.venueId !== b.venueId) continue;
+        if (!overlaps(a.start, a.end, b.start, b.end)) continue;
+        const sharedDate = a.dates.find((d) => b.dates.includes(d));
+        if (!sharedDate) continue;
+        warn('oneoffs', a.n, `overlaps with oneoffs.csv:row ${b.n} ("${b.id}") at the same venue on ${sharedDate} (${a.start}–${a.end} vs ${b.start}–${b.end}) — possible duplicate entry`);
+      }
+    }
+
+    // series vs series — same weekday and venue, overlapping validity
+    // windows and times. Exceptions aren't consulted: two duplicated series
+    // would clash on every week they both run anyway.
+    for (let i = 0; i < liveSeries.length; i++) {
+      for (let j = i + 1; j < liveSeries.length; j++) {
+        const a = liveSeries[i].row;
+        const b = liveSeries[j].row;
+        if (val(a, 'venue_id') !== val(b, 'venue_id')) continue;
+        if (val(a, 'weekday') !== val(b, 'weekday')) continue;
+        const aFrom = val(a, 'valid_from');
+        const bFrom = val(b, 'valid_from');
+        if (!isRealDate(aFrom) || !isRealDate(bFrom)) continue;
+        const aTo = val(a, 'valid_to') || '9999-12-31';
+        const bTo = val(b, 'valid_to') || '9999-12-31';
+        if (aFrom > bTo || bFrom > aTo) continue; // validity windows never overlap
+        const aStart = val(a, 'start');
+        const aEnd = val(a, 'end');
+        const bStart = val(b, 'start');
+        const bEnd = val(b, 'end');
+        if (!isTime(aStart) || !isTime(aEnd) || !isTime(bStart) || !isTime(bEnd)) continue;
+        if (!overlaps(aStart, aEnd, bStart, bEnd)) continue;
+        warn('series', liveSeries[i].n, `overlaps with series.csv:row ${liveSeries[j].n} ("${val(b, 'id')}") — both run ${val(a, 'weekday')} at the same venue (${aStart}–${aEnd} vs ${bStart}–${bEnd}) — possible duplicate entry`);
+      }
+    }
+
+    // oneoff vs series occurrence — resolves the series' per-date exception,
+    // so a cancelled or time-shifted occurrence correctly doesn't clash.
+    for (const o of liveOneoffs) {
+      for (const { row: s, n: sn } of liveSeries) {
+        if (val(s, 'venue_id') !== o.venueId) continue;
+        const from = val(s, 'valid_from');
+        if (!isRealDate(from)) continue;
+        const to = val(s, 'valid_to') || '9999-12-31';
+        const sWeekday = val(s, 'weekday');
+        const matchDate = o.dates.find((d) => d >= from && d <= to && weekdayOf(d) === sWeekday);
+        if (!matchDate) continue;
+        const exception = exceptionByKey.get(`${val(s, 'id')}|${matchDate}`) ?? {};
+        if (val(exception, 'cancelled') === 'yes') continue;
+        const sStart = val(exception, 'start') || val(s, 'start');
+        const sEnd = val(exception, 'end') || val(s, 'end');
+        if (!isTime(sStart) || !isTime(sEnd)) continue;
+        if (!overlaps(o.start, o.end, sStart, sEnd)) continue;
+        warn('oneoffs', o.n, `overlaps with series.csv:row ${sn} ("${val(s, 'id')}") at the same venue on ${matchDate} (${o.start}–${o.end} vs ${sStart}–${sEnd}) — possible duplicate entry`);
+      }
+    }
+  }
+
   // --- bands (trusted-roster registry; read by the scraper) ---
   const seenBand = new Set();
   (datasets.bands?.rows ?? []).forEach((row, i) => {

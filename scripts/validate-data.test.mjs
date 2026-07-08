@@ -220,6 +220,176 @@ describe('warnings (non-failing)', () => {
   });
 });
 
+describe('clash detection (#93)', () => {
+  it('warns when two live oneoffs at the same venue overlap in time on the same date', () => {
+    const { errors, warnings } = run({
+      oneoffs: {
+        rows: [
+          oneoff({ id: 'o1', date: '2026-07-11', start: '19:00', end: '22:00' }),
+          oneoff({ id: 'o2', date: '2026-07-11', start: '20:00', end: '23:00' }),
+        ],
+      },
+    });
+    expect(errors).toEqual([]);
+    expect(joined(warnings)).toMatch(/overlaps with oneoffs\.csv:row 3 \("o2"\).*2026-07-11.*possible duplicate entry/);
+  });
+
+  it('does not warn when two oneoffs at the same venue do not overlap in time', () => {
+    const { warnings } = run({
+      oneoffs: {
+        rows: [
+          oneoff({ id: 'o1', date: '2026-07-11', start: '19:00', end: '20:00' }),
+          oneoff({ id: 'o2', date: '2026-07-11', start: '20:00', end: '22:00' }),
+        ],
+      },
+    });
+    expect(joined(warnings)).not.toMatch(/possible duplicate entry/);
+  });
+
+  it('does not warn when two oneoffs overlap in time but not venue or date', () => {
+    const { warnings } = run({
+      venues: { rows: [venue({ id: 'chicago' }), venue({ id: 'other' })] },
+      oneoffs: {
+        rows: [
+          oneoff({ id: 'o1', venue_id: 'chicago', date: '2026-07-11', start: '19:00', end: '22:00' }),
+          oneoff({ id: 'o2', venue_id: 'other', date: '2026-07-11', start: '19:00', end: '22:00' }),
+        ],
+      },
+    });
+    expect(joined(warnings)).not.toMatch(/possible duplicate entry/);
+  });
+
+  it('does not warn on overlapping oneoffs when one is cancelled', () => {
+    const { warnings } = run({
+      oneoffs: {
+        rows: [
+          oneoff({ id: 'o1', date: '2026-07-11', start: '19:00', end: '22:00' }),
+          oneoff({ id: 'o2', date: '2026-07-11', start: '20:00', end: '23:00', status: 'cancelled' }),
+        ],
+      },
+    });
+    expect(joined(warnings)).not.toMatch(/possible duplicate entry/);
+  });
+
+  it('warns once for a multi-day oneoff overlapping another across a shared date', () => {
+    const { warnings } = run({
+      oneoffs: {
+        rows: [
+          oneoff({ id: 'o1', date: '2026-08-28', end_date: '2026-08-29', start: '19:00', end: '22:00' }),
+          oneoff({ id: 'o2', date: '2026-08-29', start: '19:30', end: '22:00' }),
+        ],
+      },
+    });
+    expect(warnings.filter((w) => /possible duplicate entry/.test(w))).toHaveLength(1);
+    expect(joined(warnings)).toMatch(/2026-08-29/);
+  });
+
+  it('warns when two live series share a venue, weekday, overlapping validity and overlapping time', () => {
+    const { warnings } = run({
+      series: {
+        rows: [
+          series({ id: 's1', weekday: 'wednesday', start: '19:00', end: '23:00', valid_from: '2026-06-01' }),
+          series({ id: 's2', weekday: 'wednesday', start: '20:00', end: '22:00', valid_from: '2026-06-01' }),
+        ],
+      },
+    });
+    expect(joined(warnings)).toMatch(/overlaps with series\.csv:row 3 \("s2"\).*possible duplicate entry/);
+  });
+
+  it('does not warn on same-weekday series whose validity windows never overlap', () => {
+    const { warnings } = run({
+      series: {
+        rows: [
+          series({ id: 's1', weekday: 'wednesday', valid_from: '2026-01-01', valid_to: '2026-03-01' }),
+          series({ id: 's2', weekday: 'wednesday', valid_from: '2026-04-01' }),
+        ],
+      },
+    });
+    expect(joined(warnings)).not.toMatch(/possible duplicate entry/);
+  });
+
+  it('does not warn on same-weekday, same-time series at different venues', () => {
+    const { warnings } = run({
+      venues: { rows: [venue({ id: 'chicago' }), venue({ id: 'other' })] },
+      series: {
+        rows: [
+          series({ id: 's1', venue_id: 'chicago', weekday: 'wednesday' }),
+          series({ id: 's2', venue_id: 'other', weekday: 'wednesday' }),
+        ],
+      },
+    });
+    expect(joined(warnings)).not.toMatch(/possible duplicate entry/);
+  });
+
+  it('warns when a oneoff duplicates a series occurrence at the same venue', () => {
+    // s1 runs Wednesdays 19:00-23:00; 2026-07-08 is a Wednesday within its window.
+    const { warnings } = run({
+      series: { rows: [series({ id: 's1', weekday: 'wednesday', start: '19:00', end: '23:00', valid_from: '2026-01-01' })] },
+      oneoffs: { rows: [oneoff({ id: 'o1', date: '2026-07-08', start: '19:00', end: '22:00' })] },
+    });
+    expect(joined(warnings)).toMatch(/overlaps with series\.csv:row 2 \("s1"\).*2026-07-08.*possible duplicate entry/);
+  });
+
+  it('does not warn when the series occurrence is cancelled that date', () => {
+    const { warnings } = run({
+      series: { rows: [series({ id: 's1', weekday: 'wednesday', start: '19:00', end: '23:00', valid_from: '2026-01-01' })] },
+      exceptions: { rows: [{ series_id: 's1', date: '2026-07-08', cancelled: 'yes' }] },
+      oneoffs: { rows: [oneoff({ id: 'o1', date: '2026-07-08', start: '19:00', end: '22:00' })] },
+    });
+    expect(joined(warnings)).not.toMatch(/possible duplicate entry/);
+  });
+
+  it('does not warn when an exception shifts the series time out of overlap', () => {
+    const { warnings } = run({
+      series: { rows: [series({ id: 's1', weekday: 'wednesday', start: '19:00', end: '23:00', valid_from: '2026-01-01' })] },
+      exceptions: { rows: [{ series_id: 's1', date: '2026-07-08', start: '22:30', end: '23:30' }] },
+      oneoffs: { rows: [oneoff({ id: 'o1', date: '2026-07-08', start: '19:00', end: '22:00' })] },
+    });
+    expect(joined(warnings)).not.toMatch(/possible duplicate entry/);
+  });
+
+  it('does not error on malformed times — those are already flagged elsewhere', () => {
+    const { errors } = run({
+      oneoffs: {
+        rows: [
+          oneoff({ id: 'o1', date: '2026-07-11', start: '19:00', end: '22:00' }),
+          oneoff({ id: 'o2', date: '2026-07-11', start: 'bad', end: '23:00' }),
+        ],
+      },
+    });
+    // Malformed time is a schema error, not a crash in the clash checker.
+    expect(joined(errors)).toMatch(/"start" is not HH:MM/);
+  });
+
+  it('handles overnight windows (end <= start means past midnight) on the same date', () => {
+    const { warnings } = run({
+      oneoffs: {
+        rows: [
+          oneoff({ id: 'o1', date: '2026-07-11', start: '22:00', end: '02:00' }),
+          oneoff({ id: 'o2', date: '2026-07-11', start: '23:00', end: '01:30' }),
+        ],
+      },
+    });
+    expect(joined(warnings)).toMatch(/possible duplicate entry/);
+  });
+
+  it('does not treat an early-morning event as overlapping the previous night on a different date', () => {
+    // o1 is dated the 11th and runs past midnight into the 12th; o2 is
+    // dated the 12th itself. Clash detection compares literal `date`
+    // values only, so these are correctly not matched — a full wall-clock
+    // instant comparison across a date boundary is out of scope here.
+    const { warnings } = run({
+      oneoffs: {
+        rows: [
+          oneoff({ id: 'o1', date: '2026-07-11', start: '22:00', end: '02:00' }),
+          oneoff({ id: 'o2', date: '2026-07-12', start: '01:00', end: '03:00' }),
+        ],
+      },
+    });
+    expect(joined(warnings)).not.toMatch(/possible duplicate entry/);
+  });
+});
+
 describe('bands registry', () => {
   it('accepts a valid band row', () => {
     expect(run({ bands: { rows: [band()] } }).errors).toEqual([]);

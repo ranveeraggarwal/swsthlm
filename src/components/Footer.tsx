@@ -12,7 +12,7 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
         <div className="text-center sm:text-left">
           <p className="font-bold text-[var(--on-surface-variant)] uppercase tracking-wider">© {new Date().getFullYear()} Stockholm Swing.</p>
-          <p className="mt-1 text-[var(--on-surface-variant)]/70 max-w-sm leading-relaxed">
+          <p className="mt-1 text-[var(--on-surface-variant)] max-w-sm leading-relaxed">
             Not affiliated with any specific studio. Built to support the local Stockholm swing dance community.
           </p>
         </div>

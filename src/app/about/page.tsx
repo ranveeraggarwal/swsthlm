@@ -34,7 +34,7 @@ export default function AboutPage() {
         {/* Informative Text Sections */}
         <div className="space-y-10 font-sans text-[var(--on-surface-variant)] leading-relaxed font-body-md">
           <section>
-            <h3 className="font-serif text-2xl font-bold text-[var(--on-surface)] mb-3">Our Mission</h3>
+            <h2 className="font-serif text-2xl font-bold text-[var(--on-surface)] mb-3">Our Mission</h2>
             <p className="text-[15px] sm:text-base">
               Stockholm Swing was born out of a desire to unite the local swing dance scene under one clear,
               lightweight, and easy-to-use platform. Instead of searching through fragmented social media feeds,
@@ -43,7 +43,7 @@ export default function AboutPage() {
           </section>
 
           <section>
-            <h3 className="font-serif text-2xl font-bold text-[var(--on-surface)] mb-3">Community First</h3>
+            <h2 className="font-serif text-2xl font-bold text-[var(--on-surface)] mb-3">Community First</h2>
             <p className="text-[15px] sm:text-base mb-4">
               This project is built and maintained by members of the community for the community. We are not
               affiliated with any single dance studio or organization, meaning we showcase events, socials, tea dances,
@@ -72,7 +72,7 @@ export default function AboutPage() {
           </section>
 
           <section>
-            <h3 className="font-serif text-2xl font-bold text-[var(--on-surface)] mb-3">Open Source</h3>
+            <h2 className="font-serif text-2xl font-bold text-[var(--on-surface)] mb-3">Open Source</h2>
             <p className="text-[15px] sm:text-base mb-4">
               We love open source. Stockholm Swing is built in the open and released under the MIT License.
               The entire site, its data, and the tools that maintain it live in a public GitHub repository.
@@ -91,7 +91,7 @@ export default function AboutPage() {
           </section>
 
           <section className="bg-[var(--surface-container-low)] p-6 rounded-lg border-2 border-[var(--on-surface)] shadow-[3px_3px_0px_0px_var(--on-surface)]">
-            <h3 className="font-serif text-xl font-bold text-[var(--on-surface)] mb-2">Are you an organizer?</h3>
+            <h2 className="font-serif text-xl font-bold text-[var(--on-surface)] mb-2">Are you an organizer?</h2>
             <p className="text-sm leading-relaxed mb-3">
               If you host a one-time or occasional Lindy Hop, Balboa, Blues, or Shag event in Stockholm, fill in our{' '}
               <a

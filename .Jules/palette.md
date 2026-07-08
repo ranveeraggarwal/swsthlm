@@ -15,3 +15,6 @@
 ## 2026-07-07 - Focus Restoration on Filter Reset
 **Learning:** When unmounting interactive elements (like a "Reset" button for filters), keyboard focus drops to the `<body>`. Setting focus back to a logical anchor, like the filter toggle button, requires `setTimeout(() => ref.current?.focus(), 0)` to safely wait for React's re-render cycle.
 **Action:** When creating components that unmount on interaction, always use a `useRef` to explicitly shift focus to a logical neighboring element (e.g., shifting focus back to the filter toggle when the "clear" button is pressed). Wrapping the focus call in `setTimeout(() => ref.current?.focus(), 0)` ensures the DOM has updated before focus is applied.
+## 2024-07-08 - Modal Focus Restoration
+**Learning:** When a modal is closed, if focus is not explicitly managed, it drops back to the `<body>`. This forces keyboard users to start tabbing from the top of the page again.
+**Action:** Always maintain a `ref` to the element that triggered the modal. Use this reference to restore focus via `setTimeout(() => triggerRef.current?.focus(), 0)` when the modal unmounts.

@@ -72,11 +72,17 @@ interface AddToCalendarButtonProps {
 export function AddToCalendarButton({ event }: AddToCalendarButtonProps) {
   const [open, setOpen] = useState(false);
   const closeRef = useRef<HTMLButtonElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+
+  const handleClose = () => {
+    setOpen(false);
+    setTimeout(() => triggerRef.current?.focus(), 0);
+  };
 
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpen(false);
+      if (e.key === 'Escape') handleClose();
     };
     document.addEventListener('keydown', onKey);
     closeRef.current?.focus();
@@ -99,7 +105,7 @@ export function AddToCalendarButton({ event }: AddToCalendarButtonProps) {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    setOpen(false);
+    handleClose();
   };
 
   const options: { label: string; action: string | (() => void); className: string; Mark: React.FC }[] = [
@@ -126,6 +132,7 @@ export function AddToCalendarButton({ event }: AddToCalendarButtonProps) {
   return (
     <>
       <button
+        ref={triggerRef}
         type="button"
         onClick={(e) => { e.stopPropagation(); setOpen(true); }}
         title="Add to calendar"
@@ -138,7 +145,7 @@ export function AddToCalendarButton({ event }: AddToCalendarButtonProps) {
       {open && createPortal(
         <div
           className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center sm:p-4 bg-[var(--on-surface)]/40 animate-in fade-in duration-150"
-          onClick={() => setOpen(false)}
+          onClick={handleClose}
         >
           <div
             role="dialog"
@@ -150,7 +157,7 @@ export function AddToCalendarButton({ event }: AddToCalendarButtonProps) {
             <button
               ref={closeRef}
               type="button"
-              onClick={() => setOpen(false)}
+              onClick={handleClose}
               aria-label="Close"
               className="absolute right-3 top-3 rounded-full p-1.5 text-[var(--outline)] hover:bg-[var(--surface-container)] transition-colors cursor-pointer"
             >
@@ -192,7 +199,7 @@ export function AddToCalendarButton({ event }: AddToCalendarButtonProps) {
                     href={action}
                     target="_blank"
                     rel="noopener noreferrer"
-                    onClick={() => setOpen(false)}
+                    onClick={handleClose}
                     className={`flex items-center justify-center gap-2.5 rounded border-2 border-[var(--on-surface)] px-4 py-3 font-sans text-sm font-bold transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[2px_2px_0px_0px_var(--on-surface)] ${className}`}
                   >
                     <Mark />

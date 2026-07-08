@@ -90,6 +90,11 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
   // Filter events based on selections
   const filteredEvents = useMemo(() => {
     return events.filter((event) => {
+      // 0. Drop past dates. The event list is fixed at build time, so once a
+      // calendar day passes without a rebuild, that day's occurrences are
+      // stale — the only date allowed to look "ended" is today's.
+      if (event.date < currentDate) return false;
+
       // 1. Search Query Filter (Title, Venue, Band, DJ, Organizer, Description)
       const q = searchQuery.toLowerCase();
       const matchesSearch =
@@ -115,7 +120,7 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
 
       return matchesSearch && matchesStyle && matchesVenue && matchesLiveMusic;
     });
-  }, [events, searchQuery, selectedStyle, selectedVenue, liveMusicOnly]);
+  }, [events, currentDate, searchQuery, selectedStyle, selectedVenue, liveMusicOnly]);
 
   // Collapse multi-day one-offs into single cards (presentation layer only).
   // groupMultiDayOneoffs expects events sorted ascending by date, which

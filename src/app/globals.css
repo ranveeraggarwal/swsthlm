@@ -36,7 +36,27 @@
   --error: #ba1a1a;
   --on-error: #ffffff;
   --error-container: #ffdad6;
-  
+  --on-error-container: #93000a;
+
+  --live: #dc2626;                 /* "Happening now" / urgency — same in dark */
+  --on-live: #ffffff;
+
+  --success-container: #e5f3e6;    /* beginner-friendly badge */
+  --on-success-container: #2f5934;
+
+  --info-container: #eef2ff;       /* multi-night badge */
+  --on-info-container: #3730a3;
+
+  --ended-container: #e4e4e7;      /* "Ended" badge */
+  --on-ended-container: #52525b;
+  --ended-outline: #a1a1aa;
+  --ended-surface: #fafafa;        /* ended card background */
+  --ended-surface-outline: #d4d4d8;
+
+  /* Solid offset "sticker-stack" shadow. Deliberately its own token:
+     in dark mode this becomes the deepest surface tone, NOT cream. */
+  --shadow-ink: #1b1c16;
+
   --transition-physics: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -136,31 +156,31 @@ body {
 /* Tactile Graphic Elevation ("Sticker-Stacking") */
 .lift-card {
   transition: var(--transition-physics);
-  box-shadow: 2px 2px 0px 0px var(--on-surface);
+  box-shadow: 2px 2px 0px 0px var(--shadow-ink);
 }
 
 .lift-card:hover,
 .lift-card:focus-visible {
   transform: translate(-4px, -4px);
-  box-shadow: 6px 6px 0px 0px var(--on-surface);
+  box-shadow: 6px 6px 0px 0px var(--shadow-ink);
   border-color: var(--on-surface);
 }
 
 /* Tactile lift states for buttons */
 .lift-btn-primary {
   transition: var(--transition-physics);
-  box-shadow: 2px 2px 0px 0px var(--on-surface);
+  box-shadow: 2px 2px 0px 0px var(--shadow-ink);
 }
 
 .lift-btn-primary:hover,
 .lift-btn-primary:focus-visible {
   transform: translate(-2px, -2px);
-  box-shadow: 4px 4px 0px 0px var(--on-surface);
+  box-shadow: 4px 4px 0px 0px var(--shadow-ink);
 }
 
 .lift-btn-primary:active {
   transform: translate(0px, 0px);
-  box-shadow: 0px 0px 0px 0px var(--on-surface);
+  box-shadow: 0px 0px 0px 0px var(--shadow-ink);
 }
 
 @keyframes slide-up {

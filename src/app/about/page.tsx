@@ -25,7 +25,7 @@ export default function AboutPage() {
         </div>
 
         {/* Intro Description Card */}
-        <div className="p-8 rounded-lg border-2 border-[var(--on-surface)] bg-[var(--surface-container-lowest)] shadow-[4px_4px_0px_0px_var(--on-surface)] mb-10 text-center">
+        <div className="p-8 rounded-lg border-2 border-[var(--on-surface)] bg-[var(--surface-container-lowest)] shadow-[4px_4px_0px_0px_var(--shadow-ink)] mb-10 text-center">
           <p className="font-serif text-xl md:text-2xl leading-relaxed italic text-[var(--on-surface-variant)]">
             &ldquo;Every Lindy Hop, Balboa, Blues, and Shag event in Stockholm, so you spend less time scrolling and more time dancing.&rdquo;
           </p>
@@ -90,7 +90,7 @@ export default function AboutPage() {
             </a>
           </section>
 
-          <section className="bg-[var(--surface-container-low)] p-6 rounded-lg border-2 border-[var(--on-surface)] shadow-[3px_3px_0px_0px_var(--on-surface)]">
+          <section className="bg-[var(--surface-container-low)] p-6 rounded-lg border-2 border-[var(--on-surface)] shadow-[3px_3px_0px_0px_var(--shadow-ink)]">
             <h2 className="font-serif text-xl font-bold text-[var(--on-surface)] mb-2">Are you an organizer?</h2>
             <p className="text-sm leading-relaxed mb-3">
               If you host a one-time or occasional Lindy Hop, Balboa, Blues, or Shag event in Stockholm, fill in our{' '}

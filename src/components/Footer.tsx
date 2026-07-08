@@ -13,7 +13,7 @@ export function Footer() {
         <div className="text-center sm:text-left">
           <p className="font-bold text-[var(--on-surface-variant)] uppercase tracking-wider">© {new Date().getFullYear()} Stockholm Swing.</p>
           <p className="mt-1 text-[var(--on-surface-variant)] max-w-sm leading-relaxed">
-            Made with ❤️ in Stockholm, Sweden 🇸🇪🇪🇺 by dancers, for dancers.
+            By dancers, for dancers. Made in Stockholm 🇸🇪 with ❤️.
           </p>
         </div>
         <div className="flex flex-col items-center sm:items-end gap-3">

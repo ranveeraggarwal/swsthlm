@@ -126,6 +126,16 @@ describe('mapResponse', () => {
     expect(issues.some((i) => i.includes('New Loft Space'))).toBe(true);
   });
 
+  it('resolves an "Other" venue answer to an existing venues.csv row by name, instead of proposing a duplicate', () => {
+    const { row, issues, venueProposal } = mapResponse(
+      response({ Venue: 'Other', 'If other - venue name': 'Norrport', 'If other - address': '', 'If other - neighborhood': '' }),
+      VENUES,
+    );
+    expect(issues).toEqual([]);
+    expect(venueProposal).toBeUndefined();
+    expect(row.venue_id).toBe('norrport');
+  });
+
   it('flags missing required fields instead of writing an incomplete row', () => {
     const { row, issues } = mapResponse(response({ 'Event Page / Ticket URL': '' }), VENUES);
     expect(row).toBeUndefined();

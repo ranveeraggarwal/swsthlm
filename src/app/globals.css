@@ -74,25 +74,31 @@
   /* "The ballroom after midnight": after dark, LIGHT is elevation. The page
      is the darkest tone and every raised layer steps visibly lighter — the
      tonal ladder does the separating that ink keylines + offset shadows do
-     in light mode. The floor sits high enough (#1c1d13, not near-black)
-     that the warm olive of the paper stock still reads. */
-  --background: #1c1d13;
-  --foreground: #e4e3d8;
+     in light mode.
 
-  --surface: #1c1d13;
-  --surface-dim: #14150c;
-  --surface-bright: #4d4e3d;
+     The neutrals are espresso/dark-wood browns, NOT the olive of the light
+     ink family: an olive undertone is invisible at cream luminance but
+     becomes the dominant page colour in dark, and green sits outside the
+     sunset palette. Brown keeps peach/brass/cream in their own hue family —
+     the wood floor of the ballroom the brand metaphor describes. The floor
+     sits high enough (#211913, not near-black) that the warmth reads. */
+  --background: #211913;
+  --foreground: #ece3d5;
+
+  --surface: #211913;
+  --surface-dim: #18110c;
+  --surface-bright: #56473c;
   /* NOTE: deliberately NOT the darkest tone. Components use
      --surface-container-lowest to mean "brightest paper" (modals, toasts,
      the search block); in dark that's the TOP of the ladder, otherwise
      elevated elements render as holes. */
-  --surface-container-lowest: #31322a;
-  --surface-container-low: #26271b;
-  --surface-container: #2b2c1f;
-  --surface-container-high: #363728;
-  --surface-container-highest: #424333;
+  --surface-container-lowest: #3a2e26;
+  --surface-container-low: #2d231c;
+  --surface-container: #332822;
+  --surface-container-high: #3e322a;
+  --surface-container-highest: #4b3d33;
 
-  --on-surface: #e4e3d8;
+  --on-surface: #ece3d5;
   --on-surface-variant: #e1bfb2;
   --outline: #aa8d81;
   --outline-variant: #594138;
@@ -128,15 +134,15 @@
   --ended-container: #2e2f33;
   --on-ended-container: #a5a5ad;
   --ended-outline: #55555c;
-  --ended-surface: #202118;
-  --ended-surface-outline: #45463a;
+  --ended-surface: #272321;
+  --ended-surface-outline: #4c4540;
 
-  /* Warm umber keyline — visible against the olive card fill, never glowing */
-  --border-ink: #594138;
+  /* Warm umber keyline — visible against the espresso card fill, never glowing */
+  --border-ink: #614a3c;
 
   /* Near-true black: with cards lifted off the floor tonally, the offset
      sticker shadow reads again */
-  --shadow-ink: #0a0b06;
+  --shadow-ink: #110b07;
 }
 
 @theme inline {

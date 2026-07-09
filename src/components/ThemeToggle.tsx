@@ -8,7 +8,7 @@ type Theme = 'light' | 'dark';
 function syncThemeColorMeta(theme: Theme) {
   document
     .querySelector('meta[name="theme-color"]')
-    ?.setAttribute('content', theme === 'dark' ? '#1c1d13' : '#a03b00');
+    ?.setAttribute('content', theme === 'dark' ? '#211913' : '#a03b00');
 }
 
 export function ThemeToggle() {

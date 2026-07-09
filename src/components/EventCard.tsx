@@ -26,17 +26,17 @@ function TemporalBadgeDisplay({ badge }: { badge: TemporalBadge }) {
   switch (badge) {
     case 'happening-now':
       return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-red-600 text-white text-[11px] uppercase font-bold tracking-wider">
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-[var(--live)] text-[var(--on-live)] text-[11px] uppercase font-bold tracking-wider">
           <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-white" />
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--on-live)] opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--on-live)]" />
           </span>
           Happening Now
         </span>
       );
     case 'ended':
       return (
-        <span className="px-2.5 py-0.5 rounded bg-zinc-200 text-zinc-600 text-[11px] uppercase font-bold tracking-wider border border-zinc-400">
+        <span className="px-2.5 py-0.5 rounded bg-[var(--ended-container)] text-[var(--on-ended-container)] text-[11px] uppercase font-bold tracking-wider border border-[var(--ended-outline)]">
           Ended
         </span>
       );
@@ -118,9 +118,9 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
   const getStripeColor = () => {
     switch (badge) {
       case 'happening-now':
-        return 'bg-red-600';
+        return 'bg-[var(--live)]';
       case 'ended':
-        return 'bg-zinc-300';
+        return 'bg-[var(--ended-surface-outline)]';
       case 'tonight':
         return 'bg-[var(--primary)]';
       case 'tomorrow':
@@ -145,11 +145,11 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
 
   return (
     <div
-      className={`relative lift-card rounded border-2 overflow-hidden flex flex-col text-[var(--on-surface)] ${event.cancelled ? 'border-red-400 bg-red-50/40' : badge === 'ended' ? 'border-zinc-300 bg-zinc-50' : 'border-[var(--on-surface)] bg-[var(--surface-container-low)]'} ${!event.cancelled && badge === 'happening-now' ? 'ring-2 ring-red-500/30' : ''}`}
+      className={`relative lift-card rounded border-2 overflow-hidden flex flex-col text-[var(--on-surface)] ${event.cancelled ? 'border-[var(--error)]/50 bg-[var(--error-container)]/40' : badge === 'ended' ? 'border-[var(--ended-surface-outline)] bg-[var(--ended-surface)]' : 'border-[var(--on-surface)] bg-[var(--surface-container-low)]'} ${!event.cancelled && badge === 'happening-now' ? 'ring-2 ring-[var(--live)]/30' : ''}`}
     >
       {/* Highlighting border/accent stripe — red for cancelled, temporal colour otherwise */}
       {event.cancelled ? (
-        <div className="absolute top-0 left-0 right-0 h-1.5 bg-red-500" />
+        <div className="absolute top-0 left-0 right-0 h-1.5 bg-[var(--error)]" />
       ) : (isThisWeek || badge) && (
         <div className={`absolute top-0 left-0 right-0 h-1.5 ${getStripeColor()}`} />
       )}
@@ -175,12 +175,12 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
             </div>
             <div className="flex items-center gap-2 shrink-0">
               {event.cancelled && (
-                <span className="px-2.5 py-0.5 rounded bg-red-600 text-white text-[10px] uppercase font-bold tracking-wider">
+                <span className="px-2.5 py-0.5 rounded bg-[var(--error)] text-[var(--on-error)] text-[10px] uppercase font-bold tracking-wider">
                   Cancelled
                 </span>
               )}
               {event.status === 'draft' && (
-                <span className="px-2 py-0.5 rounded bg-red-100 text-red-800 border border-red-200 text-[10px] uppercase font-bold tracking-wider">
+                <span className="px-2 py-0.5 rounded bg-[var(--error-container)] text-[var(--on-error-container)] border border-[var(--on-error-container)]/20 text-[10px] uppercase font-bold tracking-wider">
                   Draft Preview
                 </span>
               )}
@@ -244,13 +244,13 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
             </span>
             <FloorTypeBadge floorType={event.floorType} />
             {nightCount > 1 && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-indigo-50 text-indigo-800 border border-indigo-200 text-[10px] uppercase font-bold tracking-wider whitespace-nowrap shrink-0">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-[var(--info-container)] text-[var(--on-info-container)] border border-[var(--on-info-container)]/25 text-[10px] uppercase font-bold tracking-wider whitespace-nowrap shrink-0">
                 <Moon className="w-3 h-3" />
                 {nightCount} nights
               </span>
             )}
             {event.beginnerClass && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-green-50 text-green-800 border border-green-200 text-[10px] uppercase font-bold tracking-wider">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-[var(--success-container)] text-[var(--on-success-container)] border border-[var(--on-success-container)]/25 text-[10px] uppercase font-bold tracking-wider">
                 <GraduationCap className="w-3 h-3" />
                 {event.beginnerClass.toLowerCase() === 'yes'
                   ? 'Beginner friendly'

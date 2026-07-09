@@ -88,7 +88,7 @@ export function EventRow({ event, dates, nightCount }: EventRowProps) {
             {event.title}
           </span>
           {event.cancelled && (
-            <span className="shrink-0 px-2 py-0.5 rounded bg-red-600 text-white text-[10px] uppercase font-bold tracking-wider">
+            <span className="shrink-0 px-2 py-0.5 rounded bg-[var(--error)] text-[var(--on-error)] text-[10px] uppercase font-bold tracking-wider">
               Cancelled
             </span>
           )}
@@ -138,12 +138,12 @@ export function EventRow({ event, dates, nightCount }: EventRowProps) {
               </span>
             )}
             {nightCount > 1 && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-indigo-50 text-indigo-800 border border-indigo-200 text-[10px] uppercase font-bold tracking-wider">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-[var(--info-container)] text-[var(--on-info-container)] border border-[var(--on-info-container)]/25 text-[10px] uppercase font-bold tracking-wider">
                 <Moon className="w-3 h-3" /> {nightCount} nights
               </span>
             )}
             {event.beginnerClass && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-green-50 text-green-800 border border-green-200 text-[10px] uppercase font-bold tracking-wider">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-[var(--success-container)] text-[var(--on-success-container)] border border-[var(--on-success-container)]/25 text-[10px] uppercase font-bold tracking-wider">
                 <GraduationCap className="w-3 h-3" />
                 {event.beginnerClass.toLowerCase() === 'yes' ? 'Beginner friendly' : `Beginner class ${event.beginnerClass}`}
               </span>

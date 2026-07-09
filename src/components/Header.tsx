@@ -43,7 +43,7 @@ export function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-row items-center justify-between gap-4">
         <Link href="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
           <div className="w-10 h-10 rounded border border-[var(--on-surface)] bg-[var(--primary)] flex items-center justify-center shadow-[2px_2px_0px_0px_var(--shadow-ink)]">
-            <Music className="w-5 h-5 text-white" />
+            <Music className="w-5 h-5 text-[var(--on-primary)]" />
           </div>
           <div>
             <div className="font-serif text-xl font-bold tracking-tight text-[var(--on-surface)] flex items-center gap-1.5">

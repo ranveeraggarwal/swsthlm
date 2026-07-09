@@ -294,7 +294,7 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
                         aria-pressed={selectedStyle === style}
                         className={`snap-start whitespace-nowrap px-4 py-2 rounded text-xs font-bold uppercase tracking-wider border-2 border-[var(--on-surface)] transition-all cursor-pointer ${
                           selectedStyle === style
-                            ? 'bg-[var(--primary)] text-white font-bold shadow-[2px_2px_0px_0px_var(--shadow-ink)] -translate-y-0.5 -translate-x-0.5'
+                            ? 'bg-[var(--primary)] text-[var(--on-primary)] font-bold shadow-[2px_2px_0px_0px_var(--shadow-ink)] -translate-y-0.5 -translate-x-0.5'
                             : 'bg-[var(--surface-container)] hover:bg-[var(--surface-container-high)] text-[var(--on-surface)] shadow-[0px_0px_0px_0px_var(--shadow-ink)]'
                         }`}
                       >
@@ -338,7 +338,7 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
                       aria-pressed={selectedVenue === venue}
                       className={`snap-start whitespace-nowrap px-4 py-2 rounded text-xs font-bold uppercase tracking-wider border-2 border-[var(--on-surface)] transition-all cursor-pointer ${
                         selectedVenue === venue
-                          ? 'bg-[var(--secondary)] text-white font-bold shadow-[2px_2px_0px_0px_var(--shadow-ink)] -translate-y-0.5 -translate-x-0.5'
+                          ? 'bg-[var(--secondary)] text-[var(--on-secondary)] font-bold shadow-[2px_2px_0px_0px_var(--shadow-ink)] -translate-y-0.5 -translate-x-0.5'
                           : 'bg-[var(--surface-container)] hover:bg-[var(--surface-container-high)] text-[var(--on-surface)] shadow-[0px_0px_0px_0px_var(--shadow-ink)]'
                       }`}
                     >
@@ -371,7 +371,7 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
                   setLiveMusicOnly(false);
                   setTimeout(() => filterToggleRef.current?.focus(), 0);
                 }}
-                className="inline-flex items-center justify-center px-4 py-2 rounded border-2 border-[var(--on-surface)] bg-[var(--primary)] text-white hover:bg-[var(--primary-container)] font-bold uppercase tracking-wider text-xs lift-btn-primary transition-all cursor-pointer"
+                className="inline-flex items-center justify-center px-4 py-2 rounded border-2 border-[var(--on-surface)] bg-[var(--primary)] text-[var(--on-primary)] hover:bg-[var(--primary-container)] font-bold uppercase tracking-wider text-xs lift-btn-primary transition-all cursor-pointer"
               >
                 Clear all filters
               </button>

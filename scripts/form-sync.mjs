@@ -10,7 +10,8 @@
 // for the responses sheet. See docs/architecture/FORM_SYNC.md for setup.
 //
 // Design mirrors scripts/scrape.mjs:
-//  - Rows are proposed as `status=draft` (never `live` — a human promotes it).
+//  - Rows are proposed as `status=live`, same as the scraper — the PR review
+//    itself (a human reads the diff and merges or closes it) is the gate.
 //  - Every proposed id is deterministic (`slug(name)-date`), so a rerun before
 //    the previous PR is merged reproduces the same rows — idempotent, no
 //    separate "seen" state needed. Once merged into main, the id already
@@ -123,8 +124,8 @@ const norm = (s) => (s ?? '').trim().toLowerCase();
 
 // Dance Style answer -> style enum. Defaults to 'all' (the safe "social, all
 // styles welcome" fallback) when the answer doesn't match a known style, so
-// the row still passes validation — the human reviewing the draft PR corrects
-// it if the guess is wrong.
+// the row still passes validation — the human reviewing the PR corrects it
+// if the guess is wrong.
 function mapStyle(raw, notes) {
   const v = norm(raw);
   if (!v) { notes.push('style: no answer, defaulted to "all"'); return 'all'; }
@@ -269,7 +270,7 @@ export function mapResponse(response, venues) {
     organizer,
     url,
     description: g('Event description'),
-    status: 'draft',
+    status: 'live',
   };
 
   return { row, notes, issues: [] };
@@ -358,17 +359,17 @@ async function main() {
     return;
   }
   if (DRY_RUN) {
-    console.log(`\n[dry-run] ${added.length} new draft event(s) — nothing written.`);
+    console.log(`\n[dry-run] ${added.length} new event(s) — nothing written.`);
     return;
   }
   writeFileSync(ONEOFFS_PATH, oneoffsText);
-  console.log(`\nWrote ${added.length} new draft event(s) to data/oneoffs.csv`);
+  console.log(`\nWrote ${added.length} new event(s) to data/oneoffs.csv`);
 }
 
 function buildReport({ added, corrections, incomplete, venueProposals, skipped, errors }) {
   const lines = ['## Form submissions — review', ''];
 
-  lines.push(`### New draft events (${added.length})`);
+  lines.push(`### New events (${added.length})`);
   for (const { row, notes } of added) {
     lines.push(`- \`${row.id}\`  ${row.name} @ ${row.venue_id}  ${row.date} ${row.start}–${row.end}`);
     for (const n of notes) lines.push(`  - ⚠ ${n}`);

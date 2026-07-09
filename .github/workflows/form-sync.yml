@@ -2,8 +2,8 @@ name: Form sync
 
 # Polls the organizer-intake Google Form's responses sheet (published to the
 # web as CSV — no service account, no secrets) and opens/updates ONE review PR
-# (branch bot/form-sync) with any new submissions as draft events. Idle polls
-# produce no PR. Manual runs via the Actions tab (workflow_dispatch).
+# (branch bot/form-sync) with any new submissions. Idle polls produce no PR.
+# Manual runs via the Actions tab (workflow_dispatch).
 #
 # Setup (one-time): docs/architecture/FORM_SYNC.md.
 
@@ -36,7 +36,7 @@ jobs:
           branch: bot/form-sync
           base: main
           add-paths: data/oneoffs.csv
-          commit-message: 'chore(data): form submissions as draft events'
+          commit-message: 'chore(data): form submissions'
           title: 'Form submissions: review'
           body-path: form-sync-report.md
           labels: data

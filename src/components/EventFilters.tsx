@@ -208,7 +208,7 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
   return (
     <div className="w-full">
       {/* Top Status and Toggle for Filters */}
-      <div className="flex items-center justify-between mb-8 pb-4 border-b border-[var(--surface-container-highest)] font-sans text-xs text-zinc-500 uppercase tracking-wider font-semibold">
+      <div className="flex items-center justify-between mb-8 pb-4 border-b border-[var(--surface-container-highest)] font-sans text-xs text-[var(--on-surface-variant)] uppercase tracking-wider font-semibold">
         <span aria-live="polite" aria-atomic="true">{filterStatusMessage}</span>
         <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-1">
           <SubscribeButton />
@@ -282,7 +282,7 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
             {/* Style & Music Filters */}
             <div className="flex flex-col md:flex-row gap-6">
               <div className="flex-1">
-                <span id="filter-style-label" className="flex items-center gap-2 font-sans text-xs font-bold text-zinc-500 uppercase tracking-widest mb-3">
+                <span id="filter-style-label" className="flex items-center gap-2 font-sans text-xs font-bold text-[var(--on-surface-variant)] uppercase tracking-widest mb-3">
                   <Sparkles aria-hidden="true" className="w-3.5 h-3.5 text-[var(--primary)]" /> Filter by Style
                 </span>
                 <div className="filter-scroll-container">
@@ -306,15 +306,15 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
               </div>
 
               <div className="md:w-48">
-                <span className="flex items-center gap-2 font-sans text-xs font-bold text-zinc-500 uppercase tracking-widest mb-3">
-                  <Music aria-hidden="true" className="w-3.5 h-3.5 text-amber-600" /> Music
+                <span className="flex items-center gap-2 font-sans text-xs font-bold text-[var(--on-surface-variant)] uppercase tracking-widest mb-3">
+                  <Music aria-hidden="true" className="w-3.5 h-3.5 text-[var(--tertiary)]" /> Music
                 </span>
                 <button
                   onClick={() => setLiveMusicOnly(!liveMusicOnly)}
                   aria-pressed={liveMusicOnly}
                   className={`w-full whitespace-nowrap px-4 py-2 rounded text-xs font-bold uppercase tracking-wider border-2 border-[var(--on-surface)] transition-all cursor-pointer flex items-center justify-center gap-2 ${
                     liveMusicOnly
-                      ? 'bg-amber-500 text-white font-bold shadow-[2px_2px_0px_0px_var(--shadow-ink)] -translate-y-0.5 -translate-x-0.5'
+                      ? 'bg-[var(--tertiary)] text-[var(--on-tertiary)] font-bold shadow-[2px_2px_0px_0px_var(--shadow-ink)] -translate-y-0.5 -translate-x-0.5'
                       : 'bg-[var(--surface-container)] hover:bg-[var(--surface-container-high)] text-[var(--on-surface)] shadow-[0px_0px_0px_0px_var(--shadow-ink)]'
                   }`}
                 >
@@ -326,7 +326,7 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
 
             {/* Venue Filters */}
             <div>
-              <span id="filter-venue-label" className="flex items-center gap-2 font-sans text-xs font-bold text-zinc-500 uppercase tracking-widest mb-3">
+              <span id="filter-venue-label" className="flex items-center gap-2 font-sans text-xs font-bold text-[var(--on-surface-variant)] uppercase tracking-widest mb-3">
                 <MapPin aria-hidden="true" className="w-3.5 h-3.5 text-[var(--secondary)]" /> Filter by Venue
               </span>
               <div className="filter-scroll-container">
@@ -356,7 +356,7 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
       <div className="space-y-12">
         {totalCount === 0 ? (
           <div className="text-center py-16 border border-dashed border-[var(--surface-container-highest)] rounded bg-[var(--surface-container-low)] p-8">
-            <SlidersHorizontal aria-hidden="true" className="w-12 h-12 text-zinc-400 mx-auto mb-4" />
+            <SlidersHorizontal aria-hidden="true" className="w-12 h-12 text-[var(--outline)] mx-auto mb-4" />
             <h2 className="font-serif text-xl font-bold text-[var(--on-surface)] mb-1">No events match your filters</h2>
             <p className="font-sans font-body-md text-[var(--on-surface-variant)] max-w-sm mx-auto mb-6">
               Try adjusting your search terms or filters to find dance events.
@@ -423,7 +423,7 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
             {eventSections.hasUpcoming && (
               <div className="pt-4">
                 <div className="flex items-center gap-3 mb-6 border-b border-[var(--surface-container-highest)] pb-3">
-                  <CalendarDays aria-hidden="true" className="w-5 h-5 text-zinc-600" />
+                  <CalendarDays aria-hidden="true" className="w-5 h-5 text-[var(--on-surface-variant)]" />
                   <h2 className="font-serif text-3xl font-bold tracking-tight text-[var(--on-surface)]">
                     {eventSections.showNextWeek
                       ? <><span className="italic">Later</span></>
@@ -438,7 +438,7 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
                       if (month !== acc.month) {
                         acc.rows.push(
                           <div key={`month-${month}`} className="flex items-center gap-3 mt-6 first:mt-0 mb-2">
-                            <h2 className="font-sans text-xs font-bold text-zinc-500 uppercase tracking-widest whitespace-nowrap">
+                            <h2 className="font-sans text-xs font-bold text-[var(--on-surface-variant)] uppercase tracking-widest whitespace-nowrap">
                               {formatMonthHeading(month)}
                             </h2>
                             <div className="flex-1 h-px bg-[var(--surface-container-highest)]" aria-hidden="true" />

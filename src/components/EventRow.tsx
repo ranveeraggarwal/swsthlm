@@ -111,7 +111,7 @@ export function EventRow({ event, dates, nightCount }: EventRowProps) {
           <span className="shrink-0 flex items-center gap-1 text-[var(--on-surface-variant)]">
             {musicRows.map((r) =>
               r.type === 'live'
-                ? <Music key="live" className="w-3 h-3 text-amber-600" />
+                ? <Music key="live" className="w-3 h-3 text-[var(--tertiary)]" />
                 : <Disc key="dj" className="w-3 h-3" />
             )}
           </span>

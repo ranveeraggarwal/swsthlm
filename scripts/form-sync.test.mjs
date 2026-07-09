@@ -136,6 +136,15 @@ describe('mapResponse', () => {
     expect(row.venue_id).toBe('norrport');
   });
 
+  it('collapses a multi-paragraph description to a single line, keeping the CSV to one row per event', () => {
+    const { row, issues } = mapResponse(
+      response({ 'Event description': 'Line one.\n\nLine two.\r\nLine three with   extra   spaces.' }),
+      VENUES,
+    );
+    expect(issues).toEqual([]);
+    expect(row.description).toBe('Line one. Line two. Line three with extra spaces.');
+  });
+
   it('flags missing required fields instead of writing an incomplete row', () => {
     const { row, issues } = mapResponse(response({ 'Event Page / Ticket URL': '' }), VENUES);
     expect(row).toBeUndefined();

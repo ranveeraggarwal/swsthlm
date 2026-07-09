@@ -145,7 +145,7 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
 
   return (
     <div
-      className={`relative lift-card rounded border-2 overflow-hidden flex flex-col text-[var(--on-surface)] ${event.cancelled ? 'border-[var(--error)]/50 bg-[var(--error-container)]/40' : badge === 'ended' ? 'border-[var(--ended-surface-outline)] bg-[var(--ended-surface)]' : 'border-[var(--on-surface)] bg-[var(--surface-container-low)]'} ${!event.cancelled && badge === 'happening-now' ? 'ring-2 ring-[var(--live)]/30' : ''}`}
+      className={`relative lift-card rounded border-2 overflow-hidden flex flex-col text-[var(--on-surface)] ${event.cancelled ? 'border-[var(--error)]/50 bg-[var(--error-container)]/40' : badge === 'ended' ? 'border-[var(--ended-surface-outline)] bg-[var(--ended-surface)]' : 'border-[var(--border-ink)] bg-[var(--surface-container-low)]'} ${!event.cancelled && badge === 'happening-now' ? 'ring-2 ring-[var(--live)]/30' : ''}`}
     >
       {/* Highlighting border/accent stripe — red for cancelled, temporal colour otherwise */}
       {event.cancelled ? (
@@ -260,7 +260,7 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
           </div>
         </div>
 
-        <div className="border-t-2 border-[var(--on-surface)] p-5 space-y-3 font-sans">
+        <div className="border-t-2 border-[var(--border-ink)] p-5 space-y-3 font-sans">
           {/* Description */}
           {event.body && (
             <div>
@@ -292,7 +292,7 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
                 href={event.ticket}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded border border-[var(--on-surface)] bg-[var(--primary)] text-[var(--on-primary)] hover:bg-[var(--primary-container)] font-bold uppercase tracking-wider text-xs lift-btn-primary"
+                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded border border-[var(--border-ink)] bg-[var(--primary)] text-[var(--on-primary)] hover:bg-[var(--primary-container)] font-bold uppercase tracking-wider text-xs lift-btn-primary"
               >
                 <Ticket className="w-4 h-4" />
                 Tickets / Info

@@ -55,6 +55,12 @@
   --ended-surface: #fafafa;        /* ended card background */
   --ended-surface-outline: #d4d4d8;
 
+  /* Structural keylines (card/button/chip borders). Same as --on-surface in
+     light mode, but its own token: in dark mode ink must NOT flip to cream —
+     a bright 2px outline on a dark ground glows. There it becomes a warm
+     low-contrast umber and the lifted surface tones carry the separation. */
+  --border-ink: #1b1c16;
+
   /* Solid offset "sticker-stack" shadow. Deliberately its own token:
      in dark mode this becomes the deepest surface tone, NOT cream. */
   --shadow-ink: #1b1c16;
@@ -65,19 +71,34 @@
 :root[data-theme='dark'] {
   color-scheme: dark;
 
-  --background: #13140d;
-  --foreground: #e4e3d8;
+  /* "The ballroom after midnight": after dark, LIGHT is elevation. The page
+     is the darkest tone and every raised layer steps visibly lighter — the
+     tonal ladder does the separating that ink keylines + offset shadows do
+     in light mode.
 
-  --surface: #13140d;
-  --surface-dim: #0e0f08;
-  --surface-bright: #393a32;
-  --surface-container-lowest: #0e0f08;
-  --surface-container-low: #1b1c16;
-  --surface-container: #1f201a;
-  --surface-container-high: #2a2b24;
-  --surface-container-highest: #35362f;
+     The neutrals are espresso/dark-wood browns, NOT the olive of the light
+     ink family: an olive undertone is invisible at cream luminance but
+     becomes the dominant page colour in dark, and green sits outside the
+     sunset palette. Brown keeps peach/brass/cream in their own hue family —
+     the wood floor of the ballroom the brand metaphor describes. The floor
+     sits high enough (#211913, not near-black) that the warmth reads. */
+  --background: #211913;
+  --foreground: #ece3d5;
 
-  --on-surface: #e4e3d8;
+  --surface: #211913;
+  --surface-dim: #18110c;
+  --surface-bright: #56473c;
+  /* NOTE: deliberately NOT the darkest tone. Components use
+     --surface-container-lowest to mean "brightest paper" (modals, toasts,
+     the search block); in dark that's the TOP of the ladder, otherwise
+     elevated elements render as holes. */
+  --surface-container-lowest: #3a2e26;
+  --surface-container-low: #2d231c;
+  --surface-container: #332822;
+  --surface-container-high: #3e322a;
+  --surface-container-highest: #4b3d33;
+
+  --on-surface: #ece3d5;
   --on-surface-variant: #e1bfb2;
   --outline: #aa8d81;
   --outline-variant: #594138;
@@ -113,10 +134,15 @@
   --ended-container: #2e2f33;
   --on-ended-container: #a5a5ad;
   --ended-outline: #55555c;
-  --ended-surface: #191a1c;
-  --ended-surface-outline: #3b3c40;
+  --ended-surface: #272321;
+  --ended-surface-outline: #4c4540;
 
-  --shadow-ink: #0e0f08;
+  /* Warm umber keyline — visible against the espresso card fill, never glowing */
+  --border-ink: #614a3c;
+
+  /* Near-true black: with cards lifted off the floor tonally, the offset
+     sticker shadow reads again */
+  --shadow-ink: #110b07;
 }
 
 @theme inline {

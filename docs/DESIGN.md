@@ -176,7 +176,13 @@ The navigation bar should be a simple, centered list of uppercase labels. It rem
 
 ## Dark theme
 
-Dark mode is "the ballroom after midnight" — the same paper-stock world as the light theme, just after the house lights go down. Surfaces move to a warm olive-charcoal (`#13140d`, `#1b1c16`, …), never a neutral or clinical black, so the tactile, lived-in feel of the light palette survives the switch. Sunset orange primary softens into **lamplight peach** (`#ffb597`); deep navy secondary lightens into **moonlit steel** (`#b7c7eb`); vintage gold tertiary warms into **brass** (`#e5c273`). None of this is invented on the spot: the light palette in this file's front-matter is already M3-shaped, and the dark primary/secondary/tertiary values are exactly that palette's `inverse-primary` and `*-fixed-dim` roles, even though the front-matter doesn't name them that way. The dark neutrals stay in the same hue family as the light ink (`#1b1c16`) rather than drifting to a different grey.
+Dark mode is "the ballroom after midnight" — the same paper-stock world as the light theme, just after the house lights go down. Surfaces move to espresso/dark-wood browns (`#211913`, `#2d231c`, …), never a neutral or clinical black — the floor sits high enough that the warmth actually reads, not as an OLED void. Sunset orange primary softens into **lamplight peach** (`#ffb597`); deep navy secondary lightens into **moonlit steel** (`#b7c7eb`); vintage gold tertiary warms into **brass** (`#e5c273`). None of this is invented on the spot: the light palette in this file's front-matter is already M3-shaped, and the dark primary/secondary/tertiary values are exactly that palette's `inverse-primary` and `*-fixed-dim` roles, even though the front-matter doesn't name them that way. The dark neutrals deliberately do NOT reuse the light ink's olive hue family: an olive undertone is imperceptible at cream luminance but becomes the dominant page colour in dark, and green sits outside the sunset palette — an earlier cut shipped olive surfaces and the olive/peach pairing read as a clash. Brown is the hue family the brand's own metaphor names (the wood floor of the ballroom) and keeps peach, brass, and cream as one sunset family.
+
+**After dark, light is elevation.** The light theme is a print metaphor — ink keylines and offset shadows on cream paper — and none of those cues survive naive inversion: shadows can't darken a near-black floor, and cream keylines glow. So the dark theme flips the depth system: the page is the darkest tone and every raised layer steps *visibly lighter* (page `#211913` → card `#2d231c` → chip/hover `#3e322a` → raised paper `#3a2e26`+), the way lamplight catches whatever is closest. Three consequences:
+
+- **Structural keylines are inked with `--border-ink`, not `--on-surface`.** In light mode the two are the same `#1b1c16`, so nothing changes there; in dark, `--border-ink` is a warm low-contrast umber (`#614a3c`) so the 2px linework stays quiet structure instead of becoming the loudest thing on the page. The lifted surface tones do the separating.
+- **`--surface-container-lowest` maps to the TOP of the dark ladder (`#3a2e26`), not the bottom.** This deliberately breaks the M3 dark convention, because the codebase uses that token to mean "brightest paper" (modals, the install toast, the search block, the about-page hero). With the M3 mapping those elements rendered as holes darker than the page.
+- **Card hover brightens the border to `--on-surface`** (via `.lift-card:hover`). A no-op in light mode (the base border is already that color); in dark, brightness is earned by interaction — the spotlight hits the card you're reaching for.
 
 **It's opt-in, not OS-following.** A first-time visitor always gets the light theme by default, regardless of their OS or browser `prefers-color-scheme` setting. Dark mode only activates when the visitor clicks the header toggle, and that choice then persists in `localStorage` for future visits. There is no `matchMedia('(prefers-color-scheme: dark)')` fallback anywhere in the implementation — an earlier draft of the umbrella issue proposed one, but it was deliberately dropped before the theme shipped.
 
@@ -186,17 +192,17 @@ Exact values as merged in `src/app/globals.css` (`:root` vs. `:root[data-theme='
 
 | Token | Light | Dark |
 |---|---|---|
-| `--background` | `#fcfaef` | `#13140d` |
-| `--foreground` | `#1b1c16` | `#e4e3d8` |
-| `--surface` | `#fcfaef` | `#13140d` |
-| `--surface-dim` | `#dcdad0` | `#0e0f08` |
-| `--surface-bright` | `#fcfaef` | `#393a32` |
-| `--surface-container-lowest` | `#ffffff` | `#0e0f08` |
-| `--surface-container-low` | `#f6f4e9` | `#1b1c16` |
-| `--surface-container` | `#f0eee3` | `#1f201a` |
-| `--surface-container-high` | `#eae8de` | `#2a2b24` |
-| `--surface-container-highest` | `#e4e3d8` | `#35362f` |
-| `--on-surface` | `#1b1c16` | `#e4e3d8` |
+| `--background` | `#fcfaef` | `#211913` |
+| `--foreground` | `#1b1c16` | `#ece3d5` |
+| `--surface` | `#fcfaef` | `#211913` |
+| `--surface-dim` | `#dcdad0` | `#18110c` |
+| `--surface-bright` | `#fcfaef` | `#56473c` |
+| `--surface-container-lowest` | `#ffffff` | `#3a2e26` (top of ladder — see above) |
+| `--surface-container-low` | `#f6f4e9` | `#2d231c` |
+| `--surface-container` | `#f0eee3` | `#332822` |
+| `--surface-container-high` | `#eae8de` | `#3e322a` |
+| `--surface-container-highest` | `#e4e3d8` | `#4b3d33` |
+| `--on-surface` | `#1b1c16` | `#ece3d5` |
 | `--on-surface-variant` | `#594138` | `#e1bfb2` |
 | `--outline` | `#8d7166` | `#aa8d81` |
 | `--outline-variant` | `#e1bfb2` | `#594138` |
@@ -225,15 +231,17 @@ Exact values as merged in `src/app/globals.css` (`:root` vs. `:root[data-theme='
 | `--ended-container` | `#e4e4e7` | `#2e2f33` |
 | `--on-ended-container` | `#52525b` | `#a5a5ad` |
 | `--ended-outline` | `#a1a1aa` | `#55555c` |
-| `--ended-surface` | `#fafafa` | `#191a1c` |
-| `--ended-surface-outline` | `#d4d4d8` | `#3b3c40` |
-| `--shadow-ink` | `#1b1c16` | `#0e0f08` |
+| `--ended-surface` | `#fafafa` | `#272321` |
+| `--ended-surface-outline` | `#d4d4d8` | `#4c4540` |
+| `--border-ink` | `#1b1c16` | `#614a3c` |
+| `--shadow-ink` | `#1b1c16` | `#110b07` |
 
 `color-scheme` is also set per theme (`light` / `dark`) on the same `:root` blocks, so native form controls and the scrollbar follow automatically.
 
 ### Rules future changes must follow
 
 - **Never hardcode a color in a component; always go through a `var(--…)` token.** `text-white` on `bg-[var(--primary)]` is the canonical bug that shipped *twice* in this codebase — once across `EventCard`/`EventFilters` in the Phase 1 refactor, and again in `AddToCalendarButton.tsx`/`SubscribeButton.tsx`, caught only during the Phase 2 QA pass. It works by accident in light mode (`--on-primary` happens to be white) and breaks completely once `--primary` becomes a light peach in dark mode. Always use `text-[var(--on-primary)]`, `text-[var(--on-secondary)]`, etc.
+- **Structural keylines (card/button/chip/divider borders) use `--border-ink`, never `--on-surface`.** Identical in light mode (`--border-ink` is the same `#1b1c16`), but in dark mode `--on-surface` becomes a light cream — a 2px cream outline on a dark ground glows, turning quiet structure into the loudest element on the page. This is the border-color analogue of the `text-white` bug above; it shipped across every card and button in the first dark-theme cut.
 - **Sticker-stack shadows use `--shadow-ink`, never `--on-surface`.** They look identical in light mode (`--shadow-ink` is the same `#1b1c16`), but in dark mode `--on-surface` becomes a light cream — pointing a shadow at it would draw pale shadows on every card.
 - **`--live` (the "happening now" red) is theme-invariant by design.** It's an urgency signal, not a surface color, and it reads correctly against both grounds — don't override it in the dark block.
 - **Brand provider buttons and OG images are intentionally theme-independent and always light.** The Apple/Google/Outlook buttons inside `AddToCalendarButton.tsx`/`SubscribeButton.tsx` use fixed external brand colors, and `opengraph-image.tsx` files render fixed light-theme social-preview cards — don't theme either.
@@ -243,4 +251,4 @@ Exact values as merged in `src/app/globals.css` (`:root` vs. `:root[data-theme='
 
 A `data-theme` attribute on `<html>` (`"light"` or `"dark"`) is stamped **before first paint** by a tiny inline script in `src/app/layout.tsx`'s `<head>`: it reads `localStorage.theme`, defaults to `'light'` if the value is missing or invalid, and sets the attribute synchronously so there's no flash of the wrong theme. `<html>` carries `suppressHydrationWarning` since this mutation happens before React hydrates.
 
-`ThemeToggle` (`src/components/ThemeToggle.tsx`) is a client component rendered in the header (`src/components/Header.tsx`), showing a `Moon` icon (from `lucide-react`) when the site is light — "switch me to dark" — and a `Sun` icon when it's dark. Clicking it flips `data-theme` on `<html>`, writes the choice to `localStorage.theme`, and updates the `<meta name="theme-color">` tag to match (`#a03b00` light / `#13140d` dark), all client-side with no reload. There are no cookies and no server involvement anywhere in this — it fits the same static-site architecture as everything else.
+`ThemeToggle` (`src/components/ThemeToggle.tsx`) is a client component rendered in the header (`src/components/Header.tsx`), showing a `Moon` icon (from `lucide-react`) when the site is light — "switch me to dark" — and a `Sun` icon when it's dark. Clicking it flips `data-theme` on `<html>`, writes the choice to `localStorage.theme`, and updates the `<meta name="theme-color">` tag to match (`#a03b00` light / `#211913` dark), all client-side with no reload. The same meta sync also runs once on mount: the tag is server-rendered with the light value, so a dark-mode page load needs it corrected as soon as the toggle hydrates. There are no cookies and no server involvement anywhere in this — it fits the same static-site architecture as everything else.

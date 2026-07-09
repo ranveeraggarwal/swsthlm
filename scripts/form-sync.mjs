@@ -160,8 +160,10 @@ function mapBeginnerClass(hasClassRaw, startTimeRaw, notes) {
 
 // Venue answer -> venue_id, by matching against data/venues.csv `name` column
 // (case/whitespace-insensitive). Never invents a venue: an unmatched answer
-// (including the form's "Other" option) comes back null, and the caller flags
-// it for a human rather than writing a venue_id that doesn't exist.
+// comes back null, and the caller flags it for a human rather than writing a
+// venue_id that doesn't exist. The "Other" free-text name is checked against
+// venues.csv too — the form's dropdown can lag behind venues.csv, so an
+// organizer picking "Other" may still be naming a venue that already exists.
 function resolveVenue(raw, otherName, otherAddress, otherNeighborhood, venues) {
   const v = norm(raw);
   if (v && v !== 'other') {
@@ -169,6 +171,8 @@ function resolveVenue(raw, otherName, otherAddress, otherNeighborhood, venues) {
     if (hit) return { venueId: hit.id, proposal: null };
   }
   if (otherName?.trim()) {
+    const hit = venues.rows.find((r) => norm(r.name) === norm(otherName));
+    if (hit) return { venueId: hit.id, proposal: null };
     return {
       venueId: null,
       proposal: { name: otherName.trim(), address: otherAddress?.trim() ?? '', neighborhood: otherNeighborhood?.trim() ?? '' },
@@ -185,7 +189,13 @@ function resolveVenue(raw, otherName, otherAddress, otherNeighborhood, venues) {
  * @returns {{ row?: object, correction?: object, issues: string[] }}
  */
 export function mapResponse(response, venues) {
-  const g = (col) => (response[col] ?? '').trim();
+  // Collapse all whitespace (including the literal newlines a Google Forms
+  // "paragraph" answer carries) to single spaces. Every other oneoffs.csv row
+  // — hand-written or scraper-produced (e.g. staclara.mjs's own `\s+` collapse)
+  // — is a single physical line; without this, an embedded newline survives
+  // into a quoted multi-line CSV field and turns a one-event diff into dozens
+  // of added lines, which reads as "several rows" even though it's one record.
+  const g = (col) => (response[col] ?? '').replace(/\s+/g, ' ').trim();
   const issues = [];
   const notes = [];
 

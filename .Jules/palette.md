@@ -18,3 +18,6 @@
 ## 2024-07-08 - Modal Focus Restoration
 **Learning:** When a modal is closed, if focus is not explicitly managed, it drops back to the `<body>`. This forces keyboard users to start tabbing from the top of the page again.
 **Action:** Always maintain a `ref` to the element that triggered the modal. Use this reference to restore focus via `setTimeout(() => triggerRef.current?.focus(), 0)` when the modal unmounts.
+## 2024-11-20 - Accessible Accordions
+**Learning:** Custom accordions must always pair `aria-expanded` on the toggle button with `aria-controls` pointing to the ID of the collapsible content panel. This programmatic link allows screen readers to correctly interpret the relationship between the trigger and the content it reveals. Additionally, purely decorative icons (like a chevron) inside the button should receive `aria-hidden="true"` to reduce screen reader noise.
+**Action:** When implementing or modifying an accordion-style component, verify that the toggle button includes an `aria-controls` attribute linking it to the panel's `id`, and ensure decorative icons are hidden from assistive technology.

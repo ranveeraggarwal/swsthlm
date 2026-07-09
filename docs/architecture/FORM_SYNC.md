@@ -17,11 +17,12 @@ PRs. A scheduled GitHub Action polls the form's responses sheet and opens
 
 - The Action **never writes to `main`.** It proposes a diff on a fixed branch
   that a human merges or closes.
-- Every proposed row goes in as `status=draft` — never `live`. A draft row
-  doesn't render on the site; merging the PR after a human reviews/promotes
-  it (setting `status=live`) is what puts it on the calendar. This is a second
-  gate beyond the PR review itself, since form input is unverified prose from
-  the public internet.
+- Every proposed row goes in as `status=live` — the same PR-review gate the
+  scraper relies on (a human reads the diff and merges or closes it) is the
+  only gate here too. There used to be a second `draft`-then-promote step,
+  but it added a second manual edit on top of a review a human was already
+  doing in the same sitting, with no real safety benefit — merging the PR
+  *is* the deliberate "yes, this is real" moment.
 - The same delta-validation gate as the scraper runs before every write
   ([`scripts/validate-data.mjs`](../../scripts/validate-data.mjs)).
 
@@ -80,7 +81,7 @@ a clear error rather than silently doing nothing.
 | `organizer` | Organizer Name | The org/collective, not the submitter. |
 | `url` | Event Page / Ticket URL | |
 | `description` | Event description | Whitespace-collapsed to a single line (see below). |
-| `status` | — | Always `draft`. |
+| `status` | — | Always `live`. |
 
 **Never written anywhere:** `Timestamp`, `Email address`, `Your Name` (the
 submitter's personal name — distinct from `Organizer Name`, the public "By"

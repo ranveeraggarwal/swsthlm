@@ -79,7 +79,7 @@ describe('parseFormTime', () => {
 });
 
 describe('mapResponse', () => {
-  it('maps a complete, well-formed submission to a draft oneoffs row', () => {
+  it('maps a complete, well-formed submission to a live oneoffs row', () => {
     const { row, issues } = mapResponse(response(), VENUES);
     expect(issues).toEqual([]);
     expect(row).toMatchObject({
@@ -94,7 +94,7 @@ describe('mapResponse', () => {
       dj: 'Emma Lundqvist',
       organizer: 'Chicago Swing Dance Studio',
       url: 'https://example.com/midsummer',
-      status: 'draft',
+      status: 'live',
       beginner_class: '19:00',
     });
   });

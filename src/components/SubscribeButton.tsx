@@ -124,7 +124,7 @@ export function SubscribeButton() {
             aria-modal="true"
             aria-labelledby="subscribe-title"
             onClick={(e) => e.stopPropagation()}
-            className="relative max-h-[90vh] w-full overflow-y-auto rounded-t-lg border-2 border-[var(--on-surface)] bg-[var(--surface-container-lowest)] p-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] text-left normal-case tracking-normal animate-in slide-in-from-bottom-4 duration-200 sm:max-w-sm sm:rounded-lg sm:pb-6 sm:shadow-[4px_4px_0px_0px_var(--shadow-ink)] sm:zoom-in-95 sm:slide-in-from-bottom-1"
+            className="relative max-h-[90vh] w-full overflow-y-auto rounded-t-lg border-2 border-[var(--border-ink)] bg-[var(--surface-container-lowest)] p-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] text-left normal-case tracking-normal animate-in slide-in-from-bottom-4 duration-200 sm:max-w-sm sm:rounded-lg sm:pb-6 sm:shadow-[4px_4px_0px_0px_var(--shadow-ink)] sm:zoom-in-95 sm:slide-in-from-bottom-1"
           >
             <button
               ref={closeRef}
@@ -136,7 +136,7 @@ export function SubscribeButton() {
               <X className="h-4 w-4" />
             </button>
 
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full border-2 border-[var(--on-surface)] bg-[var(--primary)]">
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full border-2 border-[var(--border-ink)] bg-[var(--primary)]">
               <CalendarPlus className="h-6 w-6 text-[var(--on-primary)]" />
             </div>
 
@@ -164,7 +164,7 @@ export function SubscribeButton() {
                     target={isWebcal ? undefined : '_blank'}
                     rel={isWebcal ? undefined : 'noopener noreferrer'}
                     onClick={handleClose}
-                    className={`flex items-center justify-center gap-2.5 rounded border-2 border-[var(--on-surface)] px-4 py-3 font-sans text-sm font-bold transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[2px_2px_0px_0px_var(--shadow-ink)] ${className}`}
+                    className={`flex items-center justify-center gap-2.5 rounded border-2 border-[var(--border-ink)] px-4 py-3 font-sans text-sm font-bold transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[2px_2px_0px_0px_var(--shadow-ink)] ${className}`}
                   >
                     <Mark />
                     {label}
@@ -180,13 +180,13 @@ export function SubscribeButton() {
                 aria-label="Calendar feed URL"
                 value={httpsUrl}
                 onFocus={(e) => e.currentTarget.select()}
-                className="min-w-0 flex-1 border-0 border-b-2 border-[var(--on-surface)] bg-transparent px-1 py-2 font-mono text-xs text-[var(--on-surface-variant)] focus:border-[var(--primary)] focus:outline-none"
+                className="min-w-0 flex-1 border-0 border-b-2 border-[var(--border-ink)] bg-transparent px-1 py-2 font-mono text-xs text-[var(--on-surface-variant)] focus:border-[var(--primary)] focus:outline-none"
               />
               <button
                 type="button"
                 onClick={handleCopy}
                 aria-label={copied ? 'Copied' : 'Copy feed link'}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded border border-[var(--on-surface)] bg-[var(--surface-container)] text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] font-bold uppercase tracking-wider text-xs transition-colors cursor-pointer shrink-0"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded border border-[var(--border-ink)] bg-[var(--surface-container)] text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] font-bold uppercase tracking-wider text-xs transition-colors cursor-pointer shrink-0"
               >
                 {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                 {copied ? 'Copied' : 'Copy'}

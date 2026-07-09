@@ -48,7 +48,7 @@ export function InstallToast() {
 
   return (
     <div className="fixed bottom-6 left-4 right-4 sm:left-auto sm:right-6 sm:max-w-sm z-50 animate-slide-up">
-      <div className="flex items-center gap-3 px-4 py-3 rounded-lg border border-[var(--on-surface)] bg-[var(--surface-container-lowest)] text-[var(--on-surface)] lift-card">
+      <div className="flex items-center gap-3 px-4 py-3 rounded-lg border border-[var(--border-ink)] bg-[var(--surface-container-lowest)] text-[var(--on-surface)] lift-card">
         <div className="flex-1 min-w-0">
           <p className="font-sans font-bold text-sm">Add to Home Screen</p>
           <p className="font-sans text-xs text-[var(--on-surface-variant)] mt-0.5">

@@ -133,7 +133,7 @@ export default async function EventPage({
       </Link>
 
       {/* Event card */}
-      <article className="border-2 border-[var(--on-surface)] bg-[var(--surface-container-low)] rounded overflow-hidden">
+      <article className="border-2 border-[var(--border-ink)] bg-[var(--surface-container-low)] rounded overflow-hidden">
         <div className="p-6 space-y-5">
           {/* Date */}
           <p className="font-sans text-xs font-bold uppercase tracking-widest text-[var(--primary)]">
@@ -218,7 +218,7 @@ export default async function EventPage({
               href={event.ticket}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded border border-[var(--on-surface)] bg-[var(--primary)] text-[var(--on-primary)] hover:bg-[var(--primary-container)] font-bold uppercase tracking-wider text-xs lift-btn-primary"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded border border-[var(--border-ink)] bg-[var(--primary)] text-[var(--on-primary)] hover:bg-[var(--primary-container)] font-bold uppercase tracking-wider text-xs lift-btn-primary"
             >
               <Ticket className="w-4 h-4" />
               Tickets / Info

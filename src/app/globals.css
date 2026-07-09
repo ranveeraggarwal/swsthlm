@@ -55,6 +55,12 @@
   --ended-surface: #fafafa;        /* ended card background */
   --ended-surface-outline: #d4d4d8;
 
+  /* Structural keylines (card/button/chip borders). Same as --on-surface in
+     light mode, but its own token: in dark mode ink must NOT flip to cream —
+     a bright 2px outline on a dark ground glows. There it becomes a warm
+     low-contrast umber and the lifted surface tones carry the separation. */
+  --border-ink: #1b1c16;
+
   /* Solid offset "sticker-stack" shadow. Deliberately its own token:
      in dark mode this becomes the deepest surface tone, NOT cream. */
   --shadow-ink: #1b1c16;
@@ -65,17 +71,26 @@
 :root[data-theme='dark'] {
   color-scheme: dark;
 
-  --background: #13140d;
+  /* "The ballroom after midnight": after dark, LIGHT is elevation. The page
+     is the darkest tone and every raised layer steps visibly lighter — the
+     tonal ladder does the separating that ink keylines + offset shadows do
+     in light mode. The floor sits high enough (#1c1d13, not near-black)
+     that the warm olive of the paper stock still reads. */
+  --background: #1c1d13;
   --foreground: #e4e3d8;
 
-  --surface: #13140d;
-  --surface-dim: #0e0f08;
-  --surface-bright: #393a32;
-  --surface-container-lowest: #0e0f08;
-  --surface-container-low: #1b1c16;
-  --surface-container: #1f201a;
-  --surface-container-high: #2a2b24;
-  --surface-container-highest: #35362f;
+  --surface: #1c1d13;
+  --surface-dim: #14150c;
+  --surface-bright: #4d4e3d;
+  /* NOTE: deliberately NOT the darkest tone. Components use
+     --surface-container-lowest to mean "brightest paper" (modals, toasts,
+     the search block); in dark that's the TOP of the ladder, otherwise
+     elevated elements render as holes. */
+  --surface-container-lowest: #31322a;
+  --surface-container-low: #26271b;
+  --surface-container: #2b2c1f;
+  --surface-container-high: #363728;
+  --surface-container-highest: #424333;
 
   --on-surface: #e4e3d8;
   --on-surface-variant: #e1bfb2;
@@ -113,10 +128,15 @@
   --ended-container: #2e2f33;
   --on-ended-container: #a5a5ad;
   --ended-outline: #55555c;
-  --ended-surface: #191a1c;
-  --ended-surface-outline: #3b3c40;
+  --ended-surface: #202118;
+  --ended-surface-outline: #45463a;
 
-  --shadow-ink: #0e0f08;
+  /* Warm umber keyline — visible against the olive card fill, never glowing */
+  --border-ink: #594138;
+
+  /* Near-true black: with cards lifted off the floor tonally, the offset
+     sticker shadow reads again */
+  --shadow-ink: #0a0b06;
 }
 
 @theme inline {

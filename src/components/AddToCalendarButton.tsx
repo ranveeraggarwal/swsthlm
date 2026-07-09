@@ -137,7 +137,7 @@ export function AddToCalendarButton({ event }: AddToCalendarButtonProps) {
         onClick={(e) => { e.stopPropagation(); setOpen(true); }}
         title="Add to calendar"
         aria-label="Add to calendar"
-        className="inline-flex items-center justify-center w-10 py-2.5 rounded border border-[var(--on-surface)] bg-[var(--surface-container)] text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors cursor-pointer shrink-0"
+        className="inline-flex items-center justify-center w-10 py-2.5 rounded border border-[var(--border-ink)] bg-[var(--surface-container)] text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors cursor-pointer shrink-0"
       >
         <CalendarPlus className="w-4 h-4" />
       </button>
@@ -152,7 +152,7 @@ export function AddToCalendarButton({ event }: AddToCalendarButtonProps) {
             aria-modal="true"
             aria-labelledby="add-to-cal-title"
             onClick={(e) => e.stopPropagation()}
-            className="relative max-h-[90vh] w-full overflow-y-auto rounded-t-lg border-2 border-[var(--on-surface)] bg-[var(--surface-container-lowest)] p-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] text-left normal-case tracking-normal animate-in slide-in-from-bottom-4 duration-200 sm:max-w-sm sm:rounded-lg sm:pb-6 sm:shadow-[4px_4px_0px_0px_var(--shadow-ink)] sm:zoom-in-95 sm:slide-in-from-bottom-1"
+            className="relative max-h-[90vh] w-full overflow-y-auto rounded-t-lg border-2 border-[var(--border-ink)] bg-[var(--surface-container-lowest)] p-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] text-left normal-case tracking-normal animate-in slide-in-from-bottom-4 duration-200 sm:max-w-sm sm:rounded-lg sm:pb-6 sm:shadow-[4px_4px_0px_0px_var(--shadow-ink)] sm:zoom-in-95 sm:slide-in-from-bottom-1"
           >
             <button
               ref={closeRef}
@@ -164,7 +164,7 @@ export function AddToCalendarButton({ event }: AddToCalendarButtonProps) {
               <X className="h-4 w-4" />
             </button>
 
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full border-2 border-[var(--on-surface)] bg-[var(--primary)]">
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full border-2 border-[var(--border-ink)] bg-[var(--primary)]">
               <CalendarPlus className="h-6 w-6 text-[var(--on-primary)]" />
             </div>
 
@@ -186,7 +186,7 @@ export function AddToCalendarButton({ event }: AddToCalendarButtonProps) {
                       key={label}
                       type="button"
                       onClick={action}
-                      className={`flex items-center justify-center gap-2.5 rounded border-2 border-[var(--on-surface)] px-4 py-3 font-sans text-sm font-bold transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[2px_2px_0px_0px_var(--shadow-ink)] cursor-pointer ${className}`}
+                      className={`flex items-center justify-center gap-2.5 rounded border-2 border-[var(--border-ink)] px-4 py-3 font-sans text-sm font-bold transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[2px_2px_0px_0px_var(--shadow-ink)] cursor-pointer ${className}`}
                     >
                       <Mark />
                       {label}
@@ -200,7 +200,7 @@ export function AddToCalendarButton({ event }: AddToCalendarButtonProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={handleClose}
-                    className={`flex items-center justify-center gap-2.5 rounded border-2 border-[var(--on-surface)] px-4 py-3 font-sans text-sm font-bold transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[2px_2px_0px_0px_var(--shadow-ink)] ${className}`}
+                    className={`flex items-center justify-center gap-2.5 rounded border-2 border-[var(--border-ink)] px-4 py-3 font-sans text-sm font-bold transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[2px_2px_0px_0px_var(--shadow-ink)] ${className}`}
                   >
                     <Mark />
                     {label}
@@ -212,7 +212,7 @@ export function AddToCalendarButton({ event }: AddToCalendarButtonProps) {
             <button
               type="button"
               onClick={handleDownloadIcs}
-              className="mt-4 flex w-full items-center justify-center gap-2 rounded border border-[var(--on-surface)] bg-[var(--surface-container)] px-4 py-2.5 font-sans text-xs font-bold uppercase tracking-wider text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors cursor-pointer"
+              className="mt-4 flex w-full items-center justify-center gap-2 rounded border border-[var(--border-ink)] bg-[var(--surface-container)] px-4 py-2.5 font-sans text-xs font-bold uppercase tracking-wider text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors cursor-pointer"
             >
               <Download className="h-4 w-4" />
               Download .ics file

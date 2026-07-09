@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
 :root {
+  color-scheme: light;
+
   --background: #fcfaef;
   --foreground: #1b1c16;
   
@@ -58,6 +60,63 @@
   --shadow-ink: #1b1c16;
 
   --transition-physics: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --background: #13140d;
+  --foreground: #e4e3d8;
+
+  --surface: #13140d;
+  --surface-dim: #0e0f08;
+  --surface-bright: #393a32;
+  --surface-container-lowest: #0e0f08;
+  --surface-container-low: #1b1c16;
+  --surface-container: #1f201a;
+  --surface-container-high: #2a2b24;
+  --surface-container-highest: #35362f;
+
+  --on-surface: #e4e3d8;
+  --on-surface-variant: #e1bfb2;
+  --outline: #aa8d81;
+  --outline-variant: #594138;
+
+  --primary: #ffb597;
+  --on-primary: #5c1f00;
+  --primary-container: #7d2d00;
+  --on-primary-container: #ffdbcd;
+
+  --secondary: #b7c7eb;
+  --on-secondary: #21304c;
+  --secondary-container: #374765;
+  --on-secondary-container: #d7e2ff;
+
+  --tertiary: #e5c273;
+  --on-tertiary: #3e2e00;
+  --tertiary-container: #5a4300;
+  --on-tertiary-container: #ffdf99;
+
+  --error: #ffb4ab;
+  --on-error: #690005;
+  --error-container: #93000a;
+  --on-error-container: #ffdad6;
+
+  /* --live / --on-live intentionally NOT overridden — urgency red is theme-invariant */
+
+  --success-container: #1f3622;
+  --on-success-container: #b3d8b5;
+
+  --info-container: #2c3254;
+  --on-info-container: #c5cdf7;
+
+  --ended-container: #2e2f33;
+  --on-ended-container: #a5a5ad;
+  --ended-outline: #55555c;
+  --ended-surface: #191a1c;
+  --ended-surface-outline: #3b3c40;
+
+  --shadow-ink: #0e0f08;
 }
 
 @theme inline {

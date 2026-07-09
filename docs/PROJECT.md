@@ -1,6 +1,6 @@
 # Stockholm Swing — Project Plan
 
-**Repo:** `ranveeraggarwal/swsthlm` · **Site:** stockholmswing.com · **Last revised:** 2026-06-20
+**Repo:** `ranveeraggarwal/swsthlm` · **Site:** stockholmswing.com · **Last revised:** 2026-07-09
 
 ## 1. Vision
 
@@ -65,7 +65,7 @@ User accounts, an organizer dashboard, a database, machine translation of descri
 
 GitHub issue numbers are authoritative. Priorities: P0 = do first, P1 = high value, P2 = when convenient. ✓ = merged/closed.
 
-**State as of 2026-07-06:** M1 complete. M2 complete — ICS feed (#8) and per-event add-to-calendar (#9) shipped alongside the earlier JSON-LD, permalinks, and OG image work. M3 well along — day filter (#22), "updated X ago" (#24), PWA manifest (#27) all shipped in addition to earlier filter-URL (#21), neighborhood tags (#25), H1/SEO work; remaining: designed empty states (#23), accessibility pass (#26), scrolling animation (#58), dancefloor tags (#59), resources page (#60). M4 nightly scrapers complete (#4) with exception-proposal logic (#82); new P0 issues filed for Facebook/Instagram intake (#133, #134) covering SSS and remaining venues; Form → PR sync (#5) shipped (`scripts/form-sync.mjs`, `docs/architecture/FORM_SYNC.md`) — published-CSV polling rather than a service account, rows land as `status=draft`; needs the one-time "Publish to web" + `FORM_RESPONSES_CSV_URL` secret setup documented there before it's live. M5 partially started (CONTRIBUTING.md, open-source About section). Next highest-leverage open items: Facebook/Instagram intake (#133, #134), resources page (#60), "Wrong info?" link (#28).
+**State as of 2026-07-09:** M1 complete. M2 complete — ICS feed (#8) and per-event add-to-calendar (#9) shipped alongside the earlier JSON-LD, permalinks, and OG image work. M3 well along — day filter (#22), "updated X ago" (#24), PWA manifest (#27) all shipped in addition to earlier filter-URL (#21), neighborhood tags (#25), H1/SEO work; **dark mode (umbrella #183) has shipped**: it's opt-in only via the header toggle (no `prefers-color-scheme` fallback — a first-time visitor always gets light) and the choice persists in `localStorage`, see `docs/DESIGN.md` § Dark theme for the full token table and rules. All four Phase 1 token/refactor issues (#184–#187) and Phase 2's token set, bootstrap script, and toggle (#188–#190) are merged to `main`; the D4 QA pass (#191) is done and open as PR #201 (`fix/dark-mode-qa`, one contrast fix to `AddToCalendarButton`/`SubscribeButton`), awaiting merge; this doc update (#192) is the closing step of the umbrella and will complete it once #191 merges. Remaining M3 items: designed empty states (#23), accessibility pass (#26), scrolling animation (#58), dancefloor tags (#59), resources page (#60). M4 nightly scrapers complete (#4) with exception-proposal logic (#82); new P0 issues filed for Facebook/Instagram intake (#133, #134) covering SSS and remaining venues; Form → PR sync (#5) shipped (`scripts/form-sync.mjs`, `docs/architecture/FORM_SYNC.md`) — published-CSV polling rather than a service account, rows land as `status=draft`; needs the one-time "Publish to web" + `FORM_RESPONSES_CSV_URL` secret setup documented there before it's live. M5 partially started (CONTRIBUTING.md, open-source About section). Also worth flagging: an `EventRow`/`src/lib/datetime.ts` weekday-formatting hydration mismatch was found incidentally during the dark-mode QA pass and is fixed in a standalone, not-yet-merged PR (#200, `fix/eventrow-date-hydration`) — unrelated to dark mode, no issue number of its own. Next highest-leverage open items: Facebook/Instagram intake (#133, #134), resources page (#60), "Wrong info?" link (#28).
 
 | # | Issue | Milestone | Priority | |
 |---|---|---|---|---|
@@ -122,6 +122,16 @@ GitHub issue numbers are authoritative. Priorities: P0 = do first, P1 = high val
 | 107 | Fix ended events so data validation succeeds | M4 | P0 | ✓ |
 | 133 | SSS event intake — Facebook-only source | M4 | P0 | open |
 | 134 | Facebook & Instagram event intake for remaining venues | M4 | P0 | open |
+| 183 | Dark mode (umbrella): user-toggleable dark theme | M3 | P2 | open |
+| 184 | Dark mode R1: add semantic status and shadow tokens to globals.css | M3 | P2 | ✓ |
+| 185 | Dark mode R2: replace hardcoded text-white with on-* tokens | M3 | P2 | ✓ |
+| 186 | Dark mode R3: tokenize status badges and card states | M3 | P2 | ✓ |
+| 187 | Dark mode R4: unify off-palette zinc/amber onto system tokens | M3 | P2 | ✓ |
+| 188 | Dark mode D1: dark token set in globals.css | M3 | P2 | ✓ |
+| 189 | Dark mode D2: no-flash theme bootstrap script + themeColor viewport fix | M3 | P2 | ✓ |
+| 190 | Dark mode D3: sun/moon theme toggle in the header | M3 | P2 | ✓ |
+| 191 | Dark mode D4: dark-theme QA pass across all states and surfaces | M3 | P2 | open |
+| 192 | Dark mode D5: document the dark theme (DESIGN.md, PROJECT.md) | M3 | P2 | open |
 
 ## 6. Operating cadence (post-M4 steady state)
 

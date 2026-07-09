@@ -90,10 +90,13 @@ mapped.
 ## Data-safety rules (mirrors `docs/architecture/SCRAPERS.md`)
 
 - **Never invent a venue.** If the `Venue` answer doesn't match an existing
-  `venues.csv` row (including the form's "Other" option, which pairs with
-  free-text name/address/neighborhood fields), the submission is withheld
-  from `oneoffs.csv` and surfaced in the PR body under "New venues proposed"
-  for a human to add first.
+  `venues.csv` row, the submission is withheld from `oneoffs.csv` and
+  surfaced in the PR body under "New venues proposed" for a human to add
+  first. The form's "Other" option (free-text name/address/neighborhood
+  fields) is checked against `venues.csv` by name too, since the form's
+  dropdown can lag behind `venues.csv` — an organizer picking "Other" may
+  still be naming a venue that already exists, and that should resolve to
+  the existing row rather than being flagged as new.
 - **Never guess a date or time wrong.** Unparseable `Start Date`/`End Date`/
   time fields withhold the row entirely (flagged as "incomplete") rather than
   writing a value that might be transposed day/month.

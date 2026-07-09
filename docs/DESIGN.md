@@ -173,3 +173,74 @@ Small, pill-shaped tags used for "Beginner," "Intermediate," or "Social Dance" l
 
 ### Navigation
 The navigation bar should be a simple, centered list of uppercase labels. It remains fixed to the top but uses a semi-transparent Cream backdrop with a "glass" blur to keep the focus on the content underneath as the user scrolls through the "rhythm" of the page.
+
+## Dark theme
+
+Dark mode is "the ballroom after midnight" — the same paper-stock world as the light theme, just after the house lights go down. Surfaces move to a warm olive-charcoal (`#13140d`, `#1b1c16`, …), never a neutral or clinical black, so the tactile, lived-in feel of the light palette survives the switch. Sunset orange primary softens into **lamplight peach** (`#ffb597`); deep navy secondary lightens into **moonlit steel** (`#b7c7eb`); vintage gold tertiary warms into **brass** (`#e5c273`). None of this is invented on the spot: the light palette in this file's front-matter is already M3-shaped, and the dark primary/secondary/tertiary values are exactly that palette's `inverse-primary` and `*-fixed-dim` roles, even though the front-matter doesn't name them that way. The dark neutrals stay in the same hue family as the light ink (`#1b1c16`) rather than drifting to a different grey.
+
+**It's opt-in, not OS-following.** A first-time visitor always gets the light theme by default, regardless of their OS or browser `prefers-color-scheme` setting. Dark mode only activates when the visitor clicks the header toggle, and that choice then persists in `localStorage` for future visits. There is no `matchMedia('(prefers-color-scheme: dark)')` fallback anywhere in the implementation — an earlier draft of the umbrella issue proposed one, but it was deliberately dropped before the theme shipped.
+
+### Token table
+
+Exact values as merged in `src/app/globals.css` (`:root` vs. `:root[data-theme='dark']`):
+
+| Token | Light | Dark |
+|---|---|---|
+| `--background` | `#fcfaef` | `#13140d` |
+| `--foreground` | `#1b1c16` | `#e4e3d8` |
+| `--surface` | `#fcfaef` | `#13140d` |
+| `--surface-dim` | `#dcdad0` | `#0e0f08` |
+| `--surface-bright` | `#fcfaef` | `#393a32` |
+| `--surface-container-lowest` | `#ffffff` | `#0e0f08` |
+| `--surface-container-low` | `#f6f4e9` | `#1b1c16` |
+| `--surface-container` | `#f0eee3` | `#1f201a` |
+| `--surface-container-high` | `#eae8de` | `#2a2b24` |
+| `--surface-container-highest` | `#e4e3d8` | `#35362f` |
+| `--on-surface` | `#1b1c16` | `#e4e3d8` |
+| `--on-surface-variant` | `#594138` | `#e1bfb2` |
+| `--outline` | `#8d7166` | `#aa8d81` |
+| `--outline-variant` | `#e1bfb2` | `#594138` |
+| `--primary` | `#a03b00` | `#ffb597` |
+| `--on-primary` | `#ffffff` | `#5c1f00` |
+| `--primary-container` | `#c94c00` | `#7d2d00` |
+| `--on-primary-container` | `#fffbff` | `#ffdbcd` |
+| `--secondary` | `#4f5e7e` | `#b7c7eb` |
+| `--on-secondary` | `#ffffff` | `#21304c` |
+| `--secondary-container` | `#cadaff` | `#374765` |
+| `--on-secondary-container` | `#505f7f` | `#d7e2ff` |
+| `--tertiary` | `#725813` | `#e5c273` |
+| `--on-tertiary` | `#ffffff` | `#3e2e00` |
+| `--tertiary-container` | `#8d712a` | `#5a4300` |
+| `--on-tertiary-container` | `#fffbff` | `#ffdf99` |
+| `--error` | `#ba1a1a` | `#ffb4ab` |
+| `--on-error` | `#ffffff` | `#690005` |
+| `--error-container` | `#ffdad6` | `#93000a` |
+| `--on-error-container` | `#93000a` | `#ffdad6` |
+| `--live` | `#dc2626` | `#dc2626` (unchanged — see rules below) |
+| `--on-live` | `#ffffff` | `#ffffff` (unchanged) |
+| `--success-container` | `#e5f3e6` | `#1f3622` |
+| `--on-success-container` | `#2f5934` | `#b3d8b5` |
+| `--info-container` | `#eef2ff` | `#2c3254` |
+| `--on-info-container` | `#3730a3` | `#c5cdf7` |
+| `--ended-container` | `#e4e4e7` | `#2e2f33` |
+| `--on-ended-container` | `#52525b` | `#a5a5ad` |
+| `--ended-outline` | `#a1a1aa` | `#55555c` |
+| `--ended-surface` | `#fafafa` | `#191a1c` |
+| `--ended-surface-outline` | `#d4d4d8` | `#3b3c40` |
+| `--shadow-ink` | `#1b1c16` | `#0e0f08` |
+
+`color-scheme` is also set per theme (`light` / `dark`) on the same `:root` blocks, so native form controls and the scrollbar follow automatically.
+
+### Rules future changes must follow
+
+- **Never hardcode a color in a component; always go through a `var(--…)` token.** `text-white` on `bg-[var(--primary)]` is the canonical bug that shipped *twice* in this codebase — once across `EventCard`/`EventFilters` in the Phase 1 refactor, and again in `AddToCalendarButton.tsx`/`SubscribeButton.tsx`, caught only during the Phase 2 QA pass. It works by accident in light mode (`--on-primary` happens to be white) and breaks completely once `--primary` becomes a light peach in dark mode. Always use `text-[var(--on-primary)]`, `text-[var(--on-secondary)]`, etc.
+- **Sticker-stack shadows use `--shadow-ink`, never `--on-surface`.** They look identical in light mode (`--shadow-ink` is the same `#1b1c16`), but in dark mode `--on-surface` becomes a light cream — pointing a shadow at it would draw pale shadows on every card.
+- **`--live` (the "happening now" red) is theme-invariant by design.** It's an urgency signal, not a surface color, and it reads correctly against both grounds — don't override it in the dark block.
+- **Brand provider buttons and OG images are intentionally theme-independent and always light.** The Apple/Google/Outlook buttons inside `AddToCalendarButton.tsx`/`SubscribeButton.tsx` use fixed external brand colors, and `opengraph-image.tsx` files render fixed light-theme social-preview cards — don't theme either.
+- **New status colors need a semantic token pair.** Define `--x-container` / `--on-x-container` in both `:root` and `:root[data-theme='dark']`, following the `--success-container`/`--info-container`/`--ended-container` pattern, rather than reaching for a raw Tailwind palette class.
+
+### How theming works mechanically
+
+A `data-theme` attribute on `<html>` (`"light"` or `"dark"`) is stamped **before first paint** by a tiny inline script in `src/app/layout.tsx`'s `<head>`: it reads `localStorage.theme`, defaults to `'light'` if the value is missing or invalid, and sets the attribute synchronously so there's no flash of the wrong theme. `<html>` carries `suppressHydrationWarning` since this mutation happens before React hydrates.
+
+`ThemeToggle` (`src/components/ThemeToggle.tsx`) is a client component rendered in the header (`src/components/Header.tsx`), showing a `Moon` icon (from `lucide-react`) when the site is light — "switch me to dark" — and a `Sun` icon when it's dark. Clicking it flips `data-theme` on `<html>`, writes the choice to `localStorage.theme`, and updates the `<meta name="theme-color">` tag to match (`#a03b00` light / `#13140d` dark), all client-side with no reload. There are no cookies and no server involvement anywhere in this — it fits the same static-site architecture as everything else.

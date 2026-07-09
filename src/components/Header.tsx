@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Music, Menu, X } from 'lucide-react';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export function Header() {
   const pathname = usePathname();
@@ -60,16 +61,20 @@ export function Header() {
           <Link href="/about" className={navLinkClass('/about')}>
             About
           </Link>
+          <ThemeToggle />
         </nav>
 
-        <button
-          className="sm:hidden flex items-center justify-center w-10 h-10 rounded transition-colors text-[var(--on-surface-variant)] hover:text-[var(--primary)]"
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-          aria-expanded={menuOpen}
-        >
-          {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
+        <div className="sm:hidden flex items-center gap-1">
+          <ThemeToggle />
+          <button
+            className="flex items-center justify-center w-10 h-10 rounded transition-colors text-[var(--on-surface-variant)] hover:text-[var(--primary)]"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={menuOpen}
+          >
+            {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
       </div>
 
       {menuOpen && (

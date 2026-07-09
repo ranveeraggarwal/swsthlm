@@ -5,13 +5,23 @@ import { Moon, Sun } from 'lucide-react';
 
 type Theme = 'light' | 'dark';
 
+function syncThemeColorMeta(theme: Theme) {
+  document
+    .querySelector('meta[name="theme-color"]')
+    ?.setAttribute('content', theme === 'dark' ? '#211913' : '#a03b00');
+}
+
 export function ThemeToggle() {
   const [mounted, setMounted] = useState(false);
   const [theme, setTheme] = useState<Theme>('light');
 
   useEffect(() => {
     const current = document.documentElement.getAttribute('data-theme');
-    setTheme(current === 'dark' ? 'dark' : 'light');
+    const resolved: Theme = current === 'dark' ? 'dark' : 'light';
+    setTheme(resolved);
+    // The boot script only stamps data-theme; the meta tag is rendered with
+    // the light value, so a dark-mode page load needs it corrected here.
+    syncThemeColorMeta(resolved);
     setMounted(true);
   }, []);
 
@@ -23,7 +33,7 @@ export function ThemeToggle() {
     } catch {
       // private-mode Safari etc. — theme still applies for this session, just won't persist
     }
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'dark' ? '#13140d' : '#a03b00');
+    syncThemeColorMeta(next);
     setTheme(next);
   };
 

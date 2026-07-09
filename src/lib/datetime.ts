@@ -2,6 +2,32 @@
 // safe to import from client components. (Data loading lives in events.ts,
 // which is server-only.) All reasoning is Europe/Stockholm local.
 
+const WEEKDAYS_SHORT_UTC = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const MONTHS_SHORT_UTC = [
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+];
+
+/**
+ * Formats a YYYY-MM-DD string into a compact "Wed 26 Aug" label (short
+ * weekday, day, short month — no comma). Used for the homepage's compact
+ * row view, which renders during SSR and again on hydration.
+ *
+ * Built from fixed arrays rather than `toLocaleDateString`/`Intl`: for the
+ * combined `{ weekday, day, month }` shape, ICU's formatting output isn't
+ * guaranteed byte-identical across implementations — Node (used at SSR/build
+ * time) and a browser (used at hydration) can render the same locale +
+ * options as e.g. "Wed 26 Aug" vs "Wed, 26 Aug", differing only in
+ * punctuation. That's enough for React to flag a hydration mismatch even
+ * though nothing in the app's logic is actually wrong. Manual formatting
+ * sidesteps the ICU dependency entirely.
+ */
+export function formatCompactWeekdayDate(dateStr: string): string {
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return dateStr;
+  return `${WEEKDAYS_SHORT_UTC[date.getUTCDay()]} ${date.getUTCDate()} ${MONTHS_SHORT_UTC[date.getUTCMonth()]}`;
+}
+
 /**
  * Current date in Europe/Stockholm as a YYYY-MM-DD string.
  */

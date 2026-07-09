@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
   getTemporalBadge,
+  formatCompactWeekdayDate,
   formatEventDateRange,
   formatEventDateShort,
   formatMonthHeading,
@@ -127,6 +128,30 @@ describe('formatEventDateRange', () => {
   });
 });
 
+describe('formatCompactWeekdayDate', () => {
+  it('formats as "Wed 26 Aug" — short weekday, day, short month, no comma', () => {
+    // 2026-08-26 is a Wednesday.
+    expect(formatCompactWeekdayDate('2026-08-26')).toBe('Wed 26 Aug');
+  });
+
+  it('is deterministic and does not depend on Intl/ICU output', () => {
+    // Regression test for a hydration mismatch: Node's ICU formatted
+    // `en-GB` { weekday: 'short', day: 'numeric', month: 'short' } without a
+    // comma ("Tue 14 Jul"), while a browser's ICU formatted the identical
+    // call with a comma ("Tue, 14 Jul") — same input, different output,
+    // purely an implementation quirk of toLocaleDateString/Intl. Since this
+    // function builds the string from fixed arrays instead, it must be
+    // byte-identical everywhere and never contain a comma.
+    const result = formatCompactWeekdayDate('2026-07-14');
+    expect(result).toBe('Tue 14 Jul');
+    expect(result).not.toContain(',');
+  });
+
+  it('returns the original string for an invalid date', () => {
+    expect(formatCompactWeekdayDate('not-a-date')).toBe('not-a-date');
+  });
+});
+
 // Date-only strings (YYYY-MM-DD) parse as UTC midnight. Formatting them with
 // toLocaleDateString and no explicit timeZone rolls back a calendar day for
 // any negative-UTC-offset viewer (all of the Americas), showing the wrong
@@ -158,5 +183,9 @@ describe('timezone-safe formatting', () => {
     const result = formatEventDateRange('2026-08-01', '2026-08-02');
     expect(result).toContain('Aug');
     expect(result).not.toContain('Jul');
+  });
+
+  it('formatCompactWeekdayDate is not shifted back a day', () => {
+    expect(formatCompactWeekdayDate('2026-08-01')).toBe('Sat 1 Aug');
   });
 });

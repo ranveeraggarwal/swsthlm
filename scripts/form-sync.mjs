@@ -189,7 +189,13 @@ function resolveVenue(raw, otherName, otherAddress, otherNeighborhood, venues) {
  * @returns {{ row?: object, correction?: object, issues: string[] }}
  */
 export function mapResponse(response, venues) {
-  const g = (col) => (response[col] ?? '').trim();
+  // Collapse all whitespace (including the literal newlines a Google Forms
+  // "paragraph" answer carries) to single spaces. Every other oneoffs.csv row
+  // — hand-written or scraper-produced (e.g. staclara.mjs's own `\s+` collapse)
+  // — is a single physical line; without this, an embedded newline survives
+  // into a quoted multi-line CSV field and turns a one-event diff into dozens
+  // of added lines, which reads as "several rows" even though it's one record.
+  const g = (col) => (response[col] ?? '').replace(/\s+/g, ' ').trim();
   const issues = [];
   const notes = [];
 

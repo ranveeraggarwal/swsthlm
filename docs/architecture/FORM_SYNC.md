@@ -79,13 +79,22 @@ a clear error rather than silently doing nothing.
 | `band` | Band Name | |
 | `organizer` | Organizer Name | The org/collective, not the submitter. |
 | `url` | Event Page / Ticket URL | |
-| `description` | Event description | |
+| `description` | Event description | Whitespace-collapsed to a single line (see below). |
 | `status` | — | Always `draft`. |
 
 **Never written anywhere:** `Timestamp`, `Email address`, `Your Name` (the
 submitter's personal name — distinct from `Organizer Name`, the public "By"
 line). No column exists for them, and they're not needed once the row is
 mapped.
+
+**Every answer is whitespace-collapsed to one line** before it's mapped
+(`\s+` → single space), same as the scrapers already do for scraped text
+(e.g. `staclara.mjs`). Google Forms' "paragraph" question type returns the
+organizer's line breaks literally; left alone, an embedded newline survives
+into a quoted multi-line CSV field, and a single new event turns into a
+diff spanning dozens of added lines — hard to review, and easy to mistake
+for several rows instead of one. Every other row in `oneoffs.csv` is a
+single physical line; this keeps form-sync's output consistent with that.
 
 ## Data-safety rules (mirrors `docs/architecture/SCRAPERS.md`)
 

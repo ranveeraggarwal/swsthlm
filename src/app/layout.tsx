@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Playfair_Display, Plus_Jakarta_Sans } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import { Header } from '@/components/Header';
@@ -20,7 +20,6 @@ const jakarta = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   metadataBase: new URL('https://stockholmswing.com'),
   title: 'Stockholm Swing',
-  themeColor: '#a03b00',
   description: 'Lindy Hop, Balboa, Shag, and Blues social dancing in Stockholm.',
   appleWebApp: {
     capable: true,
@@ -46,6 +45,10 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  themeColor: '#a03b00',
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -55,7 +58,16 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${playfair.variable} ${jakarta.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){try{var t=localStorage.getItem('theme');if(t!=='light'&&t!=='dark'){t='light'}document.documentElement.setAttribute('data-theme',t)}catch(e){document.documentElement.setAttribute('data-theme','light')}})()",
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col">
         <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:p-4 focus:bg-[var(--surface-container-lowest)] focus:text-[var(--primary)] focus:font-bold focus:underline outline-none">Skip to content</a>
         <div className="min-h-screen flex flex-col relative bg-[var(--background)] text-[var(--on-surface)]">

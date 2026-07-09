@@ -137,7 +137,7 @@ export function SubscribeButton() {
             </button>
 
             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full border-2 border-[var(--on-surface)] bg-[var(--primary)]">
-              <CalendarPlus className="h-6 w-6 text-white" />
+              <CalendarPlus className="h-6 w-6 text-[var(--on-primary)]" />
             </div>
 
             <h2

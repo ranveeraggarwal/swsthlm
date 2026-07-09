@@ -59,6 +59,8 @@ export function EventRow({ event, dates, nightCount }: EventRowProps) {
   // arrays, not Intl) — see its docstring for why: the combined
   // weekday+day+month Intl shape isn't guaranteed byte-identical between
   // Node (SSR) and a browser (hydration), which caused a hydration mismatch.
+  const panelId = `event-row-panel-${event.id.replace(/[^a-zA-Z0-9_-]/g, '-')}`;
+
   const compactDateLabel = (() => {
     const fmtMonth = (d: Date) => d.toLocaleDateString('en-GB', { month: 'short', timeZone: 'UTC' });
     if (nightCount > 1) {
@@ -79,6 +81,7 @@ export function EventRow({ event, dates, nightCount }: EventRowProps) {
         type="button"
         onClick={() => setIsExpanded((v) => !v)}
         aria-expanded={isExpanded}
+        aria-controls={panelId}
         className="w-full text-left py-2.5 px-1 hover:bg-[var(--surface-container-low)] transition-colors cursor-pointer"
       >
         {/* Primary line */}
@@ -96,7 +99,7 @@ export function EventRow({ event, dates, nightCount }: EventRowProps) {
               Cancelled
             </span>
           )}
-          <ChevronDown className={`w-4 h-4 shrink-0 text-[var(--on-surface-variant)] transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+          <ChevronDown aria-hidden="true" className={`w-4 h-4 shrink-0 text-[var(--on-surface-variant)] transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
         </div>
 
         {/* Secondary line: aligns under the title on desktop */}
@@ -127,7 +130,7 @@ export function EventRow({ event, dates, nightCount }: EventRowProps) {
 
       {/* Expanded panel */}
       {isExpanded && (
-        <div className="px-1 pb-4 pt-1 space-y-3 font-sans border-t border-[var(--surface-container-highest)] bg-[var(--surface-container-low)]">
+        <div id={panelId} className="px-1 pb-4 pt-1 space-y-3 font-sans border-t border-[var(--surface-container-highest)] bg-[var(--surface-container-low)]">
           <div className="flex flex-wrap items-center gap-2 pt-2 px-1">
             {priceDisplay && (
               <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-xs font-bold border bg-[var(--surface-container)] text-[var(--on-surface-variant)] border-[var(--surface-container-highest)]">

@@ -159,6 +159,7 @@ export function AddToCalendarButton({ event }: AddToCalendarButtonProps) {
               type="button"
               onClick={handleClose}
               aria-label="Close"
+              title="Close"
               className="absolute right-3 top-3 rounded-full p-1.5 text-[var(--outline)] hover:bg-[var(--surface-container)] transition-colors cursor-pointer"
             >
               <X className="h-4 w-4" />

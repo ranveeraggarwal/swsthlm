@@ -45,6 +45,7 @@ export function ThemeToggle() {
       className="w-10 h-10 rounded flex items-center justify-center transition-colors text-[var(--on-surface-variant)] hover:text-[var(--primary)] cursor-pointer"
       onClick={handleToggle}
       aria-label={label}
+      title={label}
     >
       {mounted ? (
         theme === 'dark' ? (

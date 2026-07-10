@@ -272,6 +272,7 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
                     searchInputRef.current?.focus();
                   }}
                   aria-label="Clear search"
+                  title="Clear search"
                   className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--outline)] hover:text-[var(--on-surface)] transition-colors cursor-pointer"
                 >
                   <X className="w-5 h-5" />

@@ -86,6 +86,20 @@ export function eventToJsonLd(event: SwingEvent): Record<string, unknown> {
   return jsonLd;
 }
 
+// Site-level entity for the homepage graph. Gives search engines and AI
+// crawlers a machine-readable statement of what the site is, alongside the
+// individual DanceEvent nodes.
+const websiteJsonLd: Record<string, unknown> = {
+  '@type': 'WebSite',
+  '@id': `${SITE_URL}/#website`,
+  name: 'Stockholm Swing',
+  alternateName: 'Stockholm Swing Dance Calendar',
+  url: SITE_URL,
+  description:
+    'A free, community-maintained calendar of every swing dance event in Stockholm, Sweden — Lindy Hop, Balboa, Shag, and Blues socials, live-music dances, workshops, and jams.',
+  inLanguage: 'en',
+};
+
 export function eventsJsonLd(events: SwingEvent[]): string {
   const items = events
     .filter((e) => e.status === 'published')
@@ -93,7 +107,7 @@ export function eventsJsonLd(events: SwingEvent[]): string {
 
   return JSON.stringify({
     '@context': 'https://schema.org',
-    '@graph': items,
+    '@graph': [websiteJsonLd, ...items],
   });
 }
 

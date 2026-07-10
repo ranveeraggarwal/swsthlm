@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: 'About | Stockholm Swing',
   description:
     'One place for every Lindy Hop, Balboa, Blues, and Shag social, workshop, and jam in Stockholm.',
+  alternates: { canonical: '/about' },
 };
 
 export default function AboutPage() {

@@ -14,6 +14,7 @@ export const metadata: Metadata = {
   title: 'Stockholm Swing Dance Calendar | Lindy Hop, Balboa & Blues Events',
   description:
     'The complete guide to swing dancing in Stockholm. Find upcoming Lindy Hop, Balboa, Shag, and Blues socials, live music, and workshops across the city.',
+  alternates: { canonical: '/' },
   openGraph: {
     title: 'Stockholm Swing Dance Calendar | Lindy Hop, Balboa & Blues Events',
     description:

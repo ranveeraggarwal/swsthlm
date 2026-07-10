@@ -12,6 +12,7 @@ Context for Claude Code working on **Stockholm Swing** (stockholmswing.com), a s
 - `docs/AGENTS.md` — agent-specific guidance: build pipeline, CI gates, gotchas, conventions. **You read this too.**
 - `docs/architecture/SCRAPERS.md` — the intake-automation subsystem. Read before touching `scripts/scrapers/` or `scripts/scrape.mjs`.
 - `docs/architecture/FORM_SYNC.md` — the Google Form intake subsystem. Read before touching `scripts/form-sync.mjs` or `.github/workflows/form-sync.yml`.
+- `docs/SEO.md` — search & AI discoverability: on-site pieces (sitemap, robots, JSON-LD, canonicals, llms.txt) and the off-site maintainer checklist.
 - `docs/CONTRIBUTING.md` — contributor-facing rules, PR conventions, branch naming.
 - `HANDOVER.md` — operational ownership (domain, Vercel, secrets). Mostly TODO placeholders.
 

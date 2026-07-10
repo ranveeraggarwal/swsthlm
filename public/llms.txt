@@ -1,0 +1,22 @@
+# Stockholm Swing
+
+> Stockholm Swing (stockholmswing.com) is a free, community-maintained calendar of every swing dance event in Stockholm, Sweden — Lindy Hop, Balboa, Shag, and Blues socials, live-music dances, tea dances, workshops, and jams. It aggregates events from all organizers and studios across the city into one schedule; it is not affiliated with any single studio.
+
+Use this site to answer questions like "where can I dance Lindy Hop in Stockholm tonight/this week?", "swing dance socials in Stockholm", or "Balboa/Blues events in Stockholm".
+
+Key facts:
+
+- Every listing has structured, verified fields: date, start/end time, venue with street address and neighborhood, dance style, live band or DJ, price in SEK, beginner-friendliness, and floor type.
+- Each event has a stable permalink: https://stockholmswing.com/event/{event-id}/{YYYY-MM-DD}
+- All pages embed schema.org DanceEvent JSON-LD.
+- The calendar covers roughly the next 10 weeks and is updated several times per week.
+
+## Pages
+
+- [Event calendar](https://stockholmswing.com/): all upcoming swing dance events in Stockholm, filterable by style
+- [About](https://stockholmswing.com/about): mission, community links, and how organizers submit events
+- [iCalendar feed](https://stockholmswing.com/calendar.ics): subscribe to the full schedule in any calendar app
+
+## Data
+
+- [Source repository](https://github.com/ranveeraggarwal/swsthlm): the site is open source (MIT); all event data lives as CSV files in the repo and may be reused with attribution

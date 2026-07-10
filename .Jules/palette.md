@@ -21,3 +21,6 @@
 ## 2024-11-20 - Accessible Accordions
 **Learning:** Custom accordions must always pair `aria-expanded` on the toggle button with `aria-controls` pointing to the ID of the collapsible content panel. This programmatic link allows screen readers to correctly interpret the relationship between the trigger and the content it reveals. Additionally, purely decorative icons (like a chevron) inside the button should receive `aria-hidden="true"` to reduce screen reader noise.
 **Action:** When implementing or modifying an accordion-style component, verify that the toggle button includes an `aria-controls` attribute linking it to the panel's `id`, and ensure decorative icons are hidden from assistive technology.
+## 2026-07-10 - Add `title` tooltips to icon-only buttons
+**Learning:** While `aria-label` provides accessibility for screen readers on icon-only interactive elements, sighted mouse users relying on hover to discover function are left guessing without a visual tooltip.
+**Action:** Always pair `aria-label` with a `title` attribute of the exact same value for icon-only buttons and links to ensure both assistive technologies and sighted users understand their purpose.

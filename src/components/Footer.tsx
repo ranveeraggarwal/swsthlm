@@ -23,6 +23,7 @@ export function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="GitHub Community"
+              title="GitHub Community"
               className="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors"
             >
               <GitHubIcon className="w-4 h-4" />
@@ -32,6 +33,7 @@ export function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Join our Discord"
+              title="Join our Discord"
               className="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors"
             >
               <DiscordIcon className="w-4 h-4" />

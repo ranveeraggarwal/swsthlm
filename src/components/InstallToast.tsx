@@ -67,6 +67,7 @@ export function InstallToast() {
           type="button"
           onClick={handleDismiss}
           aria-label="Dismiss"
+          title="Dismiss"
           className="shrink-0 p-1 rounded text-[var(--on-surface-variant)] hover:text-[var(--on-surface)] cursor-pointer"
         >
           <X className="w-4 h-4" />

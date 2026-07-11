@@ -24,7 +24,7 @@ const DESCRIPTION_BODY_MAX = 300;
 // Europe/Stockholm: CET (+01:00) / CEST (+02:00), EU DST rule — clocks go
 // forward the last Sunday of March (02:00→03:00) and back the last Sunday of
 // October (03:00→02:00). Static; the RRULEs encode the rule for all years.
-const VTIMEZONE = [
+export const VTIMEZONE = [
   'BEGIN:VTIMEZONE',
   `TZID:${TZID}`,
   'BEGIN:DAYLIGHT',
@@ -45,12 +45,12 @@ const VTIMEZONE = [
 ];
 
 /** Format a YYYY-MM-DD + HH:MM wall time as a floating local stamp: YYYYMMDDTHHMMSS. */
-function formatLocal(dateISO: string, time: string): string {
+export function formatLocal(dateISO: string, time: string): string {
   return `${dateISO.replace(/-/g, '')}T${time.replace(':', '')}00`;
 }
 
 /** Format an absolute Date as an iCal UTC timestamp: YYYYMMDDTHHMMSSZ. */
-function formatUtc(d: Date): string {
+export function formatUtc(d: Date): string {
   const pad = (n: number) => String(n).padStart(2, '0');
   return (
     `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}${pad(d.getUTCDate())}` +
@@ -59,7 +59,7 @@ function formatUtc(d: Date): string {
 }
 
 /** Escape a value for an iCal TEXT field (RFC 5545 §3.3.11). */
-function escapeText(value: string): string {
+export function escapeText(value: string): string {
   return value
     .replace(/\\/g, '\\\\')
     .replace(/;/g, '\\;')
@@ -82,7 +82,7 @@ function truncate(text: string, max: number): string {
  * the ASCII-dominant content here and keeps multi-byte characters intact by
  * never splitting below the byte budget for our inputs.
  */
-function foldLine(line: string): string {
+export function foldLine(line: string): string {
   if (line.length <= 75) return line;
   const parts: string[] = [];
   let remaining = line;

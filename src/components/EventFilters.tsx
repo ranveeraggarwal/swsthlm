@@ -36,6 +36,42 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
   const [liveMusicOnly, setLiveMusicOnly] = useState(false);
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        e.key === '/' ||
+        (e.key === 'k' && (e.metaKey || e.ctrlKey))
+      ) {
+        // Only trigger if not already typing in an input
+        if (
+          document.activeElement?.tagName === 'INPUT' ||
+          document.activeElement?.tagName === 'TEXTAREA'
+        ) {
+          // Let the user type normally in any input field if they press '/'
+          if (e.key === '/') return;
+        }
+
+        e.preventDefault();
+
+        if (!isFilterExpanded) {
+          setIsFilterExpanded(true);
+        }
+
+        // Use timeout to allow expansion animation/render
+        setTimeout(() => {
+          searchInputRef.current?.focus();
+          // Optional: select all if already has text
+          if (searchInputRef.current?.value) {
+            searchInputRef.current.select();
+          }
+        }, 0);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isFilterExpanded]);
+
   // "Now" can't be known by static HTML, so the temporal badges and the
   // This Week / Upcoming split are computed client-side after hydration.
   // Seeded with the build-time values to keep the first paint mismatch-free.
@@ -262,14 +298,20 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
                 placeholder="Search by band, DJ, venue, title..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-11 pr-10 py-3.5 bg-transparent border-0 text-[var(--on-surface)] placeholder-[var(--outline)] focus:outline-none focus:ring-0 font-sans font-body-md"
+                className="w-full pl-11 pr-20 py-3.5 bg-transparent border-0 text-[var(--on-surface)] placeholder-[var(--outline)] focus:outline-none focus:ring-0 font-sans font-body-md"
               />
-              {searchQuery && (
+              {!searchQuery ? (
+                <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none hidden sm:flex items-center gap-1 opacity-50">
+                  <kbd className="font-sans text-[10px] font-bold border-b-2 border-r-2 border-l border-t border-[var(--border-ink)] bg-[var(--surface-container)] text-[var(--on-surface)] px-1.5 py-0.5 rounded shadow-[1px_1px_0px_var(--shadow-ink)]">
+                    /
+                  </kbd>
+                </div>
+              ) : (
                 <button
                   type="button"
                   onClick={() => {
                     setSearchQuery('');
-                    searchInputRef.current?.focus();
+                    setTimeout(() => searchInputRef.current?.focus(), 0);
                   }}
                   aria-label="Clear search"
                   title="Clear search"

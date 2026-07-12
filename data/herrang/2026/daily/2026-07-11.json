@@ -14,7 +14,7 @@
     {"title": "DJ Viktor", "venues": ["db"], "start": "23:30", "end": "01:45", "kind": "dj"},
     {"title": "DJ Victoria", "venues": ["db"], "start": "01:45", "end": "03:30", "kind": "dj"},
     {"title": "DJ Steven", "venues": ["lb"], "start": "22:45", "end": "02:15", "kind": "dj", "theme": "Long recordings"},
-    {"title": "Taster Classes", "venues": ["ab", "sp", "sb"], "start": "22:30", "end": "23:00", "kind": "taster", "tba": true, "detail": "Announced at the Variety Revue"}
+    {"title": "Taster Classes", "venues": ["ab", "sp", "sb"], "start": "22:00", "end": "23:00", "kind": "taster", "tba": true, "detail": "Announced at the Variety Revue"}
   ],
   "specials": [
     {"title": "Mozambican Dances — Saturday Special", "start": "11:20", "detail": "Only today. Classes start 11:20 — book now.", "kind": "special"},

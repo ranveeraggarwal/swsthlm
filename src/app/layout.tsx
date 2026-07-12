@@ -4,7 +4,7 @@ import { Analytics } from '@vercel/analytics/next';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { InstallToast } from '@/components/InstallToast';
-import '../globals.css';
+import './globals.css';
 
 const playfair = Playfair_Display({
   variable: '--font-playfair',

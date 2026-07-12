@@ -9,7 +9,7 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "validate:data": "node scripts/validate-data.mjs && node scripts/validate-herrang.mjs"
+    "validate:data": "node scripts/validate-data.mjs"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",

@@ -9,6 +9,7 @@ import type { DailyEvent, HerrangData } from '@/lib/herrang/types';
 import {
   endsChip,
   fromPosterMinutes,
+  isPast,
   relativeChip,
   toPosterMinutes,
   type ClockState,
@@ -41,7 +42,13 @@ export function TonightView({
   }
 
   const stream = tonightStream(daily);
-  const live = clock.mode === 'night'; // the now-line only moves at night
+  // "Live" for the whole poster window, not just the 19:10–04:00 party hours:
+  // the poster's night genuinely runs through 07:59 the next morning, so the
+  // 04:00–08:00 tail still needs now-line/past-dimming — otherwise a 3am
+  // check-in freezes with nothing ever marked as over. Stays false outside
+  // that window (checking Tonight ahead of time during the day), since
+  // nothing has started yet.
+  const live = clock.mode === 'night' || clock.mode === 'weird';
   const nowPM = clock.posterMinutes;
 
   const running = live
@@ -59,33 +66,41 @@ export function TonightView({
     <div className="flex flex-col gap-3">
       <h2 className="hg-display text-2xl">{daily.title}</h2>
 
-      {/* Specials: pinned red cards, always first. */}
-      {daily.specials.map((s) => (
-        <section
-          key={s.title}
-          className="p-4"
-          style={{
-            background: 'var(--hg-special)',
-            color: 'var(--hg-on-special)',
-            borderRadius: 'var(--hg-radius)',
-          }}
-        >
-          <div className="flex items-baseline justify-between gap-3">
-            <h3 className="hg-display text-xl">{s.title}</h3>
-            {s.start && (
-              <span className="hg-time text-sm font-bold">
-                {s.start}
-                {s.end ? `–${s.end}` : ''}
-              </span>
-            )}
-          </div>
-          <p className="mt-1 text-sm">
-            {s.venue ? `${venueLabel(data.venues, s.venue)}` : ''}
-            {s.venue && s.detail ? ' — ' : ''}
-            {s.detail ?? ''}
-          </p>
-        </section>
-      ))}
+      {/* Specials: pinned red cards, always first. Dimmed once their own
+          time has passed, same as the stream below — a "book now" note for
+          an 11:20 class shouldn't still read as urgent at 3am. */}
+      {daily.specials.map((s) => {
+        const startPM = s.start ? toPosterMinutes(s.start) : undefined;
+        const endPM = s.end ? toPosterMinutes(s.end) : undefined;
+        const over = live && isPast(nowPM, startPM, endPM);
+        return (
+          <section
+            key={s.title}
+            className="p-4"
+            style={{
+              background: 'var(--hg-special)',
+              color: 'var(--hg-on-special)',
+              borderRadius: 'var(--hg-radius)',
+              ...(over ? { opacity: 0.4 } : null),
+            }}
+          >
+            <div className="flex items-baseline justify-between gap-3">
+              <h3 className="hg-display text-xl">{s.title}</h3>
+              {s.start && (
+                <span className="hg-time text-sm font-bold">
+                  {s.start}
+                  {s.end ? `–${s.end}` : ''}
+                </span>
+              )}
+            </div>
+            <p className="mt-1 text-sm">
+              {s.venue ? `${venueLabel(data.venues, s.venue)}` : ''}
+              {s.venue && s.detail ? ' — ' : ''}
+              {s.detail ?? ''}
+            </p>
+          </section>
+        );
+      })}
 
       {/* The Now card, night flavor: current events across venues, then next. */}
       {live && (running.length > 0 || nextGroup) && (

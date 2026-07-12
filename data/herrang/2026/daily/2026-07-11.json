@@ -17,7 +17,7 @@
     {"title": "Taster Classes", "venues": ["ab", "sp", "sb"], "start": "22:30", "end": "23:00", "kind": "taster", "tba": true, "detail": "Announced at the Variety Revue"}
   ],
   "specials": [
-    {"title": "Mozambican Dances — Saturday Special", "detail": "Only today. Classes start 11:20 — book now.", "kind": "special"},
+    {"title": "Mozambican Dances — Saturday Special", "start": "11:20", "detail": "Only today. Classes start 11:20 — book now.", "kind": "special"},
     {"title": "Bedlam Jam", "venue": "bar-bedlam", "start": "00:00", "end": "03:30", "kind": "jam"}
   ]
 }

@@ -119,7 +119,11 @@ export function HerrangApp({ data }: { data: HerrangData }) {
             className="hg-time mt-1 text-xs font-semibold uppercase tracking-wider"
             style={{ color: 'var(--hg-soft)' }}
           >
-            {clock ? formatCompactWeekdayDate(clock.posterDate) : ' '}
+            {/* The real calendar date, not the poster date — during the
+                04:00–08:00 weird hours the poster date is still "yesterday"
+                (it groups the tail of last night's program), but the header
+                is read as "what day is it" and must not look stuck. */}
+            {clock ? formatCompactWeekdayDate(clock.dateISO) : ' '}
           </p>
         </div>
         <button

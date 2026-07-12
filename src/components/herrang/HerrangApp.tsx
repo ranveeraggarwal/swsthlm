@@ -4,7 +4,7 @@
 // (day/night), and which view is showing. The device clock picks the default
 // view; the tabs always let the user override.
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
 import type { HerrangData } from '@/lib/herrang/types';
 import {
   clockStateFor,
@@ -53,6 +53,7 @@ export function HerrangApp({ data }: { data: HerrangData }) {
   const [themePref, setThemePref] = useState<ThemePref>('auto');
   const [manualView, setManualView] = useState<View | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const settingsTriggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const tick = () => setClock(clockStateFor(new Date()));
@@ -123,6 +124,7 @@ export function HerrangApp({ data }: { data: HerrangData }) {
           </p>
         </div>
         <button
+          ref={settingsTriggerRef}
           onClick={() => setSettingsOpen(true)}
           className="rounded-full px-3 py-1.5 text-xs font-bold uppercase tracking-wide"
           style={{ border: '1px solid var(--hg-ink)' }}
@@ -181,7 +183,10 @@ export function HerrangApp({ data }: { data: HerrangData }) {
 
       <SettingsSheet
         open={settingsOpen}
-        onClose={() => setSettingsOpen(false)}
+        onClose={() => {
+          setSettingsOpen(false);
+          setTimeout(() => settingsTriggerRef.current?.focus(), 0);
+        }}
         week={data.week}
         selection={selection}
         onSelection={saveSelection}

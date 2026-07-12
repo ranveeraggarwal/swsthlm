@@ -54,6 +54,10 @@ export function TodayView({
               </strong>{' '}
               — {venueLabel(venues, first.venue)}
             </span>
+          ) : trackIds.length === 0 && week.tracks.length > 0 ? (
+            <button className="font-bold underline" onClick={onPickTracks}>
+              Pick your track to see what&apos;s next →
+            </button>
           ) : (
             'Nothing on your schedule until further notice.'
           )

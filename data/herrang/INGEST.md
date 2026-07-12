@@ -14,10 +14,7 @@ live in about a minute.
 > names via venues.json aliases; mark "TBA"/"announced at…" items with
 > `tba: true`; "04–?" style endings get `openEnd: true`; put the red specials
 > box into `specials`, not `events`; times after midnight stay as printed on
-> the poster; if a special's own text states a time (e.g. "classes start
-> 11:20"), also put that time in the special's `start` field — don't leave it
-> only in `detail`, or the site can't tell the special is over. Validate the
-> JSON, then stop — no other file changes.
+> the poster. Validate the JSON, then stop — no other file changes.
 
 ## Schemas
 
@@ -44,11 +41,7 @@ live in about a minute.
     }
   ],
   "specials": [                   // the red specials box, NOT part of events
-    {"title": "Bedlam Jam", "venue": "bar-bedlam", "start": "00:00", "end": "03:30", "kind": "jam"},
-    // A special with a stated time but no clear end (e.g. a daytime class
-    // reminder posted on the evening board) still gets a `start` — the site
-    // uses it to grey the card out once that time has passed.
-    {"title": "…", "start": "11:20", "detail": "Classes start 11:20 — book now.", "kind": "special"}
+    {"title": "Bedlam Jam", "venue": "bar-bedlam", "start": "00:00", "end": "03:30", "kind": "jam"}
   ]
 }
 ```

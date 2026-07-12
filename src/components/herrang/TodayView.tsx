@@ -54,10 +54,6 @@ export function TodayView({
               </strong>{' '}
               — {venueLabel(venues, first.venue)}
             </span>
-          ) : trackIds.length === 0 && week.tracks.length > 0 ? (
-            <button className="font-bold underline" onClick={onPickTracks}>
-              Pick your track to see what&apos;s next →
-            </button>
           ) : (
             'Nothing on your schedule until further notice.'
           )
@@ -66,13 +62,9 @@ export function TodayView({
     );
   }
 
-  // Class-free days: Wednesday has the whole-camp special at 14:00; arrival
-  // Saturday has nothing scheduled at all.
+  // Wednesday: class-free, but the whole camp has somewhere to be at 14:00.
   if (isClassFreeDay(week, clock.posterDate)) {
     const specials = weekSpecialsOn(week, clock.posterDate);
-    if (specials.length === 0) {
-      return <BigSay title="No classes today." sub="Free day." />;
-    }
     return (
       <div className="flex flex-col gap-3">
         {specials.map((s) => (

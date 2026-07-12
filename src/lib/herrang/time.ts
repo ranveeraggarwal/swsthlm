@@ -98,18 +98,6 @@ export function relativeChip(
   return endPM === undefined ? 'ended' : `ended ${fromPosterMinutes(endPM)}`;
 }
 
-/**
- * True once something is behind us on the poster timeline: past its end, or
- * — for things with only a single reference time, like a pinned special that
- * just says "book now" for an 11:20 class — past that one time. Used to dim
- * finished items instead of leaving them looking perpetually current.
- */
-export function isPast(nowPM: number, startPM?: number, endPM?: number): boolean {
-  if (endPM !== undefined) return nowPM >= endPM;
-  if (startPM !== undefined) return nowPM >= startPM;
-  return false;
-}
-
 /** "ends in 25 min" / "ends 01:45" for a running event. */
 export function endsChip(nowPM: number, endPM?: number, openEnd?: boolean): string {
   if (endPM === undefined) return openEnd ? 'until ?' : '';

@@ -4,7 +4,6 @@ import {
   endsChip,
   fromPosterMinutes,
   isNightGround,
-  isPast,
   modeFor,
   relativeChip,
   toMinutes,
@@ -84,28 +83,6 @@ describe('chips', () => {
     expect(endsChip(toMinutes('21:35'), toMinutes('22:00'))).toBe('ends in 25 min');
     expect(endsChip(toMinutes('21:00'), toPosterMinutes('01:45'))).toBe('ends 01:45');
     expect(endsChip(toMinutes('21:00'), undefined, true)).toBe('until ?');
-  });
-});
-
-describe('isPast — dimming finished specials', () => {
-  it('with an end, is past once that end has gone by', () => {
-    const start = toMinutes('00:00');
-    const end = toMinutes('03:30'); // Bedlam Jam
-    expect(isPast(toMinutes('02:00'), start, end)).toBe(false);
-    expect(isPast(toMinutes('03:30'), start, end)).toBe(true);
-    // still true across the cross-midnight tail (07:56 the next morning).
-    expect(isPast(toPosterMinutes('07:56'), start, end)).toBe(true);
-  });
-
-  it('with only a start (a "book now" reminder), is past once that time has gone by', () => {
-    const start = toMinutes('11:20'); // Mozambican Dances special
-    expect(isPast(toMinutes('10:00'), start)).toBe(false);
-    expect(isPast(toMinutes('11:20'), start)).toBe(true);
-    expect(isPast(toPosterMinutes('07:56'), start)).toBe(true);
-  });
-
-  it('with neither, can never be judged past', () => {
-    expect(isPast(toMinutes('23:00'))).toBe(false);
   });
 });
 

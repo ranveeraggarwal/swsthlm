@@ -84,9 +84,16 @@ before opening a PR, not after.
   token-colored background shipped twice (`EventCard`/`EventFilters`, then
   again in `AddToCalendarButton`/`SubscribeButton`), and off-palette
   `zinc`/`amber` Tailwind classes shipped once — all three were only caught
-  in a dedicated dark-mode QA pass, not code review (#193–#201). Before
-  writing a color class, ask whether it needs a different value in dark
-  mode; if yes, it's a token, not a Tailwind palette class. Structural
+  in a dedicated dark-mode QA pass, not code review (#193–#201). This one is
+  now caught by lint: `eslint-rules/no-hardcoded-color-classes.mjs` fails
+  `npm run lint` on any raw Tailwind palette class (`bg-white`,
+  `text-zinc-500`, …) inside a `className`. It can only see literal/template
+  string content, not values from an identifier — so a color baked into a
+  variable (e.g. the brand-button color maps in `AddToCalendarButton.tsx`/
+  `SubscribeButton.tsx`, which are intentionally theme-independent per
+  DESIGN.md) won't be flagged, and a reviewer still needs to look there.
+  Before writing a color class, ask whether it needs a different value in
+  dark mode; if yes, it's a token, not a Tailwind palette class. Structural
   keylines and shadows specifically use `--border-ink` / `--shadow-ink`,
   never `--on-surface` — identical in light mode, but `--on-surface` turns
   into a glowing cream line in dark mode.

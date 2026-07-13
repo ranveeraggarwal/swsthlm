@@ -26,6 +26,10 @@ jobs:
       - run: npm run validate:data
       # Validator unit tests (kept honest alongside the data).
       - run: npm test
+      # Lint, including local/no-hardcoded-color-classes (docs/AGENTS.md,
+      # "Recurring feedback") — catches the raw-Tailwind-color bug at PR
+      # time instead of a later dark-mode QA pass.
+      - run: npm run lint
 
   urls:
     # URL reachability is advisory only (Facebook/Instagram block HEAD

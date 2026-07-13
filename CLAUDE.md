@@ -9,7 +9,7 @@ Context for Claude Code working on **Stockholm Swing** (stockholmswing.com), a s
 - `docs/PROJECT.md` — roadmap, architecture decisions, issue backlog with priorities, "won't build" list, operating cadence. **The maintained source of truth for project state and sequencing.**
 - `docs/DATA.md` — **the data contract.** Full schema for the five CSVs, enums, validation rules, worked examples. Read before editing `/data/` or code that consumes it.
 - `docs/DESIGN.md` — **the design system.** Color tokens, typography, spacing, component guidelines. Read before touching styles or UI components.
-- `docs/AGENTS.md` — agent-specific guidance: build pipeline, CI gates, gotchas, conventions. **You read this too.**
+- `docs/AGENTS.md` — agent-specific guidance: build pipeline, CI gates, gotchas, conventions, and a "recurring feedback" section of concrete bugs (focus management, color tokens, UTC/hydration date handling, scope creep) that have shipped wrong before. Read that section before touching UI, dates, or colors — it's the fastest way to skip a round of review. **You read this too.**
 - `docs/architecture/SCRAPERS.md` — the intake-automation subsystem. Read before touching `scripts/scrapers/` or `scripts/scrape.mjs`.
 - `docs/architecture/FORM_SYNC.md` — the Google Form intake subsystem. Read before touching `scripts/form-sync.mjs` or `.github/workflows/form-sync.yml`.
 - `docs/SEO.md` — search & AI discoverability: on-site pieces (sitemap, robots, JSON-LD, canonicals, llms.txt) and the off-site maintainer checklist.

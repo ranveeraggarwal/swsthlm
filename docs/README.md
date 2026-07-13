@@ -1,5 +1,8 @@
 # Stockholm Swing 🎺
 
+[![Validate data](https://github.com/ranveeraggarwal/swsthlm/actions/workflows/validate-data.yml/badge.svg)](https://github.com/ranveeraggarwal/swsthlm/actions/workflows/validate-data.yml)
+[![License: BSL 1.1](https://img.shields.io/badge/license-BSL--1.1-blue)](../LICENSE)
+
 > Your single, lightweight, optimized guide to Lindy Hop, Balboa, Shag, and Blues social dancing and workshops in Stockholm.
 
 Stockholm Swing is a Next.js-powered web application that aggregates swing dance events across Stockholm. It is a fully static site, built at deploy time from structured CSV files in `/data` and rebuilt on every push to `main`, keeping the local community informed about upcoming social dances, live bands, and workshops.

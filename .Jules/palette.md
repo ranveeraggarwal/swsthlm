@@ -24,3 +24,6 @@
 ## 2026-07-10 - Add `title` tooltips to icon-only buttons
 **Learning:** While `aria-label` provides accessibility for screen readers on icon-only interactive elements, sighted mouse users relying on hover to discover function are left guessing without a visual tooltip.
 **Action:** Always pair `aria-label` with a `title` attribute of the exact same value for icon-only buttons and links to ensure both assistive technologies and sighted users understand their purpose.
+## 2024-07-25 - Search Discoverability & Keyboard Navigation
+**Learning:** Adding global keyboard shortcuts (like `/` for search) improves power-user navigation, but they are invisible by default. Without a visual `<kbd>` hint, users will never discover them. Additionally, the event listener must strictly check the `e.target` to ignore `INPUT` and `TEXTAREA` elements, otherwise it blocks normal typing in forms.
+**Action:** Always pair a global keyboard shortcut with a visual `<kbd>` hint in the corresponding UI element. When implementing a shortcut, use `e.target instanceof HTMLElement` and check `.tagName` to ensure typing within existing inputs isn't intercepted.

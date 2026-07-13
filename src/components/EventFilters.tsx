@@ -49,6 +49,24 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
   const currentDate = now.date;
   const currentTime = now.time;
 
+  // Global keyboard shortcut for search
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        e.key === '/' &&
+        e.target instanceof HTMLElement &&
+        e.target.tagName !== 'INPUT' &&
+        e.target.tagName !== 'TEXTAREA'
+      ) {
+        e.preventDefault();
+        setIsFilterExpanded(true);
+        setTimeout(() => searchInputRef.current?.focus(), 0);
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   // Dynamically extract unique venues from the events list
   const venuesList = useMemo(() => {
     const venues = new Set<string>();
@@ -277,6 +295,13 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
                 >
                   <X className="w-5 h-5" />
                 </button>
+              )}
+              {!searchQuery && (
+                <div className="absolute right-3.5 top-1/2 -translate-y-1/2 hidden sm:flex items-center pointer-events-none">
+                  <kbd className="inline-flex items-center justify-center px-1.5 py-0.5 font-sans text-xs font-bold text-[var(--on-surface-variant)] bg-[var(--surface-container)] border border-[var(--border-ink)] rounded shadow-[1px_1px_0px_0px_var(--shadow-ink)]">
+                    /
+                  </kbd>
+                </div>
               )}
             </div>
 

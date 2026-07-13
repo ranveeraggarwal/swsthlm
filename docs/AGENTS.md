@@ -1,9 +1,3 @@
-<!-- BEGIN:nextjs-agent-rules -->
-# This is NOT the Next.js you know
-
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
-<!-- END:nextjs-agent-rules -->
-
 # Agent orientation — Stockholm Swing
 
 You are working on **Stockholm Swing** (stockholmswing.com), a swing-dance event
@@ -60,3 +54,67 @@ leave it `live`.
   dedup but never writes it, and never invents venues — see SCRAPERS.md.
 - **Don't break the static-site shape.** If a task seems to need a server,
   account, or database, **stop and flag it** rather than building it.
+
+## Recurring feedback (read before you build)
+
+Each of these shipped wrong at least once in review — several twice. They're
+cheap to get right up front and expensive to catch in QA; check for them
+before opening a PR, not after.
+
+- **Accessibility is part of the component, not a follow-up pass.** Any
+  interactive element that unmounts on interaction (a "Clear search" button,
+  a closing modal, a collapsing filter panel) drops keyboard focus to
+  `<body>` unless you explicitly restore it — this exact bug has been filed
+  and fixed at least three separate times (#154, #181, and a filter-reset
+  case). Keep a `ref` to the logical next focus target and call `.focus()`
+  on it when the element unmounts; wrap in
+  `setTimeout(() => ref.current?.focus(), 0)` if the target hasn't
+  re-rendered yet. Custom accordions need `aria-controls` on the trigger
+  pointing at the panel `id`, plus `aria-hidden="true"` on decorative icons
+  (#203). Icon-only buttons need both `aria-label` (screen readers) and a
+  matching `title` (sighted mouse users hovering). New global keyboard
+  shortcuts need a visible `<kbd>` hint and must check
+  `e.target instanceof HTMLElement` before intercepting, or they swallow
+  keystrokes typed into any input on the page (#220). When touching
+  headings, filter controls, or contrast, keep heading order strictly
+  `h1 → h2 → h3` (never skip a level) and check text against WCAG AA — an
+  `opacity`-dimmed "ended" card is a classic way to fail it (#179).
+- **Never hardcode a color; always go through a `var(--…)` token** — see
+  `docs/DESIGN.md`'s "Rules future changes must follow." `text-white` on a
+  token-colored background shipped twice (`EventCard`/`EventFilters`, then
+  again in `AddToCalendarButton`/`SubscribeButton`), and off-palette
+  `zinc`/`amber` Tailwind classes shipped once — all three were only caught
+  in a dedicated dark-mode QA pass, not code review (#193–#201). Before
+  writing a color class, ask whether it needs a different value in dark
+  mode; if yes, it's a token, not a Tailwind palette class. Structural
+  keylines and shadows specifically use `--border-ink` / `--shadow-ink`,
+  never `--on-surface` — identical in light mode, but `--on-surface` turns
+  into a glowing cream line in dark mode.
+- **Dates need explicit UTC handling, twice over.** `YYYY-MM-DD` strings
+  parse as UTC midnight; formatting one with `toLocaleDateString` and no
+  `timeZone: 'UTC'` rolls the displayed day back by one for any viewer west
+  of UTC (#160). Separately, `toLocaleDateString` with identical locale and
+  options can render *different punctuation* between Node's ICU (SSR) and
+  Chromium's ICU (hydration) — same input, React hydration error #418 on
+  every load (#200). If a date renders in the initial HTML, either pin
+  `timeZone: 'UTC'` and verify the output is byte-identical between a Node
+  script and an actual browser (Playwright against a production build, not
+  `next dev`), or use fixed lookup arrays instead of `Intl` (see
+  `formatCompactWeekdayDate` in `src/lib/datetime.ts`).
+- **Confirm scope before building a new surface.** The Herräng microsite
+  (`/herrang`) was built, shipped, and iterated on for days, then reverted
+  wholesale because a dedicated microsite doesn't fit a single-purpose
+  event aggregator (#215–#219). If a task looks like a new page or section
+  that isn't "list Stockholm swing events," check `docs/PROJECT.md` §4
+  ("what we deliberately will not build") and ask before building, not
+  after.
+- **When a new validation rule has a judgment call about strictness, surface
+  the tradeoff instead of defaulting to the strictest option.**
+  Overlapping-event detection (#93) shipped as a CI *warning*, not a hard
+  failure, because some venues legitimately run two things at once — that
+  scope was agreed with the maintainer before implementation.
+- **Don't add a process step that duplicates a gate that already exists.**
+  Form submissions were briefly forced through `status=draft` before going
+  live, on top of the PR-review gate they already pass through — the merge
+  was already the "yes, this is real" decision, so the extra flip-to-live
+  step was pure overhead with no added safety, and was removed (#210).

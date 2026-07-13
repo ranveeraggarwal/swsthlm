@@ -383,7 +383,16 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
         {totalCount === 0 ? (
           <div className="text-center py-16 border border-dashed border-[var(--surface-container-highest)] rounded bg-[var(--surface-container-low)] p-8">
             <SlidersHorizontal aria-hidden="true" className="w-12 h-12 text-[var(--outline)] mx-auto mb-4" />
-            <h2 className="font-serif text-xl font-bold text-[var(--on-surface)] mb-1">No events match your filters</h2>
+            <h2 className="font-serif text-xl font-bold text-[var(--on-surface)] mb-1">
+              {(() => {
+                const s = selectedStyle !== 'all' ? selectedStyle : null;
+                const v = selectedVenue !== 'all' ? selectedVenue : null;
+                if (s && v) return `No ${s} events at ${v} right now`;
+                if (s) return `No ${s} events right now`;
+                if (v) return `No events at ${v} right now`;
+                return 'No events match your filters';
+              })()}
+            </h2>
             <p className="font-sans font-body-md text-[var(--on-surface-variant)] max-w-sm mx-auto mb-6">
               Try adjusting your search terms or filters to find dance events.
             </p>
@@ -402,6 +411,11 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
                 Clear all filters
               </button>
             )}
+            <p className="font-sans text-xs text-[var(--on-surface-variant)] mt-6">
+              <a href="webcal://stockholmswing.com/calendar.ics" className="text-[var(--primary)] underline hover:no-underline">Subscribe to get notified</a>
+              {' · '}
+              <a href="https://docs.google.com/forms/d/e/1FAIpQLSd87pOy31N_3xKthqalT-sDrFB2yoe74Z8HGr8q1HSs6Pis2g/viewform" target="_blank" rel="noopener noreferrer" className="text-[var(--primary)] underline hover:no-underline">Organizers: add your event</a>
+            </p>
           </div>
         ) : (
           <>

@@ -343,6 +343,16 @@ export function EventFilters({
                 placeholder="Search by band, DJ, venue, title..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Escape") {
+                    if (searchQuery) {
+                      setSearchQuery("");
+                    } else {
+                      setIsFilterExpanded(false);
+                      setTimeout(() => filterToggleRef.current?.focus(), 0);
+                    }
+                  }
+                }}
                 className="w-full pl-11 pr-10 py-3.5 bg-transparent border-0 text-[var(--on-surface)] placeholder-[var(--outline)] focus:outline-none focus:ring-0 font-sans font-body-md"
               />
               {searchQuery && (

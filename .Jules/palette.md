@@ -27,3 +27,6 @@
 ## 2024-07-25 - Search Discoverability & Keyboard Navigation
 **Learning:** Adding global keyboard shortcuts (like `/` for search) improves power-user navigation, but they are invisible by default. Without a visual `<kbd>` hint, users will never discover them. Additionally, the event listener must strictly check the `e.target` to ignore `INPUT` and `TEXTAREA` elements, otherwise it blocks normal typing in forms.
 **Action:** Always pair a global keyboard shortcut with a visual `<kbd>` hint in the corresponding UI element. When implementing a shortcut, use `e.target instanceof HTMLElement` and check `.tagName` to ensure typing within existing inputs isn't intercepted.
+## 2024-07-26 - Add Escape Handler and Focus Restoration for Collapsible Panels
+**Learning:** When expanding collapsible panels (like search or filters) using a global keyboard shortcut, it's essential to allow users to easily reverse the action. Closing the panel by pressing `Escape` and immediately restoring focus back to the original trigger (the toggle button) preserves context and prevents keyboard users from losing their place in the document.
+**Action:** Always implement an `Escape` key listener alongside global activation shortcuts. When reversing the state, explicitly shift focus back to the triggering element using a `useRef` and `setTimeout(() => triggerRef.current?.focus(), 0)`.

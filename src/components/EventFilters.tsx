@@ -1,11 +1,19 @@
-'use client';
+"use client";
 
-import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { Search, CalendarDays, SlidersHorizontal, MapPin, Sparkles, Music, X } from 'lucide-react';
-import { SwingEvent, EventCard as EventCardType } from '@/types/event';
-import { EventCard } from './EventCard';
-import { EventRow } from './EventRow';
-import { SubscribeButton } from './SubscribeButton';
+import React, { useState, useMemo, useEffect, useRef } from "react";
+import {
+  Search,
+  CalendarDays,
+  SlidersHorizontal,
+  MapPin,
+  Sparkles,
+  Music,
+  X,
+} from "lucide-react";
+import { SwingEvent, EventCard as EventCardType } from "@/types/event";
+import { EventCard } from "./EventCard";
+import { EventRow } from "./EventRow";
+import { SubscribeButton } from "./SubscribeButton";
 import {
   isCurrentWeek,
   isNextWeek,
@@ -16,8 +24,8 @@ import {
   formatMonthHeading,
   getStockholmCurrentDate,
   getStockholmCurrentTime,
-} from '@/lib/datetime';
-import { groupMultiDayOneoffs } from '@/lib/events-grouping';
+} from "@/lib/datetime";
+import { groupMultiDayOneoffs } from "@/lib/events-grouping";
 
 interface EventFiltersProps {
   events: SwingEvent[];
@@ -27,12 +35,16 @@ interface EventFiltersProps {
   currentTime: string;
 }
 
-export function EventFilters({ events, currentDate: initialDate, currentTime: initialTime }: EventFiltersProps) {
-  const [searchQuery, setSearchQuery] = useState('');
+export function EventFilters({
+  events,
+  currentDate: initialDate,
+  currentTime: initialTime,
+}: EventFiltersProps) {
+  const [searchQuery, setSearchQuery] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
   const filterToggleRef = useRef<HTMLButtonElement>(null);
-  const [selectedStyle, setSelectedStyle] = useState('all');
-  const [selectedVenue, setSelectedVenue] = useState('all');
+  const [selectedStyle, setSelectedStyle] = useState("all");
+  const [selectedVenue, setSelectedVenue] = useState("all");
   const [liveMusicOnly, setLiveMusicOnly] = useState(false);
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
 
@@ -77,7 +89,11 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
   // Seeded with the build-time values to keep the first paint mismatch-free.
   const [now, setNow] = useState({ date: initialDate, time: initialTime });
   useEffect(() => {
-    const tick = () => setNow({ date: getStockholmCurrentDate(), time: getStockholmCurrentTime() });
+    const tick = () =>
+      setNow({
+        date: getStockholmCurrentDate(),
+        time: getStockholmCurrentTime(),
+      });
     tick();
     const id = setInterval(tick, 60_000);
     return () => clearInterval(id);
@@ -85,39 +101,57 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
   const currentDate = now.date;
   const currentTime = now.time;
 
+  // Global keyboard shortcut for search
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        e.key === "/" &&
+        e.target instanceof HTMLElement &&
+        e.target.tagName !== "INPUT" &&
+        e.target.tagName !== "TEXTAREA"
+      ) {
+        e.preventDefault();
+        setIsFilterExpanded(true);
+        setTimeout(() => searchInputRef.current?.focus(), 0);
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   // Dynamically extract unique venues from the events list
   const venuesList = useMemo(() => {
     const venues = new Set<string>();
     events.forEach((e) => {
-      if (e.venue && e.venue.trim().toLowerCase() !== 'all') {
+      if (e.venue && e.venue.trim().toLowerCase() !== "all") {
         venues.add(e.venue.trim());
       }
     });
-    return ['all', ...Array.from(venues).sort()];
+    return ["all", ...Array.from(venues).sort()];
   }, [events]);
 
   // Extract unique styles
   const stylesList = useMemo(() => {
     const styles = new Set<string>();
     events.forEach((e) => {
-      if (e.style && e.style.trim().toLowerCase() !== 'all') {
+      if (e.style && e.style.trim().toLowerCase() !== "all") {
         styles.add(e.style.toLowerCase());
       }
     });
-    return ['all', ...Array.from(styles).sort()];
+    return ["all", ...Array.from(styles).sort()];
   }, [events]);
 
   // Normalizes styles for comparison
   const normalizeStyleLabel = (style: string) => {
     switch (style.toLowerCase()) {
-      case 'all':
-        return 'All Styles';
-      case 'lindy':
-        return 'Lindy Hop';
-      case 'balboa':
-        return 'Balboa';
-      case 'blues':
-        return 'Blues';
+      case "all":
+        return "All Styles";
+      case "lindy":
+        return "Lindy Hop";
+      case "balboa":
+        return "Balboa";
+      case "blues":
+        return "Blues";
       default:
         return style.charAt(0).toUpperCase() + style.slice(1);
     }
@@ -144,24 +178,36 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
 
       // 2. Style Filter
       const matchesStyle =
-        selectedStyle === 'all' ||
-        event.style.toLowerCase() === 'all' ||
+        selectedStyle === "all" ||
+        event.style.toLowerCase() === "all" ||
         event.style.toLowerCase() === selectedStyle.toLowerCase();
 
       // 3. Venue Filter
-      const matchesVenue = selectedVenue === 'all' || event.venue.trim() === selectedVenue;
+      const matchesVenue =
+        selectedVenue === "all" || event.venue.trim() === selectedVenue;
 
       // 4. Live Music Filter
-      const matchesLiveMusic = !liveMusicOnly || event.music === 'live' || event.music === 'mixed';
+      const matchesLiveMusic =
+        !liveMusicOnly || event.music === "live" || event.music === "mixed";
 
       return matchesSearch && matchesStyle && matchesVenue && matchesLiveMusic;
     });
-  }, [events, currentDate, searchQuery, selectedStyle, selectedVenue, liveMusicOnly]);
+  }, [
+    events,
+    currentDate,
+    searchQuery,
+    selectedStyle,
+    selectedVenue,
+    liveMusicOnly,
+  ]);
 
   // Collapse multi-day one-offs into single cards (presentation layer only).
   // groupMultiDayOneoffs expects events sorted ascending by date, which
   // filteredEvents already is (expandAll sorts them).
-  const groupedCards = useMemo(() => groupMultiDayOneoffs(filteredEvents), [filteredEvents]);
+  const groupedCards = useMemo(
+    () => groupMultiDayOneoffs(filteredEvents),
+    [filteredEvents],
+  );
 
   // Group event cards by their representative date (first night) into
   // "This Week" / "Next Week" vs "Upcoming".
@@ -189,7 +235,9 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
     const highlightedCards = showNextWeek
       ? [...thisWeekCards, ...nextWeekCards]
       : thisWeekCards;
-    const finalUpcoming = showNextWeek ? upcomingCards : [...nextWeekCards, ...upcomingCards];
+    const finalUpcoming = showNextWeek
+      ? upcomingCards
+      : [...nextWeekCards, ...upcomingCards];
 
     const groupByDate = (list: EventCardType[]) => {
       const groups: Record<string, EventCardType[]> = {};
@@ -212,25 +260,34 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
 
   // Total count for filters label (cards, not raw occurrences).
   const totalCount = groupedCards.length;
-  const hasActiveFilters = selectedStyle !== 'all' || selectedVenue !== 'all' || !!searchQuery || liveMusicOnly;
+  const hasActiveFilters =
+    selectedStyle !== "all" ||
+    selectedVenue !== "all" ||
+    !!searchQuery ||
+    liveMusicOnly;
 
   // Smart filter status message
   const filterStatusMessage = useMemo(() => {
     if (!hasActiveFilters) {
-      return <>Showing all <strong>{totalCount}</strong> event{totalCount !== 1 ? 's' : ''}</>;
+      return (
+        <>
+          Showing all <strong>{totalCount}</strong> event
+          {totalCount !== 1 ? "s" : ""}
+        </>
+      );
     }
 
     const parts: string[] = [];
-    if (selectedStyle !== 'all') {
+    if (selectedStyle !== "all") {
       parts.push(normalizeStyleLabel(selectedStyle));
     }
     if (liveMusicOnly) {
-      parts.push('Live Music');
+      parts.push("Live Music");
     }
 
-    let message = `${totalCount} ${parts.length > 0 ? parts.join(' ') + ' ' : ''}event${totalCount !== 1 ? 's' : ''}`;
+    let message = `${totalCount} ${parts.length > 0 ? parts.join(" ") + " " : ""}event${totalCount !== 1 ? "s" : ""}`;
 
-    if (selectedVenue !== 'all') {
+    if (selectedVenue !== "all") {
       message += ` at ${selectedVenue}`;
     }
 
@@ -238,14 +295,27 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
       message += ` matching "${searchQuery}"`;
     }
 
-    return <>Showing <strong>{message}</strong></>;
-  }, [totalCount, selectedStyle, selectedVenue, searchQuery, hasActiveFilters, liveMusicOnly]);
+    return (
+      <>
+        Showing <strong>{message}</strong>
+      </>
+    );
+  }, [
+    totalCount,
+    selectedStyle,
+    selectedVenue,
+    searchQuery,
+    hasActiveFilters,
+    liveMusicOnly,
+  ]);
 
   return (
     <div className="w-full">
       {/* Top Status and Toggle for Filters */}
       <div className="flex items-center justify-between mb-8 pb-4 border-b border-[var(--surface-container-highest)] font-sans text-xs text-[var(--on-surface-variant)] uppercase tracking-wider font-semibold">
-        <span aria-live="polite" aria-atomic="true">{filterStatusMessage}</span>
+        <span aria-live="polite" aria-atomic="true">
+          {filterStatusMessage}
+        </span>
         <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-1">
           <SubscribeButton />
           <button
@@ -254,18 +324,20 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
             aria-expanded={isFilterExpanded}
             aria-controls="filters-panel"
             className={`flex items-center gap-1.5 hover:underline font-bold transition-colors cursor-pointer ${
-              isFilterExpanded ? 'text-[var(--primary)]' : 'text-[var(--secondary)]'
+              isFilterExpanded
+                ? "text-[var(--primary)]"
+                : "text-[var(--secondary)]"
             }`}
           >
             <SlidersHorizontal aria-hidden="true" className="w-3.5 h-3.5" />
-            {isFilterExpanded ? 'Hide Filters' : 'Filter & Search'}
+            {isFilterExpanded ? "Hide Filters" : "Filter & Search"}
           </button>
           {hasActiveFilters && (
             <button
               onClick={() => {
-                setSearchQuery('');
-                setSelectedStyle('all');
-                setSelectedVenue('all');
+                setSearchQuery("");
+                setSelectedStyle("all");
+                setSelectedVenue("all");
                 setLiveMusicOnly(false);
                 setTimeout(() => filterToggleRef.current?.focus(), 0);
               }}
@@ -279,10 +351,16 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
 
       {/* Search and Filters panel - Collapsible */}
       {isFilterExpanded && (
-        <div id="filters-panel" className="border border-[var(--surface-container-highest)] bg-[var(--surface-container-low)] rounded-lg p-6 mb-12 shadow-sm animate-in fade-in slide-in-from-top-2 duration-200">
+        <div
+          id="filters-panel"
+          className="border border-[var(--surface-container-highest)] bg-[var(--surface-container-low)] rounded-lg p-6 mb-12 shadow-sm animate-in fade-in slide-in-from-top-2 duration-200"
+        >
           <div className="flex flex-col gap-6">
             <div className="flex items-center gap-3 border-b border-[var(--surface-container-highest)] pb-4 mb-2">
-              <SlidersHorizontal aria-hidden="true" className="w-5 h-5 text-[var(--secondary)]" />
+              <SlidersHorizontal
+                aria-hidden="true"
+                className="w-5 h-5 text-[var(--secondary)]"
+              />
               <h2 className="font-serif text-2xl font-bold tracking-tight text-[var(--on-surface)]">
                 Filters <span className="italic">& Search</span>
               </h2>
@@ -290,7 +368,10 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
 
             {/* Search Bar - Premium Neobrutalist Block Container */}
             <div className="relative w-full bg-[var(--surface-container-lowest)] border-2 border-[var(--border-ink)] rounded shadow-[2px_2px_0px_var(--shadow-ink)] transition-all focus-within:shadow-[4px_4px_0px_var(--primary)] focus-within:-translate-x-0.5 focus-within:-translate-y-0.5">
-              <Search aria-hidden="true" className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--outline)]" />
+              <Search
+                aria-hidden="true"
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--outline)]"
+              />
               <input
                 ref={searchInputRef}
                 type="text"
@@ -310,8 +391,13 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
                 <button
                   type="button"
                   onClick={() => {
+<<<<<<< HEAD
+                    setSearchQuery("");
+                    searchInputRef.current?.focus();
+=======
                     setSearchQuery('');
                     setTimeout(() => searchInputRef.current?.focus(), 0);
+>>>>>>> 0adfb74 (🎨 Palette: Add search keyboard shortcut and fix focus management)
                   }}
                   aria-label="Clear search"
                   title="Clear search"
@@ -320,16 +406,34 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
                   <X className="w-5 h-5" />
                 </button>
               )}
+              {!searchQuery && (
+                <div className="absolute right-3.5 top-1/2 -translate-y-1/2 hidden sm:flex items-center pointer-events-none">
+                  <kbd className="inline-flex items-center justify-center px-1.5 py-0.5 font-sans text-xs font-bold text-[var(--on-surface-variant)] bg-[var(--surface-container)] border border-[var(--border-ink)] rounded shadow-[1px_1px_0px_0px_var(--shadow-ink)]">
+                    /
+                  </kbd>
+                </div>
+              )}
             </div>
 
             {/* Style & Music Filters */}
             <div className="flex flex-col md:flex-row gap-6">
               <div className="flex-1">
-                <span id="filter-style-label" className="flex items-center gap-2 font-sans text-xs font-bold text-[var(--on-surface-variant)] uppercase tracking-widest mb-3">
-                  <Sparkles aria-hidden="true" className="w-3.5 h-3.5 text-[var(--primary)]" /> Filter by Style
+                <span
+                  id="filter-style-label"
+                  className="flex items-center gap-2 font-sans text-xs font-bold text-[var(--on-surface-variant)] uppercase tracking-widest mb-3"
+                >
+                  <Sparkles
+                    aria-hidden="true"
+                    className="w-3.5 h-3.5 text-[var(--primary)]"
+                  />{" "}
+                  Filter by Style
                 </span>
                 <div className="filter-scroll-container">
-                  <div role="group" aria-labelledby="filter-style-label" className="flex overflow-x-auto pb-2 -mb-2 gap-2.5 snap-x md:flex-wrap [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                  <div
+                    role="group"
+                    aria-labelledby="filter-style-label"
+                    className="flex overflow-x-auto pb-2 -mb-2 gap-2.5 snap-x md:flex-wrap [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+                  >
                     {stylesList.map((style) => (
                       <button
                         key={style}
@@ -337,8 +441,8 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
                         aria-pressed={selectedStyle === style}
                         className={`snap-start whitespace-nowrap px-4 py-2 rounded text-xs font-bold uppercase tracking-wider border-2 border-[var(--border-ink)] transition-all cursor-pointer ${
                           selectedStyle === style
-                            ? 'bg-[var(--primary)] text-[var(--on-primary)] font-bold shadow-[2px_2px_0px_0px_var(--shadow-ink)] -translate-y-0.5 -translate-x-0.5'
-                            : 'bg-[var(--surface-container)] hover:bg-[var(--surface-container-high)] text-[var(--on-surface)] shadow-[0px_0px_0px_0px_var(--shadow-ink)]'
+                            ? "bg-[var(--primary)] text-[var(--on-primary)] font-bold shadow-[2px_2px_0px_0px_var(--shadow-ink)] -translate-y-0.5 -translate-x-0.5"
+                            : "bg-[var(--surface-container)] hover:bg-[var(--surface-container-high)] text-[var(--on-surface)] shadow-[0px_0px_0px_0px_var(--shadow-ink)]"
                         }`}
                       >
                         {normalizeStyleLabel(style)}
@@ -350,15 +454,19 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
 
               <div className="md:w-48">
                 <span className="flex items-center gap-2 font-sans text-xs font-bold text-[var(--on-surface-variant)] uppercase tracking-widest mb-3">
-                  <Music aria-hidden="true" className="w-3.5 h-3.5 text-[var(--tertiary)]" /> Music
+                  <Music
+                    aria-hidden="true"
+                    className="w-3.5 h-3.5 text-[var(--tertiary)]"
+                  />{" "}
+                  Music
                 </span>
                 <button
                   onClick={() => setLiveMusicOnly(!liveMusicOnly)}
                   aria-pressed={liveMusicOnly}
                   className={`w-full whitespace-nowrap px-4 py-2 rounded text-xs font-bold uppercase tracking-wider border-2 border-[var(--border-ink)] transition-all cursor-pointer flex items-center justify-center gap-2 ${
                     liveMusicOnly
-                      ? 'bg-[var(--tertiary)] text-[var(--on-tertiary)] font-bold shadow-[2px_2px_0px_0px_var(--shadow-ink)] -translate-y-0.5 -translate-x-0.5'
-                      : 'bg-[var(--surface-container)] hover:bg-[var(--surface-container-high)] text-[var(--on-surface)] shadow-[0px_0px_0px_0px_var(--shadow-ink)]'
+                      ? "bg-[var(--tertiary)] text-[var(--on-tertiary)] font-bold shadow-[2px_2px_0px_0px_var(--shadow-ink)] -translate-y-0.5 -translate-x-0.5"
+                      : "bg-[var(--surface-container)] hover:bg-[var(--surface-container-high)] text-[var(--on-surface)] shadow-[0px_0px_0px_0px_var(--shadow-ink)]"
                   }`}
                 >
                   <Music className="w-3.5 h-3.5" />
@@ -369,11 +477,22 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
 
             {/* Venue Filters */}
             <div>
-              <span id="filter-venue-label" className="flex items-center gap-2 font-sans text-xs font-bold text-[var(--on-surface-variant)] uppercase tracking-widest mb-3">
-                <MapPin aria-hidden="true" className="w-3.5 h-3.5 text-[var(--secondary)]" /> Filter by Venue
+              <span
+                id="filter-venue-label"
+                className="flex items-center gap-2 font-sans text-xs font-bold text-[var(--on-surface-variant)] uppercase tracking-widest mb-3"
+              >
+                <MapPin
+                  aria-hidden="true"
+                  className="w-3.5 h-3.5 text-[var(--secondary)]"
+                />{" "}
+                Filter by Venue
               </span>
               <div className="filter-scroll-container">
-                <div role="group" aria-labelledby="filter-venue-label" className="flex overflow-x-auto pb-2 -mb-2 gap-2.5 snap-x md:flex-wrap [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                <div
+                  role="group"
+                  aria-labelledby="filter-venue-label"
+                  className="flex overflow-x-auto pb-2 -mb-2 gap-2.5 snap-x md:flex-wrap [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+                >
                   {venuesList.map((venue) => (
                     <button
                       key={venue}
@@ -381,11 +500,11 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
                       aria-pressed={selectedVenue === venue}
                       className={`snap-start whitespace-nowrap px-4 py-2 rounded text-xs font-bold uppercase tracking-wider border-2 border-[var(--border-ink)] transition-all cursor-pointer ${
                         selectedVenue === venue
-                          ? 'bg-[var(--secondary)] text-[var(--on-secondary)] font-bold shadow-[2px_2px_0px_0px_var(--shadow-ink)] -translate-y-0.5 -translate-x-0.5'
-                          : 'bg-[var(--surface-container)] hover:bg-[var(--surface-container-high)] text-[var(--on-surface)] shadow-[0px_0px_0px_0px_var(--shadow-ink)]'
+                          ? "bg-[var(--secondary)] text-[var(--on-secondary)] font-bold shadow-[2px_2px_0px_0px_var(--shadow-ink)] -translate-y-0.5 -translate-x-0.5"
+                          : "bg-[var(--surface-container)] hover:bg-[var(--surface-container-high)] text-[var(--on-surface)] shadow-[0px_0px_0px_0px_var(--shadow-ink)]"
                       }`}
                     >
-                      {venue === 'all' ? 'All Venues' : venue}
+                      {venue === "all" ? "All Venues" : venue}
                     </button>
                   ))}
                 </div>
@@ -399,8 +518,23 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
       <div className="space-y-12">
         {totalCount === 0 ? (
           <div className="text-center py-16 border border-dashed border-[var(--surface-container-highest)] rounded bg-[var(--surface-container-low)] p-8">
-            <SlidersHorizontal aria-hidden="true" className="w-12 h-12 text-[var(--outline)] mx-auto mb-4" />
-            <h2 className="font-serif text-xl font-bold text-[var(--on-surface)] mb-1">No events match your filters</h2>
+            <SlidersHorizontal
+              aria-hidden="true"
+              className="w-12 h-12 text-[var(--outline)] mx-auto mb-4"
+            />
+            <h2 className="font-serif text-xl font-bold text-[var(--on-surface)] mb-1">
+              {(() => {
+                const s =
+                  selectedStyle !== "all"
+                    ? normalizeStyleLabel(selectedStyle)
+                    : null;
+                const v = selectedVenue !== "all" ? selectedVenue : null;
+                if (s && v) return `No ${s} events at ${v} right now`;
+                if (s) return `No ${s} events right now`;
+                if (v) return `No events at ${v} right now`;
+                return "No events match your filters";
+              })()}
+            </h2>
             <p className="font-sans font-body-md text-[var(--on-surface-variant)] max-w-sm mx-auto mb-6">
               Try adjusting your search terms or filters to find dance events.
             </p>
@@ -408,9 +542,9 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
               <button
                 type="button"
                 onClick={() => {
-                  setSearchQuery('');
-                  setSelectedStyle('all');
-                  setSelectedVenue('all');
+                  setSearchQuery("");
+                  setSelectedStyle("all");
+                  setSelectedVenue("all");
                   setLiveMusicOnly(false);
                   setTimeout(() => filterToggleRef.current?.focus(), 0);
                 }}
@@ -419,6 +553,23 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
                 Clear all filters
               </button>
             )}
+            <p className="font-sans text-xs text-[var(--on-surface-variant)] mt-6">
+              <a
+                href="webcal://stockholmswing.com/calendar.ics"
+                className="text-[var(--primary)] underline hover:no-underline"
+              >
+                Subscribe to get notified
+              </a>
+              {" · "}
+              <a
+                href="https://docs.google.com/forms/d/e/1FAIpQLSd87pOy31N_3xKthqalT-sDrFB2yoe74Z8HGr8q1HSs6Pis2g/viewform"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[var(--primary)] underline hover:no-underline"
+              >
+                Organizers: add your event
+              </a>
+            </p>
           </div>
         ) : (
           <>
@@ -426,38 +577,57 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
             {eventSections.hasThisWeek && (
               <div>
                 <div className="flex items-center gap-3 mb-6 border-b border-[var(--surface-container-highest)] pb-3">
-                  <CalendarDays aria-hidden="true" className="w-5 h-5 text-[var(--primary)]" />
+                  <CalendarDays
+                    aria-hidden="true"
+                    className="w-5 h-5 text-[var(--primary)]"
+                  />
                   <h2 className="font-serif text-3xl font-bold tracking-tight text-[var(--on-surface)]">
-                    {eventSections.showNextWeek
-                      ? <><span className="italic">Coming Up</span></>
-                      : <>Happening <span className="italic">This Week</span></>}
+                    {eventSections.showNextWeek ? (
+                      <>
+                        <span className="italic">Coming Up</span>
+                      </>
+                    ) : (
+                      <>
+                        Happening <span className="italic">This Week</span>
+                      </>
+                    )}
                   </h2>
                 </div>
 
                 <div className="space-y-8">
-                  {Object.entries(eventSections.thisWeek).map(([date, dateCards]) => (
-                    <div key={date} className="space-y-4">
-                      <h2 className="font-sans text-xs font-bold text-[var(--primary)] uppercase tracking-widest bg-[var(--primary)]/10 py-1.5 px-3 rounded inline-block border border-[var(--primary)]/15">
-                        {/* For multi-day cards, show the range in the section header. */}
-                        {dateCards.length === 1 && dateCards[0].nightCount > 1
-                          ? formatEventDateRange(dateCards[0].dates[0], dateCards[0].dates[dateCards[0].dates.length - 1])
-                          : formatEventDate(date)}
-                      </h2>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
-                        {dateCards.map((card) => (
-                          <EventCard
-                            key={card.event.id}
-                            event={card.event}
-                            dates={card.dates}
-                            nightCount={card.nightCount}
-                            isThisWeek={isCurrentWeek(card.dates[0], currentDate)}
-                            currentDate={currentDate}
-                            currentTime={currentTime}
-                          />
-                        ))}
+                  {Object.entries(eventSections.thisWeek).map(
+                    ([date, dateCards]) => (
+                      <div key={date} className="space-y-4">
+                        <h2 className="font-sans text-xs font-bold text-[var(--primary)] uppercase tracking-widest bg-[var(--primary)]/10 py-1.5 px-3 rounded inline-block border border-[var(--primary)]/15">
+                          {/* For multi-day cards, show the range in the section header. */}
+                          {dateCards.length === 1 && dateCards[0].nightCount > 1
+                            ? formatEventDateRange(
+                                dateCards[0].dates[0],
+                                dateCards[0].dates[
+                                  dateCards[0].dates.length - 1
+                                ],
+                              )
+                            : formatEventDate(date)}
+                        </h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
+                          {dateCards.map((card) => (
+                            <EventCard
+                              key={card.event.id}
+                              event={card.event}
+                              dates={card.dates}
+                              nightCount={card.nightCount}
+                              isThisWeek={isCurrentWeek(
+                                card.dates[0],
+                                currentDate,
+                              )}
+                              currentDate={currentDate}
+                              currentTime={currentTime}
+                            />
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ),
+                  )}
                 </div>
               </div>
             )}
@@ -466,50 +636,69 @@ export function EventFilters({ events, currentDate: initialDate, currentTime: in
             {eventSections.hasUpcoming && (
               <div className="pt-4">
                 <div className="flex items-center gap-3 mb-6 border-b border-[var(--surface-container-highest)] pb-3">
-                  <CalendarDays aria-hidden="true" className="w-5 h-5 text-[var(--on-surface-variant)]" />
+                  <CalendarDays
+                    aria-hidden="true"
+                    className="w-5 h-5 text-[var(--on-surface-variant)]"
+                  />
                   <h2 className="font-serif text-3xl font-bold tracking-tight text-[var(--on-surface)]">
-                    {eventSections.showNextWeek
-                      ? <><span className="italic">Later</span></>
-                      : <>Upcoming <span className="italic">Events</span></>}
+                    {eventSections.showNextWeek ? (
+                      <>
+                        <span className="italic">Later</span>
+                      </>
+                    ) : (
+                      <>
+                        Upcoming <span className="italic">Events</span>
+                      </>
+                    )}
                   </h2>
                 </div>
 
                 <div>
-                  {eventSections.upcomingCards.reduce<{ month: string; rows: React.ReactNode[] }>(
-                    (acc, card) => {
-                      const month = getMonthKey(card.dates[0]);
-                      if (month !== acc.month) {
+                  {
+                    eventSections.upcomingCards.reduce<{
+                      month: string;
+                      rows: React.ReactNode[];
+                    }>(
+                      (acc, card) => {
+                        const month = getMonthKey(card.dates[0]);
+                        if (month !== acc.month) {
+                          acc.rows.push(
+                            <div
+                              key={`month-${month}`}
+                              className="flex items-center gap-3 mt-6 first:mt-0 mb-2"
+                            >
+                              <h2 className="font-sans text-xs font-bold text-[var(--on-surface-variant)] uppercase tracking-widest whitespace-nowrap">
+                                {formatMonthHeading(month)}
+                              </h2>
+                              <div
+                                className="flex-1 h-px bg-[var(--surface-container-highest)]"
+                                aria-hidden="true"
+                              />
+                            </div>,
+                          );
+                          acc.month = month;
+                        }
                         acc.rows.push(
-                          <div key={`month-${month}`} className="flex items-center gap-3 mt-6 first:mt-0 mb-2">
-                            <h2 className="font-sans text-xs font-bold text-[var(--on-surface-variant)] uppercase tracking-widest whitespace-nowrap">
-                              {formatMonthHeading(month)}
-                            </h2>
-                            <div className="flex-1 h-px bg-[var(--surface-container-highest)]" aria-hidden="true" />
-                          </div>
+                          <EventRow
+                            key={card.event.id}
+                            event={card.event}
+                            dates={card.dates}
+                            nightCount={card.nightCount}
+                            currentDate={currentDate}
+                            currentTime={currentTime}
+                          />,
                         );
-                        acc.month = month;
-                      }
-                      acc.rows.push(
-                        <EventRow
-                          key={card.event.id}
-                          event={card.event}
-                          dates={card.dates}
-                          nightCount={card.nightCount}
-                          currentDate={currentDate}
-                          currentTime={currentTime}
-                        />
-                      );
-                      return acc;
-                    },
-                    { month: '', rows: [] }
-                  ).rows}
+                        return acc;
+                      },
+                      { month: "", rows: [] },
+                    ).rows
+                  }
                 </div>
               </div>
             )}
           </>
         )}
       </div>
-
     </div>
   );
 }

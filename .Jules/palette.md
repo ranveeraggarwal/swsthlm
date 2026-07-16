@@ -30,3 +30,6 @@
 ## 2024-07-26 - Add Escape Handler and Focus Restoration for Collapsible Panels
 **Learning:** When expanding collapsible panels (like search or filters) using a global keyboard shortcut, it's essential to allow users to easily reverse the action. Closing the panel by pressing `Escape` and immediately restoring focus back to the original trigger (the toggle button) preserves context and prevents keyboard users from losing their place in the document.
 **Action:** Always implement an `Escape` key listener alongside global activation shortcuts. When reversing the state, explicitly shift focus back to the triggering element using a `useRef` and `setTimeout(() => triggerRef.current?.focus(), 0)`.
+## 2024-07-28 - Active Navigation Links Require aria-current
+**Learning:** While using styling (like highlighting or bolding) visually indicates to sighted users which navigation link corresponds to the current page, this information is not conveyed to screen reader users. The `aria-current="page"` attribute is the standard way to programmatically expose this state.
+**Action:** Always check that active navigation links (e.g., `<Link>` components) conditionally include the `aria-current="page"` attribute based on the current pathname.

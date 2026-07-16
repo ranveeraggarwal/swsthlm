@@ -27,6 +27,9 @@
 ## 2024-07-25 - Search Discoverability & Keyboard Navigation
 **Learning:** Adding global keyboard shortcuts (like `/` for search) improves power-user navigation, but they are invisible by default. Without a visual `<kbd>` hint, users will never discover them. Additionally, the event listener must strictly check the `e.target` to ignore `INPUT` and `TEXTAREA` elements, otherwise it blocks normal typing in forms.
 **Action:** Always pair a global keyboard shortcut with a visual `<kbd>` hint in the corresponding UI element. When implementing a shortcut, use `e.target instanceof HTMLElement` and check `.tagName` to ensure typing within existing inputs isn't intercepted.
+## 2024-07-28 - Active Navigation Links Require aria-current
+**Learning:** While using styling (like highlighting or bolding) visually indicates to sighted users which navigation link corresponds to the current page, this information is not conveyed to screen reader users. The `aria-current="page"` attribute is the standard way to programmatically expose this state.
+**Action:** Always check that active navigation links (e.g., `<Link>` components) conditionally include the `aria-current="page"` attribute based on the current pathname.
 ## 2024-07-26 - Symmetrical Escape Hatches for Global Shortcuts
 **Learning:** If a global keyboard shortcut (like `/`) opens or expands a UI panel and moves focus into it, trapping the user inside forces them to use a mouse to close it. Providing a symmetrical, intuitive keyboard escape hatch (like `Escape`) that reverses the action (clearing input, then collapsing the panel and restoring focus to the original toggle) is critical for a complete keyboard navigation loop.
 **Action:** Whenever implementing a keyboard shortcut to open/expand a UI component, always implement the `Escape` key to close/collapse it, and ensure focus is cleanly restored to the trigger element using a `useRef` and `setTimeout`.

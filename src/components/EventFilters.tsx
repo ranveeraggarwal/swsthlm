@@ -65,7 +65,7 @@ export function EventFilters({
   const currentDate = now.date;
   const currentTime = now.time;
 
-  // Global keyboard shortcut for search
+  // Global keyboard shortcut for search and escape
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (
@@ -77,11 +77,15 @@ export function EventFilters({
         e.preventDefault();
         setIsFilterExpanded(true);
         setTimeout(() => searchInputRef.current?.focus(), 0);
+      } else if (e.key === "Escape" && isFilterExpanded) {
+        e.preventDefault();
+        setIsFilterExpanded(false);
+        setTimeout(() => filterToggleRef.current?.focus(), 0);
       }
     };
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  }, [isFilterExpanded]);
 
   // Dynamically extract unique venues from the events list
   const venuesList = useMemo(() => {

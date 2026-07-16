@@ -55,10 +55,10 @@ export function Header() {
         </Link>
 
         <nav aria-label="Primary" className="hidden sm:flex items-center gap-2">
-          <Link href="/" className={navLinkClass('/')}>
+          <Link href="/" className={navLinkClass('/')} aria-current={pathname === '/' ? 'page' : undefined}>
             Calendar
           </Link>
-          <Link href="/about" className={navLinkClass('/about')}>
+          <Link href="/about" className={navLinkClass('/about')} aria-current={pathname === '/about' ? 'page' : undefined}>
             About
           </Link>
           <ThemeToggle />
@@ -80,10 +80,10 @@ export function Header() {
 
       {menuOpen && (
         <nav aria-label="Primary (mobile)" className="sm:hidden border-t border-[var(--surface-container-highest)] bg-[var(--surface)]/95 backdrop-blur-md px-4 py-3 flex flex-col gap-1">
-          <Link href="/" className={mobileNavLinkClass('/')} onClick={() => setMenuOpen(false)}>
+          <Link href="/" className={mobileNavLinkClass('/')} onClick={() => setMenuOpen(false)} aria-current={pathname === '/' ? 'page' : undefined}>
             Calendar
           </Link>
-          <Link href="/about" className={mobileNavLinkClass('/about')} onClick={() => setMenuOpen(false)}>
+          <Link href="/about" className={mobileNavLinkClass('/about')} onClick={() => setMenuOpen(false)} aria-current={pathname === '/about' ? 'page' : undefined}>
             About
           </Link>
         </nav>

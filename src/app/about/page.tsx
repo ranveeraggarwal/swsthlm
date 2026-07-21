@@ -59,6 +59,7 @@ export default function AboutPage() {
               >
                 <DiscordIcon className="w-4 h-4" />
                 Join us on Discord
+                <span className="sr-only"> (opens in a new tab)</span>
               </a>
               <a
                 href="https://github.com/ranveeraggarwal/swsthlm/discussions"
@@ -68,6 +69,7 @@ export default function AboutPage() {
               >
                 <GitHubIcon className="w-4 h-4" />
                 GitHub Community
+                <span className="sr-only"> (opens in a new tab)</span>
               </a>
             </div>
           </section>
@@ -88,6 +90,7 @@ export default function AboutPage() {
             >
               <Code className="w-4 h-4" />
               View on GitHub
+              <span className="sr-only"> (opens in a new tab)</span>
             </a>
           </section>
 
@@ -102,6 +105,7 @@ export default function AboutPage() {
                 className="text-[var(--primary)] hover:underline font-bold"
               >
                 event submission form
+                <span className="sr-only"> (opens in a new tab)</span>
               </a>
               . A bot turns submissions into pull requests; a maintainer reviews and merges. You don&apos;t need a GitHub account.
             </p>

@@ -208,6 +208,7 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
                   className={`font-bold text-[var(--on-surface)] underline decoration-[var(--outline)] underline-offset-4 hover:text-[var(--primary)] transition-colors ${event.cancelled ? 'line-through' : ''}`}
                 >
                   {event.venue}
+                  <span className="sr-only"> (opens in a new tab)</span>
                 </a>
                 {event.neighborhood && (
                   <span className="text-[var(--on-surface-variant)]"> · {event.neighborhood}</span>
@@ -296,6 +297,7 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
               >
                 <Ticket className="w-4 h-4" />
                 Tickets / Info
+                <span className="sr-only"> (opens in a new tab)</span>
               </a>
             )}
             <AddToCalendarButton event={event} />

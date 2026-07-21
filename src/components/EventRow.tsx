@@ -174,6 +174,7 @@ export function EventRow({ event, dates, nightCount }: EventRowProps) {
               <MapPin className="w-3.5 h-3.5 mt-0.5 shrink-0" />
               <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="hover:text-[var(--primary)] transition-colors">
                 {byLine}
+                <span className="sr-only"> (opens in a new tab)</span>
               </a>
             </div>
           )}
@@ -194,6 +195,7 @@ export function EventRow({ event, dates, nightCount }: EventRowProps) {
               >
                 <Ticket className="w-4 h-4" />
                 Get Tickets / Info
+                <span className="sr-only"> (opens in a new tab)</span>
               </a>
             )}
             <AddToCalendarButton event={event} />

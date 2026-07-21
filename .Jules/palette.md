@@ -33,3 +33,6 @@
 ## 2024-07-28 - Active Navigation Links Require aria-current
 **Learning:** While using styling (like highlighting or bolding) visually indicates to sighted users which navigation link corresponds to the current page, this information is not conveyed to screen reader users. The `aria-current="page"` attribute is the standard way to programmatically expose this state.
 **Action:** Always check that active navigation links (e.g., `<Link>` components) conditionally include the `aria-current="page"` attribute based on the current pathname.
+## 2024-07-29 - Warning for External Links
+**Learning:** Links that open in a new tab (`target="_blank"`) create a context change that can be disorienting for screen reader users if not announced. Visually hiding this warning ensures sighted users aren't cluttered with unnecessary text while still providing the necessary context to assistive technology.
+**Action:** Always append `<span className="sr-only"> (opens in a new tab)</span>` inside links that open in a new tab. For icon-only links, append " (opens in a new tab)" to the `aria-label` and `title`.

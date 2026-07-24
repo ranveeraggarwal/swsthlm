@@ -22,8 +22,8 @@ export function Footer() {
               href={GITHUB_DISCUSSIONS_URL}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="GitHub Community"
-              title="GitHub Community"
+              aria-label="GitHub Community (opens in a new tab)"
+              title="GitHub Community (opens in a new tab)"
               className="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors"
             >
               <GitHubIcon className="w-4 h-4" />
@@ -32,8 +32,8 @@ export function Footer() {
               href={DISCORD_INVITE_URL}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Join our Discord"
-              title="Join our Discord"
+              aria-label="Join our Discord (opens in a new tab)"
+              title="Join our Discord (opens in a new tab)"
               className="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors"
             >
               <DiscordIcon className="w-4 h-4" />

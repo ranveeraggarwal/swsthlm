@@ -5,6 +5,7 @@ import { MapPin, Music, Disc, Ticket, GraduationCap, Moon, ChevronDown, Banknote
 import { SwingEvent } from '@/types/event';
 import { ShareButton } from '@/components/ShareButton';
 import { AddToCalendarButton } from '@/components/AddToCalendarButton';
+import { ReportCorrectionLink } from '@/components/ReportCorrectionLink';
 import { FloorTypeBadge } from '@/components/FloorTypeBadge';
 import { formatCompactWeekdayDate } from '@/lib/datetime';
 
@@ -200,6 +201,10 @@ export function EventRow({ event, dates, nightCount }: EventRowProps) {
             )}
             <AddToCalendarButton event={event} />
             <ShareButton eventId={event.id} eventDate={event.date} eventTitle={event.title} />
+          </div>
+
+          <div className="px-1">
+            <ReportCorrectionLink event={event} dates={dates} />
           </div>
         </div>
       )}

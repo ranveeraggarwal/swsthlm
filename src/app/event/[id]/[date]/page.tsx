@@ -13,6 +13,7 @@ import Link from 'next/link';
 import { ArrowLeft, MapPin, Music, Disc, Ticket, Banknote, GraduationCap } from 'lucide-react';
 import { AddToCalendarButton } from '@/components/AddToCalendarButton';
 import { ShareButton } from '@/components/ShareButton';
+import { ReportCorrectionLink } from '@/components/ReportCorrectionLink';
 import { FloorTypeBadge } from '@/components/FloorTypeBadge';
 import { getPermalinkEvents } from '@/lib/events';
 import { formatEventDate } from '@/lib/datetime';
@@ -234,6 +235,10 @@ export default async function EventPage({
       <div className="flex items-center gap-2 mt-4">
         <AddToCalendarButton event={event} />
         <ShareButton eventId={event.id} eventDate={event.date} eventTitle={event.title} />
+      </div>
+
+      <div className="mt-4">
+        <ReportCorrectionLink event={event} />
       </div>
     </div>
   );

@@ -52,6 +52,12 @@ leave it `live`.
   from `src/`** — it must not reach the client bundle.
 - **The scraper's blast radius is `oneoffs.csv` only.** It reads `series.csv` to
   dedup but never writes it, and never invents venues — see SCRAPERS.md.
+- **The changelog is hand-curated, not generated.** `src/lib/changelog.ts`
+  feeds the About page's collapsed "What's new" timeline. When you ship a
+  major, user-visible feature, add one line to the current month (create the
+  month at the top if it's the first one). Everything else — data rows,
+  scraper output, dependency bumps, refactors, copy tweaks — stays out; the
+  git log already has those.
 - **Don't break the static-site shape.** If a task seems to need a server,
   account, or database, **stop and flag it** rather than building it.
 

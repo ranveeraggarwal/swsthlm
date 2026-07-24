@@ -186,7 +186,11 @@ export function EventRow({ event, dates, nightCount }: EventRowProps) {
             </p>
           )}
 
-          <div className="flex items-center gap-2 px-1">
+          {/* flex-wrap rather than a breakpoint: "Wrong info?" rides the end of
+              the action row when the buttons leave room for it, and drops to
+              its own right-aligned line when they don't (narrow viewports, or a
+              row that has a Tickets button). */}
+          <div className="flex flex-wrap items-center gap-2 px-1">
             {event.ticket && (
               <a
                 href={event.ticket}
@@ -201,10 +205,7 @@ export function EventRow({ event, dates, nightCount }: EventRowProps) {
             )}
             <AddToCalendarButton event={event} />
             <ShareButton eventId={event.id} eventDate={event.date} eventTitle={event.title} />
-          </div>
-
-          <div className="flex justify-end px-1">
-            <ReportCorrectionLink event={event} dates={dates} />
+            <ReportCorrectionLink event={event} dates={dates} className="ml-auto" />
           </div>
         </div>
       )}

@@ -26,30 +26,59 @@ export default function AboutPage() {
           </p>
         </div>
 
-        {/* The one actionable thing on this page leads; the background follows. */}
-        <section className="mt-8 bg-[var(--surface-container-low)] p-6 rounded-lg border-2 border-[var(--border-ink)] shadow-[3px_3px_0px_0px_var(--shadow-ink)] font-sans text-[var(--on-surface-variant)] leading-relaxed">
-          <h2 className="font-serif text-xl font-bold text-[var(--on-surface)] mb-2">Are you an organizer?</h2>
-          <p className="text-sm leading-relaxed mb-3">
-            If you host a one-time or occasional Lindy Hop, Balboa, Blues, or Shag event in Stockholm, fill in our{' '}
-            <a
-              href="https://docs.google.com/forms/d/e/1FAIpQLSd87pOy31N_3xKthqalT-sDrFB2yoe74Z8HGr8q1HSs6Pis2g/viewform"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[var(--primary)] hover:underline font-bold"
-            >
-              event submission form
-              <span className="sr-only"> (opens in a new tab)</span>
-            </a>
-            . A bot turns submissions into pull requests; a maintainer reviews and merges. You don&apos;t need a GitHub account.
-          </p>
-          <p className="text-sm leading-relaxed">
-            Running a recurring weekly series?{' '}
-            <a href="mailto:hello@stockholmswing.com" className="text-[var(--primary)] hover:underline font-bold">
-              Contact us directly
-            </a>{' '}
-            and we&apos;ll get it set up.
-          </p>
-        </section>
+        {/* The two things a visitor can act on lead the page as cards; the
+            background sections follow as plain prose. */}
+        <div className="mt-8 space-y-6 font-sans text-[var(--on-surface-variant)] leading-relaxed">
+          <section className="bg-[var(--surface-container-low)] p-6 rounded-lg border-2 border-[var(--border-ink)] shadow-[3px_3px_0px_0px_var(--shadow-ink)]">
+            <h2 className="font-serif text-xl font-bold text-[var(--on-surface)] mb-2">Are you an organizer?</h2>
+            <p className="text-sm leading-relaxed mb-3">
+              If you host a one-time or occasional Lindy Hop, Balboa, Blues, or Shag event in Stockholm, fill in our{' '}
+              <a
+                href="https://docs.google.com/forms/d/e/1FAIpQLSd87pOy31N_3xKthqalT-sDrFB2yoe74Z8HGr8q1HSs6Pis2g/viewform"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[var(--primary)] hover:underline font-bold"
+              >
+                event submission form
+                <span className="sr-only"> (opens in a new tab)</span>
+              </a>{' '}
+              or{' '}
+              <a href="mailto:hello@stockholmswing.com" className="text-[var(--primary)] hover:underline font-bold">
+                send us an email
+              </a>
+              . A bot turns form submissions into pull requests; a maintainer reviews and merges. You don&apos;t need a GitHub account.
+            </p>
+            <p className="text-sm leading-relaxed">
+              Running a recurring weekly series?{' '}
+              <a href="mailto:hello@stockholmswing.com" className="text-[var(--primary)] hover:underline font-bold">
+                Contact us directly
+              </a>{' '}
+              and we&apos;ll get it set up.
+            </p>
+          </section>
+
+          <section className="bg-[var(--surface-container-low)] p-6 rounded-lg border-2 border-[var(--border-ink)] shadow-[3px_3px_0px_0px_var(--shadow-ink)]">
+            <h2 className="font-serif text-xl font-bold text-[var(--on-surface)] mb-2">Spotted something wrong?</h2>
+            <p className="text-sm leading-relaxed mb-3">
+              Prices change, DJs swap, and some weeks a regular series simply doesn&apos;t run. Every event
+              has a <strong className="font-bold text-[var(--on-surface)]">flag button</strong> that opens a
+              short correction form — what&apos;s wrong, what it should say, and how you know. Sending it
+              hands us an email with the listing&apos;s current details already attached, so we can find the
+              row and fix it.
+            </p>
+            <p className="text-sm leading-relaxed">
+              You can also write to us directly at{' '}
+              <a
+                href={`mailto:${CORRECTIONS_EMAIL}`}
+                className="inline-flex items-center gap-1.5 text-[var(--primary)] hover:underline font-bold"
+              >
+                <Flag className="w-3.5 h-3.5" aria-hidden="true" />
+                {CORRECTIONS_EMAIL}
+              </a>
+              .
+            </p>
+          </section>
+        </div>
 
         {/* Informative Text Sections */}
         <div className="mt-10 space-y-10 font-sans text-[var(--on-surface-variant)] leading-relaxed font-body-md">
@@ -81,24 +110,6 @@ export default function AboutPage() {
                 <span className="sr-only"> (opens in a new tab)</span>
               </a>
             </div>
-          </section>
-
-          <section>
-            <h2 className="font-serif text-2xl font-bold text-[var(--on-surface)] mb-3">Spotted something wrong?</h2>
-            <p className="text-[15px] sm:text-base mb-4">
-              Prices change, DJs swap, and some weeks a regular series simply doesn&apos;t run. Every event
-              has a <strong className="font-bold text-[var(--on-surface)]">flag button</strong> that opens a
-              short correction form — what&apos;s wrong, what it should say, and how you know. Sending it
-              hands us an email with the listing&apos;s current details already attached, so we can find the
-              row and fix it. You can also write to us directly.
-            </p>
-            <a
-              href={`mailto:${CORRECTIONS_EMAIL}`}
-              className="inline-flex items-center gap-2 text-[var(--primary)] hover:underline font-bold"
-            >
-              <Flag className="w-4 h-4" aria-hidden="true" />
-              {CORRECTIONS_EMAIL}
-            </a>
           </section>
 
           <section>

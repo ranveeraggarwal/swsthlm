@@ -111,7 +111,7 @@ export default function AboutPage() {
             </p>
             <p className="text-sm leading-relaxed">
               Running a recurring weekly series?{' '}
-              <a href="mailto:swing@walagran.com" className="text-[var(--primary)] hover:underline font-bold">
+              <a href="mailto:hello@stockholmswing.com" className="text-[var(--primary)] hover:underline font-bold">
                 Contact us directly
               </a>{' '}
               and we&apos;ll get it set up.

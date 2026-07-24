@@ -93,7 +93,7 @@ Before opening a new issue, check the [project plan](docs/PROJECT.md) — it lis
 
 A venue steward is one regular per studio (Chicago, SSS, Sprallen, Norrport, Augustas…) who glances at their venue's listings on the site once a month and reports anything off via the form or an issue. It takes about five minutes a month and is the single most valuable non-technical contribution to the project — scrapers can't catch what only a regular notices.
 
-If you're interested, mention it in an issue or email `swing@walagran.com`. We'll add you to the About page (with your permission) and send the one-page steward guide.
+If you're interested, mention it in an issue or email `hello@stockholmswing.com`. We'll add you to the About page (with your permission) and send the one-page steward guide.
 
 ## Becoming a maintainer
 
@@ -107,6 +107,6 @@ Behavior that targets people for who they are, rather than what they're proposin
 
 ## Questions
 
-Open a [discussion](https://github.com/ranveeraggarwal/swsthlm/discussions) for anything that isn't a bug or a concrete proposal. Email `swing@walagran.com` for anything you'd rather not put in public.
+Open a [discussion](https://github.com/ranveeraggarwal/swsthlm/discussions) for anything that isn't a bug or a concrete proposal. Email `hello@stockholmswing.com` for anything you'd rather not put in public.
 
 Thanks for helping keep Stockholm dancing.

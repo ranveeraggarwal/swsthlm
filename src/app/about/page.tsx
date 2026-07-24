@@ -2,6 +2,7 @@ import React from 'react';
 import { Code, Flag } from 'lucide-react';
 import { CORRECTIONS_EMAIL } from '@/lib/corrections';
 import { GitHubIcon } from '@/components/GitHubIcon';
+import { ChangelogTimeline } from '@/components/ChangelogTimeline';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -125,6 +126,8 @@ export default function AboutPage() {
               and we&apos;ll get it set up.
             </p>
           </section>
+
+          <ChangelogTimeline />
         </div>
       </div>
     </div>

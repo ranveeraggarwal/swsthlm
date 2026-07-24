@@ -19,4 +19,4 @@ Key facts:
 
 ## Data
 
-- [Source repository](https://github.com/ranveeraggarwal/swsthlm): the site is open source (MIT); all event data lives as CSV files in the repo and may be reused with attribution
+- [Source repository](https://github.com/ranveeraggarwal/swsthlm): the site is source-available under the Business Source License 1.1 (converts to MIT on 2030-07-07), with a carve-out for competing Stockholm swing listings; all event data lives as CSV files in the repo and may be reused with attribution

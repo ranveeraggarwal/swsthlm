@@ -26,15 +26,33 @@ export default function AboutPage() {
           </p>
         </div>
 
-        {/* Intro Description Card */}
-        <div className="p-8 rounded-lg border-2 border-[var(--border-ink)] bg-[var(--surface-container-lowest)] shadow-[4px_4px_0px_0px_var(--shadow-ink)] mb-10 text-center">
-          <p className="font-serif text-xl md:text-2xl leading-relaxed italic text-[var(--on-surface-variant)]">
-            &ldquo;Every Lindy Hop, Balboa, Blues, and Shag event in Stockholm, so you spend less time scrolling and more time dancing.&rdquo;
+        {/* The one actionable thing on this page leads; the background follows. */}
+        <section className="mt-8 bg-[var(--surface-container-low)] p-6 rounded-lg border-2 border-[var(--border-ink)] shadow-[3px_3px_0px_0px_var(--shadow-ink)] font-sans text-[var(--on-surface-variant)] leading-relaxed">
+          <h2 className="font-serif text-xl font-bold text-[var(--on-surface)] mb-2">Are you an organizer?</h2>
+          <p className="text-sm leading-relaxed mb-3">
+            If you host a one-time or occasional Lindy Hop, Balboa, Blues, or Shag event in Stockholm, fill in our{' '}
+            <a
+              href="https://docs.google.com/forms/d/e/1FAIpQLSd87pOy31N_3xKthqalT-sDrFB2yoe74Z8HGr8q1HSs6Pis2g/viewform"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[var(--primary)] hover:underline font-bold"
+            >
+              event submission form
+              <span className="sr-only"> (opens in a new tab)</span>
+            </a>
+            . A bot turns submissions into pull requests; a maintainer reviews and merges. You don&apos;t need a GitHub account.
           </p>
-        </div>
+          <p className="text-sm leading-relaxed">
+            Running a recurring weekly series?{' '}
+            <a href="mailto:hello@stockholmswing.com" className="text-[var(--primary)] hover:underline font-bold">
+              Contact us directly
+            </a>{' '}
+            and we&apos;ll get it set up.
+          </p>
+        </section>
 
         {/* Informative Text Sections */}
-        <div className="space-y-10 font-sans text-[var(--on-surface-variant)] leading-relaxed font-body-md">
+        <div className="mt-10 space-y-10 font-sans text-[var(--on-surface-variant)] leading-relaxed font-body-md">
           <section>
             <h2 className="font-serif text-2xl font-bold text-[var(--on-surface)] mb-3">Our Mission</h2>
             <p className="text-[15px] sm:text-base">
@@ -84,12 +102,26 @@ export default function AboutPage() {
           </section>
 
           <section>
-            <h2 className="font-serif text-2xl font-bold text-[var(--on-surface)] mb-3">Open Source</h2>
+            <h2 className="font-serif text-2xl font-bold text-[var(--on-surface)] mb-3">Built in the Open</h2>
             <p className="text-[15px] sm:text-base mb-4">
-              We love open source. Stockholm Swing is built in the open and released under the MIT License.
               The entire site, its data, and the tools that maintain it live in a public GitHub repository.
               If you&apos;d like to fix a listing, add a feature, or just see how it works, the code is right there.
               Contributions are welcome.
+            </p>
+            <p className="text-[15px] sm:text-base mb-4">
+              It&apos;s released under the{' '}
+              <a
+                href="https://github.com/ranveeraggarwal/swsthlm/blob/main/LICENSE"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[var(--primary)] hover:underline font-bold"
+              >
+                Business Source License 1.1
+                <span className="sr-only"> (opens in a new tab)</span>
+              </a>
+              : use it, change it, and share it freely — including commercially — as long as you&apos;re not
+              building a rival listing for swing events in Stockholm. Running your own copy, covering a
+              different city, or contributing back here are all fine. The license converts to MIT on 7 July 2030.
             </p>
             <a
               href="https://github.com/ranveeraggarwal/swsthlm"
@@ -101,30 +133,6 @@ export default function AboutPage() {
               View on GitHub
               <span className="sr-only"> (opens in a new tab)</span>
             </a>
-          </section>
-
-          <section className="bg-[var(--surface-container-low)] p-6 rounded-lg border-2 border-[var(--border-ink)] shadow-[3px_3px_0px_0px_var(--shadow-ink)]">
-            <h2 className="font-serif text-xl font-bold text-[var(--on-surface)] mb-2">Are you an organizer?</h2>
-            <p className="text-sm leading-relaxed mb-3">
-              If you host a one-time or occasional Lindy Hop, Balboa, Blues, or Shag event in Stockholm, fill in our{' '}
-              <a
-                href="https://docs.google.com/forms/d/e/1FAIpQLSd87pOy31N_3xKthqalT-sDrFB2yoe74Z8HGr8q1HSs6Pis2g/viewform"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[var(--primary)] hover:underline font-bold"
-              >
-                event submission form
-                <span className="sr-only"> (opens in a new tab)</span>
-              </a>
-              . A bot turns submissions into pull requests; a maintainer reviews and merges. You don&apos;t need a GitHub account.
-            </p>
-            <p className="text-sm leading-relaxed">
-              Running a recurring weekly series?{' '}
-              <a href="mailto:hello@stockholmswing.com" className="text-[var(--primary)] hover:underline font-bold">
-                Contact us directly
-              </a>{' '}
-              and we&apos;ll get it set up.
-            </p>
           </section>
 
           <ChangelogTimeline />

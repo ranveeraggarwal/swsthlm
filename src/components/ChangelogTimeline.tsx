@@ -15,7 +15,7 @@ export function ChangelogTimeline() {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <section>
+    <section className="rounded-lg border-2 border-[var(--border-ink)] bg-[var(--surface-container-low)] shadow-[3px_3px_0px_0px_var(--shadow-ink)] overflow-hidden">
       {/* Heading wraps the trigger so the disclosure stays in the h1 → h2 → h3
           outline while the whole bar remains one control. */}
       <h2>
@@ -24,7 +24,7 @@ export function ChangelogTimeline() {
           onClick={() => setIsExpanded((v) => !v)}
           aria-expanded={isExpanded}
           aria-controls={PANEL_ID}
-          className="w-full flex items-center justify-between gap-4 p-4 rounded-lg border-2 border-[var(--border-ink)] bg-[var(--surface-container-low)] shadow-[3px_3px_0px_0px_var(--shadow-ink)] text-left cursor-pointer hover:bg-[var(--surface-container)] transition-colors"
+          className="w-full flex items-center justify-between gap-4 p-4 text-left cursor-pointer hover:bg-[var(--surface-container)] transition-colors"
         >
           <span>
             <span className="block font-serif text-xl font-bold text-[var(--on-surface)]">
@@ -42,7 +42,7 @@ export function ChangelogTimeline() {
       </h2>
 
       {isExpanded && (
-        <ol id={PANEL_ID} className="mt-6 space-y-8">
+        <ol id={PANEL_ID} className="border-t-2 border-[var(--border-ink)] p-4 sm:p-6 space-y-8">
           {CHANGELOG.map((entry, index) => (
             <li key={entry.month} className="relative pl-8">
               {/* Timeline rail + marker. Decorative: the month heading carries
@@ -70,7 +70,7 @@ export function ChangelogTimeline() {
                 {entry.items.map((item) => (
                   <li
                     key={item.title}
-                    className="p-3 rounded border border-[var(--outline-variant)] bg-[var(--surface-container-low)]"
+                    className="p-3 rounded border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)]"
                   >
                     <span className="block font-sans text-sm font-bold text-[var(--on-surface)]">
                       {item.title}

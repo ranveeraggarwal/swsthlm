@@ -5,7 +5,7 @@ import { MapPin, Music, Disc, Ticket, GraduationCap, Moon, ChevronDown, Banknote
 import { SwingEvent } from '@/types/event';
 import { ShareButton } from '@/components/ShareButton';
 import { AddToCalendarButton } from '@/components/AddToCalendarButton';
-import { ReportCorrectionLink } from '@/components/ReportCorrectionLink';
+import { ReportCorrectionButton } from '@/components/ReportCorrectionButton';
 import { FloorTypeBadge } from '@/components/FloorTypeBadge';
 import { formatCompactWeekdayDate } from '@/lib/datetime';
 
@@ -186,11 +186,7 @@ export function EventRow({ event, dates, nightCount }: EventRowProps) {
             </p>
           )}
 
-          {/* flex-wrap rather than a breakpoint: "Wrong info?" rides the end of
-              the action row when the buttons leave room for it, and drops to
-              its own right-aligned line when they don't (narrow viewports, or a
-              row that has a Tickets button). */}
-          <div className="flex flex-wrap items-center gap-2 px-1">
+          <div className="flex items-center gap-2 px-1">
             {event.ticket && (
               <a
                 href={event.ticket}
@@ -199,13 +195,13 @@ export function EventRow({ event, dates, nightCount }: EventRowProps) {
                 className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded border border-[var(--border-ink)] bg-[var(--primary)] text-[var(--on-primary)] hover:bg-[var(--primary-container)] font-bold uppercase tracking-wider text-xs"
               >
                 <Ticket className="w-4 h-4" />
-                Get Tickets / Info
-                <span className="sr-only"> (opens in a new tab)</span>
+                Source
+                <span className="sr-only"> — tickets and event info (opens in a new tab)</span>
               </a>
             )}
             <AddToCalendarButton event={event} />
             <ShareButton eventId={event.id} eventDate={event.date} eventTitle={event.title} />
-            <ReportCorrectionLink event={event} dates={dates} className="ml-auto" />
+            <ReportCorrectionButton event={event} dates={dates} />
           </div>
         </div>
       )}

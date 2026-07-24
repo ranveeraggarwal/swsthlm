@@ -6,7 +6,7 @@ Stockholm Swing is built and maintained by the local swing community. Whether yo
 
 **You organize a dance and want it listed.** Fill in the [organizer form](https://docs.google.com/forms/d/e/1FAIpQLSd87pOy31N_3xKthqalT-sDrFB2yoe74Z8HGr8q1HSs6Pis2g/viewform). A bot turns submissions into pull requests; a maintainer reviews and merges. You don't need a GitHub account. The same form is also how you tell us about a new series, a cancellation, or a venue change.
 
-**You spotted wrong info.** Every event card has a "Wrong info?" link that opens an email to `corrections@stockholmswing.com` with the listing's current details already filled in — say what's wrong, what it should say, and how you know. If you can't find the link or don't have a mail client set up, [open an issue](https://github.com/ranveeraggarwal/swsthlm/issues/new/choose) with the event name, date, and what's off. Things we get wrong most often: stale DJ names, price changes, weeks where a regular series doesn't run.
+**You spotted wrong info.** Every event has a flag button in its action row. It opens a short form — what's wrong, what it should say, how you know — and sends the answers to `corrections@stockholmswing.com` along with the listing's current details, so we can find the row. If you can't find the button or don't have a mail client set up, [open an issue](https://github.com/ranveeraggarwal/swsthlm/issues/new/choose) with the event name, date, and what's off. Things we get wrong most often: stale DJ names, price changes, weeks where a regular series doesn't run.
 
 **You want to help with code, design, or data.** Read on.
 

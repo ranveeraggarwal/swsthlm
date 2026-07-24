@@ -68,6 +68,33 @@ describe('correctionBody', () => {
     expect(body).toContain('How I know');
   });
 
+  it('places each dialog answer under its own prompt', () => {
+    const body = correctionBody(baseEvent(), undefined, {
+      whatsWrong: 'The venue was locked.',
+      shouldSay: 'Cancelled this week.',
+      howYouKnow: 'I stood outside it.',
+    });
+    expect(body).toContain("What's wrong:\nThe venue was locked.");
+    expect(body).toContain('What it should say instead:\nCancelled this week.');
+    expect(body).toContain('):\nI stood outside it.');
+  });
+
+  it('keeps the prompt visible when an answer is left blank', () => {
+    const body = correctionBody(baseEvent(), undefined, { whatsWrong: 'Wrong DJ.' });
+    expect(body).toContain("What's wrong:\nWrong DJ.");
+    expect(body).toContain('What it should say instead:\n');
+  });
+
+  it('trims surrounding whitespace from answers', () => {
+    const body = correctionBody(baseEvent(), undefined, { whatsWrong: '  Wrong price.\n\n' });
+    expect(body).toContain("What's wrong:\nWrong price.\n");
+  });
+
+  it('keeps the listing snapshot below the answers', () => {
+    const body = correctionBody(baseEvent(), undefined, { whatsWrong: 'Wrong price.' });
+    expect(body.indexOf('Wrong price.')).toBeLessThan(body.indexOf('Event ID: chicago-friday'));
+  });
+
   it('omits fields the listing does not claim', () => {
     const body = correctionBody(
       baseEvent({ price: undefined, payment: undefined, ticket: undefined, beginnerClass: undefined })
@@ -120,6 +147,19 @@ describe('buildCorrectionMailto', () => {
     const parsed = parseMailto(buildCorrectionMailto(event));
     expect(parsed.subject).toContain('Swing & Blues #3 — 50% off?');
     expect(parsed.body).toContain('Event: Swing & Blues #3 — 50% off?');
+  });
+
+  // The dialog's textareas accept anything the reporter types, newlines and
+  // all — the same encoding hazard, from a field we don't control.
+  it('survives answers with newlines and URL-significant characters', () => {
+    const parsed = parseMailto(
+      buildCorrectionMailto(baseEvent(), undefined, {
+        whatsWrong: 'Price & door\nboth wrong #urgent',
+        shouldSay: '150 kr, not 120 kr',
+      })
+    );
+    expect(parsed.body).toContain('Price & door\nboth wrong #urgent');
+    expect(parsed.body).toContain('150 kr, not 120 kr');
   });
 
   it('encodes newlines so the template arrives as separate lines', () => {

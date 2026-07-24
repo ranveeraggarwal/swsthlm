@@ -79,9 +79,10 @@ export default function AboutPage() {
             <h2 className="font-serif text-2xl font-bold text-[var(--on-surface)] mb-3">Spotted something wrong?</h2>
             <p className="text-[15px] sm:text-base mb-4">
               Prices change, DJs swap, and some weeks a regular series simply doesn&apos;t run. Every event
-              carries a <strong className="font-bold text-[var(--on-surface)]">Wrong info?</strong> link that
-              opens an email with the listing&apos;s current details already filled in — tell us what&apos;s
-              off and how you know, and we&apos;ll fix it. You can also write to us directly.
+              has a <strong className="font-bold text-[var(--on-surface)]">flag button</strong> that opens a
+              short correction form — what&apos;s wrong, what it should say, and how you know. Sending it
+              hands us an email with the listing&apos;s current details already attached, so we can find the
+              row and fix it. You can also write to us directly.
             </p>
             <a
               href={`mailto:${CORRECTIONS_EMAIL}`}

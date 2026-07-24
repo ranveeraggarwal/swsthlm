@@ -36,7 +36,7 @@ function datesLine(event: SwingEvent, dates?: string[]): string {
  * an empty "Price:" line invites a reporter to fill it in as if it were the
  * current claim, when in fact the site says nothing.
  */
-function currentDetails(event: SwingEvent, dates?: string[]): string[] {
+export function currentDetails(event: SwingEvent, dates?: string[]): string[] {
   const lines: string[] = [
     `Event: ${event.title}`,
     `Page: ${permalink(event)}`,
@@ -63,23 +63,48 @@ function currentDetails(event: SwingEvent, dates?: string[]): string[] {
   return lines;
 }
 
+/** What the reporter typed into the correction dialog. */
+export interface CorrectionReport {
+  whatsWrong?: string;
+  shouldSay?: string;
+  howYouKnow?: string;
+}
+
+/** The three prompts, in the order they appear in both the dialog and the email. */
+export const CORRECTION_PROMPTS = {
+  whatsWrong: "What's wrong",
+  shouldSay: 'What it should say instead',
+  howYouKnow: 'How I know',
+} as const;
+
 export function correctionSubject(event: SwingEvent): string {
   return `Wrong info: ${event.title} (${event.sourceId}, ${event.date})`;
 }
 
-export function correctionBody(event: SwingEvent, dates?: string[]): string {
+/**
+ * One prompt plus its answer. An unanswered prompt still appears, with a blank
+ * line under it — the reporter may have hit send early, or be composing in
+ * their mail client rather than the dialog, and the heading tells them (and us)
+ * what was being asked.
+ */
+function answerBlock(prompt: string, answer?: string): string[] {
+  return [`${prompt}:`, (answer ?? '').trim(), ''];
+}
+
+export function correctionBody(
+  event: SwingEvent,
+  dates?: string[],
+  report?: CorrectionReport
+): string {
   return [
     "Something on this listing looks wrong. Here's what I know:",
     '',
-    "What's wrong:",
-    '',
-    '',
-    'What it should say instead:',
-    '',
-    '',
-    'How I know (e.g. I was there tonight, I organise it, the venue told me):',
-    '',
-    '',
+    ...answerBlock(CORRECTION_PROMPTS.whatsWrong, report?.whatsWrong),
+    ...answerBlock(CORRECTION_PROMPTS.shouldSay, report?.shouldSay),
+    ...answerBlock(
+      `${CORRECTION_PROMPTS.howYouKnow} (e.g. I was there tonight, I organise it, the venue told me)`,
+      report?.howYouKnow
+    ),
     '---',
     'What the site currently says. Please leave this bit as it is — it tells us',
     'which listing to fix.',
@@ -94,10 +119,14 @@ export function correctionBody(event: SwingEvent, dates?: string[]): string {
  *
  * Both subject and body are percent-encoded per RFC 6068: the mailto body is a
  * URI component, so raw newlines, `&`, and `#` (all common in event titles and
- * descriptions) would otherwise truncate or corrupt the message.
+ * free-typed answers) would otherwise truncate or corrupt the message.
  */
-export function buildCorrectionMailto(event: SwingEvent, dates?: string[]): string {
+export function buildCorrectionMailto(
+  event: SwingEvent,
+  dates?: string[],
+  report?: CorrectionReport
+): string {
   const subject = encodeURIComponent(correctionSubject(event));
-  const body = encodeURIComponent(correctionBody(event, dates));
+  const body = encodeURIComponent(correctionBody(event, dates, report));
   return `mailto:${CORRECTIONS_EMAIL}?subject=${subject}&body=${body}`;
 }

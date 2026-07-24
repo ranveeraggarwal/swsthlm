@@ -163,6 +163,7 @@ export default async function EventPage({
                   className="font-bold text-[var(--on-surface)] underline decoration-[var(--outline)] underline-offset-4 hover:text-[var(--primary)] transition-colors"
                 >
                   {event.venue}
+                  <span className="sr-only"> (opens in a new tab)</span>
                 </a>
                 {event.neighborhood && (
                   <span className="text-[var(--on-surface-variant)]"> · {event.neighborhood}</span>
@@ -223,6 +224,7 @@ export default async function EventPage({
             >
               <Ticket className="w-4 h-4" />
               Tickets / Info
+              <span className="sr-only"> (opens in a new tab)</span>
             </a>
           )}
         </div>

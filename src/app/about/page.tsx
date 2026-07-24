@@ -1,5 +1,6 @@
 import React from 'react';
-import { Code } from 'lucide-react';
+import { Code, Flag } from 'lucide-react';
+import { CORRECTIONS_EMAIL } from '@/lib/corrections';
 import { DiscordIcon } from '@/components/DiscordIcon';
 import { GitHubIcon } from '@/components/GitHubIcon';
 import type { Metadata } from 'next';
@@ -72,6 +73,24 @@ export default function AboutPage() {
                 <span className="sr-only"> (opens in a new tab)</span>
               </a>
             </div>
+          </section>
+
+          <section>
+            <h2 className="font-serif text-2xl font-bold text-[var(--on-surface)] mb-3">Spotted something wrong?</h2>
+            <p className="text-[15px] sm:text-base mb-4">
+              Prices change, DJs swap, and some weeks a regular series simply doesn&apos;t run. Every event
+              has a <strong className="font-bold text-[var(--on-surface)]">flag button</strong> that opens a
+              short correction form — what&apos;s wrong, what it should say, and how you know. Sending it
+              hands us an email with the listing&apos;s current details already attached, so we can find the
+              row and fix it. You can also write to us directly.
+            </p>
+            <a
+              href={`mailto:${CORRECTIONS_EMAIL}`}
+              className="inline-flex items-center gap-2 text-[var(--primary)] hover:underline font-bold"
+            >
+              <Flag className="w-4 h-4" aria-hidden="true" />
+              {CORRECTIONS_EMAIL}
+            </a>
           </section>
 
           <section>

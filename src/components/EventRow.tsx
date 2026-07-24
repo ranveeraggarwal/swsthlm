@@ -5,6 +5,7 @@ import { MapPin, Music, Disc, Ticket, GraduationCap, Moon, ChevronDown, Banknote
 import { SwingEvent } from '@/types/event';
 import { ShareButton } from '@/components/ShareButton';
 import { AddToCalendarButton } from '@/components/AddToCalendarButton';
+import { ReportCorrectionButton } from '@/components/ReportCorrectionButton';
 import { FloorTypeBadge } from '@/components/FloorTypeBadge';
 import { formatCompactWeekdayDate } from '@/lib/datetime';
 
@@ -194,12 +195,13 @@ export function EventRow({ event, dates, nightCount }: EventRowProps) {
                 className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded border border-[var(--border-ink)] bg-[var(--primary)] text-[var(--on-primary)] hover:bg-[var(--primary-container)] font-bold uppercase tracking-wider text-xs"
               >
                 <Ticket className="w-4 h-4" />
-                Get Tickets / Info
-                <span className="sr-only"> (opens in a new tab)</span>
+                Source
+                <span className="sr-only"> — tickets and event info (opens in a new tab)</span>
               </a>
             )}
             <AddToCalendarButton event={event} />
             <ShareButton eventId={event.id} eventDate={event.date} eventTitle={event.title} />
+            <ReportCorrectionButton event={event} dates={dates} />
           </div>
         </div>
       )}

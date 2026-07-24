@@ -7,6 +7,7 @@ import { FloorTypeBadge } from '@/components/FloorTypeBadge';
 import { getTemporalBadge, formatEventDateRange, formatEventDateShort, TemporalBadge } from '@/lib/datetime';
 import { ShareButton } from '@/components/ShareButton';
 import { AddToCalendarButton } from '@/components/AddToCalendarButton';
+import { ReportCorrectionButton } from '@/components/ReportCorrectionButton';
 
 interface EventCardProps {
   event: SwingEvent;
@@ -296,12 +297,13 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
                 className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded border border-[var(--border-ink)] bg-[var(--primary)] text-[var(--on-primary)] hover:bg-[var(--primary-container)] font-bold uppercase tracking-wider text-xs lift-btn-primary"
               >
                 <Ticket className="w-4 h-4" />
-                Tickets / Info
-                <span className="sr-only"> (opens in a new tab)</span>
+                Source
+                <span className="sr-only"> — tickets and event info (opens in a new tab)</span>
               </a>
             )}
             <AddToCalendarButton event={event} />
             <ShareButton eventId={event.id} eventDate={event.date} eventTitle={event.title} />
+            <ReportCorrectionButton event={event} dates={dates} />
           </div>
         </div>
       </div>

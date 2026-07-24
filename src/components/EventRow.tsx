@@ -203,7 +203,7 @@ export function EventRow({ event, dates, nightCount }: EventRowProps) {
             <ShareButton eventId={event.id} eventDate={event.date} eventTitle={event.title} />
           </div>
 
-          <div className="px-1">
+          <div className="flex justify-end px-1">
             <ReportCorrectionLink event={event} dates={dates} />
           </div>
         </div>

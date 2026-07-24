@@ -237,7 +237,7 @@ export default async function EventPage({
         <ShareButton eventId={event.id} eventDate={event.date} eventTitle={event.title} />
       </div>
 
-      <div className="mt-4">
+      <div className="flex justify-end mt-4">
         <ReportCorrectionLink event={event} />
       </div>
     </div>

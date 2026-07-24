@@ -305,7 +305,9 @@ export function EventCard({ event, dates, nightCount, isThisWeek, showDate, curr
             <ShareButton eventId={event.id} eventDate={event.date} eventTitle={event.title} />
           </div>
 
-          <ReportCorrectionLink event={event} dates={dates} />
+          <div className="flex justify-end">
+            <ReportCorrectionLink event={event} dates={dates} />
+          </div>
         </div>
       </div>
     </div>

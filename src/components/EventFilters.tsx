@@ -525,6 +525,7 @@ export function EventFilters({
                 className="text-[var(--primary)] underline hover:no-underline"
               >
                 Organizers: add your event
+                <span className="sr-only"> (opens in a new tab)</span>
               </a>
             </p>
           </div>

@@ -1,9 +1,7 @@
 import React from 'react';
 import { FreshnessSignal } from './FreshnessSignal';
-import { DiscordIcon } from './DiscordIcon';
 import { GitHubIcon } from './GitHubIcon';
 
-const DISCORD_INVITE_URL = 'https://discord.gg/a2CZnSjfD';
 const GITHUB_DISCUSSIONS_URL = 'https://github.com/ranveeraggarwal/swsthlm/discussions';
 
 export function Footer() {
@@ -27,16 +25,6 @@ export function Footer() {
               className="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors"
             >
               <GitHubIcon className="w-4 h-4" />
-            </a>
-            <a
-              href={DISCORD_INVITE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Join our Discord (opens in a new tab)"
-              title="Join our Discord (opens in a new tab)"
-              className="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors"
-            >
-              <DiscordIcon className="w-4 h-4" />
             </a>
           </div>
           <FreshnessSignal />

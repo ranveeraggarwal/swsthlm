@@ -51,7 +51,7 @@ const pTzzDah: Series = {
   style: 'lindy-hop',
   venueId: 'sprallen',
   weekday: 'tuesday',
-  start: '18:00',
+  start: '17:00',
   end: '22:00',
   price: '50 kr',
   payment: 'Swish/cash',

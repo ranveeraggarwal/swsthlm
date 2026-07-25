@@ -73,7 +73,7 @@ Small PRs over large ones. A PR should answer one of: "fix this data error," "ad
 - Link the issue with `Closes #N` if there is one.
 - For data-only PRs, no description is needed beyond "what changed and why."
 - For code PRs, include before/after screenshots when anything visible changes.
-- If the PR ships a **major, user-visible feature**, add a line to the current month in [`src/lib/changelog.ts`](../src/lib/changelog.ts) — that's what the About page's "What's new" timeline renders — in the same PR. Data rows, scraper runs, dependency bumps, and internal refactors don't go there. The file's header comment explains the bar and the format; the PR template will remind you.
+- If the PR ships a **major, user-visible feature**, add a line to the current month in [`src/lib/changelog.ts`](../src/lib/changelog.ts) — that's what the About page's "What's new" timeline renders — in the same PR. Data rows, scraper runs, dependency bumps, and internal refactors don't go there. The file's header comment explains the bar and the format.
 - Stockholm time (Europe/Stockholm) in all event times. The build handles DST; you don't.
 
 A GitHub Action runs on every PR that touches `/data`: a **required** schema + integrity check (a malformed row blocks merge, with a readable message saying which row and why) plus the validator's unit tests. A separate **advisory** URL-reachability check won't block — sometimes a HEAD request fails because Facebook is being Facebook. For code changes, run `npm run lint`, `npx tsc --noEmit`, and `npm test` before opening the PR.

@@ -35,7 +35,7 @@ A build step expands `series` plus `exceptions` into concrete occurrences for th
 | `name` | yes | string | Display name. "Chicago Swing Dance Studio". |
 | `address` | yes | string | Street and number. "Hornsgatan 75". |
 | `neighborhood` | yes | string | "Söder", "Vasastan", "Norrmalm", "Hammarby Sjöstad", "Skanstull", "Östermalm", "Solna". |
-| `lat`, `lng` | no | float | **Nothing reads these.** Retained speculatively; a map view is on the "won't build" list in `PROJECT.md` §4. Leave empty. |
+| `lat`, `lng` | no | float | **Nothing reads these.** Retained speculatively; a map view is on the ["won't build" list](PROJECT.md#5-what-we-deliberately-will-not-build). Leave empty. |
 | `maps_url` | no | URL | **Not implemented — see issue #249.** It is meant to override the Maps link, but every venue link is currently built from name + address. Setting it has no effect today. |
 | `floor_type` | no | `studio` \| `hall` \| `bar` \| `outdoor` | What kind of space the dancing happens in. Empty = unknown — leave it blank rather than guess; a venue steward who's actually danced there should fill it in. See below for how to pick. |
 

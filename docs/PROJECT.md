@@ -70,7 +70,67 @@ per-date exception, never a deletion, so the site can *show* the cancellation.
 Past one-offs are retained as `status=ended`, never deleted — the build renders
 only `live`.
 
-## 3. Milestones
+## 3. Decisions on record
+
+Choices that were made once, for reasons, and that a later contributor could
+plausibly undo without knowing — or waste a day re-deriving. Each is recorded in
+full where it applies; this is only the map. **The reasoning stays in the linked
+doc, deliberately: a summary here would be a second copy to drift.**
+
+If you're about to reverse one of these, that's allowed — but read the entry
+first and argue against it, rather than around it.
+
+### Data & intake
+
+| Decision | Recorded in |
+|---|---|
+| The source of truth is CSVs in this repo, not the Google Sheet | §2 above |
+| Form responses are read from a **published CSV**, not the Sheets API with a service account | [`architecture/FORM_SYNC.md`](architecture/FORM_SYNC.md) |
+| Form rows land as `status=live`; the `draft`-then-promote step was tried and removed as redundant with PR review | [`architecture/FORM_SYNC.md`](architecture/FORM_SYNC.md) |
+| Corrections are a one-way report to a human, never auto-matched and applied | [`architecture/FORM_SYNC.md`](architecture/FORM_SYNC.md) |
+| Cancellations are exceptions, never deletions; past events become `status=ended`, never deleted | [`DATA.md`](DATA.md) |
+| Nothing may invent a venue — an unknown one is flagged for a human, never created | [`DATA.md`](DATA.md), [`architecture/SCRAPERS.md`](architecture/SCRAPERS.md) |
+| Overlapping-event detection is a CI **warning**, not a failure — some venues genuinely run two things at once | [`DATA.md`](DATA.md) |
+
+### Scrapers
+
+| Decision | Recorded in |
+|---|---|
+| **The SSS Google Calendar is unusable. Do not re-try it.** Recorded negative result with the evidence | [`architecture/SCRAPERS.md`](architecture/SCRAPERS.md) |
+| Facebook and Instagram are not scraped nightly; those sources are hand-entered, and #211 is the live alternative | [`architecture/SCRAPERS.md`](architecture/SCRAPERS.md) |
+| Relevance is declared **per source**, not global; mixed venues trust by band roster, not keywords | [`architecture/SCRAPERS.md`](architecture/SCRAPERS.md) |
+| Keyword matching is **word-boundary, not substring** — visible false-includes beat silent misses | [`architecture/SCRAPERS.md`](architecture/SCRAPERS.md) |
+| Rows are written by **surgical text edit**, never parse → mutate → unparse, or the nightly diff becomes the whole file | [`architecture/SCRAPERS.md`](architecture/SCRAPERS.md) |
+| The validation gate blocks only on errors the scrape *introduces*, not pre-existing ones | [`architecture/SCRAPERS.md`](architecture/SCRAPERS.md) |
+
+### Design
+
+| Decision | Recorded in |
+|---|---|
+| Dark mode is **opt-in via the toggle**. There is deliberately no `prefers-color-scheme` fallback | [`DESIGN.md`](DESIGN.md) |
+| The dark theme **inverts the elevation ladder** — `--surface-container-lowest` is the *top*, breaking M3 convention on purpose | [`DESIGN.md`](DESIGN.md) |
+| `--live` (the "happening now" red) is theme-invariant; brand provider fills and OG images are always light | [`DESIGN.md`](DESIGN.md) |
+| Raw Tailwind colour classes are banned and **linted** — this bug shipped twice | [`DESIGN.md`](DESIGN.md), `eslint-rules/no-hardcoded-color-classes.mjs` |
+
+### Code
+
+| Decision | Recorded in |
+|---|---|
+| `src/` layering is enforced by **review, not lint** — a check firing on every PR would train everyone to ignore it | [`architecture/CODE_STRUCTURE.md`](architecture/CODE_STRUCTURE.md) |
+| One type crosses the data boundary (`SwingEvent`), reusing the data layer's enums rather than re-declaring them | [`architecture/CODE_STRUCTURE.md`](architecture/CODE_STRUCTURE.md) |
+| `lib/date/calendar.ts` is UTC arithmetic **on strings** — no `Date` method without `UTC` in its name (#248) | [`architecture/CODE_STRUCTURE.md`](architecture/CODE_STRUCTURE.md) |
+| Hydration-sensitive date formats use fixed lookup arrays, not `Intl` — ICU output differs between Node and browsers (#200) | [`AGENTS.md`](AGENTS.md) |
+| `scripts/` is plain `.mjs` with no build step; `validate-data.mjs` re-declares the enums rather than importing the TS types | [`AGENTS.md`](AGENTS.md) |
+
+### Process
+
+| Decision | Recorded in |
+|---|---|
+| The changelog is hand-curated with **no CI gate**, on purpose — "is this major?" is a judgment call | [`../CLAUDE.md`](../CLAUDE.md) |
+| `robots.txt` deliberately **allows** AI crawlers; being quotable is the strategy | [`SEO.md`](SEO.md) |
+| This file is not a status tracker. GitHub issues are the authority; an index here drifted badly and was removed | top of this file |
+
+## 4. Milestones
 
 Issues are grouped under five milestones on GitHub. **GitHub is where their
 status lives**; this is only what each one means.
@@ -83,7 +143,7 @@ status lives**; this is only what each one means.
 | **M4** | Data platform & automation | The maintenance-cost milestone: repo-as-database, series expansion, CI validation, nightly scraper PRs, form intake. End state — the maintainer's recurring job is reviewing diffs. |
 | **M5** | Community & governance | Contributor docs, the corrections path, per-venue stewards, documented ownership, and a second maintainer. What makes the project outlive one person's attention. |
 
-## 4. What we deliberately will not build
+## 5. What we deliberately will not build
 
 Before building a new page, section, or surface, check this list. It is short on
 purpose, and it is the cheapest thing in the repo to read.
@@ -108,7 +168,7 @@ Each of these either breaks a principle or adds maintenance surface
 disproportionate to its value. Proposing one isn't forbidden — but argue it
 against this list first, in an issue, before writing code.
 
-## 5. Operating cadence
+## 6. Operating cadence
 
 **Weekly, ~15 minutes.** Merge or reject the scraper and form PRs; fill in
 DJ/band lineups the scrapers missed.

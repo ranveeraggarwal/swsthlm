@@ -5,7 +5,9 @@ aggregator for Stockholm. Start with [`CLAUDE.md`](../CLAUDE.md) for the project
 overview and doc map; this file covers the technical detail agents need day-to-day.
 
 For the architecture decisions and the "won't build" list see
-[`docs/PROJECT.md`](PROJECT.md) — check §4 before building any new surface.
+[`docs/PROJECT.md`](PROJECT.md) — read its ["won't build" list](PROJECT.md#5-what-we-deliberately-will-not-build)
+before building any new surface, and its "decisions on record" index before
+reversing anything that looks deliberate.
 For what's open or next, use GitHub issues, not that file. For the data schema see
 [`docs/DATA.md`](DATA.md). For the design system (colors, typography, spacing,
 components) see [`docs/DESIGN.md`](DESIGN.md). For PR conventions and branch
@@ -156,9 +158,9 @@ before opening a PR, not after.
   (`/herrang`) was built, shipped, and iterated on for days, then reverted
   wholesale because a dedicated microsite doesn't fit a single-purpose
   event aggregator (#215–#219). If a task looks like a new page or section
-  that isn't "list Stockholm swing events," check `docs/PROJECT.md` §4
-  ("what we deliberately will not build") and ask before building, not
-  after.
+  that isn't "list Stockholm swing events," check PROJECT.md's
+  ["what we deliberately will not build"](PROJECT.md#5-what-we-deliberately-will-not-build) — the Herräng
+  microsite is in there by name — and ask before building, not after.
 - **When a new validation rule has a judgment call about strictness, surface
   the tradeoff instead of defaulting to the strictest option.**
   Overlapping-event detection (#93) shipped as a CI *warning*, not a hard

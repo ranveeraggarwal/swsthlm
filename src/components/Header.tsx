@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Music, Menu, X } from 'lucide-react';
@@ -9,19 +9,29 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 export function Header() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     setMenuOpen(false);
   }, [pathname]);
 
   useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && menuOpen) {
+        setMenuOpen(false);
+        setTimeout(() => menuButtonRef.current?.focus(), 0);
+      }
+    };
+
     if (menuOpen) {
       document.body.style.overflow = 'hidden';
+      document.addEventListener('keydown', handleKeyDown);
     } else {
       document.body.style.overflow = '';
     }
     return () => {
       document.body.style.overflow = '';
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, [menuOpen]);
 
@@ -67,11 +77,13 @@ export function Header() {
         <div className="sm:hidden flex items-center gap-1">
           <ThemeToggle />
           <button
+            ref={menuButtonRef}
             className="flex items-center justify-center w-10 h-10 rounded transition-colors text-[var(--on-surface-variant)] hover:text-[var(--primary)]"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
             title={menuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={menuOpen}
+            aria-controls="mobile-menu"
           >
             {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
@@ -79,7 +91,7 @@ export function Header() {
       </div>
 
       {menuOpen && (
-        <nav aria-label="Primary (mobile)" className="sm:hidden border-t border-[var(--surface-container-highest)] bg-[var(--surface)]/95 backdrop-blur-md px-4 py-3 flex flex-col gap-1">
+        <nav id="mobile-menu" aria-label="Primary (mobile)" className="sm:hidden border-t border-[var(--surface-container-highest)] bg-[var(--surface)]/95 backdrop-blur-md px-4 py-3 flex flex-col gap-1">
           <Link href="/" className={mobileNavLinkClass('/')} onClick={() => setMenuOpen(false)} aria-current={pathname === '/' ? 'page' : undefined}>
             Calendar
           </Link>

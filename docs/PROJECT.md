@@ -83,7 +83,7 @@ The one open M4 item beyond #6 is field-level provenance for scraper-owned rows 
 
 **Code structure.** `src/` was reorganised into feature-first layers (`app/` → `features/` → `components/` → `lib/`) with the 662-line homepage listing component decomposed and the duplicated modal, label and URL-constant code consolidated. See `docs/architecture/CODE_STRUCTURE.md` for the layering rules and a "where does my change go?" table; read it before adding a file. That work also resolves two open cleanup issues — shared calendar-feed and intake-form constants (#222, now `src/lib/site.ts`) and the duplicated filter-summary logic (#223, now `src/features/events/model/sections.ts`) — which can be closed once it merges.
 
-**Known bugs.** The week predicates in `src/lib/date/calendar.ts` use the viewer's local timezone rather than Europe/Stockholm, so the Sunday "Coming Up" promotion and the Tomorrow badge misclassify for viewers west of Greenwich (#248). `venues.csv`'s `maps_url` column is documented as a Maps-link override but nothing reads it (#249). The per-event OG image's emoji render as blanks because satori has no emoji font loaded (#250).
+**Known bugs.** `venues.csv`'s `maps_url` column is documented as a Maps-link override but nothing reads it (#249). The per-event OG image's emoji render as blanks because satori has no emoji font loaded (#250).
 
 **Next highest-leverage open items:** resources page (#60), weekly health report (#6), scraper provenance (#66), and the ownership work in #30.
 
@@ -155,7 +155,7 @@ The one open M4 item beyond #6 is field-level provenance for scraper-owned rows 
 | 211 | Discord event intake → PR | — | P1 | open |
 | 222 | Consolidate calendar-feed and intake-form URLs into constants | — | P2 | open² |
 | 223 | Empty-state heading duplicates filter-summary logic | — | P2 | open² |
-| 248 | Week predicates use local time, not Europe/Stockholm | — | P2 | open |
+| 248 | Week predicates use local time, not Europe/Stockholm | — | P2 | ✓ |
 | 249 | `venues.csv` `maps_url` documented but never used | — | P2 | open |
 | 250 | Per-event OG image emoji render as blanks | — | P2 | open |
 

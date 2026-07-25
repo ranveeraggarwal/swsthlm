@@ -4,8 +4,9 @@ You are working on **Stockholm Swing** (stockholmswing.com), a swing-dance event
 aggregator for Stockholm. Start with [`CLAUDE.md`](../CLAUDE.md) for the project
 overview and doc map; this file covers the technical detail agents need day-to-day.
 
-For project state, sequencing, and the "won't build" list see
-[`docs/PROJECT.md`](PROJECT.md). For the data schema see
+For the architecture decisions and the "won't build" list see
+[`docs/PROJECT.md`](PROJECT.md) — check §4 before building any new surface.
+For what's open or next, use GitHub issues, not that file. For the data schema see
 [`docs/DATA.md`](DATA.md). For the design system (colors, typography, spacing,
 components) see [`docs/DESIGN.md`](DESIGN.md). For PR conventions and branch
 naming see [`docs/CONTRIBUTING.md`](CONTRIBUTING.md). For the scraper subsystem

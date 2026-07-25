@@ -59,7 +59,7 @@ CI runs the schema check, the tests, and lint on every PR.
 | [`DATA.md`](DATA.md) | Before editing anything in `/data`. The column-by-column contract. |
 | [`architecture/CODE_STRUCTURE.md`](architecture/CODE_STRUCTURE.md) | Before adding a file to `src/`. Where things go, and why. |
 | [`DESIGN.md`](DESIGN.md) | Before touching styles. Colour tokens, typography, the dark theme. |
-| [`PROJECT.md`](PROJECT.md) | Roadmap, architecture decisions, and the list of things we've decided not to build. |
+| [`PROJECT.md`](PROJECT.md) | Why the project is shaped this way, and the list of things we've decided not to build. |
 | [`SEO.md`](SEO.md) | Search and AI discoverability, on-site and off. |
 
 ## Community

@@ -90,7 +90,7 @@ We use a small, opinionated label set:
 - **priority:p0** (do first), **p1** (high value), **p2** (when convenient). Priorities are guidance, not contracts.
 - **good first issue** — small, well-scoped, no architecture knowledge needed. Start here.
 
-Milestones group issues by workstream (M1–M5 in the project plan). M1 and M2 are complete; the open work is in M3 (UX polish), M4 (data automation) and M5 (community and governance).
+Milestones group issues by workstream (M1–M5). [`PROJECT.md`](PROJECT.md) §3 says what each one means; the GitHub milestone pages say what's still open in them.
 
 Before opening a new issue, check the [project plan](PROJECT.md) — it lists the things we've deliberately chosen not to build, and the architecture constraints. Saves everyone time.
 

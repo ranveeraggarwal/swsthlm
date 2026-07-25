@@ -55,9 +55,12 @@ leave it `live`.
 - **The changelog is hand-curated, not generated.** `src/lib/changelog.ts`
   feeds the About page's collapsed "What's new" timeline. When you ship a
   major, user-visible feature, add one line to the current month (create the
-  month at the top if it's the first one). Everything else — data rows,
-  scraper output, dependency bumps, refactors, copy tweaks — stays out; the
-  git log already has those.
+  month at the top if it's the first one) **in the same PR**. Everything else
+  — data rows, scraper output, dependency bumps, refactors, copy tweaks —
+  stays out; the git log already has those. The file's header comment is the
+  authority on the bar and the format; `.github/pull_request_template.md`
+  carries the reminder. Nothing in CI enforces it, by design — see the header
+  for why.
 - **Don't break the static-site shape.** If a task seems to need a server,
   account, or database, **stop and flag it** rather than building it.
 

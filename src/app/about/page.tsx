@@ -119,21 +119,6 @@ export default function AboutPage() {
               If you&apos;d like to fix a listing, add a feature, or just see how it works, the code is right there.
               Contributions are welcome.
             </p>
-            <p className="text-[15px] sm:text-base mb-4">
-              It&apos;s released under the{' '}
-              <a
-                href="https://github.com/ranveeraggarwal/swsthlm/blob/main/LICENSE"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[var(--primary)] hover:underline font-bold"
-              >
-                Business Source License 1.1
-                <span className="sr-only"> (opens in a new tab)</span>
-              </a>
-              : use it, change it, and share it freely — including commercially — as long as you&apos;re not
-              building a rival listing for swing events in Stockholm. Running your own copy, covering a
-              different city, or contributing back here are all fine. The license converts to MIT on 7 July 2030.
-            </p>
             <a
               href="https://github.com/ranveeraggarwal/swsthlm"
               target="_blank"

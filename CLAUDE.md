@@ -18,6 +18,12 @@ Context for Claude Code working on **Stockholm Swing** (stockholmswing.com), a s
 
 If anything in this file conflicts with `docs/DATA.md` or `docs/PROJECT.md`, those win.
 
+## Before you open a PR for a user-visible feature
+
+Add a line to the current month in **`src/lib/changelog.ts`** — that file feeds the collapsed "What's new" timeline at the bottom of the About page. The header comment in that file is the authority on what qualifies; the short version is **major and user-visible**. A dancer should recognise it as a change to the site. Data rows, scraper output, dependency bumps, refactors, copy tweaks, and bug fixes stay out — the git log already has those.
+
+Adding the line is part of the feature PR, not a follow-up. There is no CI gate on this and there deliberately isn't one: "is this major?" is a judgment call, and a check that fired on every code PR would train everyone to ignore it.
+
 ## Non-negotiable principles
 
 1. **Structured data is the truth; scraped/pasted prose is decoration.** If a fact has a column, it goes in the column, never in a description.

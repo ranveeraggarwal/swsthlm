@@ -6,9 +6,25 @@
 // refactors don't belong here. A rough bar: if you couldn't explain the change
 // to someone standing on the dance floor, leave it out.
 //
-// Maintaining it is a manual step. When a major feature merges, add a line to
-// the current month's entry (creating the month if it's the first one), keeping
-// `CHANGELOG` sorted newest-month-first.
+// Maintaining it is a manual step, and it belongs to the feature PR itself —
+// not a follow-up, and not a post-merge sweep. Add the line in the same PR that
+// ships the feature:
+//
+//   1. If the current month isn't at the top of `CHANGELOG` yet, add it there
+//      with a `summary` naming the month's theme in a few words.
+//   2. Append a `{ title, description }` to that month's `items`.
+//   3. Keep `CHANGELOG` sorted newest-month-first. `changelog.test.ts` checks
+//      the ordering, the "YYYY-MM" shape, and that nothing is left blank.
+//
+// Write the description for a dancer, not a reviewer: what they can now do,
+// in one sentence, no issue numbers or file names.
+//
+//   good: "Subscribe once and the whole schedule appears in your calendar app."
+//   bad:  "Implemented the ICS feed route (#8) with per-event VEVENT output."
+//
+// There is deliberately no CI gate on this. Whether a change is "major" is a
+// judgment call, and a check that fired on every code PR would just train
+// everyone to ignore it — the reminder lives in the PR template instead.
 
 export interface ChangelogItem {
   /** Short, user-facing name for the change. Sentence case, no trailing period. */

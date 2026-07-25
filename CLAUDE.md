@@ -10,6 +10,7 @@ Context for Claude Code working on **Stockholm Swing** (stockholmswing.com), a s
 - `docs/DATA.md` — **the data contract.** Full schema for the five CSVs, enums, validation rules, worked examples. Read before editing `/data/` or code that consumes it.
 - `docs/DESIGN.md` — **the design system.** Color tokens, typography, spacing, component guidelines. Read before touching styles or UI components.
 - `docs/AGENTS.md` — agent-specific guidance: build pipeline, CI gates, gotchas, conventions, and a "recurring feedback" section of concrete bugs (focus management, color tokens, UTC/hydration date handling, scope creep) that have shipped wrong before. Read that section before touching UI, dates, or colors — it's the fastest way to skip a round of review. **You read this too.**
+- `docs/architecture/CODE_STRUCTURE.md` — **how `src/` is laid out**: the layering rules, the server/client boundary, and a "where does my change go?" table. Read before adding a file or moving one.
 - `docs/architecture/SCRAPERS.md` — the intake-automation subsystem. Read before touching `scripts/scrapers/` or `scripts/scrape.mjs`.
 - `docs/architecture/FORM_SYNC.md` — the Google Form intake subsystem. Read before touching `scripts/form-sync.mjs` or `.github/workflows/form-sync.yml`.
 - `docs/SEO.md` — search & AI discoverability: on-site pieces (sitemap, robots, JSON-LD, canonicals, llms.txt) and the off-site maintainer checklist.
@@ -20,7 +21,7 @@ If anything in this file conflicts with `docs/DATA.md` or `docs/PROJECT.md`, tho
 
 ## Before you open a PR for a user-visible feature
 
-Add a line to the current month in **`src/lib/changelog.ts`** — that file feeds the collapsed "What's new" timeline at the bottom of the About page. The header comment in that file is the authority on what qualifies; the short version is **major and user-visible**. A dancer should recognise it as a change to the site. Data rows, scraper output, dependency bumps, refactors, copy tweaks, and bug fixes stay out — the git log already has those.
+Add a line to the current month in **`src/features/changelog/entries.ts`** — that file feeds the collapsed "What's new" timeline at the bottom of the About page. The header comment in that file is the authority on what qualifies; the short version is **major and user-visible**. A dancer should recognise it as a change to the site. Data rows, scraper output, dependency bumps, refactors, copy tweaks, and bug fixes stay out — the git log already has those.
 
 Adding the line is part of the feature PR, not a follow-up. There is no CI gate on this and there deliberately isn't one: "is this major?" is a judgment call, and a check that fired on every code PR would train everyone to ignore it.
 
@@ -32,4 +33,8 @@ Adding the line is part of the feature PR, not a follow-up. There is no CI gate 
 
 ## Known user-visible bugs (verify against live site first — caching lies)
 
-None currently tracked. (Previously: #48 Danshuset duplicate cards — fixed; #87 card clickability — fixed.)
+- **#248 — week predicates use the viewer's local timezone, not Europe/Stockholm.** `isCurrentWeek` / `isNextWeek` / `isSunday` / `isTomorrow` in `src/lib/date/calendar.ts` read UTC-midnight dates back with local-time methods. Correct at UTC+1/+2 (so: correct for almost all traffic), off by a day for viewers west of Greenwich — on a Sunday they miss the "Coming Up" promotion. Documented in a comment at the top of that file.
+- **#249 — `venues.csv` `maps_url` is a silent no-op.** `docs/DATA.md` calls it a Maps-link override; nothing reads it. Every venue link is built from name + address by `venueMapsUrl()`.
+- **#250 — the per-event OG image's emoji render as blanks.** `opengraph-image.tsx` uses 🎷 🎧 📍 but loads only Playfair and Jakarta; satori has no emoji glyphs, so they vanish and leave the fact lines oddly indented. The site-level OG image is fine (it uses in-font `♪ ♫ ♪`).
+
+(Previously: #48 Danshuset duplicate cards — fixed; #87 card clickability — fixed.)

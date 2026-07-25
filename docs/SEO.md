@@ -11,7 +11,7 @@ the off-site half is a one-time operational checklist for the maintainer.
 | Sitemap | `src/app/sitemap.ts` → `/sitemap.xml` | Lists home, about, and every event permalink. Regenerated on each deploy. |
 | Robots | `src/app/robots.ts` → `/robots.txt` | Allows all crawlers (including AI crawlers — deliberate, see below) and points to the sitemap. |
 | Canonical URLs | `alternates.canonical` in each page's metadata | Prevents duplicate-content dilution across URL variants. |
-| Structured data | `src/lib/jsonld.ts` | `WebSite` node + schema.org `DanceEvent` per event, embedded as JSON-LD on the homepage and permalinks. This is what makes Google event rich results and AI answers possible. |
+| Structured data | `src/features/events/jsonld.ts` | `WebSite` node + schema.org `DanceEvent` per event, embedded as JSON-LD on the homepage and permalinks. This is what makes Google event rich results and AI answers possible. |
 | Per-page metadata | `metadata` / `generateMetadata` exports | Unique, descriptive `<title>` and `<meta description>` per page. |
 | `llms.txt` | `public/llms.txt` | Plain-language site summary for AI crawlers ([llmstxt.org](https://llmstxt.org) convention). |
 

@@ -1,9 +1,9 @@
 import React from 'react';
-import { getEvents } from '@/lib/events';
-import { getStockholmCurrentDate, getStockholmCurrentTime } from '@/lib/datetime';
-import { eventsJsonLd } from '@/lib/jsonld';
-import { EventFilters } from '@/components/EventFilters';
 import type { Metadata } from 'next';
+import { stockholmNow } from '@/lib/date/clock';
+import { EventCalendar } from '@/features/events/components/EventCalendar';
+import { getEvents } from '@/features/events/loader';
+import { eventsJsonLd } from '@/features/events/jsonld';
 
 // Built statically from /data; rebuilt on push to main via the Vercel deploy
 // hook. The event list is fixed at build; only the temporal badges are live
@@ -24,8 +24,6 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   const events = await getEvents();
-  const currentDate = getStockholmCurrentDate();
-  const currentTime = getStockholmCurrentTime();
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
@@ -43,8 +41,10 @@ export default async function Page() {
         </p>
       </div>
 
-      {/* Client-Side Interactive Filters and Event Listing */}
-      <EventFilters events={events} currentDate={currentDate} currentTime={currentTime} />
+      {/* The listing is a client component: filtering and the temporal badges
+          both need a live clock, which static HTML can't have. It's seeded with
+          the build-time reading so the first paint matches. */}
+      <EventCalendar events={events} initialNow={stockholmNow()} />
     </div>
   );
 }

@@ -1,8 +1,14 @@
 import React from 'react';
 import { Code, Flag } from 'lucide-react';
-import { CORRECTIONS_EMAIL } from '@/lib/corrections';
-import { GitHubIcon } from '@/components/GitHubIcon';
-import { ChangelogTimeline } from '@/components/ChangelogTimeline';
+import { GitHubIcon } from '@/components/ui/GitHubIcon';
+import { ChangelogTimeline } from '@/features/changelog/ChangelogTimeline';
+import {
+  CONTACT_EMAIL,
+  CORRECTIONS_EMAIL,
+  EVENT_SUBMISSION_FORM_URL,
+  GITHUB_DISCUSSIONS_URL,
+  GITHUB_REPO_URL,
+} from '@/lib/site';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -34,7 +40,7 @@ export default function AboutPage() {
             <p className="text-sm leading-relaxed mb-3">
               If you host a one-time or occasional Lindy Hop, Balboa, Blues, or Shag event in Stockholm, fill in our{' '}
               <a
-                href="https://docs.google.com/forms/d/e/1FAIpQLSd87pOy31N_3xKthqalT-sDrFB2yoe74Z8HGr8q1HSs6Pis2g/viewform"
+                href={EVENT_SUBMISSION_FORM_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[var(--primary)] hover:underline font-bold"
@@ -43,14 +49,14 @@ export default function AboutPage() {
                 <span className="sr-only"> (opens in a new tab)</span>
               </a>{' '}
               or{' '}
-              <a href="mailto:hello@stockholmswing.com" className="text-[var(--primary)] hover:underline font-bold">
+              <a href={`mailto:${CONTACT_EMAIL}`} className="text-[var(--primary)] hover:underline font-bold">
                 send us an email
               </a>
               . A bot turns form submissions into pull requests; a maintainer reviews and merges. You don&apos;t need a GitHub account.
             </p>
             <p className="text-sm leading-relaxed">
               Running a recurring weekly series?{' '}
-              <a href="mailto:hello@stockholmswing.com" className="text-[var(--primary)] hover:underline font-bold">
+              <a href={`mailto:${CONTACT_EMAIL}`} className="text-[var(--primary)] hover:underline font-bold">
                 Contact us directly
               </a>{' '}
               and we&apos;ll get it set up.
@@ -100,7 +106,7 @@ export default function AboutPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-2 sm:gap-6">
               <a
-                href="https://github.com/ranveeraggarwal/swsthlm/discussions"
+                href={GITHUB_DISCUSSIONS_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 text-[var(--primary)] hover:underline font-bold"
@@ -120,7 +126,7 @@ export default function AboutPage() {
               Contributions are welcome.
             </p>
             <a
-              href="https://github.com/ranveeraggarwal/swsthlm"
+              href={GITHUB_REPO_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-[var(--primary)] hover:underline font-bold"

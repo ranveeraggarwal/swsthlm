@@ -6,12 +6,11 @@
 // disagree. Calendar clients re-poll on their own schedule (REFRESH-INTERVAL),
 // and the site rebuilds on every data push, keeping subscribers current.
 
-import { getCalendarEvents } from '@/lib/events';
-import { buildCalendar } from '@/lib/ical';
+import { getCalendarEvents } from '@/features/events/loader';
+import { buildCalendar } from '@/features/events/ics';
+import { SITE_URL } from '@/lib/site';
 
 export const dynamic = 'force-static';
-
-const SITE_URL = 'https://stockholmswing.com';
 
 export async function GET() {
   const events = await getCalendarEvents();

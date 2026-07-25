@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
-import { getPermalinkEvents } from '@/lib/events';
-
-const SITE_URL = 'https://stockholmswing.com';
+import { getPermalinkEvents } from '@/features/events/loader';
+import { eventUrl } from '@/features/events/model/event';
+import { SITE_URL } from '@/lib/site';
 
 // Lists the two static pages plus every pre-rendered event permalink (same
 // set as generateStaticParams in the event route). Rebuilt on every deploy,
@@ -26,7 +26,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.5,
     },
     ...events.map((event) => ({
-      url: `${SITE_URL}/event/${event.id.split(':')[0]}/${event.date}`,
+      url: eventUrl(event),
       lastModified: dataUpdatedAt,
       changeFrequency: 'weekly' as const,
       priority: 0.7,

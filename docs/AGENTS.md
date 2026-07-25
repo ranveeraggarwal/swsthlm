@@ -9,7 +9,30 @@ For project state, sequencing, and the "won't build" list see
 [`docs/DATA.md`](DATA.md). For the design system (colors, typography, spacing,
 components) see [`docs/DESIGN.md`](DESIGN.md). For PR conventions and branch
 naming see [`docs/CONTRIBUTING.md`](CONTRIBUTING.md). For the scraper subsystem
-see [`docs/architecture/SCRAPERS.md`](architecture/SCRAPERS.md).
+see [`docs/architecture/SCRAPERS.md`](architecture/SCRAPERS.md). **For how `src/`
+is laid out and where a change belongs see
+[`docs/architecture/CODE_STRUCTURE.md`](architecture/CODE_STRUCTURE.md) — read it
+before adding a file.**
+
+## Where code goes (the short version)
+
+Full rules and a "where does my change go?" table are in
+[CODE_STRUCTURE.md](architecture/CODE_STRUCTURE.md). The five that come up most:
+
+- **Dependencies point one way:** `app/` → `features/` → `components/` → `lib/`.
+  Never the reverse.
+- **Routes are thin.** `app/` loads data, sets metadata, renders a component.
+  Logic worth testing belongs in a feature's `model/`.
+- **`model/` has no JSX; `components/` has no business rules.** Filtering,
+  bucketing, grouping and badge logic are pure functions in
+  `features/events/model/`, each taking its reference date as an argument.
+- **Words and colours live in `features/events/model/labels.ts`.** No component
+  owns a `switch (style)`. Four diverging copies of that switch is why this rule
+  exists.
+- **Outside-world constants live in `lib/site.ts`** — the production URL, the
+  submission form, contact addresses. Never re-declare them.
+
+There is no lint rule for any of this; it's enforced by review.
 
 ## The build pipeline (`expandAll`)
 
@@ -50,9 +73,17 @@ leave it `live`.
   `validate-data.mjs` already does.
 - **`cheerio` is a devDependency**, used **only** by scripts. **Never import it
   from `src/`** — it must not reach the client bundle.
+- **`node:fs` and PapaParse live in exactly two files** —
+  `src/lib/data/csv.ts` and `src/features/events/loader.ts`. That is the whole
+  server/client boundary. Importing either from a `'use client'` component fails
+  the build, with a confusing message; keep the I/O there and let everything
+  downstream consume `SwingEvent[]`.
+- **`SwingEvent` reuses the data layer's enums.** `style` is a `Style`, not a
+  `string`. If you find yourself widening it or writing `as Style`, the fix is
+  probably a label in `labels.ts` instead.
 - **The scraper's blast radius is `oneoffs.csv` only.** It reads `series.csv` to
   dedup but never writes it, and never invents venues — see SCRAPERS.md.
-- **The changelog is hand-curated, not generated.** `src/lib/changelog.ts`
+- **The changelog is hand-curated, not generated.** `src/features/changelog/entries.ts`
   feeds the About page's collapsed "What's new" timeline. When you ship a
   major, user-visible feature, add one line to the current month (create the
   month at the top if it's the first one) **in the same PR**. Everything else
@@ -89,7 +120,7 @@ before opening a PR, not after.
   `opacity`-dimmed "ended" card is a classic way to fail it (#179).
 - **Never hardcode a color; always go through a `var(--…)` token** — see
   `docs/DESIGN.md`'s "Rules future changes must follow." `text-white` on a
-  token-colored background shipped twice (`EventCard`/`EventFilters`, then
+  token-colored background shipped twice (`EventCard`/the event listing, then
   again in `AddToCalendarButton`/`SubscribeButton`), and off-palette
   `zinc`/`amber` Tailwind classes shipped once — all three were only caught
   in a dedicated dark-mode QA pass, not code review (#193–#201). This one is
@@ -115,7 +146,7 @@ before opening a PR, not after.
   `timeZone: 'UTC'` and verify the output is byte-identical between a Node
   script and an actual browser (Playwright against a production build, not
   `next dev`), or use fixed lookup arrays instead of `Intl` (see
-  `formatCompactWeekdayDate` in `src/lib/datetime.ts`).
+  `formatCompactWeekdayDate` in `src/lib/date/format.ts`).
 - **Confirm scope before building a new surface.** The Herräng microsite
   (`/herrang`) was built, shipped, and iterated on for days, then reverted
   wholesale because a dedicated microsite doesn't fit a single-purpose

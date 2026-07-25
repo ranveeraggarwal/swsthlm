@@ -1,6 +1,14 @@
+// The link-unfurl image for an event permalink (issue #12).
+//
+// Rendered by satori, which supports neither CSS custom properties nor Tailwind,
+// so the palette below is hex literals rather than the design tokens used
+// everywhere else. Keep them in step with docs/DESIGN.md by hand.
+
 import { ImageResponse } from 'next/og';
-import { getPermalinkEvents } from '@/lib/events';
-import { formatEventDate } from '@/lib/datetime';
+import { formatEventDate } from '@/lib/date/format';
+import type { FloorType, Style } from '@/lib/data/types';
+import { getPermalinkEvents } from '@/features/events/loader';
+import { styleLabel } from '@/features/events/model/labels';
 
 export const alt = 'Event details';
 export const size = { width: 1200, height: 630 };
@@ -8,10 +16,7 @@ export const contentType = 'image/png';
 
 export async function generateStaticParams() {
   const events = await getPermalinkEvents();
-  return events.map((event) => ({
-    id: event.id.split(':')[0],
-    date: event.date,
-  }));
+  return events.map((event) => ({ id: event.sourceId, date: event.date }));
 }
 
 async function loadFont(
@@ -25,22 +30,17 @@ async function loadFont(
   return fetch(match[1]).then((r) => r.arrayBuffer());
 }
 
-const STYLE_COLORS: Record<string, { bg: string; fg: string }> = {
-  lindy: { bg: '#8d712a', fg: '#fffbff' },
+// Style chip palette. Labels come from the shared `styleLabel`; only the colours
+// are duplicated here, because satori can't read the tokens.
+const STYLE_COLORS: Record<Style, { bg: string; fg: string }> = {
+  'lindy-hop': { bg: '#8d712a', fg: '#fffbff' },
   balboa: { bg: '#4f5e7e', fg: '#ffffff' },
   blues: { bg: '#eae8de', fg: '#594138' },
+  shag: { bg: '#f0eee3', fg: '#594138' },
   all: { bg: '#f0eee3', fg: '#594138' },
 };
 
-const STYLE_LABELS: Record<string, string> = {
-  lindy: 'Lindy Hop',
-  balboa: 'Balboa',
-  blues: 'Blues',
-  all: 'All Styles',
-  shag: 'Shag',
-};
-
-const FLOOR_TYPE_LABELS: Record<string, string> = {
+const FLOOR_TYPE_LABELS: Record<FloorType, string> = {
   studio: 'Dance studio',
   hall: 'Dance hall',
   bar: 'Bar / restaurant',
@@ -54,9 +54,7 @@ export default async function Image({
 }) {
   const { id, date } = await params;
   const events = await getPermalinkEvents();
-  const event = events.find(
-    (e) => e.id.split(':')[0] === id && e.date === date
-  );
+  const event = events.find((e) => e.sourceId === id && e.date === date);
 
   if (!event) {
     return new ImageResponse(
@@ -83,11 +81,8 @@ export default async function Image({
     loadFont('Plus Jakarta Sans', 600),
   ]);
 
-  const styleKey = event.style.toLowerCase();
-  const styleColor = STYLE_COLORS[styleKey] ?? STYLE_COLORS.all;
-  const styleLabel =
-    STYLE_LABELS[styleKey] ??
-    styleKey.charAt(0).toUpperCase() + styleKey.slice(1);
+  const styleColor = STYLE_COLORS[event.style] ?? STYLE_COLORS.all;
+  const styleText = styleLabel(event.style, { compact: true });
   const dateFormatted = formatEventDate(event.date);
   const titleTruncated =
     event.title.length > 60 ? event.title.slice(0, 57) + '…' : event.title;
@@ -104,7 +99,7 @@ export default async function Image({
 
   const logistics = [event.price, event.payment].filter(Boolean).join(' · ');
 
-  const floorLabel = FLOOR_TYPE_LABELS[event.floorType ?? ''];
+  const floorLabel = event.floorType ? FLOOR_TYPE_LABELS[event.floorType] : undefined;
 
   return new ImageResponse(
     (
@@ -173,7 +168,7 @@ export default async function Image({
                 marginRight: 12,
               }}
             >
-              {styleLabel}
+              {styleText}
             </span>
             {floorLabel && (
               <span

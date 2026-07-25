@@ -1,12 +1,15 @@
-// Build-time expansion: series + exceptions -> concrete dated occurrences,
-// merged with oneoffs. Pure functions, no I/O — fed typed rows, returns
-// Occurrence[]. CSV loading is wired in #7.
+// Series + exceptions -> concrete dated occurrences, merged with one-offs.
+// Pure functions, no I/O: fed typed rows, returns Occurrence[]. Reading the CSVs
+// is `./csv.ts`; joining venues and adapting to the UI type is
+// `features/events/loader.ts`.
 //
-// DST safety: all date stepping is calendar arithmetic at UTC midnight
-// (setUTCDate), never epoch/local-time math. A weekly series therefore can
-// never drift onto the wrong weekday across the Europe/Stockholm DST switches.
-// Wall-clock start/end are opaque strings, carried through untouched.
+// DST safety: all date stepping is calendar arithmetic at UTC midnight, never
+// epoch or local-time math — see `addDays` in lib/date/calendar.ts. A weekly
+// series therefore can never drift onto the wrong weekday across the
+// Europe/Stockholm DST switches. Wall-clock start/end are opaque strings,
+// carried through untouched.
 
+import { addDays, weekdayIndexOf } from '@/lib/date/calendar';
 import type {
   Exception,
   ExpandOptions,
@@ -29,18 +32,9 @@ const WEEKDAY_BY_INDEX: Weekday[] = [
 
 const DEFAULT_WEEKS = 10;
 
-function parseUTC(iso: string): Date {
-  return new Date(`${iso}T00:00:00Z`);
-}
-
-export function addDays(iso: string, days: number): string {
-  const d = parseUTC(iso);
-  d.setUTCDate(d.getUTCDate() + days);
-  return d.toISOString().slice(0, 10);
-}
-
+/** The weekday name a date falls on, in the vocabulary series.csv uses. */
 export function weekdayOf(iso: string): Weekday {
-  return WEEKDAY_BY_INDEX[parseUTC(iso).getUTCDay()];
+  return WEEKDAY_BY_INDEX[weekdayIndexOf(iso)];
 }
 
 // YYYY-MM-DD sorts and compares correctly as plain strings.

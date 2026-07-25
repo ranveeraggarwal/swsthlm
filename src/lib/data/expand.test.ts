@@ -1,11 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import {
-  addDays,
-  expandAll,
-  expandOneoff,
-  expandSeries,
-  weekdayOf,
-} from './expand';
+import { addDays } from '@/lib/date/calendar';
+import { expandAll, expandOneoff, expandSeries, weekdayOf } from './expand';
 import type { Exception, Oneoff, Series } from './types';
 
 // --- Fixtures mirroring the committed /data CSVs (the three real series) ---

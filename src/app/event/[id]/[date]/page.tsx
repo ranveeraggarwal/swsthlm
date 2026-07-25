@@ -1,36 +1,38 @@
-// Statically-generated event permalink. URL structure:
-//   /event/[series-or-oneoff-id]/[YYYY-MM-DD]
+// Statically-generated event permalink: `/event/[series-or-oneoff-id]/[YYYY-MM-DD]`.
 //
-// IDs are immutable per DATA.md — safe to use in persistent URLs. The path
-// mirrors the occurrenceId format (`${sourceId}:${date}`), split across two
-// segments for readability and to avoid colon-in-URL issues.
+// IDs are immutable per docs/DATA.md, so these URLs are safe to share and to
+// index. The path mirrors the occurrenceId format (`${sourceId}:${date}`) split
+// across two segments, avoiding a colon in the URL.
 //
-// JSON-LD (issue #10) and add-to-calendar (issue #9) will plug into this page;
-// keep the event data easily accessible via the exported props.
+// Only paths from `generateStaticParams` exist — `dynamicParams = false` means an
+// unknown id 404s instead of trying to render.
 
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, MapPin, Music, Disc, Ticket, Banknote, GraduationCap } from 'lucide-react';
-import { AddToCalendarButton } from '@/components/AddToCalendarButton';
-import { ShareButton } from '@/components/ShareButton';
-import { ReportCorrectionButton } from '@/components/ReportCorrectionButton';
-import { FloorTypeBadge } from '@/components/FloorTypeBadge';
-import { getPermalinkEvents } from '@/lib/events';
-import { formatEventDate } from '@/lib/datetime';
-import { singleEventJsonLd } from '@/lib/jsonld';
 import type { Metadata } from 'next';
-import type { SwingEvent } from '@/types/event';
+import { ArrowLeft, Ticket } from 'lucide-react';
+import { formatEventDate } from '@/lib/date/format';
+import { ReportCorrectionButton } from '@/features/corrections/ReportCorrectionButton';
+import { AddToCalendarButton } from '@/features/events/components/AddToCalendarButton';
+import { BeginnerChip, StyleChip } from '@/features/events/components/EventChips';
+import { EventFacts } from '@/features/events/components/EventFacts';
+import { FloorTypeBadge } from '@/features/events/components/FloorTypeBadge';
+import { ShareButton } from '@/features/events/components/ShareButton';
+import { singleEventJsonLd } from '@/features/events/jsonld';
+import { getPermalinkEvents } from '@/features/events/loader';
+import type { SwingEvent } from '@/features/events/model/event';
 
-// Reject any path not produced by generateStaticParams — no dynamic fallback.
 export const dynamicParams = false;
+
+/** The route's two segments identify one occurrence; find the one they name. */
+async function findEvent(id: string, date: string): Promise<SwingEvent | undefined> {
+  const events = await getPermalinkEvents();
+  return events.find((event) => event.sourceId === id && event.date === date);
+}
 
 export async function generateStaticParams() {
   const events = await getPermalinkEvents();
-  return events.map((event) => ({
-    // occurrenceId is `${sourceId}:${date}`; split into the two route segments.
-    id: event.id.split(':')[0],
-    date: event.date,
-  }));
+  return events.map((event) => ({ id: event.sourceId, date: event.date }));
 }
 
 export async function generateMetadata({
@@ -39,10 +41,7 @@ export async function generateMetadata({
   params: Promise<{ id: string; date: string }>;
 }): Promise<Metadata> {
   const { id, date } = await params;
-  const events = await getPermalinkEvents();
-  const event = events.find(
-    (e) => e.id.split(':')[0] === id && e.date === date
-  );
+  const event = await findEvent(id, date);
   if (!event) return {};
 
   const title = `${event.title} — ${formatEventDate(event.date)} at ${event.venue}`;
@@ -58,40 +57,8 @@ export async function generateMetadata({
     title,
     description,
     alternates: { canonical: `/event/${id}/${date}` },
-    openGraph: {
-      title,
-      description,
-      url: `/event/${id}/${date}`,
-      type: 'website',
-    },
+    openGraph: { title, description, url: `/event/${id}/${date}`, type: 'website' },
   };
-}
-
-function StyleBadge({ style }: { style: string }) {
-  const label = (() => {
-    switch (style.toLowerCase()) {
-      case 'lindy': return 'Lindy Hop';
-      case 'balboa': return 'Balboa';
-      case 'blues': return 'Blues';
-      case 'all': return 'Social – all styles';
-      default: return style.charAt(0).toUpperCase() + style.slice(1);
-    }
-  })();
-
-  const color = (() => {
-    switch (style.toLowerCase()) {
-      case 'lindy': return 'bg-[var(--tertiary)]/10 text-[var(--tertiary)] border-[var(--tertiary)]/20';
-      case 'balboa': return 'bg-[var(--secondary)]/10 text-[var(--secondary)] border-[var(--secondary)]/20';
-      case 'blues': return 'bg-[var(--surface-container-high)] text-[var(--on-surface-variant)] border-[var(--outline-variant)]';
-      default: return 'bg-[var(--surface-container)] text-[var(--on-surface-variant)] border-[var(--surface-container-highest)]';
-    }
-  })();
-
-  return (
-    <span className={`px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider border ${color}`}>
-      {label}
-    </span>
-  );
 }
 
 export default async function EventPage({
@@ -100,24 +67,8 @@ export default async function EventPage({
   params: Promise<{ id: string; date: string }>;
 }) {
   const { id, date } = await params;
-  const events = await getPermalinkEvents();
-  const event: SwingEvent | undefined = events.find(
-    (e) => e.id.split(':')[0] === id && e.date === date
-  );
+  const event = await findEvent(id, date);
   if (!event) notFound();
-
-  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${event.venue} ${event.address}`)}`;
-
-  const musicRows: { type: 'live' | 'dj'; name?: string }[] = [];
-  if (event.band) musicRows.push({ type: 'live', name: event.band });
-  if (event.dj) musicRows.push({ type: 'dj', name: event.dj });
-  if (musicRows.length === 0) {
-    if (event.music === 'live') musicRows.push({ type: 'live' });
-    else if (event.music === 'dj') musicRows.push({ type: 'dj' });
-    else if (event.music === 'mixed') musicRows.push({ type: 'live' }, { type: 'dj' });
-  }
-
-  const priceDisplay = event.price ?? null;
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 w-full">
@@ -125,7 +76,7 @@ export default async function EventPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: singleEventJsonLd(event) }}
       />
-      {/* Back navigation */}
+
       <Link
         href="/"
         className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors mb-6 font-sans"
@@ -134,88 +85,34 @@ export default async function EventPage({
         All events
       </Link>
 
-      {/* Event card */}
       <article className="border-2 border-[var(--border-ink)] bg-[var(--surface-container-low)] rounded overflow-hidden">
         <div className="p-6 space-y-5">
-          {/* Date */}
           <p className="font-sans text-xs font-bold uppercase tracking-widest text-[var(--primary)]">
             {formatEventDate(event.date)}
           </p>
 
-          {/* Title */}
           <h1 className="font-serif text-3xl font-bold tracking-tight text-[var(--on-surface)] leading-snug">
             {event.title}
           </h1>
 
-          {/* Time */}
           <p className="font-sans font-bold text-lg tabular-nums tracking-tight text-[var(--on-surface)]">
             {event.start} – {event.end}
           </p>
 
-          {/* Facts: venue, performers, price/payment — one consistent icon+text list */}
-          <div className="space-y-3 font-sans text-sm">
-            <div className="flex items-center gap-2 leading-none">
-              <MapPin className="w-3.5 h-3.5 shrink-0 text-[var(--on-surface-variant)]" aria-hidden="true" />
-              <span>
-                <a
-                  href={mapsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-bold text-[var(--on-surface)] underline decoration-[var(--outline)] underline-offset-4 hover:text-[var(--primary)] transition-colors"
-                >
-                  {event.venue}
-                  <span className="sr-only"> (opens in a new tab)</span>
-                </a>
-                {event.neighborhood && (
-                  <span className="text-[var(--on-surface-variant)]"> · {event.neighborhood}</span>
-                )}
-              </span>
-            </div>
+          <EventFacts event={event} />
 
-            {musicRows.map((row) => (
-              <div key={row.type} className="flex items-center gap-2 leading-none text-[var(--on-surface-variant)]">
-                {row.type === 'live' ? <Music className="w-3.5 h-3.5 shrink-0" aria-hidden="true" /> : <Disc className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />}
-                <span>
-                  <span className="sr-only">{row.type === 'live' ? 'Live: ' : 'DJ: '}</span>
-                  {row.name ?? (row.type === 'live' ? 'Live music' : 'DJ set')}
-                </span>
-              </div>
-            ))}
-
-            {(priceDisplay || event.payment) && (
-              <div className="flex items-center gap-2 leading-none text-[var(--on-surface-variant)]">
-                <Banknote className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
-                <span>
-                  {priceDisplay}
-                  {priceDisplay && event.payment && ' · '}
-                  {event.payment}
-                </span>
-              </div>
-            )}
-          </div>
-
-          {/* Identity chips: style, floor, beginner */}
           <div className="flex flex-wrap items-center gap-2 font-sans">
-            <StyleBadge style={event.style} />
+            <StyleChip style={event.style} layout="permalink" />
             <FloorTypeBadge floorType={event.floorType} />
-            {event.beginnerClass && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-[var(--success-container)] text-[var(--on-success-container)] border border-[var(--on-success-container)]/25 text-[10px] uppercase font-bold tracking-wider">
-                <GraduationCap className="w-3 h-3" />
-                {event.beginnerClass.toLowerCase() === 'yes'
-                  ? 'Beginner friendly'
-                  : `Beginner class ${event.beginnerClass}`}
-              </span>
-            )}
+            <BeginnerChip beginnerClass={event.beginnerClass} />
           </div>
 
-          {/* Description */}
           {event.body && (
             <p className="text-sm text-[var(--on-surface-variant)] leading-relaxed whitespace-pre-line">
               {event.body}
             </p>
           )}
 
-          {/* Ticket link */}
           {event.ticket && (
             <a
               href={event.ticket}
@@ -231,10 +128,9 @@ export default async function EventPage({
         </div>
       </article>
 
-      {/* Actions outside card */}
       <div className="flex items-center gap-2 mt-4">
         <AddToCalendarButton event={event} />
-        <ShareButton eventId={event.id} eventDate={event.date} eventTitle={event.title} />
+        <ShareButton event={event} />
         <ReportCorrectionButton event={event} />
       </div>
     </div>

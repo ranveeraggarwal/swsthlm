@@ -1,9 +1,10 @@
 import type { Metadata, Viewport } from 'next';
+import { SITE_URL } from '@/lib/site';
 import { Playfair_Display, Plus_Jakarta_Sans } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
-import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
-import { InstallToast } from '@/components/InstallToast';
+import { Header } from '@/components/layout/Header';
+import { Footer } from '@/components/layout/Footer';
+import { InstallToast } from '@/components/layout/InstallToast';
 import './globals.css';
 
 const playfair = Playfair_Display({
@@ -18,7 +19,7 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://stockholmswing.com'),
+  metadataBase: new URL(SITE_URL),
   title: 'Stockholm Swing',
   description: 'Lindy Hop, Balboa, Shag, and Blues social dancing in Stockholm.',
   appleWebApp: {

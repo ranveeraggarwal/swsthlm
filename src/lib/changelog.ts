@@ -24,7 +24,8 @@
 //
 // There is deliberately no CI gate on this. Whether a change is "major" is a
 // judgment call, and a check that fired on every code PR would just train
-// everyone to ignore it — the reminder lives in the PR template instead.
+// everyone to ignore it. The reminder lives in `CLAUDE.md` instead, so it's
+// already in context before the feature is written.
 
 export interface ChangelogItem {
   /** Short, user-facing name for the change. Sentence case, no trailing period. */

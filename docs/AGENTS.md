@@ -58,9 +58,8 @@ leave it `live`.
   month at the top if it's the first one) **in the same PR**. Everything else
   — data rows, scraper output, dependency bumps, refactors, copy tweaks —
   stays out; the git log already has those. The file's header comment is the
-  authority on the bar and the format; `.github/pull_request_template.md`
-  carries the reminder. Nothing in CI enforces it, by design — see the header
-  for why.
+  authority on the bar and the format, and `CLAUDE.md` carries the reminder.
+  Nothing in CI enforces it, by design — see the header for why.
 - **Don't break the static-site shape.** If a task seems to need a server,
   account, or database, **stop and flag it** rather than building it.
 

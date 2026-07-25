@@ -108,11 +108,14 @@ consecutive nights) live beside it and are named for what they are.
 first render with the build-time reading and the client takes over after
 hydration; a component that read the clock during render would mismatch.
 
-`lib/date/calendar.ts` documents a real wrinkle worth knowing before you touch
-it: date *stepping* is UTC-midnight arithmetic, but the week predicates
-(`isCurrentWeek`, `isNextWeek`, `isSunday`, `isTomorrow`) still use the runtime's
-local timezone. That's correct for Stockholm and for a UTC build server, and
-wrong by up to a day for a viewer in the Americas. See the comment in that file.
+Everything in `lib/date/calendar.ts` is UTC-midnight arithmetic **on strings** —
+no `Date` method without `UTC` in its name, and no reference to the runtime's
+local timezone. If you add a function there, build it on `addDays` and keep it
+string-in/string-out. This is not stylistic: the week predicates used to read
+UTC-midnight dates back with local-time methods, which shifted the weekday by a
+day for viewers west of Greenwich and silently suppressed the Sunday "Coming Up"
+promotion (#248, fixed). `calendar.test.ts` pins the behaviour under five host
+timezones.
 
 ## Where does my change go?
 

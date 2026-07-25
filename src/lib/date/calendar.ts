@@ -3,26 +3,38 @@
 // makes the whole date layer testable and the homepage's SSR/hydration seeding
 // possible. Reading the actual clock lives in `./clock.ts`.
 //
-// Two conventions coexist here, deliberately, and it matters which you use:
+// Everything here is **UTC-midnight arithmetic on date strings.** Nothing reads
+// the runtime's local timezone, so a viewer in Los Angeles, a dancer in
+// Stockholm and the UTC build server all agree on which week a date falls in.
 //
-//   • `addDays` / `weekdayIndexOf` do calendar arithmetic at **UTC midnight**
-//     (setUTCDate). This is the house convention for anything that steps
-//     through dates — see the DST note in `lib/data/expand.ts`. A weekly series
-//     can never drift onto the wrong weekday across a Europe/Stockholm DST
-//     switch.
+// That was not always true. The week predicates used to parse a date to UTC
+// midnight and then read it back with local-time methods (`getDay`, `setHours`,
+// `setDate`), which shifted the weekday by a day for anyone west of Greenwich:
+// on a Sunday, `isSunday` returned false in the Americas and the homepage's
+// "Coming Up" promotion silently didn't fire (#248).
 //
-//   • The week predicates below (`isCurrentWeek`, `isNextWeek`, `isSunday`,
-//     `isTomorrow`) use the **runtime's local** timezone. They are correct for
-//     Europe/Stockholm (UTC+1/+2, where UTC midnight is still the same calendar
-//     day locally) and for a UTC build server, which covers every environment
-//     this site actually runs in. A viewer west of Greenwich can see the
-//     "Coming Up" split and the Tomorrow badge shift by a day after hydration.
-//     Left as-is on purpose so this refactor changed no behaviour; if you are
-//     here to fix it, normalise all four onto UTC and update the tests.
+// So: if you add a function here, keep it string-in/string-out and build it on
+// `addDays`. Do not reach for a `Date` method without `UTC` in its name.
+
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
 /** Parse a YYYY-MM-DD string as UTC midnight. */
 function parseUTC(iso: string): Date {
   return new Date(`${iso}T00:00:00Z`);
+}
+
+/**
+ * Whether a string is a real YYYY-MM-DD date. The second check is what rejects
+ * well-shaped nonsense like '2026-13-45'.
+ *
+ * The predicates below guard on this and return `false` rather than throwing.
+ * Every date reaching them comes from `./clock.ts` or from CSVs that
+ * `scripts/validate-data.mjs` gates, so malformed input is a programming error
+ * — but a thrown RangeError deep in a render is a blank page for a dancer, and
+ * a missing badge is not.
+ */
+function isIsoDate(value: string): boolean {
+  return ISO_DATE.test(value) && !Number.isNaN(parseUTC(value).getTime());
 }
 
 /** Step a YYYY-MM-DD string by whole days, DST-safe. Negative steps back. */
@@ -48,58 +60,30 @@ export function isToday(dateStr: string, referenceDateStr: string): boolean {
 }
 
 /**
- * Local midnight of the Monday that starts the week containing `referenceDateStr`.
- * Monday-first: Swedish convention, and the week the homepage's "This Week"
- * section means.
+ * The Monday that starts the week containing `iso`. Monday-first: the Swedish
+ * convention, and the week the homepage's "This Week" section means.
  */
-function startOfWeekLocal(referenceDateStr: string): Date {
-  const refDate = new Date(referenceDateStr);
-  refDate.setHours(0, 0, 0, 0);
-  const day = refDate.getDay(); // 0 = Sunday
-  const diffToMonday = day === 0 ? -6 : 1 - day;
-  const start = new Date(refDate);
-  start.setDate(refDate.getDate() + diffToMonday);
-  return start;
+function startOfWeek(iso: string): string {
+  // weekdayIndexOf is Sunday-based; rotate so Monday is 0 and Sunday is 6.
+  const daysSinceMonday = (weekdayIndexOf(iso) + 6) % 7;
+  return addDays(iso, -daysSinceMonday);
 }
 
-/** Whether `target` falls in the Mon–Sun block starting at `weekStart`. */
-function isWithinWeek(target: Date, weekStart: Date): boolean {
-  const weekEnd = new Date(weekStart);
-  weekEnd.setDate(weekStart.getDate() + 6);
-  weekEnd.setHours(23, 59, 59, 999);
-  return target >= weekStart && target <= weekEnd;
-}
-
-function localMidnight(dateStr: string): Date {
-  const d = new Date(dateStr);
-  d.setHours(0, 0, 0, 0);
-  return d;
+/** Whether a date falls in the Mon–Sun block starting at `weekStart`. */
+function isWithinWeek(dateStr: string, weekStart: string): boolean {
+  return dateStr >= weekStart && dateStr <= addDays(weekStart, 6);
 }
 
 /** Whether a YYYY-MM-DD date is in the Mon–Sun week containing the reference date. */
-export function isCurrentWeek(dateStr: string, referenceDateStr?: string): boolean {
-  try {
-    const target = localMidnight(dateStr);
-    if (isNaN(target.getTime())) return false;
-    return isWithinWeek(target, startOfWeekLocal(referenceDateStr ?? new Date().toISOString()));
-  } catch (error) {
-    console.error('Error calculating isCurrentWeek:', error);
-    return false;
-  }
+export function isCurrentWeek(dateStr: string, referenceDateStr: string): boolean {
+  if (!isIsoDate(dateStr) || !isIsoDate(referenceDateStr)) return false;
+  return isWithinWeek(dateStr, startOfWeek(referenceDateStr));
 }
 
 /** Whether a YYYY-MM-DD date is in the Mon–Sun week *after* the reference date's. */
-export function isNextWeek(dateStr: string, referenceDateStr?: string): boolean {
-  try {
-    const target = localMidnight(dateStr);
-    if (isNaN(target.getTime())) return false;
-    const nextWeekStart = startOfWeekLocal(referenceDateStr ?? new Date().toISOString());
-    nextWeekStart.setDate(nextWeekStart.getDate() + 7);
-    return isWithinWeek(target, nextWeekStart);
-  } catch (error) {
-    console.error('Error calculating isNextWeek:', error);
-    return false;
-  }
+export function isNextWeek(dateStr: string, referenceDateStr: string): boolean {
+  if (!isIsoDate(dateStr) || !isIsoDate(referenceDateStr)) return false;
+  return isWithinWeek(dateStr, addDays(startOfWeek(referenceDateStr), 7));
 }
 
 /**
@@ -107,16 +91,11 @@ export function isNextWeek(dateStr: string, referenceDateStr?: string): boolean 
  * week into the highlighted section" rule — on Sunday, this week is over.
  */
 export function isSunday(referenceDateStr: string): boolean {
-  return new Date(referenceDateStr).getDay() === 0;
+  return isIsoDate(referenceDateStr) && weekdayIndexOf(referenceDateStr) === 0;
 }
 
 /** Whether a YYYY-MM-DD date is the day after the reference date. */
 export function isTomorrow(dateStr: string, referenceDateStr: string): boolean {
-  try {
-    const refDate = new Date(referenceDateStr);
-    refDate.setDate(refDate.getDate() + 1);
-    return dateStr === refDate.toISOString().slice(0, 10);
-  } catch {
-    return false;
-  }
+  if (!isIsoDate(referenceDateStr)) return false;
+  return dateStr === addDays(referenceDateStr, 1);
 }

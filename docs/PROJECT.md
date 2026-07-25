@@ -1,170 +1,180 @@
-# Stockholm Swing — Project Plan
+# Stockholm Swing — project plan
 
-**Repo:** `ranveeraggarwal/swsthlm` · **Site:** stockholmswing.com · **Last revised:** 2026-07-25
+**Repo:** `ranveeraggarwal/swsthlm` · **Site:** stockholmswing.com
+
+This document records **decisions and constraints** — why the project is shaped
+the way it is, and what it has decided not to become. It is deliberately not a
+status tracker: **GitHub issues and milestones are the authority on what is
+open, closed, or next**, and nothing here needs editing when an issue closes.
+
+(It used to carry a hand-maintained issue index mirroring GitHub. Within three
+weeks that index had ten issues marked open that were closed, two marked shipped
+that were never built, and two pull requests described as awaiting merge that
+didn't exist. A second copy of a database you can't keep in sync is worse than
+no copy.)
 
 ## 1. Vision
 
-Stockholm Swing is the single, trustworthy answer to "where can I swing dance in Stockholm this week?" It should be fast, correct, shareable, and cheap enough in maintenance effort that it survives the maintainer losing interest, travelling for a month, or handing it over entirely. Success looks like: dancers subscribe to it from their calendar app, organizers submit events themselves, Google surfaces its events directly in search, and the weekly maintenance load is "review a few pull requests on a phone."
+Stockholm Swing is the single, trustworthy answer to "where can I swing dance in
+Stockholm this week?" It should be fast, correct, shareable, and cheap enough in
+maintenance effort that it survives the maintainer losing interest, travelling
+for a month, or handing it over entirely.
 
-Three principles govern every decision below:
+Success looks like: dancers subscribe to it from their calendar app, organizers
+submit events themselves, Google surfaces its events directly in search, and the
+weekly maintenance load is "review a few pull requests on a phone."
 
-1. **Structured data is the truth; scraped prose is decoration.** Badges, times, and prices come from our fields and are always correct. Organizer descriptions are displayed but never trusted.
-2. **No servers, no accounts, no database.** The site is static files built from CSVs in this repo. Every feature must fit inside that model. This is what makes the project survivable on zero budget and near-zero attention.
-3. **Humans review diffs; robots produce them.** Scrapers, form intake, and validation all run as GitHub Actions that open pull requests. A human only ever approves or rejects a diff.
+Three principles govern every decision here. They're stated in full in
+[`../CLAUDE.md`](../CLAUDE.md) and [`CONTRIBUTING.md`](CONTRIBUTING.md); in
+short: **structured data is the truth**, **no servers, accounts or database**,
+and **humans review diffs, robots produce them**.
 
 ## 2. Architecture decision: repo-as-database
 
-**Decision:** Migrate the source of truth from the Google Sheet to CSV files in this repository under `/data/`. The [Google Form](https://docs.google.com/forms/d/e/1FAIpQLSd87pOy31N_3xKthqalT-sDrFB2yoe74Z8HGr8q1HSs6Pis2g/viewform) remains the organizer-facing intake; its responses sheet becomes an inbox that an Action drains into pull requests. The site reads `/data/` at build time and is fully static; a Vercel deploy hook rebuilds on every push to `main`.
+**Decision:** The source of truth is CSV files in this repository under `/data/`,
+not a Google Sheet. The [Google Form](https://docs.google.com/forms/d/e/1FAIpQLSd87pOy31N_3xKthqalT-sDrFB2yoe74Z8HGr8q1HSs6Pis2g/viewform)
+remains the organizer-facing intake; its responses sheet is an inbox that an
+Action drains into pull requests. The site reads `/data/` at build time and is
+fully static; a Vercel deploy hook rebuilds on every push to `main`.
 
-**Why:** Every planned automation (scraper PRs, CI validation, weekly health checks, diff-based review) requires a pull-request workflow, which a sheet cannot provide. Sheet edits are live instantly with no review gate, history is opaque, validation can only run after publication, and the published-CSV endpoint is coupled to one personal Google account — the worst possible bus-factor. The sheet's only real advantage, friction-free entry for non-technical people, is preserved through the form. Direct quick edits move to GitHub's web editor, which is adequate.
+**Why:** Every automation the project depends on — scraper PRs, CI validation,
+diff-based review — requires a pull-request workflow, which a sheet cannot
+provide. Sheet edits go live instantly with no review gate, history is opaque,
+validation can only run after publication, and the published-CSV endpoint is
+coupled to one personal Google account: the worst possible bus-factor. The
+sheet's one real advantage, friction-free entry for non-technical people, is
+preserved through the form. Direct quick edits move to GitHub's web editor,
+which is adequate.
 
-**Consequences:** The runtime CSV fetch and client-side PapaParse step are removed entirely. ISR becomes unnecessary for data freshness (rebuild-on-push covers it); only time-relative UI ("Happening Now", "Tomorrow") needs client-side computation after hydration, since static HTML cannot know the current time.
+**Consequences:** No runtime CSV fetch and no client-side parsing. ISR is
+unnecessary for data freshness — rebuild-on-push covers it. Only time-relative
+UI ("Happening Now", "Tomorrow") is computed client-side after hydration, since
+static HTML cannot know the current time.
 
 ### Data model
 
-Three CSVs, mirroring the existing series/exceptions/oneoffs design:
+Five CSVs under `/data`: `venues.csv` (the venue registry), `series.csv`
+(recurring weeklies), `exceptions.csv` (per-date overrides for a series),
+`oneoffs.csv` (single and multi-day events), and `bands.csv` (the scraper's
+swing-band trust roster, which never produces calendar entries).
 
-| File | Purpose | Key columns |
+**The column-by-column contract lives in [`DATA.md`](DATA.md) and is
+authoritative.** It is deliberately not restated here — an earlier version of
+this section carried a copy that drifted, describing `exceptions.csv` as
+`(series_id, date, field, value)` key-value rows when it in fact shipped with a
+column per overridable field.
+
+A build-time expansion step turns series + exceptions into concrete occurrences
+for the next ~10 weeks. `status` provides the draft/live gate; `cancelled` is a
+per-date exception, never a deletion, so the site can *show* the cancellation.
+Past one-offs are retained as `status=ended`, never deleted — the build renders
+only `live`.
+
+## 3. Decisions on record
+
+Choices that were made once, for reasons, and that a later contributor could
+plausibly undo without knowing — or waste a day re-deriving. Each is recorded in
+full where it applies; this is only the map. **The reasoning stays in the linked
+doc, deliberately: a summary here would be a second copy to drift.**
+
+If you're about to reverse one of these, that's allowed — but read the entry
+first and argue against it, rather than around it.
+
+### Data & intake
+
+| Decision | Recorded in |
+|---|---|
+| The source of truth is CSVs in this repo, not the Google Sheet | §2 above |
+| Form responses are read from a **published CSV**, not the Sheets API with a service account | [`architecture/FORM_SYNC.md`](architecture/FORM_SYNC.md) |
+| Form rows land as `status=live`; the `draft`-then-promote step was tried and removed as redundant with PR review | [`architecture/FORM_SYNC.md`](architecture/FORM_SYNC.md) |
+| Corrections are a one-way report to a human, never auto-matched and applied | [`architecture/FORM_SYNC.md`](architecture/FORM_SYNC.md) |
+| Cancellations are exceptions, never deletions; past events become `status=ended`, never deleted | [`DATA.md`](DATA.md) |
+| Nothing may invent a venue — an unknown one is flagged for a human, never created | [`DATA.md`](DATA.md), [`architecture/SCRAPERS.md`](architecture/SCRAPERS.md) |
+| Overlapping-event detection is a CI **warning**, not a failure — some venues genuinely run two things at once | [`DATA.md`](DATA.md) |
+
+### Scrapers
+
+| Decision | Recorded in |
+|---|---|
+| **The SSS Google Calendar is unusable. Do not re-try it.** Recorded negative result with the evidence | [`architecture/SCRAPERS.md`](architecture/SCRAPERS.md) |
+| Facebook and Instagram are not scraped nightly; those sources are hand-entered, and #211 is the live alternative | [`architecture/SCRAPERS.md`](architecture/SCRAPERS.md) |
+| Relevance is declared **per source**, not global; mixed venues trust by band roster, not keywords | [`architecture/SCRAPERS.md`](architecture/SCRAPERS.md) |
+| Keyword matching is **word-boundary, not substring** — visible false-includes beat silent misses | [`architecture/SCRAPERS.md`](architecture/SCRAPERS.md) |
+| Rows are written by **surgical text edit**, never parse → mutate → unparse, or the nightly diff becomes the whole file | [`architecture/SCRAPERS.md`](architecture/SCRAPERS.md) |
+| The validation gate blocks only on errors the scrape *introduces*, not pre-existing ones | [`architecture/SCRAPERS.md`](architecture/SCRAPERS.md) |
+
+### Design
+
+| Decision | Recorded in |
+|---|---|
+| Dark mode is **opt-in via the toggle**. There is deliberately no `prefers-color-scheme` fallback | [`DESIGN.md`](DESIGN.md) |
+| The dark theme **inverts the elevation ladder** — `--surface-container-lowest` is the *top*, breaking M3 convention on purpose | [`DESIGN.md`](DESIGN.md) |
+| `--live` (the "happening now" red) is theme-invariant; brand provider fills and OG images are always light | [`DESIGN.md`](DESIGN.md) |
+| Raw Tailwind colour classes are banned and **linted** — this bug shipped twice | [`DESIGN.md`](DESIGN.md), `eslint-rules/no-hardcoded-color-classes.mjs` |
+
+### Code
+
+| Decision | Recorded in |
+|---|---|
+| `src/` layering is enforced by **review, not lint** — a check firing on every PR would train everyone to ignore it | [`architecture/CODE_STRUCTURE.md`](architecture/CODE_STRUCTURE.md) |
+| One type crosses the data boundary (`SwingEvent`), reusing the data layer's enums rather than re-declaring them | [`architecture/CODE_STRUCTURE.md`](architecture/CODE_STRUCTURE.md) |
+| `lib/date/calendar.ts` is UTC arithmetic **on strings** — no `Date` method without `UTC` in its name (#248) | [`architecture/CODE_STRUCTURE.md`](architecture/CODE_STRUCTURE.md) |
+| Hydration-sensitive date formats use fixed lookup arrays, not `Intl` — ICU output differs between Node and browsers (#200) | [`AGENTS.md`](AGENTS.md) |
+| `scripts/` is plain `.mjs` with no build step; `validate-data.mjs` re-declares the enums rather than importing the TS types | [`AGENTS.md`](AGENTS.md) |
+
+### Process
+
+| Decision | Recorded in |
+|---|---|
+| The changelog is hand-curated with **no CI gate**, on purpose — "is this major?" is a judgment call | [`../CLAUDE.md`](../CLAUDE.md) |
+| `robots.txt` deliberately **allows** AI crawlers; being quotable is the strategy | [`SEO.md`](SEO.md) |
+| This file is not a status tracker. GitHub issues are the authority; an index here drifted badly and was removed | top of this file |
+
+## 4. Milestones
+
+Issues are grouped under five milestones on GitHub. **GitHub is where their
+status lives**; this is only what each one means.
+
+| | Milestone | What it covers |
 |---|---|---|
-| `data/series.csv` | Weekly/recurring events | `id, name, style, venue_id, weekday, start, end, price, beginner_class, music (live/dj), organizer, url, description, status (draft/live/ended), valid_from, valid_to` |
-| `data/exceptions.csv` | Per-date overrides for a series | `series_id, date, field, value` (e.g. `dj`, `band`, `cancelled`, `start`) |
-| `data/oneoffs.csv` | Single or multi-day events | same shape as series plus explicit `date`/`end_date`; `status` is `draft/live/ended/cancelled` |
-| `data/venues.csv` | Venue registry | `id, name, address, neighborhood, lat, lng, maps_url` |
+| **M1** | Data correctness & card design | The product is trust. Remove anything on the page that contradicts itself, and promote the three decision-driving facts — price, beginner-friendliness, live music vs DJ — from buried prose into scannable badges. |
+| **M2** | Distribution | The features that bring people in and keep them: the ICS subscription feed, per-event add-to-calendar, stable permalinks, JSON-LD for search, and link-unfurl images. |
+| **M3** | UX polish | Freshness signals, neighborhood tags, designed empty states, accessibility, PWA install. None urgent; all compounding. |
+| **M4** | Data platform & automation | The maintenance-cost milestone: repo-as-database, series expansion, CI validation, nightly scraper PRs, form intake. End state — the maintainer's recurring job is reviewing diffs. |
+| **M5** | Community & governance | Contributor docs, the corrections path, per-venue stewards, documented ownership, and a second maintainer. What makes the project outlive one person's attention. |
 
-A build-time expansion step turns series + exceptions into concrete occurrences for the next N weeks. `status` provides the draft/live gate; `cancelled` is a per-date exception, never a deletion, so the site can *show* the cancellation. Past one-offs are retained as `status=ended` (kept for a possible future archive), never deleted — the build renders only `live`.
+## 5. What we deliberately will not build
 
-## 3. Workstreams
+Before building a new page, section, or surface, check this list. It is short on
+purpose, and it is the cheapest thing in the repo to read.
 
-The work is organized into five milestones. The first three transform the product; the last two transform its maintenance cost and ownership. Recommended order: **M2 → M1 → M4 → M3 → M5**, except that the repo-data migration (M4-1) should land early because M2's server rendering builds on it. Realistically: M4-1, then M2, then M1, then the rest as energy allows.
+- **User accounts, an organizer dashboard, a CMS, or any server-side state.**
+  Breaks principle 2. The whole survivability argument rests on "static files
+  built from CSVs."
+- **A database.** `/data` is the database; git is its history and its audit log.
+- **Push notifications.** The ICS feed already puts changes in people's pockets.
+- **A map view.** Maps links plus neighborhood tags cover it at a fraction of
+  the maintenance surface. (`lat`/`lng` exist in `venues.csv` but nothing reads
+  them — see `DATA.md`.)
+- **Machine translation of descriptions.** Organizers write in Swedish or
+  English; both are fine, and a bad translation is worse than the original.
+- **A dedicated microsite for one event or festival.** This one is written from
+  experience: the Herräng microsite was built, shipped, iterated on for days,
+  and then reverted wholesale, because a single-purpose event aggregator is not
+  a venue for sub-sites. If a task looks like a new top-level surface that isn't
+  "list Stockholm swing events," ask before building.
 
-### M1 — Data correctness & card design
+Each of these either breaks a principle or adds maintenance surface
+disproportionate to its value. Proposing one isn't forbidden — but argue it
+against this list first, in an issue, before writing code.
 
-The aggregator's product is trust. This milestone removes everything on the current page that contradicts itself (stale "14/3" dates inside June events, duplicated Danshuset cards, "DJ: TBA" noise) and promotes the three decision-driving facts — price, beginner-friendliness, live music vs DJ — from buried prose to scannable badges. It also adds a first-class cancelled state and retires the mushy "All Swing Styles" tag.
+## 6. Operating cadence
 
-### M2 — Distribution
+**Weekly, ~15 minutes.** Merge or reject the scraper and form PRs; fill in
+DJ/band lineups the scrapers missed.
 
-The features that bring people in and keep them. An ICS subscription feed (`webcal://`) puts the calendar inside every regular's phone permanently and is the single highest-leverage feature in the plan. Per-event add-to-calendar, stable permalinks with share buttons, JSON-LD `Event` markup (Google event-search placement), and a proper OG image (Facebook/WhatsApp unfurls) complete the loop. Server-side rendering of event data is a prerequisite for the structured-data wins and removes the load spinner.
+**Monthly.** Stewards confirm their venue's listings; check that each scraper
+has produced at least one non-empty diff in the last three weeks — a silent
+scraper usually means a changed selector, not a quiet venue.
 
-### M3 — UX polish
-
-URL-persisted filter state (shareable "Balboa view"), a day filter, designed empty states that route people to the form and the ICS feed, an "updated X ago" freshness signal, neighborhood tags on venues, a heading-hierarchy and accessibility pass, and a PWA manifest. None of these are urgent; all of them compound.
-
-### M4 — Data platform & automation
-
-The maintenance-cost milestone. Migrate data into the repo (the architecture decision above), implement series expansion, add CI schema validation on every PR, convert the per-site scraping from the manual Chrome extension to nightly scheduled Actions that open PRs (extension remains only for Facebook-walled sources), add a Monday "health report" Action, and wire the Google Form responses into automatic PRs. End state: the maintainer's recurring job is reviewing diffs.
-
-### M5 — Community & governance
-
-CONTRIBUTING.md and a written data contract so human and agent contributors can work safely; a "Wrong info?" issue-form link on every card; per-venue stewards recruited from the scene (one regular per studio, monthly glance at their venue's listings); HANDOVER.md documenting domain, deploys, and access; migration of the repo to a GitHub org with at least two additional maintainers. This milestone is what makes the project outlive any one person's attention.
-
-## 4. What we deliberately will not build
-
-User accounts, an organizer dashboard, a database, machine translation of descriptions, push notifications (the ICS feed serves this need), or a map view (Maps links plus neighborhood tags cover it). Each of these would break principle 2 or add maintenance surface disproportionate to its value.
-
-## 5. Issue index
-
-GitHub issue numbers are authoritative. Priorities: P0 = do first, P1 = high value, P2 = when convenient. ✓ = shipped and closed; ✗ = closed as `not_planned` (decided against, never built); open = still open.
-
-**State as of 2026-07-25.** GitHub issue state is authoritative; this paragraph summarises it.
-
-**M1 and M2 are complete.** **M3 is complete** apart from the swingout scrolling animation (#58) and the resources page (#60).
-
-- **Dark mode** (umbrella #183) shipped and is closed, along with all nine sub-issues (#184–#192). It is opt-in via the header toggle only — there is deliberately no `prefers-color-scheme` fallback, so a first-time visitor always gets light — and the choice persists in `localStorage`. See `docs/DESIGN.md` § Dark theme for the token table and rules.
-- **Designed empty states** (#23), the **accessibility & heading-hierarchy pass** (#26), **dancefloor tags** (#59), **"updated X ago"** (#24), **neighborhood tags** (#25) and the **PWA manifest** (#27) are all shipped and closed. Accessibility work has continued past #26 in smaller PRs: screen-reader text on `target="_blank"` links (#239), the `EventRow` accordion (#203), title tooltips on icon-only buttons (#213), an Escape handler on the filter panel (#229), `aria-current` on active nav links (#230), and mobile-menu Escape + ARIA (#246).
-- **Two M3 items were closed as `not_planned`, not shipped:** filter state in the URL (#21) and the day filter / day-jump strip (#22). Neither exists in the code — `useSearchParams` and a day facet have never been in the repo. The homepage filters are search, style, venue and live-music-only, held in component state and not reflected in the URL. Earlier revisions of this document listed both as shipped; that was wrong.
-
-**M4 is complete apart from the weekly health report (#6).** Nightly scrapers (#4) with exception proposals (#82), CI schema validation (#3), the repo-as-database migration (#1), series expansion (#2), and clash detection (#93) are all closed. The Facebook/Instagram intake issues (#133, #134) and the SSS-specific workflow (#94) are closed as completed. **Form → PR sync** (#5) shipped — `scripts/form-sync.mjs`, `docs/architecture/FORM_SYNC.md`: published-CSV polling rather than a service account, rows land as `status=live` because the PR review is the only gate a short-lived `draft`-then-promote step was tried and dropped as redundant. It still needs the one-time "Publish to web" + `FORM_RESPONSES_CSV_URL` secret setup documented in that file before it is live.
-
-The one open M4 item beyond #6 is field-level provenance for scraper-owned rows (#66): the nightly run re-derives every field from the source, so a human edit to a scraper-owned row gets re-proposed as a revert every night until the source catches up.
-
-**M5 is partially started.** `CONTRIBUTING.md`, the open-source About section (#45) and the changelog timeline all shipped. **"Wrong info?" reporting is implemented but #28 is still open** — a flag button in every card, row and permalink action row opens a correction dialog (what's wrong / what it should say / how you know) and hands the answers plus a snapshot of the listing to `mailto:corrections@stockholmswing.com`; no endpoint. See `src/features/corrections/`. The issue predates the implementation and describes a GitHub issue-form approach rather than the mailto one that shipped; close it or re-scope it. The event's `url` button is labelled "Source". Still open: HANDOVER.md + org migration + a second maintainer (#30), and per-venue stewards (#31).
-
-**Newer proposals not in the original five milestones:** Discord event intake (#211) — poll a `#submit-events` channel, LLM-parse text and flyer screenshots into `oneoffs.csv`, open a PR; same poll → parse → validate → one-PR shape as the scraper and form-sync, chosen over a live bot because a persistent gateway connection would break principle 2.
-
-**Code structure.** `src/` was reorganised into feature-first layers (`app/` → `features/` → `components/` → `lib/`) with the 662-line homepage listing component decomposed and the duplicated modal, label and URL-constant code consolidated. See `docs/architecture/CODE_STRUCTURE.md` for the layering rules and a "where does my change go?" table; read it before adding a file. That work also resolves two open cleanup issues — shared calendar-feed and intake-form constants (#222, now `src/lib/site.ts`) and the duplicated filter-summary logic (#223, now `src/features/events/model/sections.ts`) — which can be closed once it merges.
-
-**Known bugs.** `venues.csv`'s `maps_url` column is documented as a Maps-link override but nothing reads it (#249). The per-event OG image's emoji render as blanks because satori has no emoji font loaded (#250).
-
-**Next highest-leverage open items:** resources page (#60), weekly health report (#6), scraper provenance (#66), and the ownership work in #30.
-
-| # | Issue | Milestone | Priority | |
-|---|---|---|---|---|
-| 1 | Migrate source of truth from Google Sheet to /data CSVs | M4 | P0 | ✓ |
-| 2 | Series + exceptions expansion at build time | M4 | P0 | ✓ |
-| 3 | CI schema validation for /data | M4 | P0 | ✓ |
-| 4 | Nightly scraper Actions → PRs | M4 | P1 | ✓ |
-| 5 | Google Form → PR sync Action | M4 | P1 | ✓ |
-| 6 | Weekly health-report Action | M4 | P2 | open |
-| 7 | Server-side data loading; remove runtime CSV fetch | M2 | P0 | ✓ |
-| 8 | ICS subscription feed (webcal) | M2 | P2 | ✓ |
-| 9 | Per-event "Add to calendar" (.ics) | M2 | P1 | ✓ |
-| 10 | JSON-LD Event structured data | M2 | P2 | ✓ |
-| 11 | Event permalinks + share button | M2 | P1 | ✓ |
-| 12 | OG image for link unfurls | M2 | P1 | ✓ |
-| 13 | Strip/flag stale dates in scraped descriptions | M1 | P0 | ✓ |
-| 14 | Collapse multi-day runs of the same event into one card | M1 | P1 | ✓ |
-| 15 | Hide TBA fields | M1 | P1 | ✓ |
-| 16 | Structured price field + badge | M1 | P0 | ✓ |
-| 17 | Beginner-class / beginner-friendly badge | M1 | P0 | ✓ |
-| 18 | Promote live-band vs DJ to badge | M1 | P1 | ✓ |
-| 19 | Cancelled event state | M1 | P1 | ✓ |
-| 20 | Rename "All Swing Styles" tag | M1 | P2 | ✓ |
-| 21 | Filter state in URL | M3 | P2 | ✗ |
-| 22 | Day filter / day-jump strip | M3 | P2 | ✗ |
-| 23 | Designed empty states | M3 | P2 | ✓ |
-| 24 | "Updated X ago" freshness signal | M3 | P2 | ✓ |
-| 25 | Neighborhood tags on venues | M3 | P2 | ✓ |
-| 26 | Accessibility & heading-hierarchy pass | M3 | P2 | ✓ |
-| 27 | PWA manifest + icons | M3 | P2 | ✓ |
-| 28 | "Wrong info?" report link per card | M5 | P1 | open¹ |
-| 29 | CONTRIBUTING.md + data contract docs | M5 | P1 | ✓ |
-| 30 | HANDOVER.md, org migration, second maintainer | M5 | P2 | open |
-| 31 | Recruit per-venue stewards | M5 | P2 | open |
-| 44 | "Just Ended" badge for events earlier today | M1 | P1 | ✓ |
-| 45 | Open-source / GitHub section on About page | M5 | P2 | ✓ |
-| 48 | Merge multi-day one-offs into a single card | M1 | P1 | ✓ |
-| 50 | Add Lindyhop events from Årstaliden | M4 | P1 | ✓ |
-| 52 | Sprallen neighborhood fix | M1 | P2 | ✓ |
-| 56 | Move Beginner Class badge position | M1 | P2 | ✓ |
-| 58 | Swingout scrolling animation | M3 | P2 | open |
-| 59 | Dancefloor size tags on venues | M3 | P2 | ✓ |
-| 60 | Resources page | M3 | P1 | open |
-| 61 | Events visible before filter/hero section (layout fix) | M1 | P1 | ✓ |
-| 66 | Field-level provenance for scraper-owned rows | M4 | P1 | open |
-| 69 | Chicago scraper source | M4 | P1 | ✓ |
-| 73 | Dynamic rotating H1 on homepage | M3 | P1 | ✓ |
-| 74 | SEO: homepage `<title>` and `<meta description>` | M3 | P2 | ✓ |
-| 82 | Scraper proposes exceptions when a series event changes | M4 | P1 | ✓ |
-| 87 | Event cards should be fully clickable | M1 | P1 | ✓ |
-| 88 | Meta fixes (issue template form link) | M5 | P0 | ✓ |
-| 93 | Clash detection between overlapping events | M4 | P2 | ✓ |
-| 94 | Easier SSS event addition workflow | M4 | P1 | ✓ |
-| 107 | Fix ended events so data validation succeeds | M4 | P0 | ✓ |
-| 133 | SSS event intake — Facebook-only source | M4 | P0 | ✓ |
-| 134 | Facebook & Instagram event intake for remaining venues | M4 | P0 | ✓ |
-| 183 | Dark mode (umbrella): user-toggleable dark theme | M3 | P2 | ✓ |
-| 184 | Dark mode R1: add semantic status and shadow tokens to globals.css | M3 | P2 | ✓ |
-| 185 | Dark mode R2: replace hardcoded text-white with on-* tokens | M3 | P2 | ✓ |
-| 186 | Dark mode R3: tokenize status badges and card states | M3 | P2 | ✓ |
-| 187 | Dark mode R4: unify off-palette zinc/amber onto system tokens | M3 | P2 | ✓ |
-| 188 | Dark mode D1: dark token set in globals.css | M3 | P2 | ✓ |
-| 189 | Dark mode D2: no-flash theme bootstrap script + themeColor viewport fix | M3 | P2 | ✓ |
-| 190 | Dark mode D3: sun/moon theme toggle in the header | M3 | P2 | ✓ |
-| 191 | Dark mode D4: dark-theme QA pass across all states and surfaces | M3 | P2 | ✓ |
-| 192 | Dark mode D5: document the dark theme (DESIGN.md, PROJECT.md) | M3 | P2 | ✓ |
-| 211 | Discord event intake → PR | — | P1 | open |
-| 222 | Consolidate calendar-feed and intake-form URLs into constants | — | P2 | open² |
-| 223 | Empty-state heading duplicates filter-summary logic | — | P2 | open² |
-| 248 | Week predicates use local time, not Europe/Stockholm | — | P2 | ✓ |
-| 249 | `venues.csv` `maps_url` documented but never used | — | P2 | open |
-| 250 | Per-event OG image emoji render as blanks | — | P2 | open |
-
-¹ Implemented and live (`src/features/corrections/`); the issue text describes a
-GitHub issue-form approach rather than the `mailto:` one that shipped, so it needs
-closing or re-scoping rather than building.
-
-² Addressed by the `src/` restructure; closeable once that merges.
-
-## 6. Operating cadence (post-M4 steady state)
-
-Weekly, ~15 minutes: merge or reject scraper and form PRs; glance at the Monday health issue; fill in DJ/band lineups for the week if scrapers missed them. Monthly: stewards confirm their venue's listings; check that each scraper produced at least one non-empty diff in the last three weeks (the health report flags this). Quarterly: review HANDOVER.md accuracy and access lists.
+**Quarterly.** Review who has access to what: domain, Vercel, the form, the repo.

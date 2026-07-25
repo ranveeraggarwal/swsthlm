@@ -4,8 +4,11 @@ You are working on **Stockholm Swing** (stockholmswing.com), a swing-dance event
 aggregator for Stockholm. Start with [`CLAUDE.md`](../CLAUDE.md) for the project
 overview and doc map; this file covers the technical detail agents need day-to-day.
 
-For project state, sequencing, and the "won't build" list see
-[`docs/PROJECT.md`](PROJECT.md). For the data schema see
+For the architecture decisions and the "won't build" list see
+[`docs/PROJECT.md`](PROJECT.md) — read its ["won't build" list](PROJECT.md#5-what-we-deliberately-will-not-build)
+before building any new surface, and its "decisions on record" index before
+reversing anything that looks deliberate.
+For what's open or next, use GitHub issues, not that file. For the data schema see
 [`docs/DATA.md`](DATA.md). For the design system (colors, typography, spacing,
 components) see [`docs/DESIGN.md`](DESIGN.md). For PR conventions and branch
 naming see [`docs/CONTRIBUTING.md`](CONTRIBUTING.md). For the scraper subsystem
@@ -81,8 +84,11 @@ leave it `live`.
 - **`SwingEvent` reuses the data layer's enums.** `style` is a `Style`, not a
   `string`. If you find yourself widening it or writing `as Style`, the fix is
   probably a label in `labels.ts` instead.
-- **The scraper's blast radius is `oneoffs.csv` only.** It reads `series.csv` to
-  dedup but never writes it, and never invents venues — see SCRAPERS.md.
+- **The scraper's blast radius is `oneoffs.csv`, `exceptions.csv` and
+  `bands.csv`.** It reads `series.csv` and `venues.csv` to dedup but never
+  writes them, and never invents a venue. New bands go in a *separate*
+  `bot/new-bands` PR so event review isn't blocked on vetting an act — see
+  SCRAPERS.md.
 - **The changelog is hand-curated, not generated.** `src/features/changelog/entries.ts`
   feeds the About page's collapsed "What's new" timeline. When you ship a
   major, user-visible feature, add one line to the current month (create the
@@ -128,9 +134,10 @@ before opening a PR, not after.
   `npm run lint` on any raw Tailwind palette class (`bg-white`,
   `text-zinc-500`, …) inside a `className`. It can only see literal/template
   string content, not values from an identifier — so a color baked into a
-  variable (e.g. the brand-button color maps in `AddToCalendarButton.tsx`/
-  `SubscribeButton.tsx`, which are intentionally theme-independent per
-  DESIGN.md) won't be flagged, and a reviewer still needs to look there.
+  variable (e.g. `PROVIDER_FILL` in
+  `src/components/ui/CalendarProviderMarks.tsx`, intentionally
+  theme-independent per DESIGN.md) won't be flagged, and a reviewer still
+  needs to look there.
   Before writing a color class, ask whether it needs a different value in
   dark mode; if yes, it's a token, not a Tailwind palette class. Structural
   keylines and shadows specifically use `--border-ink` / `--shadow-ink`,
@@ -151,9 +158,9 @@ before opening a PR, not after.
   (`/herrang`) was built, shipped, and iterated on for days, then reverted
   wholesale because a dedicated microsite doesn't fit a single-purpose
   event aggregator (#215–#219). If a task looks like a new page or section
-  that isn't "list Stockholm swing events," check `docs/PROJECT.md` §4
-  ("what we deliberately will not build") and ask before building, not
-  after.
+  that isn't "list Stockholm swing events," check PROJECT.md's
+  ["what we deliberately will not build"](PROJECT.md#5-what-we-deliberately-will-not-build) — the Herräng
+  microsite is in there by name — and ask before building, not after.
 - **When a new validation rule has a judgment call about strictness, surface
   the tradeoff instead of defaulting to the strictest option.**
   Overlapping-event detection (#93) shipped as a CI *warning*, not a hard

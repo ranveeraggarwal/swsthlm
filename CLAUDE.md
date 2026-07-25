@@ -33,4 +33,8 @@ Adding the line is part of the feature PR, not a follow-up. There is no CI gate 
 
 ## Known user-visible bugs (verify against live site first — caching lies)
 
-None currently tracked. (Previously: #48 Danshuset duplicate cards — fixed; #87 card clickability — fixed.)
+- **#248 — week predicates use the viewer's local timezone, not Europe/Stockholm.** `isCurrentWeek` / `isNextWeek` / `isSunday` / `isTomorrow` in `src/lib/date/calendar.ts` read UTC-midnight dates back with local-time methods. Correct at UTC+1/+2 (so: correct for almost all traffic), off by a day for viewers west of Greenwich — on a Sunday they miss the "Coming Up" promotion. Documented in a comment at the top of that file.
+- **#249 — `venues.csv` `maps_url` is a silent no-op.** `docs/DATA.md` calls it a Maps-link override; nothing reads it. Every venue link is built from name + address by `venueMapsUrl()`.
+- **#250 — the per-event OG image's emoji render as blanks.** `opengraph-image.tsx` uses 🎷 🎧 📍 but loads only Playfair and Jakarta; satori has no emoji glyphs, so they vanish and leave the fact lines oddly indented. The site-level OG image is fine (it uses in-font `♪ ♫ ♪`).
+
+(Previously: #48 Danshuset duplicate cards — fixed; #87 card clickability — fixed.)

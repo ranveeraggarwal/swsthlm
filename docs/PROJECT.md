@@ -1,6 +1,6 @@
 # Stockholm Swing — Project Plan
 
-**Repo:** `ranveeraggarwal/swsthlm` · **Site:** stockholmswing.com · **Last revised:** 2026-07-09
+**Repo:** `ranveeraggarwal/swsthlm` · **Site:** stockholmswing.com · **Last revised:** 2026-07-25
 
 ## 1. Vision
 
@@ -63,9 +63,29 @@ User accounts, an organizer dashboard, a database, machine translation of descri
 
 ## 5. Issue index
 
-GitHub issue numbers are authoritative. Priorities: P0 = do first, P1 = high value, P2 = when convenient. ✓ = merged/closed.
+GitHub issue numbers are authoritative. Priorities: P0 = do first, P1 = high value, P2 = when convenient. ✓ = shipped and closed; ✗ = closed as `not_planned` (decided against, never built); open = still open.
 
-**State as of 2026-07-09:** M1 complete. M2 complete — ICS feed (#8) and per-event add-to-calendar (#9) shipped alongside the earlier JSON-LD, permalinks, and OG image work. M3 well along — day filter (#22), "updated X ago" (#24), PWA manifest (#27) all shipped in addition to earlier filter-URL (#21), neighborhood tags (#25), H1/SEO work; **dark mode (umbrella #183) has shipped**: it's opt-in only via the header toggle (no `prefers-color-scheme` fallback — a first-time visitor always gets light) and the choice persists in `localStorage`, see `docs/DESIGN.md` § Dark theme for the full token table and rules. All four Phase 1 token/refactor issues (#184–#187) and Phase 2's token set, bootstrap script, and toggle (#188–#190) are merged to `main`; the D4 QA pass (#191) is done and open as PR #201 (`fix/dark-mode-qa`, one contrast fix to `AddToCalendarButton`/`SubscribeButton`), awaiting merge; this doc update (#192) is the closing step of the umbrella and will complete it once #191 merges. Remaining M3 items: designed empty states (#23), accessibility pass (#26), scrolling animation (#58), dancefloor tags (#59), resources page (#60). M4 nightly scrapers complete (#4) with exception-proposal logic (#82); new P0 issues filed for Facebook/Instagram intake (#133, #134) covering SSS and remaining venues; Form → PR sync (#5) shipped (`scripts/form-sync.mjs`, `docs/architecture/FORM_SYNC.md`) — published-CSV polling rather than a service account, rows land as `status=live` (the PR review is the only gate — a short-lived `draft`-then-promote step was tried and dropped as redundant); needs the one-time "Publish to web" + `FORM_RESPONSES_CSV_URL` secret setup documented there before it's live. M5 partially started (CONTRIBUTING.md, open-source About section, "Wrong info?" reporting #28 — a flag button in every card/row/permalink action row opening a correction dialog (what's wrong / what it should say / how you know) that hands the answers plus a snapshot of the listing to `mailto:corrections@stockholmswing.com`; no endpoint, see `src/features/corrections/`. The event's `url` button is labelled "Source"). Also worth flagging: an `EventRow`/date-formatting hydration mismatch was found incidentally during the dark-mode QA pass and is fixed in a standalone, not-yet-merged PR (#200, `fix/eventrow-date-hydration`) — unrelated to dark mode, no issue number of its own. The About page also carries a collapsed "What's new" changelog timeline (`src/features/changelog/`) — hand-curated, major user-visible features only, grouped by month; a feature PR is expected to add its own line. Next highest-leverage open items: Facebook/Instagram intake (#133, #134), resources page (#60), accessibility pass (#26).
+**State as of 2026-07-25.** GitHub issue state is authoritative; this paragraph summarises it.
+
+**M1 and M2 are complete.** **M3 is complete** apart from the swingout scrolling animation (#58) and the resources page (#60).
+
+- **Dark mode** (umbrella #183) shipped and is closed, along with all nine sub-issues (#184–#192). It is opt-in via the header toggle only — there is deliberately no `prefers-color-scheme` fallback, so a first-time visitor always gets light — and the choice persists in `localStorage`. See `docs/DESIGN.md` § Dark theme for the token table and rules.
+- **Designed empty states** (#23), the **accessibility & heading-hierarchy pass** (#26), **dancefloor tags** (#59), **"updated X ago"** (#24), **neighborhood tags** (#25) and the **PWA manifest** (#27) are all shipped and closed. Accessibility work has continued past #26 in smaller PRs: screen-reader text on `target="_blank"` links (#239), the `EventRow` accordion (#203), title tooltips on icon-only buttons (#213), an Escape handler on the filter panel (#229), `aria-current` on active nav links (#230), and mobile-menu Escape + ARIA (#246).
+- **Two M3 items were closed as `not_planned`, not shipped:** filter state in the URL (#21) and the day filter / day-jump strip (#22). Neither exists in the code — `useSearchParams` and a day facet have never been in the repo. The homepage filters are search, style, venue and live-music-only, held in component state and not reflected in the URL. Earlier revisions of this document listed both as shipped; that was wrong.
+
+**M4 is complete apart from the weekly health report (#6).** Nightly scrapers (#4) with exception proposals (#82), CI schema validation (#3), the repo-as-database migration (#1), series expansion (#2), and clash detection (#93) are all closed. The Facebook/Instagram intake issues (#133, #134) and the SSS-specific workflow (#94) are closed as completed. **Form → PR sync** (#5) shipped — `scripts/form-sync.mjs`, `docs/architecture/FORM_SYNC.md`: published-CSV polling rather than a service account, rows land as `status=live` because the PR review is the only gate a short-lived `draft`-then-promote step was tried and dropped as redundant. It still needs the one-time "Publish to web" + `FORM_RESPONSES_CSV_URL` secret setup documented in that file before it is live.
+
+The one open M4 item beyond #6 is field-level provenance for scraper-owned rows (#66): the nightly run re-derives every field from the source, so a human edit to a scraper-owned row gets re-proposed as a revert every night until the source catches up.
+
+**M5 is partially started.** `CONTRIBUTING.md`, the open-source About section (#45) and the changelog timeline all shipped. **"Wrong info?" reporting is implemented but #28 is still open** — a flag button in every card, row and permalink action row opens a correction dialog (what's wrong / what it should say / how you know) and hands the answers plus a snapshot of the listing to `mailto:corrections@stockholmswing.com`; no endpoint. See `src/features/corrections/`. The issue predates the implementation and describes a GitHub issue-form approach rather than the mailto one that shipped; close it or re-scope it. The event's `url` button is labelled "Source". Still open: HANDOVER.md + org migration + a second maintainer (#30), and per-venue stewards (#31).
+
+**Newer proposals not in the original five milestones:** Discord event intake (#211) — poll a `#submit-events` channel, LLM-parse text and flyer screenshots into `oneoffs.csv`, open a PR; same poll → parse → validate → one-PR shape as the scraper and form-sync, chosen over a live bot because a persistent gateway connection would break principle 2.
+
+**Code structure.** `src/` was reorganised into feature-first layers (`app/` → `features/` → `components/` → `lib/`) with the 662-line homepage listing component decomposed and the duplicated modal, label and URL-constant code consolidated. See `docs/architecture/CODE_STRUCTURE.md` for the layering rules and a "where does my change go?" table; read it before adding a file. That work also resolves two open cleanup issues — shared calendar-feed and intake-form constants (#222, now `src/lib/site.ts`) and the duplicated filter-summary logic (#223, now `src/features/events/model/sections.ts`) — which can be closed once it merges.
+
+**Known bugs.** The week predicates in `src/lib/date/calendar.ts` use the viewer's local timezone rather than Europe/Stockholm, so the Sunday "Coming Up" promotion and the Tomorrow badge misclassify for viewers west of Greenwich (#248). `venues.csv`'s `maps_url` column is documented as a Maps-link override but nothing reads it (#249). The per-event OG image's emoji render as blanks because satori has no emoji font loaded (#250).
+
+**Next highest-leverage open items:** resources page (#60), weekly health report (#6), scraper provenance (#66), and the ownership work in #30.
 
 | # | Issue | Milestone | Priority | |
 |---|---|---|---|---|
@@ -89,14 +109,14 @@ GitHub issue numbers are authoritative. Priorities: P0 = do first, P1 = high val
 | 18 | Promote live-band vs DJ to badge | M1 | P1 | ✓ |
 | 19 | Cancelled event state | M1 | P1 | ✓ |
 | 20 | Rename "All Swing Styles" tag | M1 | P2 | ✓ |
-| 21 | Filter state in URL | M3 | P2 | ✓ |
-| 22 | Day filter / day-jump strip | M3 | P2 | ✓ |
-| 23 | Designed empty states | M3 | P2 | open |
+| 21 | Filter state in URL | M3 | P2 | ✗ |
+| 22 | Day filter / day-jump strip | M3 | P2 | ✗ |
+| 23 | Designed empty states | M3 | P2 | ✓ |
 | 24 | "Updated X ago" freshness signal | M3 | P2 | ✓ |
 | 25 | Neighborhood tags on venues | M3 | P2 | ✓ |
-| 26 | Accessibility & heading-hierarchy pass | M3 | P2 | open |
+| 26 | Accessibility & heading-hierarchy pass | M3 | P2 | ✓ |
 | 27 | PWA manifest + icons | M3 | P2 | ✓ |
-| 28 | "Wrong info?" report link per card | M5 | P1 | ✓ |
+| 28 | "Wrong info?" report link per card | M5 | P1 | open¹ |
 | 29 | CONTRIBUTING.md + data contract docs | M5 | P1 | ✓ |
 | 30 | HANDOVER.md, org migration, second maintainer | M5 | P2 | open |
 | 31 | Recruit per-venue stewards | M5 | P2 | open |
@@ -107,7 +127,7 @@ GitHub issue numbers are authoritative. Priorities: P0 = do first, P1 = high val
 | 52 | Sprallen neighborhood fix | M1 | P2 | ✓ |
 | 56 | Move Beginner Class badge position | M1 | P2 | ✓ |
 | 58 | Swingout scrolling animation | M3 | P2 | open |
-| 59 | Dancefloor size tags on venues | M3 | P2 | open |
+| 59 | Dancefloor size tags on venues | M3 | P2 | ✓ |
 | 60 | Resources page | M3 | P1 | open |
 | 61 | Events visible before filter/hero section (layout fix) | M1 | P1 | ✓ |
 | 66 | Field-level provenance for scraper-owned rows | M4 | P1 | open |
@@ -117,12 +137,12 @@ GitHub issue numbers are authoritative. Priorities: P0 = do first, P1 = high val
 | 82 | Scraper proposes exceptions when a series event changes | M4 | P1 | ✓ |
 | 87 | Event cards should be fully clickable | M1 | P1 | ✓ |
 | 88 | Meta fixes (issue template form link) | M5 | P0 | ✓ |
-| 93 | Clash detection between overlapping events | M4 | P2 | open |
-| 94 | Easier SSS event addition workflow | M4 | P1 | open |
+| 93 | Clash detection between overlapping events | M4 | P2 | ✓ |
+| 94 | Easier SSS event addition workflow | M4 | P1 | ✓ |
 | 107 | Fix ended events so data validation succeeds | M4 | P0 | ✓ |
-| 133 | SSS event intake — Facebook-only source | M4 | P0 | open |
-| 134 | Facebook & Instagram event intake for remaining venues | M4 | P0 | open |
-| 183 | Dark mode (umbrella): user-toggleable dark theme | M3 | P2 | open |
+| 133 | SSS event intake — Facebook-only source | M4 | P0 | ✓ |
+| 134 | Facebook & Instagram event intake for remaining venues | M4 | P0 | ✓ |
+| 183 | Dark mode (umbrella): user-toggleable dark theme | M3 | P2 | ✓ |
 | 184 | Dark mode R1: add semantic status and shadow tokens to globals.css | M3 | P2 | ✓ |
 | 185 | Dark mode R2: replace hardcoded text-white with on-* tokens | M3 | P2 | ✓ |
 | 186 | Dark mode R3: tokenize status badges and card states | M3 | P2 | ✓ |
@@ -130,8 +150,20 @@ GitHub issue numbers are authoritative. Priorities: P0 = do first, P1 = high val
 | 188 | Dark mode D1: dark token set in globals.css | M3 | P2 | ✓ |
 | 189 | Dark mode D2: no-flash theme bootstrap script + themeColor viewport fix | M3 | P2 | ✓ |
 | 190 | Dark mode D3: sun/moon theme toggle in the header | M3 | P2 | ✓ |
-| 191 | Dark mode D4: dark-theme QA pass across all states and surfaces | M3 | P2 | open |
-| 192 | Dark mode D5: document the dark theme (DESIGN.md, PROJECT.md) | M3 | P2 | open |
+| 191 | Dark mode D4: dark-theme QA pass across all states and surfaces | M3 | P2 | ✓ |
+| 192 | Dark mode D5: document the dark theme (DESIGN.md, PROJECT.md) | M3 | P2 | ✓ |
+| 211 | Discord event intake → PR | — | P1 | open |
+| 222 | Consolidate calendar-feed and intake-form URLs into constants | — | P2 | open² |
+| 223 | Empty-state heading duplicates filter-summary logic | — | P2 | open² |
+| 248 | Week predicates use local time, not Europe/Stockholm | — | P2 | open |
+| 249 | `venues.csv` `maps_url` documented but never used | — | P2 | open |
+| 250 | Per-event OG image emoji render as blanks | — | P2 | open |
+
+¹ Implemented and live (`src/features/corrections/`); the issue text describes a
+GitHub issue-form approach rather than the `mailto:` one that shipped, so it needs
+closing or re-scoping rather than building.
+
+² Addressed by the `src/` restructure; closeable once that merges.
 
 ## 6. Operating cadence (post-M4 steady state)
 

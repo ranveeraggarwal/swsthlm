@@ -81,8 +81,11 @@ leave it `live`.
 - **`SwingEvent` reuses the data layer's enums.** `style` is a `Style`, not a
   `string`. If you find yourself widening it or writing `as Style`, the fix is
   probably a label in `labels.ts` instead.
-- **The scraper's blast radius is `oneoffs.csv` only.** It reads `series.csv` to
-  dedup but never writes it, and never invents venues — see SCRAPERS.md.
+- **The scraper's blast radius is `oneoffs.csv`, `exceptions.csv` and
+  `bands.csv`.** It reads `series.csv` and `venues.csv` to dedup but never
+  writes them, and never invents a venue. New bands go in a *separate*
+  `bot/new-bands` PR so event review isn't blocked on vetting an act — see
+  SCRAPERS.md.
 - **The changelog is hand-curated, not generated.** `src/features/changelog/entries.ts`
   feeds the About page's collapsed "What's new" timeline. When you ship a
   major, user-visible feature, add one line to the current month (create the
@@ -128,9 +131,10 @@ before opening a PR, not after.
   `npm run lint` on any raw Tailwind palette class (`bg-white`,
   `text-zinc-500`, …) inside a `className`. It can only see literal/template
   string content, not values from an identifier — so a color baked into a
-  variable (e.g. the brand-button color maps in `AddToCalendarButton.tsx`/
-  `SubscribeButton.tsx`, which are intentionally theme-independent per
-  DESIGN.md) won't be flagged, and a reviewer still needs to look there.
+  variable (e.g. `PROVIDER_FILL` in
+  `src/components/ui/CalendarProviderMarks.tsx`, intentionally
+  theme-independent per DESIGN.md) won't be flagged, and a reviewer still
+  needs to look there.
   Before writing a color class, ask whether it needs a different value in
   dark mode; if yes, it's a token, not a Tailwind palette class. Structural
   keylines and shadows specifically use `--border-ink` / `--shadow-ink`,

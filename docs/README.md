@@ -5,55 +5,63 @@
 
 > Your single, lightweight, optimized guide to Lindy Hop, Balboa, Shag, and Blues social dancing and workshops in Stockholm.
 
-Stockholm Swing is a Next.js-powered web application that aggregates swing dance events across Stockholm. It is a fully static site, built at deploy time from structured CSV files in `/data` and rebuilt on every push to `main`, keeping the local community informed about upcoming social dances, live bands, and workshops.
+[**stockholmswing.com**](https://stockholmswing.com) is a static site built from CSV files in this repository. No database, no accounts, no server beyond the build on Vercel — that shape is deliberate, and it's what lets the project survive on volunteer attention.
 
-## 🚀 Features
+## What it does
 
-- **Comprehensive Calendar**: Track events for Lindy Hop, Balboa, Shag, and Blues.
-- **Client-Side Filtering**: Easily filter events by style, date, and venue.
-- **Chrome Extension Scraper**: Includes a custom Chrome extension (`/scrapers/chromeext`) that automates scraping event data directly from local studio websites (e.g., Chicago75) into the required CSV format.
-- **Modern Stack**: Built with Next.js 15 App Router, React 19, and Tailwind CSS 4.
+- **The calendar.** Every swing event in Stockholm in one place, filterable by style, venue, live-music-only, and free-text search.
+- **Subscribe from your calendar app.** `webcal://stockholmswing.com/calendar.ics` — the feed updates itself, so new events and cancellations arrive without anyone doing anything.
+- **Shareable event pages.** Every occurrence has a stable permalink, an add-to-calendar button, and a link-preview image.
+- **Corrections from anyone.** A flag button on every listing opens a short form and mails it to the maintainers with the listing's current details attached.
+- **Installable.** PWA manifest and icons, so it can live on a phone home screen.
 
-## 🛠 Tech Stack
+## How events get in
 
-- **Framework**: [Next.js 15](https://nextjs.org/)
-- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
-- **Icons**: [Lucide React](https://lucide.dev/)
-- **Data Parsing**: [PapaParse](https://www.papaparse.com/)
-- **Deployment & Analytics**: [Vercel](https://vercel.com)
+Nobody hand-edits a spreadsheet. Three paths all end at the same place — **a pull request a human reviews**:
 
-## 🏃 Getting Started
+| Path | What it does |
+|---|---|
+| **Nightly scrapers** | A scheduled Action parses public venue pages and opens one PR with proposed events. See [`architecture/SCRAPERS.md`](architecture/SCRAPERS.md). |
+| **Organizer form** | Submissions to the [intake form](https://docs.google.com/forms/d/e/1FAIpQLSd87pOy31N_3xKthqalT-sDrFB2yoe74Z8HGr8q1HSs6Pis2g/viewform) are polled every two hours and turned into PRs. See [`architecture/FORM_SYNC.md`](architecture/FORM_SYNC.md). |
+| **By hand** | Facebook-only sources and anything the parsers can't reach. |
 
-First, install dependencies:
+Nothing writes to `main` directly, and every proposal passes the same schema check a hand-written PR does.
+
+## Tech
+
+Next.js 15 (App Router) · React 19 · Tailwind 4 · PapaParse · deployed on Vercel.
+
+## Running it locally
+
+Node 20+ and npm.
 
 ```bash
 npm install
+npm run dev          # http://localhost:3000
 ```
 
-Then, run the development server:
+The dev server reads `/data/*.csv` directly — edit a CSV, save, the page reloads. There's no separate data build step.
 
 ```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the application.
-
-## 🧪 Tests & data validation
-
-```bash
-npm test               # unit tests: series expansion + the data validator
+npm test               # unit tests
+npm run lint           # eslint, including the project's own colour-token rule
+npx tsc --noEmit       # typecheck
 npm run validate:data  # schema + integrity check over /data
 ```
 
-The same schema check runs in CI on every PR that touches `/data` (see `.github/workflows/validate-data.yml`).
+CI runs the schema check, the tests, and lint on every PR.
 
-## 🕸 Web Scraper
+## Docs
 
-The `/scrapers/chromeext` directory contains a one-click Chrome Extension used by admins to extract event data from dance studio websites into a ready-to-paste CSV format. 
-1. Load unpacked extension in `chrome://extensions/`
-2. Navigate to an event page
-3. Click the extension icon to instantly copy the parsed CSV row to your clipboard.
+| Read this | When |
+|---|---|
+| [`CONTRIBUTING.md`](CONTRIBUTING.md) | Before your first PR. Also: how to report a wrong listing without touching code. |
+| [`DATA.md`](DATA.md) | Before editing anything in `/data`. The column-by-column contract. |
+| [`architecture/CODE_STRUCTURE.md`](architecture/CODE_STRUCTURE.md) | Before adding a file to `src/`. Where things go, and why. |
+| [`DESIGN.md`](DESIGN.md) | Before touching styles. Colour tokens, typography, the dark theme. |
+| [`PROJECT.md`](PROJECT.md) | Roadmap, architecture decisions, and the list of things we've decided not to build. |
+| [`SEO.md`](SEO.md) | Search and AI discoverability, on-site and off. |
 
-## 🤝 Community
+## Community
 
-This project is built to support the local Stockholm swing dance community and is not affiliated with any specific studio. Contributions, bug reports, and feature requests are welcome!
+Built by and for the Stockholm swing community, not affiliated with any studio. Contributions, corrections, and bug reports are all welcome — [`CONTRIBUTING.md`](CONTRIBUTING.md) has the five-minute paths in.

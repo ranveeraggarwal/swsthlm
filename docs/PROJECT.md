@@ -22,14 +22,16 @@ Three principles govern every decision below:
 
 ### Data model
 
-Three CSVs, mirroring the existing series/exceptions/oneoffs design:
+Five CSVs under `/data`: `venues.csv` (the venue registry), `series.csv`
+(recurring weeklies), `exceptions.csv` (per-date overrides for a series),
+`oneoffs.csv` (single and multi-day events), and `bands.csv` (the scraper's
+swing-band trust roster, which never produces calendar entries).
 
-| File | Purpose | Key columns |
-|---|---|---|
-| `data/series.csv` | Weekly/recurring events | `id, name, style, venue_id, weekday, start, end, price, beginner_class, music (live/dj), organizer, url, description, status (draft/live/ended), valid_from, valid_to` |
-| `data/exceptions.csv` | Per-date overrides for a series | `series_id, date, field, value` (e.g. `dj`, `band`, `cancelled`, `start`) |
-| `data/oneoffs.csv` | Single or multi-day events | same shape as series plus explicit `date`/`end_date`; `status` is `draft/live/ended/cancelled` |
-| `data/venues.csv` | Venue registry | `id, name, address, neighborhood, lat, lng, maps_url` |
+**The column-by-column contract lives in [`DATA.md`](DATA.md) and is
+authoritative.** It is deliberately not restated here — an earlier version of
+this section carried a copy that drifted, describing `exceptions.csv` as
+`(series_id, date, field, value)` key-value rows when it in fact shipped with a
+column per overridable field.
 
 A build-time expansion step turns series + exceptions into concrete occurrences for the next N weeks. `status` provides the draft/live gate; `cancelled` is a per-date exception, never a deletion, so the site can *show* the cancellation. Past one-offs are retained as `status=ended` (kept for a possible future archive), never deleted — the build renders only `live`.
 
@@ -73,7 +75,7 @@ GitHub issue numbers are authoritative. Priorities: P0 = do first, P1 = high val
 - **Designed empty states** (#23), the **accessibility & heading-hierarchy pass** (#26), **dancefloor tags** (#59), **"updated X ago"** (#24), **neighborhood tags** (#25) and the **PWA manifest** (#27) are all shipped and closed. Accessibility work has continued past #26 in smaller PRs: screen-reader text on `target="_blank"` links (#239), the `EventRow` accordion (#203), title tooltips on icon-only buttons (#213), an Escape handler on the filter panel (#229), `aria-current` on active nav links (#230), and mobile-menu Escape + ARIA (#246).
 - **Two M3 items were closed as `not_planned`, not shipped:** filter state in the URL (#21) and the day filter / day-jump strip (#22). Neither exists in the code — `useSearchParams` and a day facet have never been in the repo. The homepage filters are search, style, venue and live-music-only, held in component state and not reflected in the URL. Earlier revisions of this document listed both as shipped; that was wrong.
 
-**M4 is complete apart from the weekly health report (#6).** Nightly scrapers (#4) with exception proposals (#82), CI schema validation (#3), the repo-as-database migration (#1), series expansion (#2), and clash detection (#93) are all closed. The Facebook/Instagram intake issues (#133, #134) and the SSS-specific workflow (#94) are closed as completed. **Form → PR sync** (#5) shipped — `scripts/form-sync.mjs`, `docs/architecture/FORM_SYNC.md`: published-CSV polling rather than a service account, rows land as `status=live` because the PR review is the only gate a short-lived `draft`-then-promote step was tried and dropped as redundant. It still needs the one-time "Publish to web" + `FORM_RESPONSES_CSV_URL` secret setup documented in that file before it is live.
+**M4 is complete apart from the weekly health report (#6).** Nightly scrapers (#4) with exception proposals (#82), CI schema validation (#3), the repo-as-database migration (#1), series expansion (#2), and clash detection (#93) are all closed. The Facebook/Instagram intake issues (#133, #134) and the SSS-specific workflow (#94) are closed as completed. **Form → PR sync** (#5) shipped and **is live** — `scripts/form-sync.mjs`, `docs/architecture/FORM_SYNC.md`: published-CSV polling rather than a service account, rows land as `status=live` because the PR review is the only gate (a short-lived `draft`-then-promote step was tried and dropped as redundant). The one-time "Publish to web" + `FORM_RESPONSES_CSV_URL` setup is done; the poll runs every two hours and has already merged submissions via PR #209.
 
 The one open M4 item beyond #6 is field-level provenance for scraper-owned rows (#66): the nightly run re-derives every field from the source, so a human edit to a scraper-owned row gets re-proposed as a revert every night until the source catches up.
 

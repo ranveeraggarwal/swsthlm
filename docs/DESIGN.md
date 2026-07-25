@@ -135,7 +135,7 @@ Typography is the rhythmic engine of this design system. We pair the high-contra
 
 The layout follows a **fixed-grid philosophy** that centers content to create a focused, editorial experience. 
 
-- **Grid:** A 12-column grid on desktop, transitioning to a 4-column grid on mobile.
+- **Grid:** There is no 12-column grid. Page content sits in a centred `max-w-7xl` container (1280px, wider than the `container-max: 1200px` in the front-matter — the code is what ships). The event card grid steps 1 → 2 → 3 columns at `md` and `lg`; the compact list below it is full-width rows.
 - **Asymmetric Balance:** To mirror the improvisation of swing dance, white space should be used generously. Aligning images slightly off-center or allowing text to overlap background shapes (using "paper-layering" logic) is encouraged.
 - **Rhythmic Vertical Spacing:** Use multiples of 8px (base) for all padding and margins. Large sections should be separated by significantly more space (80px+) to maintain a clean, uncluttered "Stockholm" aesthetic.
 
@@ -166,10 +166,17 @@ The shape language is **Soft (0.25rem)**. This provides enough roundness to feel
 Cards are the primary container for events and classes. They should use a subtle Cream-on-Cream tonal shift with a 1px border. Headlines within cards should always be Playfair Display.
 
 ### Input Fields
-Inputs should feel tactile. Use a solid 2px bottom-border in Deep Navy for a "ledger" look, rather than a full bounding box, to keep the UI feeling light and airy.
+Two treatments are in use, and the difference is deliberate:
+
+- **The search field** is a full bounding box — 2px `--border-ink` border plus an offset `--shadow-ink` block that turns `--primary` on `focus-within`. It's the page's primary control and reads as a physical object.
+- **Read-only display fields** (the calendar feed URL in the subscribe dialog) use a 2px bottom border only, for a lighter "ledger" look, since they're there to be copied rather than typed into.
+
+Both go through tokens; neither uses a raw colour.
 
 ### Chips & Badges
-Small, pill-shaped tags used for "Beginner," "Intermediate," or "Social Dance" labels. These use the Tertiary Vintage Gold to pop against the Cream background without the aggression of the Primary Orange.
+Small tags carrying the facts a dancer scans for: dance style, floor type, beginner class, price, "3 nights". They are `rounded` (not pill), uppercase, and 10px.
+
+Each chip family has its own semantic token pair rather than one shared accent — beginner uses `--success-container`, the multi-night badge uses `--info-container`, an ended card uses `--ended-container`, and the style chips map per style (Lindy → tertiary, Balboa → secondary, the rest neutral). Adding a new chip family means adding a token pair, not reaching for a Tailwind palette class. The wording and the colour mapping both live in `src/features/events/model/labels.ts`; the chip components are in `src/features/events/components/EventChips.tsx`.
 
 ### Navigation
 The navigation bar should be a simple, centered list of uppercase labels. It remains fixed to the top but uses a semi-transparent Cream backdrop with a "glass" blur to keep the focus on the content underneath as the user scrolls through the "rhythm" of the page.
@@ -244,7 +251,7 @@ Exact values as merged in `src/app/globals.css` (`:root` vs. `:root[data-theme='
 - **Structural keylines (card/button/chip/divider borders) use `--border-ink`, never `--on-surface`.** Identical in light mode (`--border-ink` is the same `#1b1c16`), but in dark mode `--on-surface` becomes a light cream — a 2px cream outline on a dark ground glows, turning quiet structure into the loudest element on the page. This is the border-color analogue of the `text-white` bug above; it shipped across every card and button in the first dark-theme cut.
 - **Sticker-stack shadows use `--shadow-ink`, never `--on-surface`.** They look identical in light mode (`--shadow-ink` is the same `#1b1c16`), but in dark mode `--on-surface` becomes a light cream — pointing a shadow at it would draw pale shadows on every card.
 - **`--live` (the "happening now" red) is theme-invariant by design.** It's an urgency signal, not a surface color, and it reads correctly against both grounds — don't override it in the dark block.
-- **Brand provider buttons and OG images are intentionally theme-independent and always light.** The Apple/Google/Outlook buttons inside `AddToCalendarButton.tsx`/`SubscribeButton.tsx` use fixed external brand colors, and `opengraph-image.tsx` files render fixed light-theme social-preview cards — don't theme either.
+- **Brand provider buttons and OG images are intentionally theme-independent and always light.** The Apple/Google/Outlook fills live in `src/components/ui/CalendarProviderMarks.tsx` (`PROVIDER_FILL`) and are other companies' marks, not our palette; the `opengraph-image.tsx` files render fixed light-theme social-preview cards because satori can't read CSS custom properties. Don't theme either.
 - **New status colors need a semantic token pair.** Define `--x-container` / `--on-x-container` in both `:root` and `:root[data-theme='dark']`, following the `--success-container`/`--info-container`/`--ended-container` pattern, rather than reaching for a raw Tailwind palette class.
 
 ### How theming works mechanically

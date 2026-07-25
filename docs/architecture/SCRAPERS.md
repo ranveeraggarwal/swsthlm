@@ -59,7 +59,7 @@ fixture test; no runner changes. Each `sources/<venue>.mjs` exports:
 | `id` | string | Stable source id (e.g. `staclara`). |
 | `label` | string | Human label for the report (e.g. `S:ta Clara Bierhaus`). |
 | `url` | string | The page being scraped. |
-| `relevance` | `'all'` \| `'genre'` | Declared relevance policy — see below. |
+| `relevance` | `'all'` \| `'roster'` \| `'genre'` | Declared relevance policy — see below. |
 | `parse(html)` | pure fn → `CandidateEvent[]` | **No network.** Drives the fixture test. |
 | `scrape()` | async → `CandidateEvent[]` | `fetch(url)` + `parse()`. |
 
@@ -76,27 +76,37 @@ The `CandidateEvent` shape and the mapping to a `oneoffs.csv` row live in
 ## Relevance policy (a per-source decision)
 
 Relevance filtering is **not global.** It is a property each source *declares*,
-and the runner *enforces* — **parsers only extract, the runner judges.**
+and the runner *enforces* — **parsers only extract, the runner judges.** Three
+policies, declared as `relevance` on the source module:
 
-- **`relevance: 'all'`** — a **swing-dedicated venue.** Chicago (a swing-dance
-  studio), Årstaliden's Lindy night, a swing band's own gig list. Every event is
-  a dance night, so keep all of them; no filter is applied.
-- **`relevance: 'genre'`** — a **mixed venue.** S:ta Clara Bierhaus, a
-  jazz/blues pub. The runner applies the shared genre filter
-  ([`lib/genre.mjs`](../../scripts/scrapers/lib/genre.mjs)) to drop non-dance
-  programming (pub quizzes, open jams, rock/folk gigs).
-- **Undeclared defaults to `'genre'`** — safer to drop than to flood the
-  calendar with non-dance.
+- **`'all'`** — a **swing-dedicated venue.** Chicago (a swing-dance studio),
+  Årstaliden's Lindy night, a swing band's own gig list. Every event is a dance
+  night, so keep all of them; no filter is applied.
+- **`'roster'`** — a **mixed venue** (S:ta Clara Bierhaus, Norrport: pubs that
+  also run quizzes and rock gigs). This is the policy mixed venues use today.
+  Each act is looked up in the band roster (`data/bands.csv`, contract in
+  [`DATA.md`](../DATA.md)):
+  - **trusted** (`swing=yes`) → propose the event, and adopt the band's style if
+    it's more specific than `all`.
+  - **rejected** (`swing=no`) or **pending** (`swing=unknown`) → drop silently.
+    Recording a `no` is what stops a non-dance act being re-surfaced nightly.
+  - **not in the roster** → it's a *new act*. If it doesn't look like obvious
+    non-music noise (quiz, jam, karaoke, rock…), it is surfaced for vetting in
+    a **separate PR** — never proposed as an event on the spot.
+- **`'genre'`** — **legacy, keyword-only.** The original mixed-venue policy,
+  kept for flexibility; no source declares it today. An undeclared `relevance`
+  defaults to this, on the principle that dropping is safer than flooding.
 
-The runner reports how many candidates a mixed venue dropped, e.g.:
+The runner reports what each source kept and why, e.g.:
 
 ```
-S:ta Clara Bierhaus: 8 event(s) (15 filtered as non-dance)
+S:ta Clara Bierhaus: 8 event(s), 3 new act(s) for review (15 dropped)
 ```
 
-## Genre filter (`lib/genre.mjs`)
+## Genre keywords (`lib/genre.mjs`)
 
-Two tunable lowercase keyword lists:
+Two tunable lowercase keyword lists, used by the legacy `'genre'` policy and —
+for the noise cut only — by `'roster'` discovery:
 
 - **`INCLUDE`** — `jazz, swing, lindy, balboa, shag, blues, django, manouche,
   gypsy, bop, hardbop, blue note, dixieland, big band, boogie, hot club,
@@ -104,8 +114,10 @@ Two tunable lowercase keyword lists:
 - **`EXCLUDE`** — `quiz, quizz, jam, open mic, karaoke, rock, folk, psych, pop,
   reggae, funk, soul, country, metal, punk, hip hop, techno, house, disco`.
 
-A candidate is relevant **iff** its `"<name> <description>"` text matches an
-`INCLUDE` keyword **and no** `EXCLUDE` keyword. **`EXCLUDE` always wins.**
+Under `'genre'`, a candidate is relevant **iff** its `"<name> <description>"`
+text matches an `INCLUDE` keyword **and no** `EXCLUDE` keyword — **`EXCLUDE`
+always wins.** Under `'roster'`, only the noise cut runs, and only to decide
+whether an unknown act is worth a human's attention.
 
 Matching is **word-boundary, not substring.** Boundaries use Latin-letter
 lookarounds (`(?<![a-zà-ÿ])…(?![a-zà-ÿ])`), *not* `\b`, so accented Swedish band
@@ -127,8 +139,9 @@ In order:
 2. **Run each source's `scrape()` in try/catch.** A thrown source — *or a source
    that returns 0 events* — is a **warning**, not a crash. (0 events feeds the
    dead-source signal: DATA.md's "no non-empty diff in 3+ weeks" lint.)
-3. **Apply the per-source relevance filter** (`'all'` keeps everything;
-   `'genre'` runs `isSwingRelevant`). Record how many were dropped.
+3. **Apply the per-source relevance policy** (`'all'` keeps everything;
+   `'roster'` looks each act up in `bands.csv`; `'genre'` runs the legacy
+   keyword filter). Record what was kept, dropped, and newly discovered.
 4. **Drop past candidates** (`date < today`, where today is Europe/Stockholm
    today, computed with `Intl.DateTimeFormat('en-CA', { timeZone:
    'Europe/Stockholm' })`). Never propose a past-dated `live` row — the validator
@@ -192,9 +205,10 @@ In order:
   `beginner_class` and the like are left **empty** for a human to fill on review
   — never invented, never smuggled into the description. (`candidateToRow` emits
   empty strings for everything the scraper can't know.)
-- **Never touch `series.csv`.** Recurring definitions stay hand-curated; the
-  scraper only *reads* them to dedup and compare. The blast radius of a scrape
-  is **`oneoffs.csv` and `exceptions.csv` only.**
+- **Never touch `series.csv` or `venues.csv`.** Recurring definitions and the
+  venue registry stay hand-curated; the scraper only *reads* them to dedup and
+  compare. A scrape writes **`oneoffs.csv`** and **`exceptions.csv`** (the events
+  PR) and **`bands.csv`** (the roster PR) — nothing else.
 - **Never invent a venue.** A source whose location doesn't map to an existing
   `venue_id` must **flag it** in the report ("needs a `venues.csv` row"), not
   silently create one. Adding a venue is a deliberate, separate step per DATA.md.
@@ -222,28 +236,26 @@ In order:
   `workflow_dispatch` (manual run from the Actions tab).
 - **Steps:** checkout → `setup-node` (Node 20, npm cache) → `npm ci` →
   `node scripts/scrape.mjs` → `peter-evans/create-pull-request@v6`.
-- **create-pull-request config:** `branch: bot/scrape` (a **fixed** branch, so
-  it's **one PR updated in place**, never nightly spam), `base: main`,
-  `add-paths: data/oneoffs.csv`, `body-path: scrape-report.md`, `labels: data`,
-  `delete-branch: false`. An idle night = no diff = no PR.
+- **Two PRs, both on fixed branches** so each is **updated in place**, never
+  nightly spam. An idle night = no diff = no PR.
+  - **`bot/scrape`** — the events PR. `add-paths: data/oneoffs.csv` and
+    `data/exceptions.csv`, `body-path: scrape-report.md`, `labels: data`.
+  - **`bot/new-bands`** — roster curation, kept separate so event review isn't
+    blocked on vetting an unknown act. `add-paths: data/bands.csv`; each new act
+    is proposed as a row with `swing=unknown` for a human to set to `yes`/`no`.
+  - Both use `base: main`, `delete-branch: false`.
 - **No secrets.** It uses the built-in `GITHUB_TOKEN` (`permissions:
   contents: write`, `pull-requests: write`). This is exactly why this subsystem
   is unblocked, unlike Google-Form sync (needs a service-account JSON) or
   Facebook (needs a logged-in session).
 
-### Operational prerequisite (one-time setup)
+### Repo setting this depends on
 
-> **The nightly PR creation requires a repo setting that is currently OFF.**
->
-> **Settings → Actions → General → "Allow GitHub Actions to create and approve
-> pull requests"** must be **ON**. Until it is enabled, the create-PR step fails
-> with:
->
-> ```
-> GitHub Actions is not permitted to create or approve pull requests.
-> ```
->
-> Enable it once; no other setup is needed.
+**Settings → Actions → General → "Allow GitHub Actions to create and approve
+pull requests"** must stay **ON**, or the create-PR step fails with
+`GitHub Actions is not permitted to create or approve pull requests`. It is on
+and the nightly job has been running green since — this note exists so nobody
+switches it off wondering what uses it.
 
 ## Source inventory & decisions
 
@@ -254,10 +266,10 @@ venue registry.
 
 | Source | URL | Type → relevance | Notes |
 |---|---|---|---|
-| **Chicago** | `chicago75.se/evenemang` | swing-dance studio → `'all'` | Keep every event. (PR2 — see sequencing.) |
-| **S:ta Clara Bierhaus** | `staclara.se/calendar.html` | jazz/blues pub → `'roster'` | Implemented (PR1). Events live in custom `<calendar-event>` elements under a month `<h2>` header; `BAND 19-22<BR>genre` lines. |
-| **Norrport** | `norrport.se/kalender/` | mixed venue → `'roster'` | Implemented (PR4). Grid of `.np-grid-card` divs; date from booking-button onclick; band name from title before `\|`. |
-| **Årstaliden** | `arstablick.com/Lindyhop.html` | Lindy night → `'all'` | Implemented (PR5). Static `<li>` list; year from page text ("sommaren 2026"); `parse(html, refDate)` for test determinism. |
+| **Chicago** | `chicago75.se/evenemang` | swing-dance studio → `'all'` | Keep every event. |
+| **S:ta Clara Bierhaus** | `staclara.se/calendar.html` | jazz/blues pub → `'roster'` | Events live in custom `<calendar-event>` elements under a month `<h2>` header; `BAND 19-22<BR>genre` lines. |
+| **Norrport** | `norrport.se/kalender/` | mixed venue → `'roster'` | Grid of `.np-grid-card` divs; date from booking-button onclick; band name from title before `\|`. |
+| **Årstaliden** | `arstablick.com/Lindyhop.html` | Lindy night → `'all'` | Static `<li>` list; year from page text ("sommaren 2026"); `parse(html, refDate)` for test determinism. |
 | **Swing Magnifique (band)** | `swingmagnifique.com/gigs` | band gig list → `'all'` | **Hand-entered** — Bandzoogle page structure is complex and fragile; gigs added directly to `oneoffs.csv`. Cross-venue (Georgian House, S:t Eriks Jazzbar). |
 
 None of these expose a usable ICS/iCal feed, so **v1 is HTML parsing**.
@@ -308,26 +320,26 @@ HTML scraper:
 | Nomad | Facebook / Instagram |
 | SSS | Facebook |
 
-**Future plan** (explicitly *not* nightly scraping): a Chrome extension that
-grabs events from a Facebook page the maintainer is already viewing, and/or a
-screenshot parser. Both are **manual-assist** paths.
+**Today these are entered by hand.** There is no Facebook or Instagram intake
+code in the repo, and nightly scraping of those platforms is not planned — they
+block it, and it would break the "no secrets, no logged-in session" shape the
+rest of this subsystem holds to.
+
+The live proposal for replacing the hand-entry is **issue #211: Discord intake**
+— an organizer pastes text or a flyer screenshot into a channel, a scheduled
+Action LLM-parses it and opens a PR. Same poll → parse → validate → one-PR shape
+as this subsystem and form-sync, for the same reason: no always-on service.
 
 ### Dropped
 
 - **Stadshuset / Danshuset** — too low-frequency to warrant a parser; enter by
   hand.
 
-## Decisions & cadence
+## Cadence
 
-- **Cadence: nightly (settled).** No real downside: a PR opens only on a
-  non-empty diff, so idle nights cause no churn; daily means a last-minute venue
-  change is caught within 24h (a weekly cadence would miss same-week edits);
-  Actions cost is negligible.
-- **No `tsx`, no TS import in scripts.** The runner is plain `.mjs`, imports
-  `validateData` from `validate-data.mjs`, and re-implements the tiny
-  `weekdayOf` / `addDays` UTC helpers. Keeps CI build-free.
-- **`cheerio` is a devDependency**, used only by scripts. **Never import it from
-  `src/`** — it must not reach the client bundle.
+**Nightly, settled.** A PR opens only on a non-empty diff, so idle nights cause
+no churn; daily catches a last-minute venue change within 24h where a weekly
+cadence would miss same-week edits; Actions cost is negligible.
 
 ## Known follow-ups / limitations
 
@@ -335,24 +347,6 @@ screenshot parser. Both are **manual-assist** paths.
   scraper-owned row (fixes a title, adds a price), the runner re-derives the
   source value and **re-proposes the revert every night** until the *source*
   itself changes. The eventual fix is **field-level provenance**: track which
-  fields a human has touched and stop overwriting them. This should be filed as
-  an issue.
-- **The genre filter is coarse by design.** Tuning the `INCLUDE` / `EXCLUDE`
-  keyword lists is expected, ongoing maintenance.
-
-## Build / PR sequencing
-
-- **PR1** (`feat/scraper-v1`, PR #55 — merged): scaffold + runner + S:ta Clara
-  source.
-- **PR2** (`feat/chicago-scraper`, PR #79 — merged): Chicago source
-  (`relevance: 'all'`) + series-dedup test.
-- **PR3** (`feat/exception-proposals`, PR #83 — merged): EXCEPTION
-  classification bucket; `exceptions.csv` surgical write; DJ name extraction
-  from Chicago titles; `lib/exceptions.mjs` helpers.
-- **PR4** (`feat/norrport-scraper`): Norrport source (`relevance: 'roster'`);
-  date from booking-button onclick; curly-quote normalization; Old Boy Stompers
-  + Josefin's New Orleans Gang pre-seeded in `bands.csv`.
-- **PR5** (`feat/arstaliden-magnifique-scrapers`): Årstaliden source
-  (`relevance: 'all'`, year from page text). Swing Magnifique gigs added as
-  hand-entered one-offs (Georgian House + S:t Eriks Jazzbar venues added).
-  Workflow updated to include `exceptions.csv` in the events PR's `add-paths`.
+  fields a human has touched and stop overwriting them. Tracked in **issue #66**.
+- **The keyword lists are coarse by design.** Tuning `INCLUDE` / `EXCLUDE` is
+  expected, ongoing maintenance.

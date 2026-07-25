@@ -15,7 +15,9 @@ Context for Claude Code working on **Stockholm Swing** (stockholmswing.com), a s
 - `docs/architecture/FORM_SYNC.md` — the Google Form intake subsystem. Read before touching `scripts/form-sync.mjs` or `.github/workflows/form-sync.yml`.
 - `docs/SEO.md` — search & AI discoverability: on-site pieces (sitemap, robots, JSON-LD, canonicals, llms.txt) and the off-site maintainer checklist.
 - `docs/CONTRIBUTING.md` — contributor-facing rules, PR conventions, branch naming.
-- `HANDOVER.md` — operational ownership (domain, Vercel, secrets). Mostly TODO placeholders.
+- `docs/README.md` — the repo's front page (GitHub renders it): what the site does, how events get in, how to run it.
+
+There is no `HANDOVER.md` yet — operational ownership (domain, Vercel, secrets) is unwritten and tracked in issue #30.
 
 If anything in this file conflicts with `docs/DATA.md` or `docs/PROJECT.md`, those win.
 

@@ -35,8 +35,8 @@ A build step expands `series` plus `exceptions` into concrete occurrences for th
 | `name` | yes | string | Display name. "Chicago Swing Dance Studio". |
 | `address` | yes | string | Street and number. "Hornsgatan 75". |
 | `neighborhood` | yes | string | "Söder", "Vasastan", "Norrmalm", "Hammarby Sjöstad", "Skanstull", "Östermalm", "Solna". |
-| `lat`, `lng` | no | float | For future map use. Skip if unknown. |
-| `maps_url` | no | URL | Override the default Maps link. Usually leave empty. |
+| `lat`, `lng` | no | float | **Nothing reads these.** Retained speculatively; a map view is on the "won't build" list in `PROJECT.md` §4. Leave empty. |
+| `maps_url` | no | URL | **Not implemented — see issue #249.** It is meant to override the Maps link, but every venue link is currently built from name + address. Setting it has no effect today. |
 | `floor_type` | no | `studio` \| `hall` \| `bar` \| `outdoor` | What kind of space the dancing happens in. Empty = unknown — leave it blank rather than guess; a venue steward who's actually danced there should fill it in. See below for how to pick. |
 
 Adding a new venue is a separate PR from the event that needed it — keeps the diff focused.
@@ -58,7 +58,7 @@ The most-edited file. Most weekly entries live here.
 |---|---|---|---|
 | `id` | yes | slug | `p-tzz-dah`, `chicago-live-weds`, `zinkens-rhythm-club`. |
 | `name` | yes | string | Display name. |
-| `style` | yes | `lindy-hop` \| `balboa` \| `blues` \| `shag` \| `all` | `all` means "social, all styles welcome." Renders as "Social – all styles," never as "All Swing Styles." |
+| `style` | yes | `lindy-hop` \| `balboa` \| `blues` \| `shag` \| `all` | `all` means "social, all styles welcome." Renders as "Social – all styles" on cards and event pages, shortened to "All styles" in the compact list. Never "All Swing Styles." Wording lives in `src/features/events/model/labels.ts`. |
 | `venue_id` | yes | venue slug | Must exist in `venues.csv`. |
 | `weekday` | yes | `monday`…`sunday` | Lowercase. |
 | `start`, `end` | yes | `HH:MM` | 24h, Stockholm local. |
@@ -138,7 +138,7 @@ Descriptions are flavor, not interface. Things that don't belong:
 - **Prices.** Use `price`. Don't write "100:- vid dörren" in the prose.
 - **Venue addresses.** Use `venue_id`. Don't write "Roslagsgatan 38" in the prose.
 
-What does belong: what the night is about, who the band is (one or two sentences of bio is fine), what makes this evening distinctive, any organizer flavor. Swedish and English are both fine — leave whatever the organizer wrote in their language. The card truncates to ~200 characters by default; full text is behind "Show more."
+What does belong: what the night is about, who the band is (one or two sentences of bio is fine), what makes this evening distinctive, any organizer flavor. Swedish and English are both fine — leave whatever the organizer wrote in their language. The card clamps the description to two lines; the rest is behind a "Read more" toggle. That's a CSS line clamp, not a character count, so how much shows depends on the card width.
 
 ## Validation rules (enforced by CI)
 

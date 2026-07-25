@@ -21,7 +21,7 @@ Two principles, in order:
 1. **Structured data is the truth; scraped or pasted prose is decoration.** When in doubt, add a field rather than parse a sentence.
 2. **Humans review diffs; robots produce them.** Scrapers and form intake open pull requests. Maintainers merge them. Nothing edits the data in place.
 
-A maintainer can merge most PRs solo. Anything that changes the data schema, the deploy pipeline, or the project's scope needs a second maintainer's review. See [`docs/PROJECT.md`](docs/PROJECT.md) for the longer rationale and roadmap.
+A maintainer can merge most PRs solo. Anything that changes the data schema, the deploy pipeline, or the project's scope needs a second maintainer's review. See [`PROJECT.md`](PROJECT.md) for the longer rationale and roadmap.
 
 ## Setting up locally
 
@@ -39,17 +39,21 @@ The dev server reads from `/data/*.csv` directly. Edit a CSV, save, and the page
 ## Repository layout
 
 ```
-data/           # source of truth — series.csv, exceptions.csv, oneoffs.csv, venues.csv
-src/            # Next.js app (App Router)
-public/         # static assets, manifest, OG images
-scrapers/
-  chromeext/    # Chrome extension, used only for Facebook-walled events
-  actions/      # scheduled scrapers that open PRs (chicago75, norrport, sss…)
-docs/
-  PROJECT.md    # roadmap, architecture decisions, "we won't build" list
-  DATA.md       # the data contract — read this before editing CSVs
-HANDOVER.md     # who owns what (domain, Vercel, form). For maintainers.
+data/           # source of truth — series.csv, exceptions.csv, oneoffs.csv, venues.csv, bands.csv
+src/            # Next.js app (App Router) — see docs/architecture/CODE_STRUCTURE.md
+public/         # static assets, manifest, icons, llms.txt
+scripts/        # plain .mjs, no build step
+  validate-data.mjs   # the schema + integrity checker CI runs
+  scrape.mjs          # nightly scraper runner
+  scrapers/           # one module per source, plus fixtures and tests
+  form-sync.mjs       # Google Form → PR sync
+docs/           # you are here
+eslint-rules/   # the project's own lint rule banning raw Tailwind colour classes
 ```
+
+If you're adding a file under `src/`, read
+[`architecture/CODE_STRUCTURE.md`](architecture/CODE_STRUCTURE.md) first — it has
+the layering rules and a "where does my change go?" table.
 
 ## Working with data
 
@@ -62,7 +66,7 @@ Most contributions touch `/data/`, not `/src/`. A few rules:
 - **Past events are kept, not deleted.** When a one-off is over, set `status=ended` instead of removing the row — we retain it for a possible future archive. The build renders only `live`, so it drops off the calendar while the history survives. (Leaving a past event as `live` fails CI.)
 - **TBA is fine, but only when it's really TBA.** The renderer hides TBA dj/band fields. Don't put "TBA" in price, time, or venue.
 
-The full column-by-column contract lives in [`docs/DATA.md`](docs/DATA.md). CI validates every PR against that schema and will leave a comment if something doesn't fit.
+The full column-by-column contract lives in [`DATA.md`](DATA.md). CI validates every PR against that schema and will leave a comment if something doesn't fit.
 
 ## Pull request conventions
 
@@ -86,9 +90,9 @@ We use a small, opinionated label set:
 - **priority:p0** (do first), **p1** (high value), **p2** (when convenient). Priorities are guidance, not contracts.
 - **good first issue** — small, well-scoped, no architecture knowledge needed. Start here.
 
-Milestones group issues by workstream (M1–M5 in the project plan). If you want to know what's likely to land next, look at the M1/M2 milestones.
+Milestones group issues by workstream (M1–M5 in the project plan). M1 and M2 are complete; the open work is in M3 (UX polish), M4 (data automation) and M5 (community and governance).
 
-Before opening a new issue, check the [project plan](docs/PROJECT.md) — it lists the things we've deliberately chosen not to build, and the architecture constraints. Saves everyone time.
+Before opening a new issue, check the [project plan](PROJECT.md) — it lists the things we've deliberately chosen not to build, and the architecture constraints. Saves everyone time.
 
 ## Becoming a venue steward
 
@@ -98,7 +102,7 @@ If you're interested, mention it in an issue or email `hello@stockholmswing.com`
 
 ## Becoming a maintainer
 
-After a few merged PRs and a sense that you'd enjoy the responsibility, an existing maintainer can propose you for the team. Maintainers can merge PRs, manage labels and milestones, and have access to the deploy pipeline. The bus-factor goal is at least two active maintainers at all times; see `HANDOVER.md` for what comes with the role.
+After a few merged PRs and a sense that you'd enjoy the responsibility, an existing maintainer can propose you for the team. Maintainers can merge PRs, manage labels and milestones, and have access to the deploy pipeline. The bus-factor goal is at least two active maintainers at all times — that work, along with documenting who owns the domain, the Vercel project and the form, is tracked in issue #30.
 
 ## Community standards
 

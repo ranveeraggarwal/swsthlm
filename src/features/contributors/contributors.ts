@@ -10,8 +10,8 @@ export interface Contributor {
 export const CONTRIBUTORS: Contributor[] = [
   { name: 'Ranveer Aggarwal', githubUrl: 'https://github.com/ranveeraggarwal' },
   { name: 'Hanna Bjarre', githubUrl: 'https://github.com/hbjarre' },
+  { name: 'Leonardo Hansson' },
   { name: 'Michael Belfrage', githubUrl: 'https://github.com/mikez' },
   { name: 'Stefan Andersson', githubUrl: 'https://github.com/ste-andersson' },
-  { name: 'Leonardo Hansson' },
   { name: 'Kerstin Alquist' },
 ];

@@ -2,6 +2,7 @@ import React from 'react';
 import { Code, Flag } from 'lucide-react';
 import { GitHubIcon } from '@/components/ui/GitHubIcon';
 import { ChangelogTimeline } from '@/features/changelog/ChangelogTimeline';
+import { ContributorsWall } from '@/features/contributors/ContributorsWall';
 import {
   CONTACT_EMAIL,
   CORRECTIONS_EMAIL,
@@ -138,6 +139,7 @@ export default function AboutPage() {
           </section>
 
           <ChangelogTimeline />
+          <ContributorsWall />
         </div>
       </div>
     </div>

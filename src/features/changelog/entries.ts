@@ -49,6 +49,11 @@ export const CHANGELOG: ChangelogEntry[] = [
     summary: 'Dark mode, organizer intake, and a big polish pass',
     items: [
       {
+        title: 'Contributors wall',
+        description:
+          'The About page now has a collapsed "Contributors" section crediting everyone who has built and maintained the site.',
+      },
+      {
         title: 'Dark mode',
         description:
           'A sun/moon toggle in the header switches the whole site to a warm after-midnight palette, and remembers the choice on your next visit.',

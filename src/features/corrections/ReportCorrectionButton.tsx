@@ -88,10 +88,12 @@ export function ReportCorrectionButton({ event, dates }: ReportCorrectionButtonP
           <div>
             <label htmlFor={`${dialogId}-wrong`} className={labelClass}>
               {CORRECTION_PROMPTS.whatsWrong}
+              <span className="text-[var(--error)] ml-1" aria-hidden="true">*</span>
             </label>
             <textarea
               ref={whatsWrongRef}
               id={`${dialogId}-wrong`}
+              required
               rows={2}
               value={whatsWrong}
               onChange={(e) => {

@@ -90,6 +90,7 @@ export function SubscribeButton() {
               >
                 <Mark />
                 {PROVIDER_LABELS[provider]}
+                {!isWebcal && <span className="sr-only"> (opens in a new tab)</span>}
               </a>
             );
           })}

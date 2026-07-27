@@ -102,3 +102,18 @@ export const getPermalinkEvents = () => buildFeed(PERMALINK_LOOKBACK_DAYS);
 
 /** Upcoming plus a year of past events — the ICS subscription feed. */
 export const getCalendarEvents = () => buildFeed(CALENDAR_LOOKBACK_DAYS);
+
+// Shared by both the English and Swedish permalink routes (`app/(en)/event/`
+// and `app/sv/event/`), which mirror the same set of occurrences — see #260.
+
+/** The route's two segments identify one occurrence; find the one they name. */
+export async function findPermalinkEvent(id: string, date: string): Promise<SwingEvent | undefined> {
+  const events = await getPermalinkEvents();
+  return events.find((event) => event.sourceId === id && event.date === date);
+}
+
+/** Every permalink `generateStaticParams` should prerender — identical for both locales. */
+export async function permalinkStaticParams(): Promise<{ id: string; date: string }[]> {
+  const events = await getPermalinkEvents();
+  return events.map((event) => ({ id: event.sourceId, date: event.date }));
+}

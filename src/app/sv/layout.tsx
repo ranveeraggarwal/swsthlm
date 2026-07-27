@@ -1,23 +1,14 @@
 import type { Metadata, Viewport } from 'next';
 import { SITE_URL } from '@/lib/site';
-import { Playfair_Display, Plus_Jakarta_Sans } from 'next/font/google';
-import { Analytics } from '@vercel/analytics/next';
-import { Header } from '@/components/layout/Header';
-import { Footer } from '@/components/layout/Footer';
-import { InstallToast } from '@/components/layout/InstallToast';
-import './globals.css';
+import { playfair, jakarta } from '@/lib/fonts';
+import { RootShell } from '@/components/layout/RootShell';
+import '../globals.css';
 
-const playfair = Playfair_Display({
-  variable: '--font-playfair',
-  subsets: ['latin'],
-  style: ['normal', 'italic'],
-});
-
-const jakarta = Plus_Jakarta_Sans({
-  variable: '--font-jakarta',
-  subsets: ['latin'],
-});
-
+// Mirrors `app/(en)/layout.tsx` — its own root layout (its own `<html>`/
+// `<body>`), per the "multiple root layouts" pattern, since a shared ancestor
+// layout has no way to know which locale segment matched. Metadata here is
+// still the English site-wide copy; #266 (SEO) gives it a Swedish
+// `openGraph.locale` and title once there's real Swedish content to point at.
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: 'Stockholm Swing',
@@ -50,14 +41,14 @@ export const viewport: Viewport = {
   themeColor: '#a03b00',
 };
 
-export default function RootLayout({
+export default function SwedishRootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
     <html
-      lang="en"
+      lang="sv"
       className={`${playfair.variable} ${jakarta.variable} h-full antialiased`}
       suppressHydrationWarning
     >
@@ -69,18 +60,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-full flex flex-col">
-        <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:p-4 focus:bg-[var(--surface-container-lowest)] focus:text-[var(--primary)] focus:font-bold focus:underline outline-none">Skip to content</a>
-        <div className="min-h-screen flex flex-col relative bg-[var(--background)] text-[var(--on-surface)]">
-          <Header />
-          <main id="main-content" className="flex-grow">
-            {children}
-          </main>
-          <Footer />
-        </div>
-        <InstallToast />
-        <Analytics />
-      </body>
+      <RootShell locale="sv">{children}</RootShell>
     </html>
   );
 }

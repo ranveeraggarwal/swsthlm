@@ -4,12 +4,15 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Music, Menu, X } from 'lucide-react';
+import { localePath, type Locale } from '@/lib/i18n/locale';
 import { ThemeToggle } from './ThemeToggle';
 
-export function Header() {
+export function Header({ locale = 'en' }: { locale?: Locale }) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const homeHref = localePath(locale, '/');
+  const aboutHref = localePath(locale, '/about');
 
   useEffect(() => {
     setMenuOpen(false);
@@ -52,7 +55,7 @@ export function Header() {
   return (
     <header className="w-full border-b border-[var(--surface-container-highest)] bg-[var(--surface)]/80 backdrop-blur-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-row items-center justify-between gap-4">
-        <Link href="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
+        <Link href={homeHref} className="flex items-center gap-3 hover:opacity-90 transition-opacity">
           <div className="w-10 h-10 rounded border border-[var(--border-ink)] bg-[var(--primary)] flex items-center justify-center shadow-[2px_2px_0px_0px_var(--shadow-ink)]">
             <Music className="w-5 h-5 text-[var(--on-primary)]" />
           </div>
@@ -65,10 +68,10 @@ export function Header() {
         </Link>
 
         <nav aria-label="Primary" className="hidden sm:flex items-center gap-2">
-          <Link href="/" className={navLinkClass('/')} aria-current={pathname === '/' ? 'page' : undefined}>
+          <Link href={homeHref} className={navLinkClass(homeHref)} aria-current={pathname === homeHref ? 'page' : undefined}>
             Calendar
           </Link>
-          <Link href="/about" className={navLinkClass('/about')} aria-current={pathname === '/about' ? 'page' : undefined}>
+          <Link href={aboutHref} className={navLinkClass(aboutHref)} aria-current={pathname === aboutHref ? 'page' : undefined}>
             About
           </Link>
           <ThemeToggle />
@@ -92,10 +95,10 @@ export function Header() {
 
       {menuOpen && (
         <nav id="mobile-menu" aria-label="Primary (mobile)" className="sm:hidden border-t border-[var(--surface-container-highest)] bg-[var(--surface)]/95 backdrop-blur-md px-4 py-3 flex flex-col gap-1">
-          <Link href="/" className={mobileNavLinkClass('/')} onClick={() => setMenuOpen(false)} aria-current={pathname === '/' ? 'page' : undefined}>
+          <Link href={homeHref} className={mobileNavLinkClass(homeHref)} onClick={() => setMenuOpen(false)} aria-current={pathname === homeHref ? 'page' : undefined}>
             Calendar
           </Link>
-          <Link href="/about" className={mobileNavLinkClass('/about')} onClick={() => setMenuOpen(false)} aria-current={pathname === '/about' ? 'page' : undefined}>
+          <Link href={aboutHref} className={mobileNavLinkClass(aboutHref)} onClick={() => setMenuOpen(false)} aria-current={pathname === aboutHref ? 'page' : undefined}>
             About
           </Link>
         </nav>

@@ -1,3 +1,12 @@
+// The site-level OG image, shared by English and Swedish (one image, not
+// translated — see issue #259's out-of-scope list). Lives in this `_shared`
+// private folder (ignored by Next's router) rather than directly at
+// `app/opengraph-image.tsx`: with two root layouts (`app/(en)/layout.tsx`
+// and `app/sv/layout.tsx`, see #260), a convention file sitting outside both
+// route groups has no ancestor layout to resolve `metadataBase` from, which
+// silently dropped the image on some pages and warned on others. Each
+// locale's own `opengraph-image.tsx` re-exports this file, so the image
+// resolves inside that locale's layout tree instead.
 import { ImageResponse } from 'next/og';
 
 export const alt =

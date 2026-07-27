@@ -10,16 +10,13 @@ import {
   GITHUB_DISCUSSIONS_URL,
   GITHUB_REPO_URL,
 } from '@/lib/site';
-import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: 'About | Stockholm Swing',
-  description:
-    'One place for every Lindy Hop, Balboa, Blues, and Shag social, workshop, and jam in Stockholm.',
-  alternates: { canonical: '/about' },
-};
-
-export default function AboutPage() {
+/**
+ * The About page body, shared by `/about` and `/sv/about` so the ~150 lines
+ * of prose live in one place. Still English-only copy; #264 threads a
+ * `locale` prop through here once the Swedish translation exists.
+ */
+export function AboutContent() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
       <div className="max-w-2xl mx-auto">

@@ -3,8 +3,9 @@ import type { Metadata } from 'next';
 import { AboutContent } from '@/features/about/AboutContent';
 import { dictionary } from '@/lib/i18n';
 
-// Mirrors `app/(en)/about/page.tsx`. See `AboutContent`'s header for why the
-// prose is still English at this stage — #264 is the translation PR.
+// Mirrors `app/(en)/about/page.tsx`, with the same heading structure and order
+// so the two locales stay diffable. Copy comes from `lib/i18n`'s `about`
+// namespace (#264).
 const t = dictionary('sv').meta.about;
 
 export const metadata: Metadata = {
@@ -14,5 +15,5 @@ export const metadata: Metadata = {
 };
 
 export default function AboutPage() {
-  return <AboutContent />;
+  return <AboutContent locale="sv" />;
 }

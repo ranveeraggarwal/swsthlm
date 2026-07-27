@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { formatMonthHeading } from '@/lib/date/format';
+import { dictionary, type Locale } from '@/lib/i18n';
 import { CHANGELOG } from './entries';
 
 const PANEL_ID = 'changelog-panel';
@@ -10,8 +11,15 @@ const PANEL_ID = 'changelog-panel';
 /**
  * Collapsed-by-default disclosure listing major feature work month by month.
  * Content lives in `./entries.ts`; this component only renders it.
+ *
+ * The chrome around the timeline is translated, the entries inside it are not
+ * (#264): a changelog sits next to the git history, and giving every entry an
+ * `{ en, sv }` pair would turn each future feature PR into a two-language
+ * authoring job forever. Non-English readers get `entriesLanguageNote` above
+ * the list saying so.
  */
-export function ChangelogTimeline() {
+export function ChangelogTimeline({ locale = 'en' }: { locale?: Locale }) {
+  const t = dictionary(locale).changelog;
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
@@ -28,10 +36,10 @@ export function ChangelogTimeline() {
         >
           <span>
             <span className="block font-serif text-xl font-bold text-[var(--on-surface)]">
-              What&apos;s new
+              {t.heading}
             </span>
             <span className="block mt-0.5 font-sans text-sm font-normal text-[var(--on-surface-variant)]">
-              Major updates to the site, month by month
+              {t.subheading}
             </span>
           </span>
           <ChevronDown
@@ -42,48 +50,56 @@ export function ChangelogTimeline() {
       </h2>
 
       {isExpanded && (
-        <ol id={PANEL_ID} className="border-t-2 border-[var(--border-ink)] p-4 sm:p-6 space-y-8">
-          {CHANGELOG.map((entry, index) => (
-            <li key={entry.month} className="relative pl-8">
-              {/* Timeline rail + marker. Decorative: the month heading carries
-                  the meaning. The rail is skipped on the last entry so the
-                  line stops at the oldest month instead of dangling. */}
-              {index < CHANGELOG.length - 1 && (
+        <div id={PANEL_ID} className="border-t-2 border-[var(--border-ink)] p-4 sm:p-6">
+          {/* Empty in English, where there is nothing to explain. */}
+          {t.entriesLanguageNote && (
+            <p className="mb-6 font-sans text-sm text-[var(--on-surface-variant)] leading-relaxed">
+              {t.entriesLanguageNote}
+            </p>
+          )}
+          <ol className="space-y-8">
+            {CHANGELOG.map((entry, index) => (
+              <li key={entry.month} className="relative pl-8">
+                {/* Timeline rail + marker. Decorative: the month heading carries
+                    the meaning. The rail is skipped on the last entry so the
+                    line stops at the oldest month instead of dangling. */}
+                {index < CHANGELOG.length - 1 && (
+                  <span
+                    aria-hidden="true"
+                    className="absolute left-[5px] top-4 -bottom-8 w-0.5 bg-[var(--outline-variant)]"
+                  />
+                )}
                 <span
                   aria-hidden="true"
-                  className="absolute left-[5px] top-4 -bottom-8 w-0.5 bg-[var(--outline-variant)]"
+                  className="absolute left-0 top-1.5 w-3 h-3 rounded-full border-2 border-[var(--border-ink)] bg-[var(--primary)]"
                 />
-              )}
-              <span
-                aria-hidden="true"
-                className="absolute left-0 top-1.5 w-3 h-3 rounded-full border-2 border-[var(--border-ink)] bg-[var(--primary)]"
-              />
 
-              <h3 className="font-sans text-xs font-bold uppercase tracking-[0.05em] text-[var(--on-surface-variant)]">
-                {formatMonthHeading(entry.month)}
-              </h3>
-              <p className="mt-1 font-serif text-lg font-bold text-[var(--on-surface)] leading-snug">
-                {entry.summary}
-              </p>
+                <h3 className="font-sans text-xs font-bold uppercase tracking-[0.05em] text-[var(--on-surface-variant)]">
+                  {formatMonthHeading(entry.month)}
+                </h3>
+                <p className="mt-1 font-serif text-lg font-bold text-[var(--on-surface)] leading-snug">
+                  {entry.summary}
+                </p>
 
-              <ul className="mt-3 space-y-3">
-                {entry.items.map((item) => (
-                  <li
-                    key={item.title}
-                    className="p-3 rounded border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)]"
-                  >
-                    <span className="block font-sans text-sm font-bold text-[var(--on-surface)]">
-                      {item.title}
-                    </span>
-                    <span className="block mt-0.5 font-sans text-sm text-[var(--on-surface-variant)] leading-relaxed">
-                      {item.description}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </li>
-          ))}
-        </ol>
+                <ul className="mt-3 space-y-3">
+                  {entry.items.map((item) => (
+                    <li
+                      key={item.title}
+                      className="p-3 rounded border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)]"
+                    >
+                      <span className="block font-sans text-sm font-bold text-[var(--on-surface)]">
+                        {item.title}
+                      </span>
+                      <span className="block mt-0.5 font-sans text-sm text-[var(--on-surface-variant)] leading-relaxed">
+                        {item.description}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ))}
+          </ol>
+        </div>
       )}
     </section>
   );

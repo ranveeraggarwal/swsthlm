@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { GitHubIcon } from '@/components/ui/GitHubIcon';
+import { dictionary, type Locale } from '@/lib/i18n';
 import { CONTRIBUTORS } from './contributors';
 
 const PANEL_ID = 'contributors-panel';
@@ -10,8 +11,11 @@ const PANEL_ID = 'contributors-panel';
 /**
  * Collapsed-by-default disclosure listing everyone who has contributed to the
  * site. Content lives in `./contributors.ts`; this component only renders it.
+ * Names are names — only the heading, blurb and link labels translate.
  */
-export function ContributorsWall() {
+export function ContributorsWall({ locale = 'en' }: { locale?: Locale }) {
+  const d = dictionary(locale);
+  const t = d.contributors;
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
@@ -28,10 +32,10 @@ export function ContributorsWall() {
         >
           <span>
             <span className="block font-serif text-xl font-bold text-[var(--on-surface)]">
-              Contributors
+              {t.heading}
             </span>
             <span className="block mt-0.5 font-sans text-sm font-normal text-[var(--on-surface-variant)]">
-              The people who&apos;ve built and maintained this site
+              {t.subheading}
             </span>
           </span>
           <ChevronDown
@@ -46,29 +50,32 @@ export function ContributorsWall() {
           id={PANEL_ID}
           className="border-t-2 border-[var(--border-ink)] p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-2 gap-3"
         >
-          {CONTRIBUTORS.map((contributor) => (
-            <li
-              key={contributor.name}
-              className="p-3 rounded border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] flex items-center justify-between gap-2"
-            >
-              <span className="font-sans text-sm font-bold text-[var(--on-surface)]">
-                {contributor.name}
-              </span>
-              {contributor.githubUrl && (
-                <a
-                  href={contributor.githubUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`${contributor.name} on GitHub`}
-                  title={`${contributor.name} on GitHub`}
-                  className="shrink-0 text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors"
-                >
-                  <GitHubIcon className="w-4 h-4" />
-                  <span className="sr-only"> (opens in a new tab)</span>
-                </a>
-              )}
-            </li>
-          ))}
+          {CONTRIBUTORS.map((contributor) => {
+            const githubLabel = `${contributor.name} ${t.onGitHub}`;
+            return (
+              <li
+                key={contributor.name}
+                className="p-3 rounded border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] flex items-center justify-between gap-2"
+              >
+                <span className="font-sans text-sm font-bold text-[var(--on-surface)]">
+                  {contributor.name}
+                </span>
+                {contributor.githubUrl && (
+                  <a
+                    href={contributor.githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={githubLabel}
+                    title={githubLabel}
+                    className="shrink-0 text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors"
+                  >
+                    <GitHubIcon className="w-4 h-4" />
+                    <span className="sr-only"> {d.common.opensInNewTab}</span>
+                  </a>
+                )}
+              </li>
+            );
+          })}
         </ul>
       )}
     </section>

@@ -8,6 +8,7 @@
 
 import { getMonthKey, isCurrentWeek, isNextWeek, isSunday } from '@/lib/date/calendar';
 import type { Style } from '@/lib/data/types';
+import type { Locale } from '@/lib/i18n/locale';
 import type { EventGroup, SwingEvent } from './event';
 import { firstNightOf } from './grouping';
 import { styleLabel } from './labels';
@@ -17,9 +18,16 @@ export const ALL_STYLES = 'all';
 /** Sentinel meaning "don't filter on venue". */
 export const ALL_VENUES = 'all';
 
+// The prose this file produces, per locale. Venue names and search terms are
+// interpolated as written — they're data, not chrome, and don't translate.
+const ALL_VENUES_LABEL: Record<Locale, string> = {
+  en: 'All Venues',
+  sv: 'Alla lokaler',
+};
+
 /** Chip text for a venue filter option. */
-export function venueFilterLabel(venue: string): string {
-  return venue === ALL_VENUES ? 'All Venues' : venue;
+export function venueFilterLabel(venue: string, locale: Locale): string {
+  return venue === ALL_VENUES ? ALL_VENUES_LABEL[locale] : venue;
 }
 
 export interface EventFilters {
@@ -214,28 +222,91 @@ export type FilterSummary =
   | { kind: 'all'; count: number }
   | { kind: 'filtered'; description: string };
 
-export function summariseFilters(filters: EventFilters, count: number): FilterSummary {
+/**
+ * Each locale composes the whole sentence rather than filling blanks in a
+ * shared template: Swedish compounds the qualifiers onto the noun with a hyphen
+ * ("3 Lindy Hop-evenemang"), has one form of "evenemang" for both singular and
+ * plural, and quotes with `”…”` rather than `"…"`.
+ */
+const FILTER_SUMMARY: Record<
+  Locale,
+  {
+    countedEvents: (count: number, qualifiers: string[]) => string;
+    liveMusic: string;
+    atVenue: (venue: string) => string;
+    matching: (search: string) => string;
+  }
+> = {
+  en: {
+    countedEvents: (count, qualifiers) =>
+      `${count} ${qualifiers.length > 0 ? `${qualifiers.join(' ')} ` : ''}event${
+        count !== 1 ? 's' : ''
+      }`,
+    liveMusic: 'Live Music',
+    atVenue: (venue) => ` at ${venue}`,
+    matching: (search) => ` matching "${search}"`,
+  },
+  sv: {
+    countedEvents: (count, qualifiers) =>
+      qualifiers.length > 0 ? `${count} ${qualifiers.join(' ')}-evenemang` : `${count} evenemang`,
+    liveMusic: 'Livemusik',
+    atVenue: (venue) => ` på ${venue}`,
+    matching: (search) => ` som matchar ”${search}”`,
+  },
+};
+
+export function summariseFilters(
+  filters: EventFilters,
+  count: number,
+  locale: Locale,
+): FilterSummary {
   if (!hasActiveFilters(filters)) return { kind: 'all', count };
 
+  const text = FILTER_SUMMARY[locale];
   const qualifiers: string[] = [];
-  if (filters.style !== ALL_STYLES) qualifiers.push(styleLabel(filters.style as Style));
-  if (filters.liveMusicOnly) qualifiers.push('Live Music');
+  if (filters.style !== ALL_STYLES) qualifiers.push(styleLabel(filters.style as Style, locale));
+  if (filters.liveMusicOnly) qualifiers.push(text.liveMusic);
 
-  const noun = `event${count !== 1 ? 's' : ''}`;
-  let description = `${count} ${qualifiers.length > 0 ? `${qualifiers.join(' ')} ` : ''}${noun}`;
-  if (filters.venue !== ALL_VENUES) description += ` at ${filters.venue}`;
-  if (filters.search) description += ` matching "${filters.search}"`;
+  let description = text.countedEvents(count, qualifiers);
+  if (filters.venue !== ALL_VENUES) description += text.atVenue(filters.venue);
+  if (filters.search) description += text.matching(filters.search);
 
   return { kind: 'filtered', description };
 }
 
-/** Heading for the empty state, which names the filters that emptied the page. */
-export function emptyStateHeading(filters: EventFilters): string {
-  const style = filters.style !== ALL_STYLES ? styleLabel(filters.style as Style) : null;
-  const venue = filters.venue !== ALL_VENUES ? filters.venue : null;
+const EMPTY_STATE: Record<
+  Locale,
+  {
+    styleAtVenue: (style: string, venue: string) => string;
+    style: (style: string) => string;
+    venue: (venue: string) => string;
+    noMatch: string;
+  }
+> = {
+  en: {
+    styleAtVenue: (style, venue) => `No ${style} events at ${venue} right now`,
+    style: (style) => `No ${style} events right now`,
+    venue: (venue) => `No events at ${venue} right now`,
+    noMatch: 'No events match your filters',
+  },
+  sv: {
+    styleAtVenue: (style, venue) => `Inga ${style}-evenemang på ${venue} just nu`,
+    style: (style) => `Inga ${style}-evenemang just nu`,
+    venue: (venue) => `Inga evenemang på ${venue} just nu`,
+    noMatch: 'Inga evenemang matchar dina filter',
+  },
+};
 
-  if (style && venue) return `No ${style} events at ${venue} right now`;
-  if (style) return `No ${style} events right now`;
-  if (venue) return `No events at ${venue} right now`;
-  return 'No events match your filters';
+/** Heading for the empty state, which names the filters that emptied the page. */
+export function emptyStateHeading(filters: EventFilters, locale: Locale): string {
+  // Never the 'all' style: it isn't a filter, so the heading never has to read
+  // "No Social – all styles events".
+  const style = filters.style !== ALL_STYLES ? styleLabel(filters.style as Style, locale) : null;
+  const venue = filters.venue !== ALL_VENUES ? filters.venue : null;
+  const text = EMPTY_STATE[locale];
+
+  if (style && venue) return text.styleAtVenue(style, venue);
+  if (style) return text.style(style);
+  if (venue) return text.venue(venue);
+  return text.noMatch;
 }

@@ -10,6 +10,7 @@
 import React from 'react';
 import { Banknote, GraduationCap, Moon, Wallet } from 'lucide-react';
 import type { Style } from '@/lib/data/types';
+import { DEFAULT_LOCALE, type Locale } from '@/lib/i18n/locale';
 import { beginnerClassLabel, styleChipClass, styleLabel } from '../model/labels';
 
 const CHIP_TYPE = 'rounded text-[10px] font-bold uppercase tracking-wider border';
@@ -36,13 +37,15 @@ const STYLE_CHIP_LAYOUT = {
 export function StyleChip({
   style,
   layout,
+  locale = DEFAULT_LOCALE,
 }: {
   style: Style;
   layout: keyof typeof STYLE_CHIP_LAYOUT;
+  locale?: Locale;
 }) {
   return (
     <span className={`${STYLE_CHIP_LAYOUT[layout]} ${styleChipClass(style)}`}>
-      {styleLabel(style, { compact: layout === 'row' })}
+      {styleLabel(style, locale, { compact: layout === 'row' })}
     </span>
   );
 }
@@ -62,14 +65,20 @@ export function NightsChip({ nightCount }: { nightCount: number }) {
 
 /** "Beginner friendly", or the class start time. One of the three facts the
  *  whole card design exists to surface (see docs/PROJECT.md M1). */
-export function BeginnerChip({ beginnerClass }: { beginnerClass?: string }) {
+export function BeginnerChip({
+  beginnerClass,
+  locale = DEFAULT_LOCALE,
+}: {
+  beginnerClass?: string;
+  locale?: Locale;
+}) {
   if (!beginnerClass) return null;
   return (
     <span
       className={`${CHIP} bg-[var(--success-container)] text-[var(--on-success-container)] border-[var(--on-success-container)]/25`}
     >
       <GraduationCap className="w-3 h-3" />
-      {beginnerClassLabel(beginnerClass)}
+      {beginnerClassLabel(beginnerClass, locale)}
     </span>
   );
 }

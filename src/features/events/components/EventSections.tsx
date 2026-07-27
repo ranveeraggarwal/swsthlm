@@ -13,6 +13,7 @@ import { CalendarDays } from 'lucide-react';
 import { isCurrentWeek } from '@/lib/date/calendar';
 import type { Now } from '@/lib/date/clock';
 import { formatEventDate, formatEventDateRange, formatMonthHeading } from '@/lib/date/format';
+import { DEFAULT_LOCALE, type Locale } from '@/lib/i18n/locale';
 import { lastNightOf } from '../model/grouping';
 import type { DateSection, MonthSection } from '../model/sections';
 import { EventCard } from './EventCard';
@@ -49,10 +50,12 @@ export function HighlightedEvents({
   sections,
   showNextWeek,
   now,
+  locale = DEFAULT_LOCALE,
 }: {
   sections: DateSection[];
   showNextWeek: boolean;
   now: Now;
+  locale?: Locale;
 }) {
   if (sections.length === 0) return null;
 
@@ -85,6 +88,7 @@ export function HighlightedEvents({
                   group={group}
                   isThisWeek={isCurrentWeek(group.dates[0], now.date)}
                   now={now}
+                  locale={locale}
                 />
               ))}
             </div>
@@ -99,9 +103,11 @@ export function HighlightedEvents({
 export function UpcomingEvents({
   sections,
   showNextWeek,
+  locale = DEFAULT_LOCALE,
 }: {
   sections: MonthSection[];
   showNextWeek: boolean;
+  locale?: Locale;
 }) {
   if (sections.length === 0) return null;
 
@@ -132,7 +138,7 @@ export function UpcomingEvents({
               />
             </div>
             {groups.map((group) => (
-              <EventRow key={group.event.id} group={group} />
+              <EventRow key={group.event.id} group={group} locale={locale} />
             ))}
           </div>
         ))}

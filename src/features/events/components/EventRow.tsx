@@ -11,6 +11,7 @@
 import React, { useState } from 'react';
 import { ChevronDown, Disc, MapPin, Music, Ticket } from 'lucide-react';
 import { formatCompactDateRange } from '@/lib/date/format';
+import { DEFAULT_LOCALE, type Locale } from '@/lib/i18n/locale';
 import { ReportCorrectionButton } from '@/features/corrections/ReportCorrectionButton';
 import { domIdFor, venueMapsUrl, type EventGroup } from '../model/event';
 import { musicLines } from '../model/labels';
@@ -19,7 +20,13 @@ import { BeginnerChip, NightsChip, PaymentChip, PriceChip, StyleChip } from './E
 import { FloorTypeBadge } from './FloorTypeBadge';
 import { ShareButton } from './ShareButton';
 
-export function EventRow({ group }: { group: EventGroup }) {
+export function EventRow({
+  group,
+  locale = DEFAULT_LOCALE,
+}: {
+  group: EventGroup;
+  locale?: Locale;
+}) {
   const { event, dates, nightCount } = group;
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -90,7 +97,7 @@ export function EventRow({ group }: { group: EventGroup }) {
               ),
             )}
           </span>
-          <StyleChip style={event.style} layout="row" />
+          <StyleChip style={event.style} layout="row" locale={locale} />
         </div>
       </button>
 
@@ -103,8 +110,8 @@ export function EventRow({ group }: { group: EventGroup }) {
             <PriceChip price={event.price} />
             <PaymentChip payment={event.payment} />
             <NightsChip nightCount={nightCount} />
-            <BeginnerChip beginnerClass={event.beginnerClass} />
-            <FloorTypeBadge floorType={event.floorType} />
+            <BeginnerChip beginnerClass={event.beginnerClass} locale={locale} />
+            <FloorTypeBadge floorType={event.floorType} locale={locale} />
           </div>
 
           {namedPerformers.length > 0 && (

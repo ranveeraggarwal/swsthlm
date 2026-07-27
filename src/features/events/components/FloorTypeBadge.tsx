@@ -1,23 +1,30 @@
 import React from 'react';
 import { LayoutGrid, Landmark, Beer, Palmtree } from 'lucide-react';
 import type { FloorType } from '@/lib/data/types';
+import { DEFAULT_LOCALE, type Locale } from '@/lib/i18n/locale';
+import { floorTypeLabel } from '../model/labels';
 
-const FLOOR_TYPES: Record<
-  FloorType,
-  { label: string; Icon: React.ComponentType<{ className?: string }> }
-> = {
-  studio: { label: 'Dance studio', Icon: LayoutGrid },
-  hall: { label: 'Dance hall', Icon: Landmark },
-  bar: { label: 'Bar / restaurant', Icon: Beer },
-  outdoor: { label: 'Outdoor', Icon: Palmtree },
+// Icons only — the wording lives in `../model/labels.ts` with the rest of the
+// value→text mappings, so the Swedish copy can't drift from the English.
+const FLOOR_TYPE_ICONS: Record<FloorType, React.ComponentType<{ className?: string }>> = {
+  studio: LayoutGrid,
+  hall: Landmark,
+  bar: Beer,
+  outdoor: Palmtree,
 };
 
 // Neutral styling on purpose — this describes the room, not a quality
 // judgment, so it shouldn't read as better/worse the way a rating would.
-export function FloorTypeBadge({ floorType }: { floorType?: FloorType }) {
-  const info = floorType ? FLOOR_TYPES[floorType] : undefined;
-  if (!info) return null;
-  const { label, Icon } = info;
+export function FloorTypeBadge({
+  floorType,
+  locale = DEFAULT_LOCALE,
+}: {
+  floorType?: FloorType;
+  locale?: Locale;
+}) {
+  const Icon = floorType ? FLOOR_TYPE_ICONS[floorType] : undefined;
+  if (!floorType || !Icon) return null;
+  const label = floorTypeLabel(floorType, locale);
 
   return (
     <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-[var(--surface-container)] text-[var(--on-surface-variant)] border border-[var(--surface-container-highest)] text-[10px] font-bold uppercase tracking-wider">

@@ -7,14 +7,16 @@
 import React from 'react';
 import { SlidersHorizontal } from 'lucide-react';
 import { CALENDAR_WEBCAL_URL, EVENT_SUBMISSION_FORM_URL } from '@/lib/site';
+import { DEFAULT_LOCALE, type Locale } from '@/lib/i18n/locale';
 import { emptyStateHeading, hasActiveFilters, type EventFilters } from '../model/sections';
 
 interface EmptyStateProps {
   filters: EventFilters;
   onClearFilters: () => void;
+  locale?: Locale;
 }
 
-export function EmptyState({ filters, onClearFilters }: EmptyStateProps) {
+export function EmptyState({ filters, onClearFilters, locale = DEFAULT_LOCALE }: EmptyStateProps) {
   return (
     <div className="text-center py-16 border border-dashed border-[var(--surface-container-highest)] rounded bg-[var(--surface-container-low)] p-8">
       <SlidersHorizontal
@@ -22,7 +24,7 @@ export function EmptyState({ filters, onClearFilters }: EmptyStateProps) {
         className="w-12 h-12 text-[var(--outline)] mx-auto mb-4"
       />
       <h2 className="font-serif text-xl font-bold text-[var(--on-surface)] mb-1">
-        {emptyStateHeading(filters)}
+        {emptyStateHeading(filters, locale)}
       </h2>
       <p className="font-sans font-body-md text-[var(--on-surface-variant)] max-w-sm mx-auto mb-6">
         Try adjusting your search terms or filters to find dance events.

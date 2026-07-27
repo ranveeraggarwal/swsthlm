@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { ArrowLeft, Ticket } from 'lucide-react';
 import { formatEventDate } from '@/lib/date/format';
+import { DEFAULT_LOCALE, type Locale } from '@/lib/i18n/locale';
 import { ReportCorrectionButton } from '@/features/corrections/ReportCorrectionButton';
 import { AddToCalendarButton } from './AddToCalendarButton';
 import { BeginnerChip, StyleChip } from './EventChips';
@@ -18,9 +19,11 @@ import type { SwingEvent } from '../model/event';
 export function EventPermalinkArticle({
   event,
   backHref,
+  locale = DEFAULT_LOCALE,
 }: {
   event: SwingEvent;
   backHref: string;
+  locale?: Locale;
 }) {
   return (
     <>
@@ -49,9 +52,9 @@ export function EventPermalinkArticle({
           <EventFacts event={event} />
 
           <div className="flex flex-wrap items-center gap-2 font-sans">
-            <StyleChip style={event.style} layout="permalink" />
-            <FloorTypeBadge floorType={event.floorType} />
-            <BeginnerChip beginnerClass={event.beginnerClass} />
+            <StyleChip style={event.style} layout="permalink" locale={locale} />
+            <FloorTypeBadge floorType={event.floorType} locale={locale} />
+            <BeginnerChip beginnerClass={event.beginnerClass} locale={locale} />
           </div>
 
           {event.body && (

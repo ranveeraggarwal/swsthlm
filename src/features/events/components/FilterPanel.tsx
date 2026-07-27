@@ -7,6 +7,7 @@
 import React from 'react';
 import { MapPin, Music, Search, SlidersHorizontal, Sparkles, X } from 'lucide-react';
 import type { Style } from '@/lib/data/types';
+import { DEFAULT_LOCALE, type Locale } from '@/lib/i18n/locale';
 import { styleFilterLabel } from '../model/labels';
 import { venueFilterLabel, type EventFilters } from '../model/sections';
 
@@ -17,6 +18,7 @@ interface FilterPanelProps {
   styles: Style[];
   venues: string[];
   searchInputRef: React.RefObject<HTMLInputElement | null>;
+  locale?: Locale;
 }
 
 const SCROLLER =
@@ -50,6 +52,7 @@ export function FilterPanel({
   styles,
   venues,
   searchInputRef,
+  locale = DEFAULT_LOCALE,
 }: FilterPanelProps) {
   return (
     <div
@@ -118,7 +121,7 @@ export function FilterPanel({
                     aria-pressed={filters.style === style}
                     className={`${CHIP_BASE} ${filters.style === style ? CHIP_SELECTED.primary : CHIP_IDLE}`}
                   >
-                    {styleFilterLabel(style)}
+                    {styleFilterLabel(style, locale)}
                   </button>
                 ))}
               </div>
@@ -155,7 +158,7 @@ export function FilterPanel({
                   aria-pressed={filters.venue === venue}
                   className={`${CHIP_BASE} ${filters.venue === venue ? CHIP_SELECTED.secondary : CHIP_IDLE}`}
                 >
-                  {venueFilterLabel(venue)}
+                  {venueFilterLabel(venue, locale)}
                 </button>
               ))}
             </div>

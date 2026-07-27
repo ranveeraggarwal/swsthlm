@@ -11,6 +11,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Ticket } from 'lucide-react';
 import type { Now } from '@/lib/date/clock';
 import { formatEventDateRange, formatEventDateShort } from '@/lib/date/format';
+import { DEFAULT_LOCALE, type Locale } from '@/lib/i18n/locale';
 import { ReportCorrectionButton } from '@/features/corrections/ReportCorrectionButton';
 import { domIdFor, type EventGroup } from '../model/event';
 import { getTemporalBadge } from '../model/temporal';
@@ -28,12 +29,21 @@ interface EventCardProps {
   /** Force the date line on, for a card whose section heading doesn't carry it. */
   showDate?: boolean;
   now: Now;
+  /** The badge and chips are rendered client-side, so their language arrives as
+   *  a prop rather than being read from the URL. */
+  locale?: Locale;
 }
 
 /** How many lines of the organizer's description to show before "Read more". */
 const DESCRIPTION_CLAMP = 'line-clamp-2';
 
-export function EventCard({ group, isThisWeek, showDate, now }: EventCardProps) {
+export function EventCard({
+  group,
+  isThisWeek,
+  showDate,
+  now,
+  locale = DEFAULT_LOCALE,
+}: EventCardProps) {
   const { event, dates, nightCount } = group;
 
   const [descriptionExpanded, setDescriptionExpanded] = useState(false);
@@ -97,7 +107,7 @@ export function EventCard({ group, isThisWeek, showDate, now }: EventCardProps) 
                   Cancelled
                 </span>
               ) : (
-                <TemporalBadgeDisplay badge={badge} />
+                <TemporalBadgeDisplay badge={badge} locale={locale} />
               )}
             </div>
           </div>
@@ -112,10 +122,10 @@ export function EventCard({ group, isThisWeek, showDate, now }: EventCardProps) 
           <EventFacts event={event} struckThrough={event.cancelled} className="mb-4" />
 
           <div className="flex flex-wrap items-center gap-2 font-sans">
-            <StyleChip style={event.style} layout="card" />
-            <FloorTypeBadge floorType={event.floorType} />
+            <StyleChip style={event.style} layout="card" locale={locale} />
+            <FloorTypeBadge floorType={event.floorType} locale={locale} />
             <NightsChip nightCount={nightCount} />
-            <BeginnerChip beginnerClass={event.beginnerClass} />
+            <BeginnerChip beginnerClass={event.beginnerClass} locale={locale} />
           </div>
         </div>
 

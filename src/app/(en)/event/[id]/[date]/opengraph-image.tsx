@@ -6,9 +6,10 @@
 
 import { ImageResponse } from 'next/og';
 import { formatEventDate } from '@/lib/date/format';
-import type { FloorType, Style } from '@/lib/data/types';
+import type { Style } from '@/lib/data/types';
 import { getPermalinkEvents } from '@/features/events/loader';
-import { styleLabel } from '@/features/events/model/labels';
+import { DEFAULT_LOCALE } from '@/lib/i18n/locale';
+import { floorTypeLabel, styleLabel } from '@/features/events/model/labels';
 
 export const alt = 'Event details';
 export const size = { width: 1200, height: 630 };
@@ -38,13 +39,6 @@ const STYLE_COLORS: Record<Style, { bg: string; fg: string }> = {
   blues: { bg: '#eae8de', fg: '#594138' },
   shag: { bg: '#f0eee3', fg: '#594138' },
   all: { bg: '#f0eee3', fg: '#594138' },
-};
-
-const FLOOR_TYPE_LABELS: Record<FloorType, string> = {
-  studio: 'Dance studio',
-  hall: 'Dance hall',
-  bar: 'Bar / restaurant',
-  outdoor: 'Outdoor',
 };
 
 export default async function Image({
@@ -82,7 +76,9 @@ export default async function Image({
   ]);
 
   const styleColor = STYLE_COLORS[event.style] ?? STYLE_COLORS.all;
-  const styleText = styleLabel(event.style, { compact: true });
+  // English regardless of locale: `/sv` reuses these images rather than
+  // generating a second satori route (see issue #259's design comment).
+  const styleText = styleLabel(event.style, DEFAULT_LOCALE, { compact: true });
   const dateFormatted = formatEventDate(event.date);
   const titleTruncated =
     event.title.length > 60 ? event.title.slice(0, 57) + '…' : event.title;
@@ -99,7 +95,9 @@ export default async function Image({
 
   const logistics = [event.price, event.payment].filter(Boolean).join(' · ');
 
-  const floorLabel = event.floorType ? FLOOR_TYPE_LABELS[event.floorType] : undefined;
+  const floorLabel = event.floorType
+    ? floorTypeLabel(event.floorType, DEFAULT_LOCALE)
+    : undefined;
 
   return new ImageResponse(
     (

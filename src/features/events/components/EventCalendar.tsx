@@ -17,6 +17,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { SlidersHorizontal } from 'lucide-react';
 import { stockholmNow, type Now } from '@/lib/date/clock';
+import { DEFAULT_LOCALE, type Locale } from '@/lib/i18n/locale';
 import type { SwingEvent } from '../model/event';
 import { groupMultiDayOneoffs } from '../model/grouping';
 import {
@@ -42,9 +43,13 @@ interface EventCalendarProps {
   /** The build-time Stockholm clock, seeding the first render so that SSR and
    *  hydration agree. The real client clock takes over in an effect. */
   initialNow: Now;
+  /** The language for everything below this component. This is the one stateful
+   *  client tree, so it takes the locale once and hands it down; nothing under
+   *  it reads ambient state. Routes start passing it in #263. */
+  locale?: Locale;
 }
 
-export function EventCalendar({ events, initialNow }: EventCalendarProps) {
+export function EventCalendar({ events, initialNow, locale = DEFAULT_LOCALE }: EventCalendarProps) {
   const [filters, setFilters] = useState<EventFilters>(NO_FILTERS);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
 
@@ -91,7 +96,7 @@ export function EventCalendar({ events, initialNow }: EventCalendarProps) {
   const sections = useMemo(() => buildSections(groups, now.date), [groups, now.date]);
 
   // Cards, not raw occurrences — a three-night workshop counts once.
-  const summary = summariseFilters(filters, groups.length);
+  const summary = summariseFilters(filters, groups.length, locale);
   const filtersActive = hasActiveFilters(filters);
 
   return (
@@ -143,22 +148,25 @@ export function EventCalendar({ events, initialNow }: EventCalendarProps) {
           styles={styles}
           venues={venues}
           searchInputRef={searchInputRef}
+          locale={locale}
         />
       )}
 
       <div className="space-y-12">
         {groups.length === 0 ? (
-          <EmptyState filters={filters} onClearFilters={clearFilters} />
+          <EmptyState filters={filters} onClearFilters={clearFilters} locale={locale} />
         ) : (
           <>
             <HighlightedEvents
               sections={sections.highlighted}
               showNextWeek={sections.showNextWeek}
               now={now}
+              locale={locale}
             />
             <UpcomingEvents
               sections={sections.upcoming}
               showNextWeek={sections.showNextWeek}
+              locale={locale}
             />
           </>
         )}

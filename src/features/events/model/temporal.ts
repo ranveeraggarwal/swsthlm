@@ -9,6 +9,7 @@
 
 import { isToday, isTomorrow } from '@/lib/date/calendar';
 import type { Now } from '@/lib/date/clock';
+import type { Locale } from '@/lib/i18n/locale';
 import type { SwingEvent } from './event';
 
 /** Badge kinds, highest priority first. `null` means no badge. */
@@ -19,6 +20,23 @@ export type TemporalBadge =
   | 'tomorrow'
   | 'this-week'
   | null;
+
+// The wording sits next to the union it describes, keyed by both — a new badge
+// kind or a new locale is a compile error until it has text. `TemporalBadgeDisplay`
+// keeps only the colours, so it has no `switch` over badge wording.
+const BADGE_LABELS: Record<NonNullable<TemporalBadge>, Record<Locale, string>> = {
+  'happening-now': { en: 'Happening Now', sv: 'Pågår nu' },
+  ended: { en: 'Ended', sv: 'Avslutad' },
+  tonight: { en: 'Tonight', sv: 'Ikväll' },
+  tomorrow: { en: 'Tomorrow', sv: 'Imorgon' },
+  'this-week': { en: 'This Week', sv: 'Denna vecka' },
+};
+
+/** Badge text. Computed client-side after hydration, so the locale is passed
+ *  down as a prop rather than read from the URL. */
+export function temporalBadgeLabel(badge: NonNullable<TemporalBadge>, locale: Locale): string {
+  return BADGE_LABELS[badge][locale];
+}
 
 /** The fields a badge is computed from — a whole SwingEvent isn't needed. */
 type Timing = Pick<SwingEvent, 'date' | 'start' | 'end'>;

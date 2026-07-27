@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getTemporalBadge } from './temporal';
+import { getTemporalBadge, temporalBadgeLabel } from './temporal';
 
 const today = '2025-05-20';
 const tomorrow = '2025-05-21';
@@ -57,5 +57,23 @@ describe('getTemporalBadge', () => {
 
   it('returns null for future events not in the current week', () => {
     expect(badgeFor('2025-05-30', '19:00', '22:00', '17:00', false)).toBe(null);
+  });
+});
+
+describe('temporalBadgeLabel', () => {
+  it('reads in English', () => {
+    expect(temporalBadgeLabel('happening-now', 'en')).toBe('Happening Now');
+    expect(temporalBadgeLabel('ended', 'en')).toBe('Ended');
+    expect(temporalBadgeLabel('tonight', 'en')).toBe('Tonight');
+    expect(temporalBadgeLabel('tomorrow', 'en')).toBe('Tomorrow');
+    expect(temporalBadgeLabel('this-week', 'en')).toBe('This Week');
+  });
+
+  it('reads in Swedish', () => {
+    expect(temporalBadgeLabel('happening-now', 'sv')).toBe('Pågår nu');
+    expect(temporalBadgeLabel('ended', 'sv')).toBe('Avslutad');
+    expect(temporalBadgeLabel('tonight', 'sv')).toBe('Ikväll');
+    expect(temporalBadgeLabel('tomorrow', 'sv')).toBe('Imorgon');
+    expect(temporalBadgeLabel('this-week', 'sv')).toBe('Denna vecka');
   });
 });

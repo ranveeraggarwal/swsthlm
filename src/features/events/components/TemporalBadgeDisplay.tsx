@@ -1,9 +1,12 @@
+'use client';
+
 // Renders the badge that `../model/temporal.ts` decided on. One table, so the
 // wording and colour of "Happening Now" live next to "Tonight" instead of in a
 // switch inside a 300-line card.
 
 import React from 'react';
 import { temporalBadgeLabel, type TemporalBadge } from '../model/temporal';
+import { useLocale } from '@/components/providers/LocaleProvider';
 
 const BADGE = 'px-2.5 py-0.5 rounded text-[11px] uppercase font-bold tracking-wider';
 
@@ -19,8 +22,9 @@ const BADGE_CLASSES: Record<NonNullable<TemporalBadge>, string> = {
 };
 
 export function TemporalBadgeDisplay({ badge }: { badge: TemporalBadge }) {
+  const { locale } = useLocale();
   if (!badge) return null;
-  const label = temporalBadgeLabel(badge);
+  const label = temporalBadgeLabel(badge, locale);
   const className = BADGE_CLASSES[badge];
 
   // "Happening Now" gets a pulsing dot; the others are plain text.

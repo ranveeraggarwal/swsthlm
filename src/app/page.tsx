@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import { stockholmNow } from '@/lib/date/clock';
+import { HomeHero } from '@/components/layout/HomeHero';
 import { EventCalendar } from '@/features/events/components/EventCalendar';
 import { getEvents } from '@/features/events/loader';
 import { eventsJsonLd } from '@/features/events/jsonld';
@@ -31,15 +32,7 @@ export default async function Page() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: eventsJsonLd(events) }}
       />
-      {/* Compact Hero */}
-      <div className="text-center max-w-2xl mx-auto mb-4 mt-0">
-        <h1 className="font-serif text-3xl md:text-4xl lg:text-5xl font-black tracking-tight text-[var(--on-surface)] leading-tight">
-          Stockholm in <span className="italic font-normal">Full Swing</span>
-        </h1>
-        <p className="mt-1 font-sans text-xs md:text-sm text-[var(--on-surface-variant)] leading-relaxed max-w-md mx-auto">
-          Your guide to Lindy Hop, Balboa, Shag, and Blues social dancing in Stockholm.
-        </p>
-      </div>
+      <HomeHero />
 
       {/* The listing is a client component: filtering and the temporal badges
           both need a live clock, which static HTML can't have. It's seeded with

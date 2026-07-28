@@ -89,7 +89,34 @@ export const sv = {
     friendly: 'Nybörjarvänlig',
     atTime: 'Nybörjarkurs {time}',
   },
+  home: {
+    // "i full swing" is the same idiom in Swedish, which is lucky — the hero
+    // keeps its pun without needing a different joke.
+    title: { lead: 'Stockholm i ', em: 'full swing' },
+    subtitle: 'Din guide till socialdans i Lindy Hop, Balboa, Shag och Blues i Stockholm.',
+  },
+  listing: {
+    showingAll: 'Visar alla {count} {noun}',
+    showingFiltered: 'Visar {description}',
+    hideFilters: 'Dölj filter',
+    showFilters: 'Filtrera & sök',
+    reset: 'Återställ',
+    sections: {
+      comingUp: { lead: '', em: 'På gång' },
+      thisWeek: { lead: 'Händer ', em: 'denna vecka' },
+      later: { lead: '', em: 'Senare' },
+      upcoming: { lead: 'Kommande ', em: 'evenemang' },
+    },
+  },
   filters: {
+    title: { lead: 'Filter ', em: '& sök' },
+    searchLabel: 'Sök evenemang',
+    searchPlaceholder: 'Sök på band, DJ, lokal, titel...',
+    clearSearch: 'Rensa sökningen',
+    byStyle: 'Filtrera på stil',
+    music: 'Musik',
+    liveMusicOnly: 'Endast livemusik',
+    byVenue: 'Filtrera på lokal',
     allVenues: 'Alla lokaler',
     // "Evenemang" doesn't inflect for number, so both plural forms are the
     // same word — the interface still asks for both, for the locales where
@@ -104,5 +131,74 @@ export const sv = {
       venue: 'Inga evenemang på {venue} just nu',
       none: 'Inga evenemang matchar dina filter',
     },
+  },
+  card: {
+    readMore: 'Läs mer',
+    showLess: 'Visa mindre',
+    cancelled: 'Inställt',
+    nights: { one: 'kväll', other: 'kvällar' },
+    // "Källa" would be literal; the link goes to the organizer's own page, so
+    // "Arrangörens sida" says what the reader actually gets.
+    source: 'Arrangörens sida',
+    sourceHint: ' — biljetter och information (öppnas i en ny flik)',
+    opensInNewTab: ' (öppnas i en ny flik)',
+    livePrefix: 'Live: ',
+    djPrefix: 'DJ: ',
+  },
+  actions: {
+    addToCalendar: 'Lägg till i kalendern',
+    addToCalendarTitle: 'Lägg till i kalendern',
+    addIntro: 'Lägg till {title} den {date} i din kalender.',
+    downloadIcs: 'Ladda ner .ics-fil',
+    share: 'Dela evenemang',
+    linkCopied: 'Länken är kopierad!',
+    subscribe: 'Prenumerera',
+    subscribeTitle: 'Prenumerera på kalendern',
+    subscribeBlurb:
+      'Lägg till evenemangsflödet i din kalenderapp — det hålls uppdaterat automatiskt.',
+    feedUrlLabel: 'Adress till kalenderflödet',
+    copy: 'Kopiera',
+    copied: 'Kopierad',
+    copyFeedLink: 'Kopiera länken till flödet',
+  },
+  empty: {
+    body: 'Justera sökorden eller filtren för att hitta dansevenemang.',
+    clearAll: 'Rensa alla filter',
+    subscribeCta: 'Prenumerera för att få veta',
+    organizersCta: 'Arrangörer: lägg till ert evenemang',
+  },
+  footer: {
+    tagline: 'Av dansare, för dansare. Gjord i Stockholm 🇸🇪 med ❤️.',
+    github: 'GitHub-community (öppnas i en ny flik)',
+  },
+  install: {
+    title: 'Lägg till på hemskärmen',
+    body: 'Snabb åtkomst till Stockholms swingevenemang',
+    action: 'Installera',
+    dismiss: 'Stäng',
+  },
+  modal: {
+    close: 'Stäng',
+  },
+  corrections: {
+    trigger: 'Rapportera fel',
+    triggerFor: 'Rapportera fel om {title}',
+    title: 'Skicka en rättelse',
+    intro:
+      'Berätta vad som är fel med {title}, så rättar vi uppgifterna. Det här öppnar ett mejl — ingenting skickas förrän du skickar det.',
+    prompts: {
+      whatsWrong: 'Vad är fel',
+      shouldSay: 'Vad det borde stå i stället',
+      howYouKnow: 'Hur jag vet',
+    },
+    placeholders: {
+      whatsWrong: 'Lokalen var stängd, DJ:n har bytts…',
+      shouldSay: 'Insläpp 19:30, 120 kr…',
+      howYouKnow: 'Jag var där ikväll / jag arrangerar det',
+    },
+    currentlySays: 'Vad sajten säger just nu',
+    noMailApp: 'Ingen mejlapp? Skriv till',
+    currentlySaysHint: 'Följer med i mejlet så att vi hittar rätt evenemang.',
+    openEmail: 'Öppna mejlet',
   },
 } satisfies LocaleBundle;

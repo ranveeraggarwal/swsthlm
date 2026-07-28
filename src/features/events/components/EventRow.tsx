@@ -11,6 +11,7 @@
 import React, { useState } from 'react';
 import { ChevronDown, Disc, MapPin, Music, Ticket } from 'lucide-react';
 import { formatCompactDateRange } from '@/lib/date/format';
+import { useLocale } from '@/components/providers/LocaleProvider';
 import { ReportCorrectionButton } from '@/features/corrections/ReportCorrectionButton';
 import { domIdFor, venueMapsUrl, type EventGroup } from '../model/event';
 import { musicLines } from '../model/labels';
@@ -23,8 +24,9 @@ export function EventRow({ group }: { group: EventGroup }) {
   const { event, dates, nightCount } = group;
   const [isExpanded, setIsExpanded] = useState(false);
 
+  const { locale, bundle } = useLocale();
   const panelId = domIdFor(event, 'event-row-panel');
-  const dateLabel = formatCompactDateRange(dates);
+  const dateLabel = formatCompactDateRange(dates, locale);
   const performers = musicLines(event);
   const namedPerformers = performers.filter((line) => line.name);
 
@@ -57,7 +59,7 @@ export function EventRow({ group }: { group: EventGroup }) {
           </span>
           {event.cancelled && (
             <span className="shrink-0 px-2 py-0.5 rounded bg-[var(--error)] text-[var(--on-error)] text-[10px] uppercase font-bold tracking-wider">
-              Cancelled
+              {bundle.card.cancelled}
             </span>
           )}
           <ChevronDown
@@ -135,7 +137,7 @@ export function EventRow({ group }: { group: EventGroup }) {
                 className="hover:text-[var(--primary)] transition-colors"
               >
                 {byLine}
-                <span className="sr-only"> (opens in a new tab)</span>
+                <span className="sr-only">{bundle.card.opensInNewTab}</span>
               </a>
             </div>
           )}
@@ -155,8 +157,8 @@ export function EventRow({ group }: { group: EventGroup }) {
                 className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded border border-[var(--border-ink)] bg-[var(--primary)] text-[var(--on-primary)] hover:bg-[var(--primary-container)] font-bold uppercase tracking-wider text-xs"
               >
                 <Ticket className="w-4 h-4" />
-                Source
-                <span className="sr-only"> — tickets and event info (opens in a new tab)</span>
+                {bundle.card.source}
+                <span className="sr-only">{bundle.card.sourceHint}</span>
               </a>
             )}
             <AddToCalendarButton event={event} />

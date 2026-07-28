@@ -29,6 +29,22 @@ interface PluralForms {
   other: string;
 }
 
+/**
+ * A phrase where one part is set in italics — the hero, the section headings,
+ * the filter panel's title.
+ *
+ * Split rather than marked up inside the string because the emphasis is
+ * presentation: the component decides it renders as `<span className="italic">`,
+ * and a translator only supplies words. `lead` is empty when the whole phrase
+ * is emphasised ("Coming Up"). No locale so far needs text *after* the
+ * emphasis; the day one does, this grows a `trail` rather than the components
+ * growing a special case.
+ */
+interface EmphasisedText {
+  lead: string;
+  em: string;
+}
+
 export interface LocaleBundle {
   /** The header: the two primary links plus the mobile menu toggle's label
    *  (used as both `aria-label` and the hover `title`, per Header.tsx). */
@@ -121,11 +137,39 @@ export interface LocaleBundle {
     /** Takes `{time}`. */
     atTime: string;
   };
+  /** The homepage hero. */
+  home: {
+    title: EmphasisedText;
+    subtitle: string;
+  };
+  /** The listing's summary bar, its controls, and the section headings. */
+  listing: {
+    /** Takes `{count}` (rendered bold) and `{noun}` — see `filters.eventNoun`. */
+    showingAll: string;
+    /** Takes `{description}` (rendered bold) from `summariseFilters`. */
+    showingFiltered: string;
+    hideFilters: string;
+    showFilters: string;
+    reset: string;
+    sections: {
+      comingUp: EmphasisedText;
+      thisWeek: EmphasisedText;
+      later: EmphasisedText;
+      upcoming: EmphasisedText;
+    };
+  };
   // The words `features/events/model/sections.ts` builds its filter prose
-  // from. The filter *controls* themselves (search box, "Filter by Style"…)
-  // stay hardcoded English in `FilterPanel.tsx` until S4 wires the panel —
-  // only the words the pure filtering/summary logic produces move here.
+  // from, plus the panel's own controls.
   filters: {
+    /** The panel heading. */
+    title: EmphasisedText;
+    searchLabel: string;
+    searchPlaceholder: string;
+    clearSearch: string;
+    byStyle: string;
+    music: string;
+    liveMusicOnly: string;
+    byVenue: string;
     /** "All Venues" — the venue chip's "don't filter" sentinel, same idea as
      *  the style table's `filter` word. */
     allVenues: string;
@@ -148,5 +192,94 @@ export interface LocaleBundle {
       venue: string;
       none: string;
     };
+  };
+  /** The card and row: the description toggle, the status badge, the outbound
+   *  link, and the screen-reader-only text that goes with them. */
+  card: {
+    readMore: string;
+    showLess: string;
+    cancelled: string;
+    /** "3 nights" — only ever rendered for a merged multi-night run, so `one`
+     *  is unreachable today. It's here anyway: the guard lives in a component
+     *  and the bundle shouldn't depend on it staying there. */
+    nights: PluralForms;
+    source: string;
+    /** Appended `sr-only` after "Source". */
+    sourceHint: string;
+    /** Appended `sr-only` to every link that opens a new tab. */
+    opensInNewTab: string;
+    /** Prefixes a performer line for screen readers. */
+    livePrefix: string;
+    djPrefix: string;
+  };
+  /** The three action buttons on a card, and the calendar sheets they open. */
+  actions: {
+    addToCalendar: string;
+    addToCalendarTitle: string;
+    /** Takes `{title}` (rendered bold) and `{date}`. */
+    addIntro: string;
+    downloadIcs: string;
+    share: string;
+    linkCopied: string;
+    subscribe: string;
+    subscribeTitle: string;
+    subscribeBlurb: string;
+    feedUrlLabel: string;
+    copy: string;
+    copied: string;
+    copyFeedLink: string;
+  };
+  /** The designed empty state — it names what emptied the page (see
+   *  `filters.emptyState`) and then offers the two ways to help. */
+  empty: {
+    body: string;
+    clearAll: string;
+    subscribeCta: string;
+    organizersCta: string;
+  };
+  footer: {
+    tagline: string;
+    github: string;
+  };
+  /** The PWA install prompt. */
+  install: {
+    title: string;
+    body: string;
+    action: string;
+    dismiss: string;
+  };
+  /** Shared dialog chrome — one string, used by all three modals. */
+  modal: {
+    close: string;
+  };
+  // The "Wrong info?" dialog. The *email* this builds is deliberately not
+  // translated: it goes to a maintainer who reads English, and its field
+  // labels are what make a report skimmable. Only what the reporter sees
+  // while filling the form is localized — see `report.ts`.
+  corrections: {
+    trigger: string;
+    /** Takes `{title}` — the icon button's accessible name. */
+    triggerFor: string;
+    title: string;
+    /** Takes `{title}`, which renders bold. */
+    intro: string;
+    /** The three field labels. `CORRECTION_PROMPTS` in `report.ts` holds the
+     *  English wording the *email* uses; these are what the reporter reads.
+     *  Same three, same order — change one and change the other. */
+    prompts: {
+      whatsWrong: string;
+      shouldSay: string;
+      howYouKnow: string;
+    };
+    placeholders: {
+      whatsWrong: string;
+      shouldSay: string;
+      howYouKnow: string;
+    };
+    currentlySays: string;
+    /** Precedes the contact address, for someone with no mail client. */
+    noMailApp: string;
+    currentlySaysHint: string;
+    openEmail: string;
   };
 }

@@ -10,10 +10,12 @@ import React, { useState } from 'react';
 import { Share2, Check } from 'lucide-react';
 import { IconButton } from '@/components/ui/IconButton';
 import { eventPath, type SwingEvent } from '../model/event';
+import { useLocale } from '@/components/providers/LocaleProvider';
 
 const COPIED_FEEDBACK_MS = 2000;
 
 export function ShareButton({ event }: { event: SwingEvent }) {
+  const { bundle } = useLocale();
   const [copied, setCopied] = useState(false);
   const path = eventPath(event);
 
@@ -42,7 +44,7 @@ export function ShareButton({ event }: { event: SwingEvent }) {
   return (
     <IconButton
       onClick={handleShare}
-      label={copied ? 'Link copied!' : 'Share event'}
+      label={copied ? bundle.actions.linkCopied : bundle.actions.share}
       icon={copied ? Check : Share2}
     />
   );

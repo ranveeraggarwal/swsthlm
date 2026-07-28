@@ -1,13 +1,14 @@
 import type { Metadata, Viewport } from 'next';
-import { SITE_URL } from '@/lib/site';
+import { SITE_NAME, SITE_URL } from '@/lib/site';
 import { playfair, jakarta } from '@/lib/fonts';
 import { RootShell } from '@/components/layout/RootShell';
+import { dictionary } from '@/lib/i18n';
 import '../globals.css';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: 'Stockholm Swing',
-  description: 'Lindy Hop, Balboa, Shag, and Blues social dancing in Stockholm.',
+  title: SITE_NAME,
+  description: dictionary('en').meta.site.description,
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
@@ -22,9 +23,14 @@ export const metadata: Metadata = {
     ],
     apple: '/icons/apple-touch-icon.png',
   },
+  // Fallback only. Next *replaces* a nested `openGraph` rather than merging
+  // it, so any page exporting its own wipes this block entirely — every route
+  // therefore builds a complete one via `localeOpenGraph`. See
+  // `src/lib/i18n/metadata.ts`.
   openGraph: {
-    siteName: 'Stockholm Swing',
+    siteName: SITE_NAME,
     locale: 'en',
+    alternateLocale: 'sv',
     type: 'website',
   },
   twitter: {

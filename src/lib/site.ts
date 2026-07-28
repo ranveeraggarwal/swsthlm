@@ -10,6 +10,10 @@ export const SITE_URL = 'https://stockholmswing.com';
 /** Bare host, for the `webcal://` scheme which has no https:// prefix. */
 export const SITE_HOST = 'stockholmswing.com';
 
+/** The site's name as it appears in share previews (`og:site_name`). A proper
+ *  noun — it is *not* translated in the Swedish tree. */
+export const SITE_NAME = 'Stockholm Swing';
+
 export const CALENDAR_FEED_PATH = '/calendar.ics';
 export const CALENDAR_FEED_URL = `${SITE_URL}${CALENDAR_FEED_PATH}`;
 /** `webcal://` hands off to the OS calendar app and subscribes rather than

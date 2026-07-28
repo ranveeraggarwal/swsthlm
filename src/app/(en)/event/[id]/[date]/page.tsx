@@ -16,6 +16,8 @@ import { formatEventDate } from '@/lib/date/format';
 import { EventPermalinkArticle } from '@/features/events/components/EventPermalinkArticle';
 import { singleEventJsonLd } from '@/features/events/jsonld';
 import { findPermalinkEvent, permalinkStaticParams } from '@/features/events/loader';
+import { eventPath } from '@/features/events/model/event';
+import { dictionary, localeAlternates, localeOpenGraph } from '@/lib/i18n';
 
 export const dynamicParams = false;
 
@@ -30,7 +32,8 @@ export async function generateMetadata({
   const event = await findPermalinkEvent(id, date);
   if (!event) return {};
 
-  const title = `${event.title} — ${formatEventDate(event.date)} at ${event.venue}`;
+  const t = dictionary('en').meta.event;
+  const title = `${event.title} — ${formatEventDate(event.date)} ${t.venuePreposition} ${event.venue}`;
   const description = [
     `${event.start}–${event.end}`,
     event.price ?? null,
@@ -39,11 +42,13 @@ export async function generateMetadata({
     .filter(Boolean)
     .join(' · ');
 
+  const path = eventPath(event);
+
   return {
     title,
     description,
-    alternates: { canonical: `/event/${id}/${date}` },
-    openGraph: { title, description, url: `/event/${id}/${date}`, type: 'website' },
+    alternates: localeAlternates('en', path),
+    openGraph: localeOpenGraph('en', { title, description, path }),
   };
 }
 

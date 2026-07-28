@@ -1,18 +1,20 @@
 import type { Metadata, Viewport } from 'next';
-import { SITE_URL } from '@/lib/site';
+import { SITE_NAME, SITE_URL } from '@/lib/site';
 import { playfair, jakarta } from '@/lib/fonts';
 import { RootShell } from '@/components/layout/RootShell';
+import { dictionary } from '@/lib/i18n';
 import '../globals.css';
 
 // Mirrors `app/(en)/layout.tsx` — its own root layout (its own `<html>`/
 // `<body>`), per the "multiple root layouts" pattern, since a shared ancestor
-// layout has no way to know which locale segment matched. Metadata here is
-// still the English site-wide copy; #266 (SEO) gives it a Swedish
-// `openGraph.locale` and title once there's real Swedish content to point at.
+// layout has no way to know which locale segment matched.
+//
+// The site name stays "Stockholm Swing" in both trees — it's a proper noun,
+// not copy. Everything else here is per-locale as of #266.
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: 'Stockholm Swing',
-  description: 'Lindy Hop, Balboa, Shag, and Blues social dancing in Stockholm.',
+  title: SITE_NAME,
+  description: dictionary('sv').meta.site.description,
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
@@ -27,9 +29,11 @@ export const metadata: Metadata = {
     ],
     apple: '/icons/apple-touch-icon.png',
   },
+  // Fallback only — see the note in `app/(en)/layout.tsx`.
   openGraph: {
-    siteName: 'Stockholm Swing',
-    locale: 'en',
+    siteName: SITE_NAME,
+    locale: 'sv',
+    alternateLocale: 'en',
     type: 'website',
   },
   twitter: {

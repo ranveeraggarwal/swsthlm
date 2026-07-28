@@ -10,12 +10,14 @@ Key facts:
 - Each event has a stable permalink: https://stockholmswing.com/event/{event-id}/{YYYY-MM-DD}
 - All pages embed schema.org DanceEvent JSON-LD.
 - The calendar covers roughly the next 10 weeks and is updated several times per week.
+- The site is published in English at the URLs above and in Swedish under https://stockholmswing.com/sv (same events, same data — only the interface copy is translated; event titles and descriptions stay in whatever language the organizer wrote them in). Every page links to its counterpart with hreflang.
 
 ## Pages
 
 - [Event calendar](https://stockholmswing.com/): all upcoming swing dance events in Stockholm, filterable by style
 - [About](https://stockholmswing.com/about): mission, community links, and how organizers submit events
 - [iCalendar feed](https://stockholmswing.com/calendar.ics): subscribe to the full schedule in any calendar app
+- [Swedish version](https://stockholmswing.com/sv): the same calendar with Swedish interface copy — *swingdans, socialdans, lindy hop i Stockholm*. There is one shared iCalendar feed, not a per-language one.
 
 ## Data
 

@@ -4,6 +4,8 @@ import type { Locale } from './locale';
 
 export type { Locale } from './locale';
 export { DEFAULT_LOCALE, LOCALES, localePath, stripLocale } from './locale';
+export { hreflangLanguages, localeAlternates, localeUrl } from './alternates';
+export { localeOpenGraph } from './metadata';
 
 const dictionaries = { en, sv } as const;
 

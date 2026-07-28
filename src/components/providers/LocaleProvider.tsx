@@ -17,11 +17,15 @@
 // language), so the first render seeds a safe default and an effect hands
 // off to the real one after hydration.
 //
-// There is deliberately **no `navigator.language` sniffing**. Guessing means
-// every visitor with a Swedish browser watches the page flip on every load,
-// including the ones who prefer English and have to undo it each time.
-// Defaulting without a flash needs a server that can vary its response, which
-// a static site hasn't got. One press of a visible toggle is the better deal.
+// Nothing here ever **auto-switches** on `navigator.language`. Guessing means
+// every visitor whose browser lists a language we ship watches the page flip
+// on every load, including the ones who prefer English and have to undo it
+// each time; defaulting without a flash needs a server that can vary its
+// response, which a static site hasn't got.
+//
+// Asking is a different thing, and `LanguagePrompt` does it: one offer, and
+// the answer stored either way. `hasStoredPreference` below is what stops it
+// asking twice.
 
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { bundle, DEFAULT_LOCALE, LOCALES, LOCALE_STORAGE_KEY, type Locale, type LocaleBundle } from '@/i18n';
@@ -30,6 +34,21 @@ interface LocaleContextValue {
   locale: Locale;
   bundle: LocaleBundle;
   setLocale: (locale: Locale) => void;
+  /**
+   * Whether the visitor has ever expressed a preference — by using the toggle,
+   * or by answering the one-time prompt either way. It doubles as "have we
+   * already asked?", which is why the prompt needs no storage key of its own:
+   * the answer *is* the preference, and declining stores the locale they were
+   * already reading.
+   *
+   * Three states, not a boolean, and that matters. Storage can only be read
+   * after mount, so a boolean would read `false` — indistinguishable from "we
+   * checked, there's nothing" — during the first commit, and a consumer
+   * looking at it in its own mount effect would act on an answer that hadn't
+   * arrived yet. `'unknown'` makes "not yet known" impossible to mistake for
+   * "known to be absent"; wait for it to resolve before acting.
+   */
+  preferenceStatus: 'unknown' | 'stored' | 'none';
 }
 
 const LocaleContext = createContext<LocaleContextValue | null>(null);
@@ -40,6 +59,8 @@ function isLocale(value: string | null): value is Locale {
 
 export function LocaleProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>(DEFAULT_LOCALE);
+  const [preferenceStatus, setPreferenceStatus] =
+    useState<LocaleContextValue['preferenceStatus']>('unknown');
 
   // After mount only. A stored value that isn't a locale we ship — a stale
   // preference from a language since removed, or something else writing to the
@@ -47,8 +68,12 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       const stored = localStorage.getItem(LOCALE_STORAGE_KEY);
+      setPreferenceStatus(stored === null ? 'none' : 'stored');
       if (isLocale(stored)) setLocaleState(stored);
     } catch {
+      // Unreadable storage counts as "asked and answered": we can't remember
+      // an answer, so asking every single load would be worse than not asking.
+      setPreferenceStatus('stored');
       // private-mode Safari and friends: the site stays in the default
       // language, which is a worse experience than a crash but not by much.
     }
@@ -66,8 +91,10 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
     () => ({
       locale,
       bundle: bundle(locale),
+      preferenceStatus,
       setLocale: (next: Locale) => {
         setLocaleState(next);
+        setPreferenceStatus('stored');
         try {
           localStorage.setItem(LOCALE_STORAGE_KEY, next);
         } catch {
@@ -75,7 +102,7 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
         }
       },
     }),
-    [locale],
+    [locale, preferenceStatus],
   );
 
   return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>;

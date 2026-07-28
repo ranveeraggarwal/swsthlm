@@ -8,6 +8,15 @@ boundaries here are judgment calls, and a check that fired on every PR would
 train everyone to ignore it. It's enforced by review, which means this document
 has to be short enough to actually be read.
 
+Which is a claim about length, so here is what keeps it honest: **a rule lives
+here only as long as it takes to state; the story that justifies it lives in the
+file it governs.** Rule 4 below states the split and why the typing matters — the
+account of the four diverging copies, and which drift was deliberate, sits in the
+header of `features/events/model/labels.ts`, where someone about to edit that
+table actually meets it. Rule 4 is also the longest entry here, which makes it
+the ceiling rather than the target: if a rule needs more room than that to
+defend itself, the defence belongs in the code and this file should link to it.
+
 ## The tree
 
 ```

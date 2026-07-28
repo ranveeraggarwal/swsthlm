@@ -9,6 +9,7 @@
 
 import { isToday, isTomorrow } from '@/lib/date/calendar';
 import type { Now } from '@/lib/date/clock';
+import { bundle, DEFAULT_LOCALE, type Locale } from '@/i18n';
 import type { SwingEvent } from './event';
 
 /** Badge kinds, highest priority first. `null` means no badge. */
@@ -72,4 +73,17 @@ export function getTemporalBadge(timing: Timing, now: Now, isThisWeek: boolean):
   if (isTomorrow(timing.date, now.date)) return 'tomorrow';
   if (isThisWeek) return 'this-week';
   return null;
+}
+
+/**
+ * The badge's word — "Happening Now" / "Pågår nu", etc. Colour and layout
+ * stay in `TemporalBadgeDisplay.tsx`; this is the single place the badge's
+ * wording is decided, so a card and any other surface showing the same badge
+ * can't disagree on what it says.
+ */
+export function temporalBadgeLabel(
+  badge: NonNullable<TemporalBadge>,
+  locale: Locale = DEFAULT_LOCALE,
+): string {
+  return bundle(locale).temporal[badge];
 }

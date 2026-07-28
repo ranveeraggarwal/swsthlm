@@ -4,11 +4,12 @@
 // same enforcement `features/events/model/labels.ts` gets from
 // `Record<Style, StylePresentation>`, no lint rule or script involved.
 //
-// Chrome, dates and relative time live here today. S3 adds the remaining
-// slot — `Record<Style, …>`, `Record<Music, …>`, `Record<FloorType, …>` word
-// tables mirroring `features/events/model/labels.ts`. It isn't stubbed in
-// below: an empty object would have to be filled with something to satisfy
-// the type today, and that something would be fake.
+// S3 moved the domain vocabulary in: `styles`, `music`, `floors` and
+// `temporal` below are keyed by the data contract's own unions
+// (`lib/data/types.ts`), so a style or floor type added there is a compile
+// error here until it has a word in both `en.ts` and `sv.ts`.
+
+import type { FloorType, Music, Style } from '@/lib/data/types';
 
 /** Weekday names indexed by `Date.getUTCDay()`, so Sunday is 0. The tuple
  *  length is part of the contract — a locale file with six weekdays is a
@@ -87,6 +88,65 @@ export interface LocaleBundle {
       hour: PluralForms;
       day: PluralForms;
       week: PluralForms;
+    };
+  };
+  // Domain vocabulary — S3. Dance style *names* ('Lindy Hop', 'Balboa', 'Shag',
+  // 'Blues') are deliberately not here: they're what Swedish dancers call them
+  // too, so the union's own keys already double as their Swedish label. Only
+  // the sentences built around a style go through this table.
+  /** `compact` is the dense row list's shorter form (falls back to `label`);
+   *  `filter` is the filter panel's word (falls back to `label`). For 'all'
+   *  these read differently on purpose: `label` is "a social that welcomes
+   *  every style", `filter` is "don't filter" — see `labels.ts`. */
+  styles: Record<Style, { label: string; compact?: string; filter?: string }>;
+  /** The `music` column, spelled out. `mixed` never displays on its own —
+   *  `musicLines` in `labels.ts` splits it into a live line and a DJ line —
+   *  but the table stays `Record<Music, …>` so it can't drift from the data
+   *  contract if a third music value is ever added. */
+  music: Record<Music, string>;
+  /** The venue's floor type badge. */
+  floors: Record<FloorType, string>;
+  /** The event-card badge's word. Colour, priority and layout stay in
+   *  `features/events/model/temporal.ts` / `TemporalBadgeDisplay.tsx`; only
+   *  the text moves here. Keys are `TemporalBadge` minus `null` (no badge
+   *  needs no word) — duplicated as a literal union rather than imported,
+   *  since importing a feature type into the locale contract would run the
+   *  `app → features → … → lib` dependency arrow backwards. `temporal.ts`
+   *  indexes this record with an actual `TemporalBadge` value, so the two
+   *  fail to compile together the moment they drift apart. */
+  temporal: Record<'happening-now' | 'ended' | 'tonight' | 'tomorrow' | 'this-week', string>;
+  /** "Beginner friendly" for a plain yes; the class start time otherwise. */
+  beginnerClass: {
+    friendly: string;
+    /** Takes `{time}`. */
+    atTime: string;
+  };
+  // The words `features/events/model/sections.ts` builds its filter prose
+  // from. The filter *controls* themselves (search box, "Filter by Style"…)
+  // stay hardcoded English in `FilterPanel.tsx` until S4 wires the panel —
+  // only the words the pure filtering/summary logic produces move here.
+  filters: {
+    /** "All Venues" — the venue chip's "don't filter" sentinel, same idea as
+     *  the style table's `filter` word. */
+    allVenues: string;
+    /** The noun in "`{count}` `{noun}`" above the grid. */
+    eventNoun: PluralForms;
+    /** Appended to the summary when "Live Music Only" is on. */
+    liveMusicQualifier: string;
+    /** Takes `{description}` and `{venue}`. */
+    atVenue: string;
+    /** Takes `{description}` and `{search}`. */
+    matchingSearch: string;
+    /** The empty-state heading, one template per combination of active
+     *  filters — see `emptyStateHeading`. */
+    emptyState: {
+      /** Takes `{style}` and `{venue}`. */
+      styleAndVenue: string;
+      /** Takes `{style}`. */
+      style: string;
+      /** Takes `{venue}`. */
+      venue: string;
+      none: string;
     };
   };
 }

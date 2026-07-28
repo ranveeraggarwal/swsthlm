@@ -8,6 +8,7 @@
 
 import { getMonthKey, isCurrentWeek, isNextWeek, isSunday } from '@/lib/date/calendar';
 import type { Style } from '@/lib/data/types';
+import { bundle, DEFAULT_LOCALE, type Locale } from '@/i18n';
 import type { EventGroup, SwingEvent } from './event';
 import { firstNightOf } from './grouping';
 import { styleLabel } from './labels';
@@ -18,8 +19,8 @@ export const ALL_STYLES = 'all';
 export const ALL_VENUES = 'all';
 
 /** Chip text for a venue filter option. */
-export function venueFilterLabel(venue: string): string {
-  return venue === ALL_VENUES ? 'All Venues' : venue;
+export function venueFilterLabel(venue: string, locale: Locale = DEFAULT_LOCALE): string {
+  return venue === ALL_VENUES ? bundle(locale).filters.allVenues : venue;
 }
 
 export interface EventFilters {
@@ -214,28 +215,40 @@ export type FilterSummary =
   | { kind: 'all'; count: number }
   | { kind: 'filtered'; description: string };
 
-export function summariseFilters(filters: EventFilters, count: number): FilterSummary {
+export function summariseFilters(
+  filters: EventFilters,
+  count: number,
+  locale: Locale = DEFAULT_LOCALE,
+): FilterSummary {
   if (!hasActiveFilters(filters)) return { kind: 'all', count };
+  const words = bundle(locale).filters;
 
   const qualifiers: string[] = [];
-  if (filters.style !== ALL_STYLES) qualifiers.push(styleLabel(filters.style as Style));
-  if (filters.liveMusicOnly) qualifiers.push('Live Music');
+  if (filters.style !== ALL_STYLES) qualifiers.push(styleLabel(filters.style as Style, undefined, locale));
+  if (filters.liveMusicOnly) qualifiers.push(words.liveMusicQualifier);
 
-  const noun = `event${count !== 1 ? 's' : ''}`;
+  const noun = count === 1 ? words.eventNoun.one : words.eventNoun.other;
   let description = `${count} ${qualifiers.length > 0 ? `${qualifiers.join(' ')} ` : ''}${noun}`;
-  if (filters.venue !== ALL_VENUES) description += ` at ${filters.venue}`;
-  if (filters.search) description += ` matching "${filters.search}"`;
+  if (filters.venue !== ALL_VENUES) {
+    description = words.atVenue.replace('{description}', description).replace('{venue}', filters.venue);
+  }
+  if (filters.search) {
+    description = words.matchingSearch
+      .replace('{description}', description)
+      .replace('{search}', filters.search);
+  }
 
   return { kind: 'filtered', description };
 }
 
 /** Heading for the empty state, which names the filters that emptied the page. */
-export function emptyStateHeading(filters: EventFilters): string {
-  const style = filters.style !== ALL_STYLES ? styleLabel(filters.style as Style) : null;
+export function emptyStateHeading(filters: EventFilters, locale: Locale = DEFAULT_LOCALE): string {
+  const words = bundle(locale).filters.emptyState;
+  const style = filters.style !== ALL_STYLES ? styleLabel(filters.style as Style, undefined, locale) : null;
   const venue = filters.venue !== ALL_VENUES ? filters.venue : null;
 
-  if (style && venue) return `No ${style} events at ${venue} right now`;
-  if (style) return `No ${style} events right now`;
-  if (venue) return `No events at ${venue} right now`;
-  return 'No events match your filters';
+  if (style && venue) return words.styleAndVenue.replace('{style}', style).replace('{venue}', venue);
+  if (style) return words.style.replace('{style}', style);
+  if (venue) return words.venue.replace('{venue}', venue);
+  return words.none;
 }

@@ -103,6 +103,17 @@ first and argue against it, rather than around it.
 | Rows are written by **surgical text edit**, never parse → mutate → unparse, or the nightly diff becomes the whole file | [`architecture/SCRAPERS.md`](architecture/SCRAPERS.md) |
 | The validation gate blocks only on errors the scrape *introduces*, not pre-existing ones | [`architecture/SCRAPERS.md`](architecture/SCRAPERS.md) |
 
+### Language
+
+| Decision | Recorded in |
+|---|---|
+| **The chrome is translated; the content is not.** Organizer prose stays in whatever language it was written in, so a Swedish page shows Swedish navigation around mixed-language event text | §5 below, [`DATA.md`](DATA.md) |
+| **Swedish is a client-side preference, not a second prerendered site.** No `/sv`, nothing localized at its own URL — and therefore **no Swedish search visibility**, given up knowingly | [`architecture/CODE_STRUCTURE.md`](architecture/CODE_STRUCTURE.md), [`SEO.md`](SEO.md), issue #266 |
+| The first client render must match the served English HTML; the stored preference applies **after** mount. Reading it during render is a hydration mismatch on every text node | `components/providers/LocaleProvider.tsx` |
+| There is deliberately **no `navigator.language` sniffing** — a static site can't vary its response, so guessing makes every Swedish-browser visitor watch the page flip on each load | `components/providers/LocaleProvider.tsx`, issue #265 |
+| Adding a language costs **one entry in `LOCALES` and one bundle file** — no route, component or logic changes. There is no CI gate; the rule is the gate | [`architecture/CODE_STRUCTURE.md`](architecture/CODE_STRUCTURE.md) |
+| Changelog entries stay **English only**; the timeline chrome around them is translated | [`../src/features/changelog/entries.ts`](../src/features/changelog/entries.ts), issue #264 |
+
 ### Design
 
 | Decision | Recorded in |
@@ -119,7 +130,8 @@ first and argue against it, rather than around it.
 | `src/` layering is enforced by **review, not lint** — a check firing on every PR would train everyone to ignore it | [`architecture/CODE_STRUCTURE.md`](architecture/CODE_STRUCTURE.md) |
 | One type crosses the data boundary (`SwingEvent`), reusing the data layer's enums rather than re-declaring them | [`architecture/CODE_STRUCTURE.md`](architecture/CODE_STRUCTURE.md) |
 | `lib/date/calendar.ts` is UTC arithmetic **on strings** — no `Date` method without `UTC` in its name (#248) | [`architecture/CODE_STRUCTURE.md`](architecture/CODE_STRUCTURE.md) |
-| Hydration-sensitive date formats use fixed lookup arrays, not `Intl` — ICU output differs between Node and browsers (#200) | [`AGENTS.md`](AGENTS.md) |
+| Hydration-sensitive date formats use fixed lookup arrays, not `Intl` — ICU output differs between Node and browsers (#200). This holds for **every** language, not just English | [`AGENTS.md`](AGENTS.md) |
+| Colours live in `labels.ts`, words live in `src/i18n/<locale>.ts` — one table each, both keyed by the data contract's unions so a new style can't ship without either | [`architecture/CODE_STRUCTURE.md`](architecture/CODE_STRUCTURE.md) |
 | `scripts/` is plain `.mjs` with no build step; `validate-data.mjs` re-declares the enums rather than importing the TS types | [`AGENTS.md`](AGENTS.md) |
 
 ### Process
@@ -158,6 +170,17 @@ purpose, and it is the cheapest thing in the repo to read.
   them — see `DATA.md`.)
 - **Machine translation of descriptions.** Organizers write in Swedish or
   English; both are fine, and a bad translation is worse than the original.
+  Note this is about the *data*: the site's own interface **is** translated
+  (English and Swedish, switchable in the header). What that means in practice
+  is that a Swedish reader gets Swedish navigation, filters, dates and badges
+  wrapped around event titles and descriptions in whatever language the
+  organizer wrote — a deliberate mix, not a half-finished translation.
+- **A prerendered Swedish copy of the site.** The language is a client-side
+  preference; nothing Swedish exists at its own URL. This gives up Swedish
+  search visibility on purpose — a second route tree is maintenance surface
+  disproportionate to the value at this size, and dancers find the site
+  through the community rather than through Google. Issue #266 holds the
+  closed write-up of what reversing it would take.
 - **A dedicated microsite for one event or festival.** This one is written from
   experience: the Herräng microsite was built, shipped, iterated on for days,
   and then reverted wholesale, because a single-purpose event aggregator is not

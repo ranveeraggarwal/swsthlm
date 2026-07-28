@@ -14,4 +14,10 @@ export function bundle(locale: Locale): LocaleBundle {
 }
 
 export type { Locale, LocaleBundle };
-export { LOCALES, DEFAULT_LOCALE, LOCALE_STORAGE_KEY, LOCALE_TOGGLE_ID } from './locale';
+export {
+  LOCALES,
+  DEFAULT_LOCALE,
+  LOCALE_STORAGE_KEY,
+  LOCALE_TOGGLE_ID,
+  LOCALE_PENDING_ATTR,
+} from './locale';

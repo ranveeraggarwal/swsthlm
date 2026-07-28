@@ -341,3 +341,25 @@ body {
   font-weight: 700;
   line-height: 1.2;
 }
+
+/* ---------------------------------------------------------------------------
+   Covering the language swap.
+
+   The site is built once, in English. A reader who has chosen Swedish gets
+   English in the first paint and the swap a frame or two later — inherent to a
+   client-side preference (see docs/PROJECT.md), and visibly janky on a refresh.
+
+   So the shell is hidden until the stored language has been applied. `body`
+   already carries `--background`, so what shows through is an empty page in the
+   reader's theme rather than a white flash — which is why this needs no overlay
+   element of its own. `visibility` rather than `display` means nothing reflows
+   when the shell comes back.
+
+   The pre-paint script in `layout.tsx` sets the attribute and, crucially, arms a
+   timeout to clear it: hiding content behind a script is how a page ends up
+   blank forever when the bundle 404s.
+   --------------------------------------------------------------------------- */
+
+html[data-lang-pending] [data-app-shell] {
+  visibility: hidden;
+}

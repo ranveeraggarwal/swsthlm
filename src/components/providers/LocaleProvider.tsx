@@ -28,7 +28,15 @@
 // asking twice.
 
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { bundle, DEFAULT_LOCALE, LOCALES, LOCALE_STORAGE_KEY, type Locale, type LocaleBundle } from '@/i18n';
+import {
+  bundle,
+  DEFAULT_LOCALE,
+  LOCALES,
+  LOCALE_PENDING_ATTR,
+  LOCALE_STORAGE_KEY,
+  type Locale,
+  type LocaleBundle,
+} from '@/i18n';
 
 interface LocaleContextValue {
   locale: Locale;
@@ -78,6 +86,16 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
       // language, which is a worse experience than a crash but not by much.
     }
   }, []);
+
+  // Lift the veil the pre-paint script raised, once the stored language has
+  // actually been applied. Running after paint costs one veiled frame and
+  // nothing else — the alternative, `useLayoutEffect`, warns during SSR for a
+  // frame nobody can see. The script's own timeout still lifts it if this
+  // never runs at all.
+  useEffect(() => {
+    if (preferenceStatus === 'unknown') return;
+    document.documentElement.removeAttribute(LOCALE_PENDING_ATTR);
+  }, [preferenceStatus, locale]);
 
   // `<html lang>` is served as `en` and has to follow. Not cosmetic: a screen
   // reader pronouncing Swedish text with an English voice is genuinely hard to

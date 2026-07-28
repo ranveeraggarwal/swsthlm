@@ -25,3 +25,15 @@ export const LOCALE_STORAGE_KEY = 'locale';
  *  focus here when answered, so a keyboard user lands on the control for what
  *  they just decided rather than at the top of the document. */
 export const LOCALE_TOGGLE_ID = 'language-toggle';
+
+/**
+ * Set on `<html>` by the pre-paint script when a non-default language is
+ * stored, and removed once that language has been applied. While it's present
+ * the page is veiled, so nobody watches the site translate itself.
+ *
+ * It exists because the HTML is built once, in English: a returning Swedish
+ * reader's first paint is always English, and the swap lands a frame or two
+ * later. Covering that is the cheapest honest fix short of prerendering a
+ * second copy of the site (see PROJECT.md).
+ */
+export const LOCALE_PENDING_ATTR = 'data-lang-pending';

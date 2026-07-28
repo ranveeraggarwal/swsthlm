@@ -57,11 +57,6 @@ export const CHANGELOG: ChangelogEntry[] = [
     summary: 'Dark mode, organizer intake, and a big polish pass',
     items: [
       {
-        title: 'Swedish is offered, not guessed',
-        description:
-          'If your browser is set to a language the site speaks, it asks once whether you\'d like to read it that way — and remembers your answer, whichever way you go.',
-      },
-      {
         title: 'The site speaks Swedish',
         description:
           'An EN / SV switch in the header puts the whole interface — filters, dates, badges and buttons — into Swedish, and remembers your choice. Event descriptions stay in whatever language the organizer wrote them in.',

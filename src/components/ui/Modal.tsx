@@ -30,7 +30,7 @@ interface ModalProps {
   /** Unique per instance — cards render many of these on one page. */
   id: string;
   /** The lucide icon for the medallion above the title. */
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{ className?: string; 'aria-hidden'?: boolean | 'true' | 'false' }>;
   /** Wider variant for the correction form; the calendar pickers use the default. */
   width?: 'sm' | 'md';
   children: React.ReactNode;
@@ -82,11 +82,11 @@ export function Modal({ open, onClose, title, id, icon: Icon, width = 'sm', chil
           title="Close"
           className="absolute right-3 top-3 rounded-full p-1.5 text-[var(--outline)] hover:bg-[var(--surface-container)] transition-colors cursor-pointer"
         >
-          <X className="h-4 w-4" />
+          <X className="h-4 w-4" aria-hidden="true" />
         </button>
 
         <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full border-2 border-[var(--border-ink)] bg-[var(--primary)]">
-          <Icon className="h-6 w-6 text-[var(--on-primary)]" />
+          <Icon className="h-6 w-6 text-[var(--on-primary)]" aria-hidden="true" />
         </div>
 
         <h2

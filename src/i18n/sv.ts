@@ -154,9 +154,12 @@ export const sv = {
     showLess: 'Visa mindre',
     cancelled: 'Inställt',
     nights: { one: 'kväll', other: 'kvällar' },
-    // "Källa" would be literal; the link goes to the organizer's own page, so
-    // "Arrangörens sida" says what the reader actually gets.
-    source: 'Arrangörens sida',
+    // The button is uppercase with letter-spacing and shares a row with three
+    // icon buttons, so length is a layout constraint, not a preference:
+    // "Arrangörens sida" rendered nearly three times the width of "Source".
+    // "Källa" is shorter still but reads as a citation in Swedish, which is
+    // odd next to a ticket icon. The sr-only hint below carries the detail.
+    source: 'Mer info',
     sourceHint: ' — biljetter och information (öppnas i en ny flik)',
     opensInNewTab: ' (öppnas i en ny flik)',
     livePrefix: 'Live: ',

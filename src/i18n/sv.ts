@@ -201,4 +201,52 @@ export const sv = {
     currentlySaysHint: 'Följer med i mejlet så att vi hittar rätt evenemang.',
     openEmail: 'Öppna mejlet',
   },
+  about: {
+    title: { lead: 'Om ', em: 'Stockholm Swing' },
+    subtitle: 'En plats för alla socialdanser, workshops och jam i Stockholm.',
+    organizers: {
+      heading: 'Är du arrangör?',
+      intro:
+        'Arrangerar du ett enstaka eller återkommande evenemang i Lindy Hop, Balboa, Blues eller Shag i Stockholm? Fyll i vårt {form} eller {email}. En bot gör formulärsvaren till pull requests som en underhållare granskar och slår ihop. Du behöver inget GitHub-konto.',
+      formLink: 'formulär för evenemang',
+      emailLink: 'skicka ett mejl till oss',
+      series: 'Driver du en återkommande veckoserie? {contact} så lägger vi upp den.',
+      contactLink: 'Hör av dig direkt',
+    },
+    corrections: {
+      heading: 'Har du hittat något fel?',
+      intro:
+        'Priser ändras, DJ:s byts ut och ibland ställs en vanlig serie in. Varje evenemang har en {flagButton} som öppnar ett kort rättelseformulär — vad som är fel, vad det borde stå och hur du vet. När du skickar det får vi ett mejl med evenemangets nuvarande uppgifter bifogade, så att vi hittar raden och rättar den.',
+      flagButton: 'flaggknapp',
+      writeDirectly: 'Du kan också skriva direkt till oss på {email}.',
+    },
+    mission: {
+      heading: 'Vårt uppdrag',
+      body: 'Stockholm Swing kom till för att samla den lokala swingdansscenen på ett enda tydligt, lättviktigt och lättanvänt ställe. I stället för att leta igenom spridda flöden i sociala medier, olika studiosidor och nyhetsbrev samlar vi allt i ett gemensamt schema.',
+    },
+    community: {
+      heading: 'Gemenskapen först',
+      body: 'Sajten byggs och underhålls av dansare i gemenskapen, för gemenskapen. Vi är inte knutna till någon enskild dansstudio eller förening, vilket betyder att vi visar evenemang, socialdanser, tedanser och workshops från alla arrangörer i Stockholm på lika villkor.',
+      githubLink: 'GitHub-community',
+    },
+    openSource: {
+      heading: 'Byggd i öppenhet',
+      body: 'Hela sajten, dess data och verktygen som underhåller den ligger i ett publikt GitHub-repo. Vill du rätta en uppgift, bygga en funktion eller bara se hur det fungerar så finns koden där. Bidrag är välkomna.',
+      githubLink: 'Visa på GitHub',
+    },
+  },
+  changelog: {
+    heading: 'Nyheter',
+    subheading: 'Större uppdateringar av sajten, månad för månad',
+    // The entries themselves stay English by decision (#264) — they're written
+    // per release and a bilingual obligation on every future PR isn't worth it.
+    // Saying so is better than letting a Swedish reader wonder why this one
+    // section didn't translate.
+    entriesInEnglish: 'Posterna nedan är skrivna på engelska.',
+  },
+  contributors: {
+    heading: 'Bidragsgivare',
+    subheading: 'Personerna som har byggt och underhållit sajten',
+    onGitHub: '{name} på GitHub',
+  },
 } satisfies LocaleBundle;

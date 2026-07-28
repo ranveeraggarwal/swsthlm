@@ -180,4 +180,48 @@ export const en = {
     currentlySaysHint: 'Included in the email so we can find the listing.',
     openEmail: 'Open email',
   },
+  about: {
+    title: { lead: 'About ', em: 'Stockholm Swing' },
+    subtitle: 'One place for every social, workshop, and jam in Stockholm.',
+    organizers: {
+      heading: 'Are you an organizer?',
+      intro:
+        'If you host a one-time or occasional Lindy Hop, Balboa, Blues, or Shag event in Stockholm, fill in our {form} or {email}. A bot turns form submissions into pull requests; a maintainer reviews and merges. You don\'t need a GitHub account.',
+      formLink: 'event submission form',
+      emailLink: 'send us an email',
+      series: 'Running a recurring weekly series? {contact} and we\'ll get it set up.',
+      contactLink: 'Contact us directly',
+    },
+    corrections: {
+      heading: 'Spotted something wrong?',
+      intro:
+        'Prices change, DJs swap, and some weeks a regular series simply doesn\'t run. Every event has a {flagButton} that opens a short correction form — what\'s wrong, what it should say, and how you know. Sending it hands us an email with the listing\'s current details already attached, so we can find the row and fix it.',
+      flagButton: 'flag button',
+      writeDirectly: 'You can also write to us directly at {email}.',
+    },
+    mission: {
+      heading: 'Our Mission',
+      body: 'Stockholm Swing was born out of a desire to unite the local swing dance scene under one clear, lightweight, and easy-to-use platform. Instead of searching through fragmented social media feeds, different studio pages, and email newsletters, we aggregate everything in one central schedule.',
+    },
+    community: {
+      heading: 'Community First',
+      body: 'This project is built and maintained by members of the community for the community. We are not affiliated with any single dance studio or organization, meaning we showcase events, socials, tea dances, and workshops from all organizers across Stockholm fairly and transparently.',
+      githubLink: 'GitHub Community',
+    },
+    openSource: {
+      heading: 'Built in the Open',
+      body: 'The entire site, its data, and the tools that maintain it live in a public GitHub repository. If you\'d like to fix a listing, add a feature, or just see how it works, the code is right there. Contributions are welcome.',
+      githubLink: 'View on GitHub',
+    },
+  },
+  changelog: {
+    heading: 'What\'s new',
+    subheading: 'Major updates to the site, month by month',
+    entriesInEnglish: null,
+  },
+  contributors: {
+    heading: 'Contributors',
+    subheading: 'The people who\'ve built and maintained this site',
+    onGitHub: '{name} on GitHub',
+  },
 } satisfies LocaleBundle;

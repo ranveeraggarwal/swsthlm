@@ -282,4 +282,48 @@ export interface LocaleBundle {
     currentlySaysHint: string;
     openEmail: string;
   };
+  // The About page. Its sentences carry links and bold runs inside them, so
+  // several are templates rendered through `<Interpolate>` — the sentence
+  // stays whole here, and the component supplies the nodes. The link *text*
+  // is a separate key so it translates too.
+  about: {
+    title: EmphasisedText;
+    subtitle: string;
+    organizers: {
+      heading: string;
+      /** Takes `{form}` and `{email}`. */
+      intro: string;
+      formLink: string;
+      emailLink: string;
+      /** Takes `{contact}`. */
+      series: string;
+      contactLink: string;
+    };
+    corrections: {
+      heading: string;
+      /** Takes `{flagButton}`, which renders bold. */
+      intro: string;
+      flagButton: string;
+      /** Takes `{email}`. */
+      writeDirectly: string;
+    };
+    mission: { heading: string; body: string };
+    community: { heading: string; body: string; githubLink: string };
+    openSource: { heading: string; body: string; githubLink: string };
+  };
+  changelog: {
+    heading: string;
+    subheading: string;
+    /** A note that the entries below are written in English, shown only where
+     *  that isn't already obvious. `null` for English itself — the entries are
+     *  hand-written per release and deliberately not translated (#264), so a
+     *  Swedish reader gets told rather than left wondering. */
+    entriesInEnglish: string | null;
+  };
+  contributors: {
+    heading: string;
+    subheading: string;
+    /** Takes `{name}`. */
+    onGitHub: string;
+  };
 }

@@ -17,6 +17,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { SlidersHorizontal } from 'lucide-react';
 import { stockholmNow, type Now } from '@/lib/date/clock';
+import { useLocale } from '@/components/providers/LocaleProvider';
+import { splitTemplate } from '@/i18n/template';
 import type { SwingEvent } from '../model/event';
 import { groupMultiDayOneoffs } from '../model/grouping';
 import {
@@ -45,6 +47,7 @@ interface EventCalendarProps {
 }
 
 export function EventCalendar({ events, initialNow }: EventCalendarProps) {
+  const { locale, bundle } = useLocale();
   const [filters, setFilters] = useState<EventFilters>(NO_FILTERS);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
 
@@ -91,23 +94,29 @@ export function EventCalendar({ events, initialNow }: EventCalendarProps) {
   const sections = useMemo(() => buildSections(groups, now.date), [groups, now.date]);
 
   // Cards, not raw occurrences — a three-night workshop counts once.
-  const summary = summariseFilters(filters, groups.length);
+  const summary = summariseFilters(filters, groups.length, locale);
   const filtersActive = hasActiveFilters(filters);
+
+  // The count and the filter description render bold inside the sentence, so
+  // the template is split around the placeholder rather than substituted into
+  // it — see `@/i18n/template`.
+  const summaryNode =
+    summary.kind === 'all'
+      ? renderWithEmphasis(
+          bundle.listing.showingAll.replace(
+            '{noun}',
+            summary.count === 1 ? bundle.filters.eventNoun.one : bundle.filters.eventNoun.other,
+          ),
+          'count',
+          summary.count,
+        )
+      : renderWithEmphasis(bundle.listing.showingFiltered, 'description', summary.description);
 
   return (
     <div className="w-full">
       <div className="flex items-center justify-between mb-8 pb-4 border-b border-[var(--surface-container-highest)] font-sans text-xs text-[var(--on-surface-variant)] uppercase tracking-wider font-semibold">
         <span aria-live="polite" aria-atomic="true">
-          {summary.kind === 'all' ? (
-            <>
-              Showing all <strong>{summary.count}</strong> event
-              {summary.count !== 1 ? 's' : ''}
-            </>
-          ) : (
-            <>
-              Showing <strong>{summary.description}</strong>
-            </>
-          )}
+          {summaryNode}
         </span>
 
         <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-1">
@@ -122,14 +131,14 @@ export function EventCalendar({ events, initialNow }: EventCalendarProps) {
             }`}
           >
             <SlidersHorizontal aria-hidden="true" className="w-3.5 h-3.5" />
-            {isPanelOpen ? 'Hide Filters' : 'Filter & Search'}
+            {isPanelOpen ? bundle.listing.hideFilters : bundle.listing.showFilters}
           </button>
           {filtersActive && (
             <button
               onClick={clearFilters}
               className="text-[var(--primary)] hover:underline font-bold cursor-pointer"
             >
-              Reset
+              {bundle.listing.reset}
             </button>
           )}
         </div>
@@ -164,6 +173,19 @@ export function EventCalendar({ events, initialNow }: EventCalendarProps) {
         )}
       </div>
     </div>
+  );
+}
+
+/** `Showing all <strong>12</strong> events` — the sentence from the locale
+ *  file, with its one substituted value set bold. */
+function renderWithEmphasis(template: string, token: string, value: React.ReactNode) {
+  const [before, after] = splitTemplate(template, token);
+  return (
+    <>
+      {before}
+      <strong>{value}</strong>
+      {after}
+    </>
   );
 }
 

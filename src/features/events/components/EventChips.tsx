@@ -1,3 +1,5 @@
+'use client';
+
 // The small identity chips on an event: style, nights, beginner class, price,
 // payment. Each surface composes the ones it wants in the order it wants — the
 // card leads with style, the dense row leads with price — which is why these are
@@ -11,6 +13,7 @@ import React from 'react';
 import { Banknote, GraduationCap, Moon, Wallet } from 'lucide-react';
 import type { Style } from '@/lib/data/types';
 import { beginnerClassLabel, styleChipClass, styleLabel } from '../model/labels';
+import { useLocale } from '@/components/providers/LocaleProvider';
 
 const CHIP_TYPE = 'rounded text-[10px] font-bold uppercase tracking-wider border';
 const CHIP = `inline-flex items-center gap-1 px-2.5 py-0.5 ${CHIP_TYPE}`;
@@ -40,22 +43,24 @@ export function StyleChip({
   style: Style;
   layout: keyof typeof STYLE_CHIP_LAYOUT;
 }) {
+  const { locale } = useLocale();
   return (
     <span className={`${STYLE_CHIP_LAYOUT[layout]} ${styleChipClass(style)}`}>
-      {styleLabel(style, { compact: layout === 'row' })}
+      {styleLabel(style, { compact: layout === 'row' }, locale)}
     </span>
   );
 }
 
 /** "3 nights" — only shown for a merged multi-night run. */
 export function NightsChip({ nightCount }: { nightCount: number }) {
+  const { bundle } = useLocale();
   if (nightCount <= 1) return null;
   return (
     <span
       className={`${CHIP} bg-[var(--info-container)] text-[var(--on-info-container)] border-[var(--on-info-container)]/25 whitespace-nowrap shrink-0`}
     >
       <Moon className="w-3 h-3" />
-      {nightCount} nights
+      {nightCount} {nightCount === 1 ? bundle.card.nights.one : bundle.card.nights.other}
     </span>
   );
 }
@@ -63,13 +68,14 @@ export function NightsChip({ nightCount }: { nightCount: number }) {
 /** "Beginner friendly", or the class start time. One of the three facts the
  *  whole card design exists to surface (see docs/PROJECT.md M1). */
 export function BeginnerChip({ beginnerClass }: { beginnerClass?: string }) {
+  const { locale } = useLocale();
   if (!beginnerClass) return null;
   return (
     <span
       className={`${CHIP} bg-[var(--success-container)] text-[var(--on-success-container)] border-[var(--on-success-container)]/25`}
     >
       <GraduationCap className="w-3 h-3" />
-      {beginnerClassLabel(beginnerClass)}
+      {beginnerClassLabel(beginnerClass, locale)}
     </span>
   );
 }

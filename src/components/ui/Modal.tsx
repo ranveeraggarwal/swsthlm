@@ -21,6 +21,7 @@
 import React, { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
+import { useLocale } from '@/components/providers/LocaleProvider';
 
 interface ModalProps {
   /** Rendered only when true; mounting is what triggers the focus move. */
@@ -39,6 +40,7 @@ interface ModalProps {
 const WIDTHS = { sm: 'sm:max-w-sm', md: 'sm:max-w-md' } as const;
 
 export function Modal({ open, onClose, title, id, icon: Icon, width = 'sm', children }: ModalProps) {
+  const { bundle } = useLocale();
   const closeRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -78,8 +80,8 @@ export function Modal({ open, onClose, title, id, icon: Icon, width = 'sm', chil
           ref={closeRef}
           type="button"
           onClick={onClose}
-          aria-label="Close"
-          title="Close"
+          aria-label={bundle.modal.close}
+          title={bundle.modal.close}
           className="absolute right-3 top-3 rounded-full p-1.5 text-[var(--outline)] hover:bg-[var(--surface-container)] transition-colors cursor-pointer"
         >
           <X className="h-4 w-4" aria-hidden="true" />

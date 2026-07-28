@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { X, Download } from 'lucide-react';
+import { useLocale } from '@/components/providers/LocaleProvider';
 
 const DISMISSED_KEY = 'pwa-install-dismissed';
 
@@ -11,6 +12,7 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 export function InstallToast() {
+  const { bundle } = useLocale();
   const [deferredPrompt, setDeferredPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
   const [visible, setVisible] = useState(false);
@@ -50,9 +52,9 @@ export function InstallToast() {
     <div className="fixed bottom-6 left-4 right-4 sm:left-auto sm:right-6 sm:max-w-sm z-50 animate-slide-up">
       <div className="flex items-center gap-3 px-4 py-3 rounded-lg border border-[var(--border-ink)] bg-[var(--surface-container-lowest)] text-[var(--on-surface)] lift-card">
         <div className="flex-1 min-w-0">
-          <p className="font-sans font-bold text-sm">Add to Home Screen</p>
+          <p className="font-sans font-bold text-sm">{bundle.install.title}</p>
           <p className="font-sans text-xs text-[var(--on-surface-variant)] mt-0.5">
-            Quick access to Stockholm swing events
+            {bundle.install.body}
           </p>
         </div>
         <button
@@ -61,13 +63,13 @@ export function InstallToast() {
           className="shrink-0 inline-flex items-center gap-1.5 px-3 py-2 rounded bg-[var(--primary)] text-[var(--on-primary)] font-bold uppercase tracking-wider text-xs lift-btn-primary cursor-pointer"
         >
           <Download className="w-3.5 h-3.5" />
-          Install
+          {bundle.install.action}
         </button>
         <button
           type="button"
           onClick={handleDismiss}
-          aria-label="Dismiss"
-          title="Dismiss"
+          aria-label={bundle.install.dismiss}
+          title={bundle.install.dismiss}
           className="shrink-0 p-1 rounded text-[var(--on-surface-variant)] hover:text-[var(--on-surface)] cursor-pointer"
         >
           <X className="w-4 h-4" />

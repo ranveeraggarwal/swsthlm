@@ -1,3 +1,5 @@
+'use client';
+
 // The icon-and-text fact list: where it is, who's playing, what it costs.
 //
 // One consistent list rather than a mix of prose and badges, and one component
@@ -10,6 +12,7 @@ import { Banknote, Disc, MapPin, Music } from 'lucide-react';
 import type { SwingEvent } from '../model/event';
 import { venueMapsUrl } from '../model/event';
 import { musicLines, type MusicLine } from '../model/labels';
+import { useLocale } from '@/components/providers/LocaleProvider';
 
 const ROW = 'flex items-center gap-2 leading-none';
 const MUTED = 'text-[var(--on-surface-variant)]';
@@ -19,6 +22,7 @@ const joinClasses = (...parts: (string | undefined | false)[]) => parts.filter(B
 
 /** Venue, linked to a maps search, with the neighborhood appended. */
 export function VenueFact({ event, struckThrough }: { event: SwingEvent; struckThrough?: boolean }) {
+  const { bundle } = useLocale();
   return (
     <div className={ROW}>
       <MapPin className={`w-3.5 h-3.5 shrink-0 ${MUTED}`} aria-hidden="true" />
@@ -33,7 +37,7 @@ export function VenueFact({ event, struckThrough }: { event: SwingEvent; struckT
           )}
         >
           {event.venue}
-          <span className="sr-only"> (opens in a new tab)</span>
+          <span className="sr-only">{bundle.card.opensInNewTab}</span>
         </a>
         {event.neighborhood && <span className={MUTED}> · {event.neighborhood}</span>}
       </span>
@@ -43,13 +47,16 @@ export function VenueFact({ event, struckThrough }: { event: SwingEvent; struckT
 
 /** One performer line. The screen-reader prefix carries the meaning the icon has. */
 export function MusicFact({ line }: { line: MusicLine }) {
+  const { bundle } = useLocale();
   const Icon = line.type === 'live' ? Music : Disc;
   return (
     <div className={`${ROW} ${MUTED}`}>
       <Icon className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
       <span>
-        <span className="sr-only">{line.type === 'live' ? 'Live: ' : 'DJ: '}</span>
-        {line.name ?? (line.type === 'live' ? 'Live music' : 'DJ set')}
+        <span className="sr-only">
+          {line.type === 'live' ? bundle.card.livePrefix : bundle.card.djPrefix}
+        </span>
+        {line.name ?? (line.type === 'live' ? bundle.music.live : bundle.music.dj)}
       </span>
     </div>
   );

@@ -11,6 +11,8 @@ import React from 'react';
 import { CalendarPlus, Download } from 'lucide-react';
 import { IconButton } from '@/components/ui/IconButton';
 import { Modal, useModal } from '@/components/ui/Modal';
+import { useLocale } from '@/components/providers/LocaleProvider';
+import { splitTemplate } from '@/i18n/template';
 import {
   AppleMark,
   PROVIDER_BUTTON_CLASS,
@@ -62,6 +64,8 @@ function outlookUrl(event: SwingEvent): string {
 }
 
 export function AddToCalendarButton({ event }: { event: SwingEvent }) {
+  const { bundle } = useLocale();
+  const t = bundle.actions;
   const { open, triggerRef, openModal, close } = useModal();
 
   const downloadIcs = () => {
@@ -80,17 +84,29 @@ export function AddToCalendarButton({ event }: { event: SwingEvent }) {
 
   return (
     <>
-      <IconButton ref={triggerRef} onClick={openModal} label="Add to calendar" icon={CalendarPlus} />
+      <IconButton ref={triggerRef} onClick={openModal} label={t.addToCalendar} icon={CalendarPlus} />
 
       <Modal
         open={open}
         onClose={close}
         id={domIdFor(event, 'add-to-cal')}
-        title="Add to Calendar"
+        title={t.addToCalendarTitle}
         icon={CalendarPlus}
       >
         <p className="mt-1.5 font-sans text-sm leading-relaxed text-[var(--on-surface-variant)]">
-          Add <span className="font-bold">{event.title}</span> on {event.date} to your calendar.
+          {(() => {
+            const [before, after] = splitTemplate(
+              t.addIntro.replace('{date}', event.date),
+              'title',
+            );
+            return (
+              <>
+                {before}
+                <span className="font-bold">{event.title}</span>
+                {after}
+              </>
+            );
+          })()}
         </p>
 
         <div className="mt-6 flex flex-col gap-2.5">
@@ -128,7 +144,7 @@ export function AddToCalendarButton({ event }: { event: SwingEvent }) {
           className="mt-4 flex w-full items-center justify-center gap-2 rounded border border-[var(--border-ink)] bg-[var(--surface-container)] px-4 py-2.5 font-sans text-xs font-bold uppercase tracking-wider text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors cursor-pointer"
         >
           <Download className="h-4 w-4" />
-          Download .ics file
+          {t.downloadIcs}
         </button>
       </Modal>
     </>

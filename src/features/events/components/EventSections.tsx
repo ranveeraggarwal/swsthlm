@@ -13,6 +13,7 @@ import { CalendarDays } from 'lucide-react';
 import { isCurrentWeek } from '@/lib/date/calendar';
 import type { Now } from '@/lib/date/clock';
 import { formatEventDate, formatEventDateRange, formatMonthHeading } from '@/lib/date/format';
+import { useLocale } from '@/components/providers/LocaleProvider';
 import { lastNightOf } from '../model/grouping';
 import type { DateSection, MonthSection } from '../model/sections';
 import { EventCard } from './EventCard';
@@ -54,16 +55,19 @@ export function HighlightedEvents({
   showNextWeek: boolean;
   now: Now;
 }) {
+  const { locale, bundle } = useLocale();
+  const t = bundle.listing.sections;
   if (sections.length === 0) return null;
 
   return (
     <div>
       <SectionHeading>
         {showNextWeek ? (
-          <span className="italic">Coming Up</span>
+          <span className="italic">{t.comingUp.em}</span>
         ) : (
           <>
-            Happening <span className="italic">This Week</span>
+            {t.thisWeek.lead}
+            <span className="italic">{t.thisWeek.em}</span>
           </>
         )}
       </SectionHeading>
@@ -74,8 +78,8 @@ export function HighlightedEvents({
             <h2 className="font-sans text-xs font-bold text-[var(--primary)] uppercase tracking-widest bg-[var(--primary)]/10 py-1.5 px-3 rounded inline-block border border-[var(--primary)]/15">
               {/* A lone multi-night card puts its whole run in the heading. */}
               {groups.length === 1 && groups[0].nightCount > 1
-                ? formatEventDateRange(groups[0].dates[0], lastNightOf(groups[0]))
-                : formatEventDate(date)}
+                ? formatEventDateRange(groups[0].dates[0], lastNightOf(groups[0]), locale)
+                : formatEventDate(date, locale)}
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
@@ -103,16 +107,19 @@ export function UpcomingEvents({
   sections: MonthSection[];
   showNextWeek: boolean;
 }) {
+  const { locale, bundle } = useLocale();
+  const t = bundle.listing.sections;
   if (sections.length === 0) return null;
 
   return (
     <div className="pt-4">
       <SectionHeading muted>
         {showNextWeek ? (
-          <span className="italic">Later</span>
+          <span className="italic">{t.later.em}</span>
         ) : (
           <>
-            Upcoming <span className="italic">Events</span>
+            {t.upcoming.lead}
+            <span className="italic">{t.upcoming.em}</span>
           </>
         )}
       </SectionHeading>
@@ -124,7 +131,7 @@ export function UpcomingEvents({
           <div key={month} className="mt-6 first:mt-0">
             <div className="flex items-center gap-3 mb-2">
               <h2 className="font-sans text-xs font-bold text-[var(--on-surface-variant)] uppercase tracking-widest whitespace-nowrap">
-                {formatMonthHeading(month)}
+                {formatMonthHeading(month, locale)}
               </h2>
               <div
                 className="flex-1 h-px bg-[var(--surface-container-highest)]"

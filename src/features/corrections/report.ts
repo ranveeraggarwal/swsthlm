@@ -64,7 +64,13 @@ export interface CorrectionReport {
   howYouKnow?: string;
 }
 
-/** The three prompts, in the order they appear in both the dialog and the email. */
+/**
+ * The three prompts as they appear **in the email**, which is deliberately
+ * English: it goes to a maintainer, and these labels are what make a report
+ * skimmable in an inbox. What the reporter reads while filling the form is
+ * localized separately — `corrections.prompts` in the locale bundle. Same
+ * three, same order; change one and change the other.
+ */
 export const CORRECTION_PROMPTS = {
   whatsWrong: "What's wrong",
   shouldSay: 'What it should say instead',

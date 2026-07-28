@@ -11,6 +11,17 @@ export const sv = {
     openMenu: 'Öppna menyn',
     closeMenu: 'Stäng menyn',
   },
+  language: {
+    label: 'Språk',
+    code: 'SV',
+    // Language names are lowercase in Swedish — "svenska", never "Svenska".
+    names: { en: 'engelska', sv: 'svenska' },
+    switchTo: 'Byt till {language}',
+    changed: 'Språk: {language}',
+  },
+  permalink: {
+    backToAll: 'Alla evenemang',
+  },
   a11y: {
     skipToContent: 'Hoppa till innehållet',
   },

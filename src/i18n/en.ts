@@ -11,6 +11,16 @@ export const en = {
     openMenu: 'Open menu',
     closeMenu: 'Close menu',
   },
+  language: {
+    label: 'Language',
+    code: 'EN',
+    names: { en: 'English', sv: 'Swedish' },
+    switchTo: 'Switch to {language}',
+    changed: 'Language: {language}',
+  },
+  permalink: {
+    backToAll: 'All events',
+  },
   a11y: {
     skipToContent: 'Skip to content',
   },

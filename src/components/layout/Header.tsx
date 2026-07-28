@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Music, Menu, X } from 'lucide-react';
 import { useLocale } from '@/components/providers/LocaleProvider';
+import { LanguageToggle } from './LanguageToggle';
 import { ThemeToggle } from './ThemeToggle';
 
 export function Header() {
@@ -73,6 +74,7 @@ export function Header() {
           <Link href="/about" className={navLinkClass('/about')} aria-current={pathname === '/about' ? 'page' : undefined}>
             {bundle.nav.about}
           </Link>
+          <LanguageToggle />
           <ThemeToggle />
         </nav>
 
@@ -100,6 +102,17 @@ export function Header() {
           <Link href="/about" className={mobileNavLinkClass('/about')} onClick={() => setMenuOpen(false)} aria-current={pathname === '/about' ? 'page' : undefined}>
             {bundle.nav.about}
           </Link>
+          <div className="flex items-center justify-between gap-4 py-3 px-4 border-t border-[var(--surface-container-highest)] mt-1">
+            {/* The group carries the same name for assistive tech, so the
+                visible copy would otherwise be announced twice. */}
+            <span
+              aria-hidden="true"
+              className="font-sans text-sm font-bold uppercase tracking-widest text-[var(--on-surface-variant)]"
+            >
+              {bundle.language.label}
+            </span>
+            <LanguageToggle />
+          </div>
         </nav>
       )}
     </header>

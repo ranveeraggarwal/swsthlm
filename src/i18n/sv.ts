@@ -55,4 +55,54 @@ export const sv = {
       week: { one: 'vecka', other: 'veckor' },
     },
   },
+  // Dance style names stay in English — "Lindy Hop", "Balboa", "Shag",
+  // "Blues" are what Swedish dancers say, not translations waiting to happen.
+  styles: {
+    'lindy-hop': { label: 'Lindy Hop' },
+    balboa: { label: 'Balboa' },
+    blues: { label: 'Blues' },
+    shag: { label: 'Shag' },
+    // The event data already calls a style-agnostic social "socialdans" — see
+    // e.g. data/oneoffs.csv — so the label matches rather than inventing a
+    // second word for the same thing.
+    all: { label: 'Socialdans – alla stilar', compact: 'Alla stilar', filter: 'Alla stilar' },
+  },
+  music: {
+    live: 'Livemusik',
+    dj: 'DJ-set',
+    mixed: 'Livemusik & DJ-set',
+  },
+  floors: {
+    studio: 'Dansstudio',
+    hall: 'Danssal',
+    bar: 'Bar/restaurang',
+    outdoor: 'Utomhus',
+  },
+  temporal: {
+    'happening-now': 'Pågår nu',
+    ended: 'Avslutad',
+    tonight: 'Ikväll',
+    tomorrow: 'Imorgon',
+    'this-week': 'Denna vecka',
+  },
+  beginnerClass: {
+    friendly: 'Nybörjarvänlig',
+    atTime: 'Nybörjarkurs {time}',
+  },
+  filters: {
+    allVenues: 'Alla lokaler',
+    // "Evenemang" doesn't inflect for number, so both plural forms are the
+    // same word — the interface still asks for both, for the locales where
+    // they'd differ.
+    eventNoun: { one: 'evenemang', other: 'evenemang' },
+    liveMusicQualifier: 'Livemusik',
+    atVenue: '{description} på {venue}',
+    matchingSearch: '{description} som matchar "{search}"',
+    emptyState: {
+      styleAndVenue: 'Inga {style}-evenemang på {venue} just nu',
+      style: 'Inga {style}-evenemang just nu',
+      venue: 'Inga evenemang på {venue} just nu',
+      none: 'Inga evenemang matchar dina filter',
+    },
+  },
 } satisfies LocaleBundle;

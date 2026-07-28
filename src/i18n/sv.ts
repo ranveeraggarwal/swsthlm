@@ -19,6 +19,12 @@ export const sv = {
     switchTo: 'Byt till {language}',
     changed: 'Språk: {language}',
   },
+  languagePrompt: {
+    question: 'Vill du läsa sidan på svenska?',
+    accept: 'Byt till svenska',
+    decline: 'Nej tack',
+    dismiss: 'Stäng',
+  },
   permalink: {
     backToAll: 'Alla evenemang',
   },

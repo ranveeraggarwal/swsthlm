@@ -18,6 +18,12 @@ export const en = {
     switchTo: 'Switch to {language}',
     changed: 'Language: {language}',
   },
+  languagePrompt: {
+    question: 'Would you like to read this site in English?',
+    accept: 'Switch to English',
+    decline: 'No thanks',
+    dismiss: 'Close',
+  },
   permalink: {
     backToAll: 'All events',
   },

@@ -15,7 +15,7 @@
 
 import React, { useState } from 'react';
 import { useLocale } from '@/components/providers/LocaleProvider';
-import { bundle as bundleFor, LOCALES, type Locale } from '@/i18n';
+import { bundle as bundleFor, LOCALES, LOCALE_TOGGLE_ID, type Locale } from '@/i18n';
 
 export function LanguageToggle() {
   const { locale, bundle, setLocale } = useLocale();
@@ -39,11 +39,15 @@ export function LanguageToggle() {
         aria-label={t.label}
         className="flex items-center rounded border border-[var(--outline-variant)] overflow-hidden"
       >
-        {LOCALES.map((option) => {
+        {LOCALES.map((option, index) => {
           const active = option === locale;
           return (
             <button
               key={option}
+              // Focus target for the one-time prompt. First button only —
+              // there's one toggle rendered at a time (desktop nav or the
+              // mobile menu), so the id stays unique.
+              id={index === 0 ? LOCALE_TOGGLE_ID : undefined}
               type="button"
               onClick={() => choose(option)}
               aria-pressed={active}

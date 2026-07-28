@@ -5,6 +5,8 @@ import { Analytics } from '@vercel/analytics/next';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { InstallToast } from '@/components/layout/InstallToast';
+import { LanguagePrompt } from '@/components/layout/LanguagePrompt';
+import { ToastStack } from '@/components/layout/ToastStack';
 import { SkipToContentLink } from '@/components/layout/SkipToContentLink';
 import { LocaleProvider } from '@/components/providers/LocaleProvider';
 import './globals.css';
@@ -81,7 +83,10 @@ export default function RootLayout({
             </main>
             <Footer />
           </div>
-          <InstallToast />
+          <ToastStack>
+            <LanguagePrompt />
+            <InstallToast />
+          </ToastStack>
         </LocaleProvider>
         <Analytics />
       </body>

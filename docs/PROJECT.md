@@ -110,7 +110,7 @@ first and argue against it, rather than around it.
 | **The chrome is translated; the content is not.** Organizer prose stays in whatever language it was written in, so a Swedish page shows Swedish navigation around mixed-language event text | §5 below, [`DATA.md`](DATA.md) |
 | **Swedish is a client-side preference, not a second prerendered site.** No `/sv`, nothing localized at its own URL — and therefore **no Swedish search visibility**, given up knowingly | [`architecture/CODE_STRUCTURE.md`](architecture/CODE_STRUCTURE.md), [`SEO.md`](SEO.md), issue #266 |
 | The first client render must match the served English HTML; the stored preference applies **after** mount. Reading it during render is a hydration mismatch on every text node | `components/providers/LocaleProvider.tsx` |
-| There is deliberately **no `navigator.language` sniffing** — a static site can't vary its response, so guessing makes every Swedish-browser visitor watch the page flip on each load | `components/providers/LocaleProvider.tsx`, issue #265 |
+| The site never **auto-switches** on `navigator.language` — a static site can't vary its response, so guessing makes every visitor who prefers the default watch the page flip on each load. It may **ask once**, and remembers the answer either way | `components/layout/LanguagePrompt.tsx`, issues #265 and #284 |
 | Adding a language costs **one entry in `LOCALES` and one bundle file** — no route, component or logic changes. There is no CI gate; the rule is the gate | [`architecture/CODE_STRUCTURE.md`](architecture/CODE_STRUCTURE.md) |
 | Changelog entries stay **English only**; the timeline chrome around them is translated | [`../src/features/changelog/entries.ts`](../src/features/changelog/entries.ts), issue #264 |
 

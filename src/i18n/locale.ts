@@ -20,3 +20,8 @@ export const DEFAULT_LOCALE: Locale = 'en';
 /** `localStorage` key for the stored preference. Read and written by S6; S1
  *  only reserves the name so the two don't drift. */
 export const LOCALE_STORAGE_KEY = 'locale';
+
+/** DOM id of the language toggle's first button. The one-time prompt moves
+ *  focus here when answered, so a keyboard user lands on the control for what
+ *  they just decided rather than at the top of the document. */
+export const LOCALE_TOGGLE_ID = 'language-toggle';

@@ -88,7 +88,8 @@ leave it `live`.
   downstream consume `SwingEvent[]`.
 - **`SwingEvent` reuses the data layer's enums.** `style` is a `Style`, not a
   `string`. If you find yourself widening it or writing `as Style`, the fix is
-  probably a label in `labels.ts` instead.
+  probably a missing word in the locale bundles plus a colour in `labels.ts`,
+  not a looser type.
 - **The scraper's blast radius is `oneoffs.csv`, `exceptions.csv` and
   `bands.csv`.** It reads `series.csv` and `venues.csv` to dedup but never
   writes them, and never invents a venue. New bands go in a *separate*

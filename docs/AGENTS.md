@@ -29,9 +29,14 @@ Full rules and a "where does my change go?" table are in
 - **`model/` has no JSX; `components/` has no business rules.** Filtering,
   bucketing, grouping and badge logic are pure functions in
   `features/events/model/`, each taking its reference date as an argument.
-- **Words and colours live in `features/events/model/labels.ts`.** No component
-  owns a `switch (style)`. Four diverging copies of that switch is why this rule
-  exists.
+- **Colours live in `features/events/model/labels.ts`; words live in
+  `src/i18n/<locale>.ts`.** No component owns a `switch (style)` — four
+  diverging copies of that switch is why this rule exists. Both tables are keyed
+  by the data contract's unions, so a new style is a compile error until it has
+  a colour and a word in every locale.
+- **Every visitor-facing string goes in both `src/i18n/en.ts` and `sv.ts`**, or
+  `tsc` fails. Components read them via `useLocale()`; `model/` takes `locale`
+  as an argument and never calls the hook.
 - **Outside-world constants live in `lib/site.ts`** — the production URL, the
   submission form, contact addresses. Never re-declare them.
 

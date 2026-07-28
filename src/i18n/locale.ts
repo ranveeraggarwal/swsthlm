@@ -2,9 +2,16 @@
 // One definition each — nothing else in the repo may redeclare a locale list,
 // a default, or the storage key.
 
-export type Locale = 'en' | 'sv';
+// The list is the source of truth and the type is derived from it, not the
+// other way round. Declared as `LOCALES: Locale[]` instead, a locale added to
+// the union would leave this array silently stale — `['en', 'sv']` still
+// satisfies `Locale[]` when `Locale` gained a third member — and anything
+// iterating it (the S6 toggle) would quietly omit the new language with no
+// compile error. Derived, adding a locale is one edit here and every
+// `Record<Locale, …>` in the repo fails until it's complete.
+export const LOCALES = ['en', 'sv'] as const;
 
-export const LOCALES: Locale[] = ['en', 'sv'];
+export type Locale = (typeof LOCALES)[number];
 
 /** What the server always renders. The served HTML is English, so the first
  *  client render must be too — see `LocaleProvider` for why. */

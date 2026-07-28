@@ -4,6 +4,7 @@ import React from 'react';
 import { GitHubIcon } from '@/components/ui/GitHubIcon';
 import { GITHUB_DISCUSSIONS_URL } from '@/lib/site';
 import { FreshnessSignal } from './FreshnessSignal';
+import { LanguageToggle } from './LanguageToggle';
 import { useLocale } from '@/components/providers/LocaleProvider';
 
 export function Footer() {
@@ -18,7 +19,8 @@ export function Footer() {
           </p>
         </div>
         <div className="flex flex-col items-center sm:items-end gap-3">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
+            <LanguageToggle />
             <a
               href={GITHUB_DISCUSSIONS_URL}
               target="_blank"

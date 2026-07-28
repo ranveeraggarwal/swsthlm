@@ -49,6 +49,11 @@ export const CHANGELOG: ChangelogEntry[] = [
     summary: 'Dark mode, organizer intake, and a big polish pass',
     items: [
       {
+        title: 'The site speaks Swedish',
+        description:
+          'An EN / SV switch in the header puts the whole interface — filters, dates, badges and buttons — into Swedish, and remembers your choice. Event descriptions stay in whatever language the organizer wrote them in.',
+      },
+      {
         title: 'Contributors wall',
         description:
           'The About page now has a collapsed "Contributors" section crediting everyone who has built and maintained the site.',

@@ -10,6 +10,7 @@
 // error here until it has a word in both `en.ts` and `sv.ts`.
 
 import type { FloorType, Music, Style } from '@/lib/data/types';
+import type { Locale } from './locale';
 
 /** Weekday names indexed by `Date.getUTCDay()`, so Sunday is 0. The tuple
  *  length is part of the contract — a locale file with six weekdays is a
@@ -53,6 +54,26 @@ export interface LocaleBundle {
     about: string;
     openMenu: string;
     closeMenu: string;
+  };
+  // The language toggle. `code` is this locale's own short form, so the
+  // control reads "EN | SV" whichever language you're in — a Swede looking for
+  // English shouldn't have to recognise the Swedish word for it. `names` is
+  // every language *in this language*, for the accessible labels, which do
+  // follow the current locale ("Switch to Swedish" / "Byt till engelska").
+  language: {
+    /** Names the group for screen readers. */
+    label: string;
+    /** This locale's short code, e.g. "EN". */
+    code: string;
+    names: Record<Locale, string>;
+    /** Takes `{language}`. */
+    switchTo: string;
+    /** Announced politely when the language changes. Takes `{language}`. */
+    changed: string;
+  };
+  /** The single-event page's own chrome. */
+  permalink: {
+    backToAll: string;
   };
   /** Strings for assistive tech that aren't part of the visible chrome above. */
   a11y: {

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Music, Menu, X } from 'lucide-react';
 import { useLocale } from '@/components/providers/LocaleProvider';
+import { LanguageToggle } from './LanguageToggle';
 import { ThemeToggle } from './ThemeToggle';
 
 export function Header() {
@@ -73,10 +74,12 @@ export function Header() {
           <Link href="/about" className={navLinkClass('/about')} aria-current={pathname === '/about' ? 'page' : undefined}>
             {bundle.nav.about}
           </Link>
+          <LanguageToggle />
           <ThemeToggle />
         </nav>
 
         <div className="sm:hidden flex items-center gap-1">
+          <LanguageToggle />
           <ThemeToggle />
           <button
             ref={menuButtonRef}

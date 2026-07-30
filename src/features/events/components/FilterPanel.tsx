@@ -9,6 +9,7 @@ import { MapPin, Music, Search, SlidersHorizontal, Sparkles, X } from 'lucide-re
 import type { Style } from '@/lib/data/types';
 import { styleFilterLabel } from '../model/labels';
 import { venueFilterLabel, type EventFilters } from '../model/sections';
+import { useLocale } from '@/components/providers/LocaleProvider';
 
 interface FilterPanelProps {
   id: string;
@@ -51,6 +52,8 @@ export function FilterPanel({
   venues,
   searchInputRef,
 }: FilterPanelProps) {
+  const { locale, bundle } = useLocale();
+  const t = bundle.filters;
   return (
     <div
       id={id}
@@ -60,7 +63,8 @@ export function FilterPanel({
         <div className="flex items-center gap-3 border-b border-[var(--surface-container-highest)] pb-4 mb-2">
           <SlidersHorizontal aria-hidden="true" className="w-5 h-5 text-[var(--secondary)]" />
           <h2 className="font-serif text-2xl font-bold tracking-tight text-[var(--on-surface)]">
-            Filters <span className="italic">&amp; Search</span>
+            {t.title.lead}
+            <span className="italic">{t.title.em}</span>
           </h2>
         </div>
 
@@ -73,8 +77,8 @@ export function FilterPanel({
           <input
             ref={searchInputRef}
             type="text"
-            aria-label="Search events"
-            placeholder="Search by band, DJ, venue, title..."
+            aria-label={t.searchLabel}
+            placeholder={t.searchPlaceholder}
             value={filters.search}
             onChange={(e) => onChange({ search: e.target.value })}
             className="w-full pl-11 pr-10 py-3.5 bg-transparent border-0 text-[var(--on-surface)] placeholder-[var(--outline)] focus:outline-none focus:ring-0 font-sans font-body-md"
@@ -86,8 +90,8 @@ export function FilterPanel({
                 onChange({ search: '' });
                 searchInputRef.current?.focus();
               }}
-              aria-label="Clear search"
-              title="Clear search"
+              aria-label={t.clearSearch}
+              title={t.clearSearch}
               className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--outline)] hover:text-[var(--on-surface)] transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
@@ -106,8 +110,7 @@ export function FilterPanel({
         <div className="flex flex-col md:flex-row gap-6">
           <div className="flex-1">
             <span id={`${id}-style-label`} className={FACET_LABEL}>
-              <Sparkles aria-hidden="true" className="w-3.5 h-3.5 text-[var(--primary)]" /> Filter by
-              Style
+              <Sparkles aria-hidden="true" className="w-3.5 h-3.5 text-[var(--primary)]" /> {t.byStyle}
             </span>
             <div className="filter-scroll-container">
               <div role="group" aria-labelledby={`${id}-style-label`} className={SCROLLER}>
@@ -118,7 +121,7 @@ export function FilterPanel({
                     aria-pressed={filters.style === style}
                     className={`${CHIP_BASE} ${filters.style === style ? CHIP_SELECTED.primary : CHIP_IDLE}`}
                   >
-                    {styleFilterLabel(style)}
+                    {styleFilterLabel(style, locale)}
                   </button>
                 ))}
               </div>
@@ -127,7 +130,7 @@ export function FilterPanel({
 
           <div className="md:w-48">
             <span className={FACET_LABEL}>
-              <Music aria-hidden="true" className="w-3.5 h-3.5 text-[var(--tertiary)]" /> Music
+              <Music aria-hidden="true" className="w-3.5 h-3.5 text-[var(--tertiary)]" /> {t.music}
             </span>
             <button
               onClick={() => onChange({ liveMusicOnly: !filters.liveMusicOnly })}
@@ -135,7 +138,7 @@ export function FilterPanel({
               className={`w-full flex items-center justify-center gap-2 ${CHIP_BASE} ${filters.liveMusicOnly ? CHIP_SELECTED.tertiary : CHIP_IDLE}`}
             >
               <Music className="w-3.5 h-3.5" />
-              Live Music Only
+              {t.liveMusicOnly}
             </button>
           </div>
         </div>
@@ -143,8 +146,7 @@ export function FilterPanel({
         {/* Venue */}
         <div>
           <span id={`${id}-venue-label`} className={FACET_LABEL}>
-            <MapPin aria-hidden="true" className="w-3.5 h-3.5 text-[var(--secondary)]" /> Filter by
-            Venue
+            <MapPin aria-hidden="true" className="w-3.5 h-3.5 text-[var(--secondary)]" /> {t.byVenue}
           </span>
           <div className="filter-scroll-container">
             <div role="group" aria-labelledby={`${id}-venue-label`} className={SCROLLER}>
@@ -155,7 +157,7 @@ export function FilterPanel({
                   aria-pressed={filters.venue === venue}
                   className={`${CHIP_BASE} ${filters.venue === venue ? CHIP_SELECTED.secondary : CHIP_IDLE}`}
                 >
-                  {venueFilterLabel(venue)}
+                  {venueFilterLabel(venue, locale)}
                 </button>
               ))}
             </div>

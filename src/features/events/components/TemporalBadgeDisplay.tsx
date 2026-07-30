@@ -1,30 +1,31 @@
+'use client';
+
 // Renders the badge that `../model/temporal.ts` decided on. One table, so the
 // wording and colour of "Happening Now" live next to "Tonight" instead of in a
 // switch inside a 300-line card.
 
 import React from 'react';
-import type { TemporalBadge } from '../model/temporal';
+import { temporalBadgeLabel, type TemporalBadge } from '../model/temporal';
+import { useLocale } from '@/components/providers/LocaleProvider';
 
 const BADGE = 'px-2.5 py-0.5 rounded text-[11px] uppercase font-bold tracking-wider';
 
-const BADGES: Record<NonNullable<TemporalBadge>, { label: string; className: string }> = {
-  'happening-now': { label: 'Happening Now', className: 'bg-[var(--live)] text-[var(--on-live)]' },
-  ended: {
-    label: 'Ended',
-    className:
-      'bg-[var(--ended-container)] text-[var(--on-ended-container)] border border-[var(--ended-outline)]',
-  },
-  tonight: { label: 'Tonight', className: 'bg-[var(--primary)] text-[var(--on-primary)]' },
-  tomorrow: { label: 'Tomorrow', className: 'bg-[var(--secondary)] text-[var(--on-secondary)]' },
-  'this-week': {
-    label: 'This Week',
-    className: 'bg-[var(--primary)]/15 text-[var(--primary)] border border-[var(--primary)]/20',
-  },
+// Colour only — the word comes from `temporalBadgeLabel` (locale bundle) so
+// this table and that one can't drift apart.
+const BADGE_CLASSES: Record<NonNullable<TemporalBadge>, string> = {
+  'happening-now': 'bg-[var(--live)] text-[var(--on-live)]',
+  ended:
+    'bg-[var(--ended-container)] text-[var(--on-ended-container)] border border-[var(--ended-outline)]',
+  tonight: 'bg-[var(--primary)] text-[var(--on-primary)]',
+  tomorrow: 'bg-[var(--secondary)] text-[var(--on-secondary)]',
+  'this-week': 'bg-[var(--primary)]/15 text-[var(--primary)] border border-[var(--primary)]/20',
 };
 
 export function TemporalBadgeDisplay({ badge }: { badge: TemporalBadge }) {
+  const { locale } = useLocale();
   if (!badge) return null;
-  const { label, className } = BADGES[badge];
+  const label = temporalBadgeLabel(badge, locale);
+  const className = BADGE_CLASSES[badge];
 
   // "Happening Now" gets a pulsing dot; the others are plain text.
   if (badge === 'happening-now') {

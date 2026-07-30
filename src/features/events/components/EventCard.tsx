@@ -14,6 +14,7 @@ import { formatEventDateRange, formatEventDateShort } from '@/lib/date/format';
 import { ReportCorrectionButton } from '@/features/corrections/ReportCorrectionButton';
 import { domIdFor, type EventGroup } from '../model/event';
 import { getTemporalBadge } from '../model/temporal';
+import { useLocale } from '@/components/providers/LocaleProvider';
 import { AddToCalendarButton } from './AddToCalendarButton';
 import { BeginnerChip, NightsChip, StyleChip } from './EventChips';
 import { EventFacts } from './EventFacts';
@@ -34,6 +35,7 @@ interface EventCardProps {
 const DESCRIPTION_CLAMP = 'line-clamp-2';
 
 export function EventCard({ group, isThisWeek, showDate, now }: EventCardProps) {
+  const { locale, bundle } = useLocale();
   const { event, dates, nightCount } = group;
 
   const [descriptionExpanded, setDescriptionExpanded] = useState(false);
@@ -80,8 +82,8 @@ export function EventCard({ group, isThisWeek, showDate, now }: EventCardProps) 
               {(isMultiNight || showDate) && (
                 <div className="font-sans text-xs text-[var(--on-surface-variant)] mb-0.5 font-medium">
                   {isMultiNight
-                    ? formatEventDateRange(dates[0], dates[dates.length - 1])
-                    : formatEventDateShort(dates[0])}
+                    ? formatEventDateRange(dates[0], dates[dates.length - 1], locale)
+                    : formatEventDateShort(dates[0], locale)}
                 </div>
               )}
               <span
@@ -94,7 +96,7 @@ export function EventCard({ group, isThisWeek, showDate, now }: EventCardProps) 
             <div className="flex items-center gap-2 shrink-0">
               {event.cancelled ? (
                 <span className="px-2.5 py-0.5 rounded bg-[var(--error)] text-[var(--on-error)] text-[10px] uppercase font-bold tracking-wider">
-                  Cancelled
+                  {bundle.card.cancelled}
                 </span>
               ) : (
                 <TemporalBadgeDisplay badge={badge} />
@@ -137,7 +139,7 @@ export function EventCard({ group, isThisWeek, showDate, now }: EventCardProps) 
                   aria-controls={descriptionId}
                   className="mt-1 font-sans text-xs font-bold uppercase tracking-wider text-[var(--primary)] hover:underline"
                 >
-                  {descriptionExpanded ? 'Show less' : 'Read more'}
+                  {descriptionExpanded ? bundle.card.showLess : bundle.card.readMore}
                 </button>
               )}
             </div>
@@ -152,8 +154,8 @@ export function EventCard({ group, isThisWeek, showDate, now }: EventCardProps) 
                 className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded border border-[var(--border-ink)] bg-[var(--primary)] text-[var(--on-primary)] hover:bg-[var(--primary-container)] font-bold uppercase tracking-wider text-xs lift-btn-primary"
               >
                 <Ticket className="w-4 h-4" />
-                Source
-                <span className="sr-only"> — tickets and event info (opens in a new tab)</span>
+                {bundle.card.source}
+                <span className="sr-only">{bundle.card.sourceHint}</span>
               </a>
             )}
             <AddToCalendarButton event={event} />

@@ -16,7 +16,8 @@ the off-site half is a one-time operational checklist for the maintainer.
 | `llms.txt` | `public/llms.txt` | Plain-language site summary for AI crawlers ([llmstxt.org](https://llmstxt.org) convention). |
 
 Keep these in sync: a new page type needs a canonical, a sitemap entry, and
-metadata. Validate structured data after changes with
+metadata — one of each, in English. See the language section below for why
+there is no Swedish counterpart to any of them. Validate structured data after changes with
 [Google's Rich Results Test](https://search.google.com/test/rich-results).
 
 ## Off-site checklist (maintainer, one-time)
@@ -53,6 +54,23 @@ sites link to it. Roughly in order of impact:
    Do not block them: being crawlable and being *linked from pages they trust*
    (see 4) is the whole strategy. `public/llms.txt` gives them a canonical
    plain-language summary to quote.
+
+## The site is English-only to crawlers, on purpose
+
+Everything below assumes English queries, and that is the whole story: the site
+has a Swedish interface, but it's a **client-side preference**, so nothing
+Swedish exists at a URL a crawler can reach. There is no `/sv`, no `hreflang`,
+and no Swedish entry in the sitemap — none of which is an oversight.
+
+The trade was weighed and recorded in [`PROJECT.md`](PROJECT.md) §5: a second
+prerendered tree is maintenance surface disproportionate to the value at this
+size, and Stockholm's dancers reach the site through the community rather than
+through Google. Issue #266 holds the closed write-up of what reversing it would
+take, if a Swedish query set ever looks worth chasing.
+
+So: don't add `hreflang` or Swedish sitemap entries to "fix" the gap. Either
+they'd point at URLs that don't exist, or reversing the decision above is the
+actual task.
 
 ## Expectations
 

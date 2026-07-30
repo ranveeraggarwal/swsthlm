@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { GitHubIcon } from '@/components/ui/GitHubIcon';
 import { CONTRIBUTORS } from './contributors';
+import { useLocale } from '@/components/providers/LocaleProvider';
 
 const PANEL_ID = 'contributors-panel';
 
@@ -12,6 +13,8 @@ const PANEL_ID = 'contributors-panel';
  * site. Content lives in `./contributors.ts`; this component only renders it.
  */
 export function ContributorsWall() {
+  const { bundle } = useLocale();
+  const t = bundle.contributors;
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
@@ -28,10 +31,10 @@ export function ContributorsWall() {
         >
           <span>
             <span className="block font-serif text-xl font-bold text-[var(--on-surface)]">
-              Contributors
+              {t.heading}
             </span>
             <span className="block mt-0.5 font-sans text-sm font-normal text-[var(--on-surface-variant)]">
-              The people who&apos;ve built and maintained this site
+              {t.subheading}
             </span>
           </span>
           <ChevronDown
@@ -59,12 +62,12 @@ export function ContributorsWall() {
                   href={contributor.githubUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label={`${contributor.name} on GitHub`}
-                  title={`${contributor.name} on GitHub`}
+                  aria-label={t.onGitHub.replace('{name}', contributor.name)}
+                  title={t.onGitHub.replace('{name}', contributor.name)}
                   className="shrink-0 text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors"
                 >
                   <GitHubIcon className="w-4 h-4" />
-                  <span className="sr-only"> (opens in a new tab)</span>
+                  <span className="sr-only">{bundle.card.opensInNewTab}</span>
                 </a>
               )}
             </li>

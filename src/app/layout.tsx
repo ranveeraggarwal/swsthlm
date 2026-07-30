@@ -5,6 +5,10 @@ import { Analytics } from '@vercel/analytics/next';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { InstallToast } from '@/components/layout/InstallToast';
+import { LanguagePrompt } from '@/components/layout/LanguagePrompt';
+import { ToastStack } from '@/components/layout/ToastStack';
+import { SkipToContentLink } from '@/components/layout/SkipToContentLink';
+import { LocaleProvider } from '@/components/providers/LocaleProvider';
 import './globals.css';
 
 const playfair = Playfair_Display({
@@ -70,15 +74,20 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col">
-        <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:p-4 focus:bg-[var(--surface-container-lowest)] focus:text-[var(--primary)] focus:font-bold focus:underline outline-none">Skip to content</a>
-        <div className="min-h-screen flex flex-col relative bg-[var(--background)] text-[var(--on-surface)]">
-          <Header />
-          <main id="main-content" className="flex-grow">
-            {children}
-          </main>
-          <Footer />
-        </div>
-        <InstallToast />
+        <LocaleProvider>
+          <SkipToContentLink />
+          <div className="min-h-screen flex flex-col relative bg-[var(--background)] text-[var(--on-surface)]">
+            <Header />
+            <main id="main-content" className="flex-grow">
+              {children}
+            </main>
+            <Footer />
+          </div>
+          <ToastStack>
+            <LanguagePrompt />
+            <InstallToast />
+          </ToastStack>
+        </LocaleProvider>
         <Analytics />
       </body>
     </html>

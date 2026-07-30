@@ -9,6 +9,7 @@
 import React, { useState } from 'react';
 import { CalendarPlus, Check, Copy } from 'lucide-react';
 import { Modal, useModal } from '@/components/ui/Modal';
+import { useLocale } from '@/components/providers/LocaleProvider';
 import {
   PROVIDER_BUTTON_CLASS,
   PROVIDER_FILL,
@@ -37,6 +38,8 @@ const SUBSCRIBE_URLS: Record<CalendarProvider, string> = {
 const PROVIDERS: CalendarProvider[] = ['apple', 'google', 'outlook'];
 
 export function SubscribeButton() {
+  const { bundle } = useLocale();
+  const t = bundle.actions;
   const { open, triggerRef, openModal, close } = useModal();
   const [copied, setCopied] = useState(false);
 
@@ -59,18 +62,18 @@ export function SubscribeButton() {
         className="flex items-center gap-1.5 font-bold normal-case text-[var(--secondary)] hover:underline transition-colors cursor-pointer"
       >
         <CalendarPlus className="w-3.5 h-3.5" />
-        Subscribe
+        {t.subscribe}
       </button>
 
       <Modal
         open={open}
         onClose={close}
         id="subscribe"
-        title="Subscribe to Calendar"
+        title={t.subscribeTitle}
         icon={CalendarPlus}
       >
         <p className="mt-1.5 font-sans text-sm leading-relaxed text-[var(--on-surface-variant)]">
-          Add the event feed to your calendar app, kept up to date automatically.
+          {t.subscribeBlurb}
         </p>
 
         <div className="mt-6 flex flex-col gap-2.5">
@@ -101,7 +104,7 @@ export function SubscribeButton() {
           <input
             type="text"
             readOnly
-            aria-label="Calendar feed URL"
+            aria-label={t.feedUrlLabel}
             value={CALENDAR_FEED_URL}
             onFocus={(e) => e.currentTarget.select()}
             className="min-w-0 flex-1 border-0 border-b-2 border-[var(--border-ink)] bg-transparent px-1 py-2 font-mono text-xs text-[var(--on-surface-variant)] focus:border-[var(--primary)] focus:outline-none"
@@ -109,11 +112,11 @@ export function SubscribeButton() {
           <button
             type="button"
             onClick={handleCopy}
-            aria-label={copied ? 'Copied' : 'Copy feed link'}
+            aria-label={copied ? t.copied : t.copyFeedLink}
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded border border-[var(--border-ink)] bg-[var(--surface-container)] text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] font-bold uppercase tracking-wider text-xs transition-colors cursor-pointer shrink-0"
           >
             {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-            {copied ? 'Copied' : 'Copy'}
+            {copied ? t.copied : t.copy}
           </button>
         </div>
       </Modal>

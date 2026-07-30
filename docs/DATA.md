@@ -138,7 +138,7 @@ Descriptions are flavor, not interface. Things that don't belong:
 - **Prices.** Use `price`. Don't write "100:- vid dörren" in the prose.
 - **Venue addresses.** Use `venue_id`. Don't write "Roslagsgatan 38" in the prose.
 
-What does belong: what the night is about, who the band is (one or two sentences of bio is fine), what makes this evening distinctive, any organizer flavor. Swedish and English are both fine — leave whatever the organizer wrote in their language. The card clamps the description to two lines; the rest is behind a "Read more" toggle. That's a CSS line clamp, not a character count, so how much shows depends on the card width.
+What does belong: what the night is about, who the band is (one or two sentences of bio is fine), what makes this evening distinctive, any organizer flavor. Swedish and English are both fine — leave whatever the organizer wrote in their language. This is the one place the site is deliberately *not* translated: the interface itself has an English/Swedish switch, but descriptions stay as written, because a bad translation is worse than the original (see [`PROJECT.md`](PROJECT.md) §5). The card clamps the description to two lines; the rest is behind a "Read more" toggle. That's a CSS line clamp, not a character count, so how much shows depends on the card width.
 
 ## Validation rules (enforced by CI)
 

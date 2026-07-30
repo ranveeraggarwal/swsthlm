@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { formatMonthHeading } from '@/lib/date/format';
 import { CHANGELOG } from './entries';
+import { useLocale } from '@/components/providers/LocaleProvider';
 
 const PANEL_ID = 'changelog-panel';
 
@@ -12,6 +13,8 @@ const PANEL_ID = 'changelog-panel';
  * Content lives in `./entries.ts`; this component only renders it.
  */
 export function ChangelogTimeline() {
+  const { locale, bundle } = useLocale();
+  const t = bundle.changelog;
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
@@ -28,10 +31,10 @@ export function ChangelogTimeline() {
         >
           <span>
             <span className="block font-serif text-xl font-bold text-[var(--on-surface)]">
-              What&apos;s new
+              {t.heading}
             </span>
             <span className="block mt-0.5 font-sans text-sm font-normal text-[var(--on-surface-variant)]">
-              Major updates to the site, month by month
+              {t.subheading}
             </span>
           </span>
           <ChevronDown
@@ -42,7 +45,14 @@ export function ChangelogTimeline() {
       </h2>
 
       {isExpanded && (
-        <ol id={PANEL_ID} className="border-t-2 border-[var(--border-ink)] p-4 sm:p-6 space-y-8">
+        <div id={PANEL_ID} className="border-t-2 border-[var(--border-ink)] p-4 sm:p-6">
+          {/* The entries are hand-written per release and deliberately not
+              translated (#264). Saying so beats letting a Swedish reader
+              wonder why one section stayed English. */}
+          {t.entriesInEnglish && (
+            <p className="mb-6 font-sans text-xs text-[var(--outline)]">{t.entriesInEnglish}</p>
+          )}
+          <ol className="space-y-8">
           {CHANGELOG.map((entry, index) => (
             <li key={entry.month} className="relative pl-8">
               {/* Timeline rail + marker. Decorative: the month heading carries
@@ -60,7 +70,7 @@ export function ChangelogTimeline() {
               />
 
               <h3 className="font-sans text-xs font-bold uppercase tracking-[0.05em] text-[var(--on-surface-variant)]">
-                {formatMonthHeading(entry.month)}
+                {formatMonthHeading(entry.month, locale)}
               </h3>
               <p className="mt-1 font-serif text-lg font-bold text-[var(--on-surface)] leading-snug">
                 {entry.summary}
@@ -82,8 +92,9 @@ export function ChangelogTimeline() {
                 ))}
               </ul>
             </li>
-          ))}
-        </ol>
+            ))}
+          </ol>
+        </div>
       )}
     </section>
   );

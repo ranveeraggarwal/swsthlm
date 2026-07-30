@@ -4,10 +4,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Music, Menu, X } from 'lucide-react';
+import { useLocale } from '@/components/providers/LocaleProvider';
+import { LanguageToggle } from './LanguageToggle';
 import { ThemeToggle } from './ThemeToggle';
 
 export function Header() {
   const pathname = usePathname();
+  const { bundle } = useLocale();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -66,11 +69,12 @@ export function Header() {
 
         <nav aria-label="Primary" className="hidden sm:flex items-center gap-2">
           <Link href="/" className={navLinkClass('/')} aria-current={pathname === '/' ? 'page' : undefined}>
-            Calendar
+            {bundle.nav.calendar}
           </Link>
           <Link href="/about" className={navLinkClass('/about')} aria-current={pathname === '/about' ? 'page' : undefined}>
-            About
+            {bundle.nav.about}
           </Link>
+          <LanguageToggle />
           <ThemeToggle />
         </nav>
 
@@ -80,8 +84,8 @@ export function Header() {
             ref={menuButtonRef}
             className="flex items-center justify-center w-10 h-10 rounded transition-colors text-[var(--on-surface-variant)] hover:text-[var(--primary)]"
             onClick={() => setMenuOpen(!menuOpen)}
-            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-            title={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-label={menuOpen ? bundle.nav.closeMenu : bundle.nav.openMenu}
+            title={menuOpen ? bundle.nav.closeMenu : bundle.nav.openMenu}
             aria-expanded={menuOpen}
             aria-controls="mobile-menu"
           >
@@ -93,11 +97,22 @@ export function Header() {
       {menuOpen && (
         <nav id="mobile-menu" aria-label="Primary (mobile)" className="sm:hidden border-t border-[var(--surface-container-highest)] bg-[var(--surface)]/95 backdrop-blur-md px-4 py-3 flex flex-col gap-1">
           <Link href="/" className={mobileNavLinkClass('/')} onClick={() => setMenuOpen(false)} aria-current={pathname === '/' ? 'page' : undefined}>
-            Calendar
+            {bundle.nav.calendar}
           </Link>
           <Link href="/about" className={mobileNavLinkClass('/about')} onClick={() => setMenuOpen(false)} aria-current={pathname === '/about' ? 'page' : undefined}>
-            About
+            {bundle.nav.about}
           </Link>
+          <div className="flex items-center justify-between gap-4 py-3 px-4 border-t border-[var(--surface-container-highest)] mt-1">
+            {/* The group carries the same name for assistive tech, so the
+                visible copy would otherwise be announced twice. */}
+            <span
+              aria-hidden="true"
+              className="font-sans text-sm font-bold uppercase tracking-widest text-[var(--on-surface-variant)]"
+            >
+              {bundle.language.label}
+            </span>
+            <LanguageToggle />
+          </div>
         </nav>
       )}
     </header>

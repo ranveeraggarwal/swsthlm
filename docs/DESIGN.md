@@ -143,6 +143,10 @@ The layout follows a **fixed-grid philosophy** that centers content to create a 
 
 This design system avoids realistic shadows in favor of **Graphic Layering**. Depth is communicated through color blocking and "sticker-stacking" rather than light sources.
 
+**The test: if a shadow has a blur radius, it's wrong.** A blur simulates light falling on a surface, and this system has no light source to fall from — depth comes from one flat shape sitting on another, the way a sticker sits on paper. Every shadow in `src/` today is `Npx Npx 0px` (fifteen of them, no exceptions), so `grep -r 'shadow-\[' src/` is the whole audit.
+
+Pair it with the right token: offsets use `--shadow-ink`, never `--on-surface`. They're identical in light mode, which is what makes the mistake easy to ship and impossible to see — in dark mode `--on-surface` turns the offset into a glowing cream slab.
+
 - **Tonal Layers:** Surfaces are stacked using color. A Cream card sits on a slightly darker "Paper" background. 
 - **Low-Contrast Outlines:** Instead of shadows, use 1px solid borders in Deep Navy (at 10-15% opacity) or subtle tonal shifts to define element boundaries.
 - **The "Lift" State:** When an element (like a card) is hovered, it should shift its position (e.g., move 4px up and 4px left) with a solid, non-blurred offset "shadow" in Deep Navy to mimic a physical layer being lifted.

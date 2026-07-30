@@ -8,6 +8,7 @@ import React from 'react';
 import { SlidersHorizontal } from 'lucide-react';
 import { CALENDAR_WEBCAL_URL, EVENT_SUBMISSION_FORM_URL } from '@/lib/site';
 import { emptyStateHeading, hasActiveFilters, type EventFilters } from '../model/sections';
+import { useLocale } from '@/components/providers/LocaleProvider';
 
 interface EmptyStateProps {
   filters: EventFilters;
@@ -15,6 +16,7 @@ interface EmptyStateProps {
 }
 
 export function EmptyState({ filters, onClearFilters }: EmptyStateProps) {
+  const { locale, bundle } = useLocale();
   return (
     <div className="text-center py-16 border border-dashed border-[var(--surface-container-highest)] rounded bg-[var(--surface-container-low)] p-8">
       <SlidersHorizontal
@@ -22,10 +24,10 @@ export function EmptyState({ filters, onClearFilters }: EmptyStateProps) {
         className="w-12 h-12 text-[var(--outline)] mx-auto mb-4"
       />
       <h2 className="font-serif text-xl font-bold text-[var(--on-surface)] mb-1">
-        {emptyStateHeading(filters)}
+        {emptyStateHeading(filters, locale)}
       </h2>
       <p className="font-sans font-body-md text-[var(--on-surface-variant)] max-w-sm mx-auto mb-6">
-        Try adjusting your search terms or filters to find dance events.
+        {bundle.empty.body}
       </p>
 
       {hasActiveFilters(filters) && (
@@ -34,7 +36,7 @@ export function EmptyState({ filters, onClearFilters }: EmptyStateProps) {
           onClick={onClearFilters}
           className="inline-flex items-center justify-center px-4 py-2 rounded border-2 border-[var(--border-ink)] bg-[var(--primary)] text-[var(--on-primary)] hover:bg-[var(--primary-container)] font-bold uppercase tracking-wider text-xs lift-btn-primary transition-all cursor-pointer"
         >
-          Clear all filters
+          {bundle.empty.clearAll}
         </button>
       )}
 
@@ -43,7 +45,7 @@ export function EmptyState({ filters, onClearFilters }: EmptyStateProps) {
           href={CALENDAR_WEBCAL_URL}
           className="text-[var(--primary)] underline hover:no-underline"
         >
-          Subscribe to get notified
+          {bundle.empty.subscribeCta}
         </a>
         {' · '}
         <a
@@ -52,8 +54,8 @@ export function EmptyState({ filters, onClearFilters }: EmptyStateProps) {
           rel="noopener noreferrer"
           className="text-[var(--primary)] underline hover:no-underline"
         >
-          Organizers: add your event
-          <span className="sr-only"> (opens in a new tab)</span>
+          {bundle.empty.organizersCta}
+          <span className="sr-only">{bundle.card.opensInNewTab}</span>
         </a>
       </p>
     </div>

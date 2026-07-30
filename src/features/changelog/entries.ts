@@ -16,6 +16,14 @@
 //   3. Keep `CHANGELOG` sorted newest-month-first. `changelog.test.ts` checks
 //      the ordering, the "YYYY-MM" shape, and that nothing is left blank.
 //
+// **Entries are written in English only.** The timeline's chrome around them —
+// its heading, the collapse control, the month names — is translated like the
+// rest of the site, and the Swedish view carries a line saying these entries
+// aren't. That's deliberate (#264): a changelog is written per release and
+// sits next to a git log, so making every future feature PR write two
+// languages costs more than it returns. Don't add a `sv` field here without
+// reversing that decision first.
+//
 // Write the description for a dancer, not a reviewer: what they can now do,
 // in one sentence, no issue numbers or file names.
 //
@@ -48,6 +56,11 @@ export const CHANGELOG: ChangelogEntry[] = [
     month: '2026-07',
     summary: 'Dark mode, organizer intake, and a big polish pass',
     items: [
+      {
+        title: 'The site speaks Swedish',
+        description:
+          'An EN / SV switch in the header puts the whole interface — filters, dates, badges and buttons — into Swedish, and remembers your choice. Event descriptions stay in whatever language the organizer wrote them in.',
+      },
       {
         title: 'Contributors wall',
         description:

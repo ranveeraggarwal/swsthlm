@@ -31,7 +31,7 @@ interface ModalProps {
   /** Unique per instance — cards render many of these on one page. */
   id: string;
   /** The lucide icon for the medallion above the title. */
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{ className?: string; 'aria-hidden'?: boolean | 'true' | 'false' }>;
   /** Wider variant for the correction form; the calendar pickers use the default. */
   width?: 'sm' | 'md';
   children: React.ReactNode;

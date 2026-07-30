@@ -16,7 +16,7 @@ interface IconButtonProps {
   /** Hover tooltip, when a shorter phrasing reads better than the full label.
    *  Defaults to `label`. */
   title?: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{ className?: string; 'aria-hidden'?: boolean | 'true' | 'false' }>;
 }
 
 export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(

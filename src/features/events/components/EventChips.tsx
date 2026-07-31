@@ -59,7 +59,7 @@ export function NightsChip({ nightCount }: { nightCount: number }) {
     <span
       className={`${CHIP} bg-[var(--info-container)] text-[var(--on-info-container)] border-[var(--on-info-container)]/25 whitespace-nowrap shrink-0`}
     >
-      <Moon className="w-3 h-3" />
+      <Moon aria-hidden="true" className="w-3 h-3" />
       {nightCount} {nightCount === 1 ? bundle.card.nights.one : bundle.card.nights.other}
     </span>
   );
@@ -74,7 +74,7 @@ export function BeginnerChip({ beginnerClass }: { beginnerClass?: string }) {
     <span
       className={`${CHIP} bg-[var(--success-container)] text-[var(--on-success-container)] border-[var(--on-success-container)]/25`}
     >
-      <GraduationCap className="w-3 h-3" />
+      <GraduationCap aria-hidden="true" className="w-3 h-3" />
       {beginnerClassLabel(beginnerClass, locale)}
     </span>
   );
@@ -89,7 +89,7 @@ export function PriceChip({ price }: { price?: string }) {
   if (!price) return null;
   return (
     <span className={FACT_CHIP}>
-      <Banknote className="w-3.5 h-3.5 shrink-0" />
+      <Banknote aria-hidden="true" className="w-3.5 h-3.5 shrink-0" />
       {price}
     </span>
   );
@@ -99,7 +99,7 @@ export function PaymentChip({ payment }: { payment?: string }) {
   if (!payment) return null;
   return (
     <span className={FACT_CHIP}>
-      <Wallet className="w-3.5 h-3.5 shrink-0" />
+      <Wallet aria-hidden="true" className="w-3.5 h-3.5 shrink-0" />
       {payment}
     </span>
   );

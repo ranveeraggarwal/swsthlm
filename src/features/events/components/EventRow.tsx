@@ -86,9 +86,9 @@ export function EventRow({ group }: { group: EventGroup }) {
           <span className="shrink-0 flex items-center gap-1 text-[var(--on-surface-variant)]">
             {performers.map((line) =>
               line.type === 'live' ? (
-                <Music key="live" className="w-3 h-3 text-[var(--tertiary)]" />
+                <Music key="live" aria-hidden="true" className="w-3 h-3 text-[var(--tertiary)]" />
               ) : (
-                <Disc key="dj" className="w-3 h-3" />
+                <Disc key="dj" aria-hidden="true" className="w-3 h-3" />
               ),
             )}
           </span>
@@ -117,9 +117,9 @@ export function EventRow({ group }: { group: EventGroup }) {
                   className="flex items-center gap-2 text-sm text-[var(--on-surface-variant)]"
                 >
                   {line.type === 'live' ? (
-                    <Music className="w-3.5 h-3.5 shrink-0" />
+                    <Music aria-hidden="true" className="w-3.5 h-3.5 shrink-0" />
                   ) : (
-                    <Disc className="w-3.5 h-3.5 shrink-0" />
+                    <Disc aria-hidden="true" className="w-3.5 h-3.5 shrink-0" />
                   )}
                   <span>{line.name}</span>
                 </div>
@@ -129,7 +129,7 @@ export function EventRow({ group }: { group: EventGroup }) {
 
           {byLine && (
             <div className="flex items-start gap-2 text-xs text-[var(--on-surface-variant)] font-medium px-1">
-              <MapPin className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+              <MapPin aria-hidden="true" className="w-3.5 h-3.5 mt-0.5 shrink-0" />
               <a
                 href={venueMapsUrl(event)}
                 target="_blank"
@@ -156,7 +156,7 @@ export function EventRow({ group }: { group: EventGroup }) {
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded border border-[var(--border-ink)] bg-[var(--primary)] text-[var(--on-primary)] hover:bg-[var(--primary-container)] font-bold uppercase tracking-wider text-xs"
               >
-                <Ticket className="w-4 h-4" />
+                <Ticket aria-hidden="true" className="w-4 h-4" />
                 {bundle.card.source}
                 <span className="sr-only">{bundle.card.sourceHint}</span>
               </a>

@@ -165,7 +165,7 @@ export function AboutContent() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-[var(--primary)] hover:underline font-bold"
             >
-              <Code className="w-4 h-4" />
+              <Code className="w-4 h-4" aria-hidden="true" />
               {t.openSource.githubLink}
               {newTabHint}
             </a>

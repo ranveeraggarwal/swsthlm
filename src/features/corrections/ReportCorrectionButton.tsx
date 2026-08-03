@@ -173,7 +173,7 @@ export function ReportCorrectionButton({ event, dates }: ReportCorrectionButtonP
           onClick={handleSend}
           className="mt-5 flex w-full items-center justify-center gap-2 rounded border-2 border-[var(--border-ink)] bg-[var(--primary)] px-4 py-3 font-sans text-sm font-bold uppercase tracking-wider text-[var(--on-primary)] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[2px_2px_0px_0px_var(--shadow-ink)]"
         >
-          <Mail className="h-4 w-4" />
+          <Mail className="h-4 w-4" aria-hidden="true" />
           {t.openEmail}
         </a>
 

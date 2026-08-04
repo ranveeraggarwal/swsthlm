@@ -94,7 +94,7 @@ export function FilterPanel({
               title={t.clearSearch}
               className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--outline)] hover:text-[var(--on-surface)] transition-colors cursor-pointer"
             >
-              <X className="w-5 h-5" />
+              <X className="w-5 h-5" aria-hidden="true" />
             </button>
           ) : (
             // The "/" shortcut hint. Hidden on mobile, where there's no keyboard.

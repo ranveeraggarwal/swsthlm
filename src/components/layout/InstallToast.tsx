@@ -62,7 +62,7 @@ export function InstallToast() {
           onClick={handleInstall}
           className="shrink-0 inline-flex items-center gap-1.5 px-3 py-2 rounded bg-[var(--primary)] text-[var(--on-primary)] font-bold uppercase tracking-wider text-xs lift-btn-primary cursor-pointer"
         >
-          <Download className="w-3.5 h-3.5" />
+          <Download className="w-3.5 h-3.5" aria-hidden="true" />
           {bundle.install.action}
         </button>
         <button

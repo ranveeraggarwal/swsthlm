@@ -94,7 +94,7 @@ export function FilterPanel({
               title={t.clearSearch}
               className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--outline)] hover:text-[var(--on-surface)] transition-colors cursor-pointer"
             >
-              <X className="w-5 h-5" />
+              <X aria-hidden="true" className="w-5 h-5" />
             </button>
           ) : (
             // The "/" shortcut hint. Hidden on mobile, where there's no keyboard.
@@ -137,7 +137,7 @@ export function FilterPanel({
               aria-pressed={filters.liveMusicOnly}
               className={`w-full flex items-center justify-center gap-2 ${CHIP_BASE} ${filters.liveMusicOnly ? CHIP_SELECTED.tertiary : CHIP_IDLE}`}
             >
-              <Music className="w-3.5 h-3.5" />
+              <Music aria-hidden="true" className="w-3.5 h-3.5" />
               {t.liveMusicOnly}
             </button>
           </div>

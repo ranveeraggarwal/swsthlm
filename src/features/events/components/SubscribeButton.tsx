@@ -61,7 +61,7 @@ export function SubscribeButton() {
         onClick={openModal}
         className="flex items-center gap-1.5 font-bold normal-case text-[var(--secondary)] hover:underline transition-colors cursor-pointer"
       >
-        <CalendarPlus className="w-3.5 h-3.5" />
+        <CalendarPlus aria-hidden="true" className="w-3.5 h-3.5" />
         {t.subscribe}
       </button>
 
@@ -115,7 +115,7 @@ export function SubscribeButton() {
             aria-label={copied ? t.copied : t.copyFeedLink}
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded border border-[var(--border-ink)] bg-[var(--surface-container)] text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] font-bold uppercase tracking-wider text-xs transition-colors cursor-pointer shrink-0"
           >
-            {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+            {copied ? <Check aria-hidden="true" className="h-4 w-4" /> : <Copy aria-hidden="true" className="h-4 w-4" />}
             {copied ? t.copied : t.copy}
           </button>
         </div>

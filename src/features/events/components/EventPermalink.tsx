@@ -34,7 +34,7 @@ export function EventPermalink({ event }: { event: SwingEvent }) {
         href="/"
         className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors mb-6 font-sans"
       >
-        <ArrowLeft className="w-3.5 h-3.5" />
+        <ArrowLeft aria-hidden="true" className="w-3.5 h-3.5" />
         {bundle.permalink.backToAll}
       </Link>
 
@@ -73,7 +73,7 @@ export function EventPermalink({ event }: { event: SwingEvent }) {
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded border border-[var(--border-ink)] bg-[var(--primary)] text-[var(--on-primary)] hover:bg-[var(--primary-container)] font-bold uppercase tracking-wider text-xs lift-btn-primary"
             >
-              <Ticket className="w-4 h-4" />
+              <Ticket aria-hidden="true" className="w-4 h-4" />
               {bundle.card.source}
               <span className="sr-only">{bundle.card.sourceHint}</span>
             </a>

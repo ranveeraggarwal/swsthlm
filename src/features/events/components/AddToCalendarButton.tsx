@@ -143,7 +143,7 @@ export function AddToCalendarButton({ event }: { event: SwingEvent }) {
           onClick={downloadIcs}
           className="mt-4 flex w-full items-center justify-center gap-2 rounded border border-[var(--border-ink)] bg-[var(--surface-container)] px-4 py-2.5 font-sans text-xs font-bold uppercase tracking-wider text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors cursor-pointer"
         >
-          <Download className="h-4 w-4" />
+          <Download className="h-4 w-4" aria-hidden="true" />
           {t.downloadIcs}
         </button>
       </Modal>

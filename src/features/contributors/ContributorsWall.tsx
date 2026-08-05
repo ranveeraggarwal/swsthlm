@@ -66,7 +66,7 @@ export function ContributorsWall() {
                   title={t.onGitHub.replace('{name}', contributor.name)}
                   className="shrink-0 text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors"
                 >
-                  <GitHubIcon className="w-4 h-4" />
+                  <GitHubIcon className="w-4 h-4" aria-hidden="true" />
                   <span className="sr-only">{bundle.card.opensInNewTab}</span>
                 </a>
               )}

@@ -23,8 +23,8 @@ export function Footer() {
               href={GITHUB_DISCUSSIONS_URL}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label={bundle.footer.github}
-              title={bundle.footer.github}
+              aria-label={`${bundle.footer.github}${bundle.card.opensInNewTab}`}
+              title={`${bundle.footer.github}${bundle.card.opensInNewTab}`}
               className="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors"
             >
               <GitHubIcon className="w-4 h-4" />

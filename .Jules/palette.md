@@ -12,3 +12,6 @@
 ## 2026-08-05 - Prevent Redundant Announcements for Decorative Icons
 **Learning:** When decorative icons (e.g., from `lucide-react`) are placed inside interactive components (like buttons or links) that already have descriptive text or an `aria-label`, they are read aloud by screen readers if not explicitly hidden. This leads to redundant and confusing announcements for visually impaired users.
 **Action:** Always explicitly apply `aria-hidden="true"` to decorative icons (or icons that merely reinforce the text they accompany) to ensure they are ignored by screen readers, maintaining a clean and focused accessibility tree.
+## 2026-08-05 - [Appended strings missing space]
+**Learning:** When appending a translation string like `bundle.card.opensInNewTab` (which already has a leading space) to another attribute, it works without a space. However, it's generally best to explicitly evaluate if the string needs a space when doing string interpolation to avoid runtime string bugs in visual tooltips.
+**Action:** When adding attributes via string interpolation, review the exact translation string source to confirm leading spaces.

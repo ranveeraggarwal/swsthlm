@@ -137,7 +137,7 @@ export function EventCard({ group, isThisWeek, showDate, now }: EventCardProps) 
                   onClick={() => setDescriptionExpanded((v) => !v)}
                   aria-expanded={descriptionExpanded}
                   aria-controls={descriptionId}
-                  className="mt-1 font-sans text-xs font-bold uppercase tracking-wider text-[var(--primary)] hover:underline"
+                  className="mt-1 font-sans text-xs font-bold uppercase tracking-wider text-[var(--primary)] hover:underline transition-colors cursor-pointer"
                 >
                   {descriptionExpanded ? bundle.card.showLess : bundle.card.readMore}
                 </button>

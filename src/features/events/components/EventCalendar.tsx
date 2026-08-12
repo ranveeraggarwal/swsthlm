@@ -122,6 +122,7 @@ export function EventCalendar({ events, initialNow }: EventCalendarProps) {
         <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-1">
           <SubscribeButton />
           <button
+            type="button"
             ref={panelToggleRef}
             onClick={() => setIsPanelOpen((open) => !open)}
             aria-expanded={isPanelOpen}
@@ -135,6 +136,7 @@ export function EventCalendar({ events, initialNow }: EventCalendarProps) {
           </button>
           {filtersActive && (
             <button
+              type="button"
               onClick={clearFilters}
               className="text-[var(--primary)] hover:underline font-bold cursor-pointer"
             >

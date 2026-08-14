@@ -10,6 +10,8 @@ export const sv = {
     about: 'Om',
     openMenu: 'Öppna menyn',
     closeMenu: 'Stäng menyn',
+    themeLight: 'Byt till ljust tema',
+    themeDark: 'Byt till mörkt tema',
   },
   language: {
     label: 'Språk',

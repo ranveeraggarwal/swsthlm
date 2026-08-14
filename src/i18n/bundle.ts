@@ -54,6 +54,8 @@ export interface LocaleBundle {
     about: string;
     openMenu: string;
     closeMenu: string;
+    themeLight: string;
+    themeDark: string;
   };
   // The language toggle. `code` is this locale's own short form, so the
   // control reads "EN | SV" whichever language you're in — a Swede looking for

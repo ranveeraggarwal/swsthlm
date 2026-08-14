@@ -10,6 +10,8 @@ export const en = {
     about: 'About',
     openMenu: 'Open menu',
     closeMenu: 'Close menu',
+    themeLight: 'Switch to light theme',
+    themeDark: 'Switch to dark theme',
   },
   language: {
     label: 'Language',

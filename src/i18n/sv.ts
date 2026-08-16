@@ -19,6 +19,10 @@ export const sv = {
     switchTo: 'Byt till {language}',
     changed: 'Språk: {language}',
   },
+  theme: {
+    toLight: 'Byt till ljust tema',
+    toDark: 'Byt till mörkt tema',
+  },
   languagePrompt: {
     question: 'Vill du läsa sidan på svenska?',
     accept: 'Byt till svenska',

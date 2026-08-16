@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Moon, Sun } from 'lucide-react';
+import { useLocale } from '@/components/providers/LocaleProvider';
 
 type Theme = 'light' | 'dark';
 
@@ -25,6 +26,8 @@ export function ThemeToggle() {
     setMounted(true);
   }, []);
 
+  const { bundle } = useLocale();
+
   const handleToggle = () => {
     const next: Theme = theme === 'dark' ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', next);
@@ -37,7 +40,7 @@ export function ThemeToggle() {
     setTheme(next);
   };
 
-  const label = theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme';
+  const label = theme === 'dark' ? bundle.theme.toLight : bundle.theme.toDark;
 
   return (
     <button

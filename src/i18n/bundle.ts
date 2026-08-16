@@ -71,6 +71,10 @@ export interface LocaleBundle {
     /** Announced politely when the language changes. Takes `{language}`. */
     changed: string;
   };
+  theme: {
+    toLight: string;
+    toDark: string;
+  };
   // The one-time offer shown when the browser prefers a language we ship that
   // isn't the one on screen. Always read from the *offered* locale's bundle —
   // it's addressed to someone who reads that language, so asking in English

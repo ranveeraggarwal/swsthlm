@@ -18,6 +18,10 @@ export const en = {
     switchTo: 'Switch to {language}',
     changed: 'Language: {language}',
   },
+  theme: {
+    toLight: 'Switch to light theme',
+    toDark: 'Switch to dark theme',
+  },
   languagePrompt: {
     question: 'Would you like to read this site in English?',
     accept: 'Switch to English',

@@ -1,0 +1,43 @@
+name: Mark ended events
+
+# Runs daily and flips `status: live -> ended` on any oneoffs.csv/series.csv
+# row that's finished (past one-offs are retained per docs/DATA.md, never
+# deleted — this is what keeps CI's "live one-off entirely in the past" check
+# from ever firing). Opens/updates ONE review PR (branch bot/mark-ended) on a
+# non-empty diff; an idle day produces no PR. Manual runs via the Actions tab
+# (workflow_dispatch). No secrets — uses the built-in token.
+
+on:
+  schedule:
+    - cron: '5 3 * * *' # ~03:05 UTC daily, after the nightly scrape
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  mark-ended:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Mark ended events
+        run: node scripts/mark-ended.mjs
+      - name: Open / update review PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: bot/mark-ended
+          base: main
+          add-paths: |
+            data/oneoffs.csv
+            data/series.csv
+          commit-message: 'chore(data): mark ended events'
+          title: 'Mark ended events'
+          body-path: mark-ended-report.md
+          labels: data
+          delete-branch: false

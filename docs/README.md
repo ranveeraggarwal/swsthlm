@@ -5,7 +5,7 @@
 
 > Your single, lightweight, optimized guide to Lindy Hop, Balboa, Shag, and Blues social dancing and workshops in Stockholm.
 
-[**stockholmswing.com**](https://stockholmswing.com) is a static site built from CSV files in this repository. No database, no accounts, no server beyond the build on Vercel — that shape is deliberate, and it's what lets the project survive on volunteer attention.
+[**stockholmswing.com**](https://stockholmswing.com) is a static site built from CSV files in this repository — no database and no account anywhere in the public calendar's path, and that shape is deliberate: it's what lets the project survive on volunteer attention. A separate **member plane** (Firebase — sign-in, event submission, a review queue) is in the works so the community can contribute without touching GitHub; it feeds *proposals* into these CSVs and never feeds the calendar directly. See [`architecture/BACKEND.md`](architecture/BACKEND.md).
 
 ## What it does
 
@@ -26,6 +26,8 @@ Nobody hand-edits a spreadsheet. Three paths all end at the same place — **a p
 | **By hand** | Facebook-only sources and anything the parsers can't reach. |
 
 Nothing writes to `main` directly, and every proposal passes the same schema check a hand-written PR does.
+
+A fourth path is designed and being built in phases: signed-in members submitting through the site itself, with venue stewards approving from a review queue — see [`architecture/BACKEND.md`](architecture/BACKEND.md). Approved rows land as validated commits; the CSVs stay the source of truth.
 
 ## Tech
 
@@ -60,6 +62,7 @@ CI runs the schema check, the tests, and lint on every PR.
 | [`architecture/CODE_STRUCTURE.md`](architecture/CODE_STRUCTURE.md) | Before adding a file to `src/`. Where things go, and why. |
 | [`DESIGN.md`](DESIGN.md) | Before touching styles. Colour tokens, typography, the dark theme. |
 | [`PROJECT.md`](PROJECT.md) | Why the project is shaped this way, and the list of things we've decided not to build. |
+| [`architecture/BACKEND.md`](architecture/BACKEND.md) | The member plane: sign-in, submissions, the review queue, and its hard boundary with the static calendar. |
 | [`SEO.md`](SEO.md) | Search and AI discoverability, on-site and off. |
 
 ## Community

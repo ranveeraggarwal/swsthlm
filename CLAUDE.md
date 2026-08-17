@@ -2,7 +2,7 @@
 
 Context for Claude Code working on **Stockholm Swing** (stockholmswing.com), a swing dance event aggregator for Stockholm. This file is the entry point; the authoritative detail lives in the docs linked below. Read the relevant doc before acting on anything it governs.
 
-**Stack:** Next.js 15 (App Router), React 19, Tailwind 4, deployed on Vercel. The public calendar is a static site built from CSV files — no database, no account, no server in its path. A separate **member plane** (Firebase: Firestore + email-link auth) powers event submission, the review queue, and future social features; it is designed but not yet built, and it never feeds the calendar (`docs/architecture/BACKEND.md`). The interface is English and Swedish, switched client-side; event data stays in whatever language the organizer wrote it in.
+**Stack:** Next.js 15 (App Router), React 19, Tailwind 4, deployed on Vercel. Static site built from CSV files — no database, no accounts, no server beyond the Vercel build. The interface is English and Swedish, switched client-side; event data stays in whatever language the organizer wrote it in.
 
 ## The docs (read before touching what they govern)
 
@@ -13,7 +13,6 @@ Context for Claude Code working on **Stockholm Swing** (stockholmswing.com), a s
 - `docs/architecture/CODE_STRUCTURE.md` — **how `src/` is laid out**: the layering rules, the server/client boundary, and a "where does my change go?" table. Read before adding a file or moving one.
 - `docs/architecture/SCRAPERS.md` — the intake-automation subsystem. Read before touching `scripts/scrapers/` or `scripts/scrape.mjs`.
 - `docs/architecture/FORM_SYNC.md` — the Google Form intake subsystem. Read before touching `scripts/form-sync.mjs` or `.github/workflows/form-sync.yml`.
-- `docs/architecture/BACKEND.md` — **the member plane** (Firebase: submissions, review queue, roles, future social layer). Read before touching anything that signs a user in, reads/writes Firestore, or handles a submission — it carries the boundary rules and the security model, including why roles must never live in client-writable documents.
 - `docs/SEO.md` — search & AI discoverability: on-site pieces (sitemap, robots, JSON-LD, canonicals, llms.txt) and the off-site maintainer checklist.
 - `docs/CONTRIBUTING.md` — contributor-facing rules, PR conventions, branch naming.
 - `docs/README.md` — the repo's front page (GitHub renders it): what the site does, how events get in, how to run it.
@@ -33,8 +32,8 @@ Adding the line is part of the feature PR, not a follow-up. There is no CI gate 
 ## Non-negotiable principles
 
 1. **Structured data is the truth; scraped/pasted prose is decoration.** If a fact has a column, it goes in the column, never in a description.
-2. **The public calendar is static — no server, account, or database in its path.** Everything a logged-out visitor sees fits inside "static site built from CSVs"; if Firebase is down, the calendar must not notice. Auth and Firestore exist only in the member plane (submitting, reviewing, social — `docs/architecture/BACKEND.md`). If a task would make the *calendar* read a database at build or runtime, stop and flag it.
-3. **Every change to `/data` is a commit a human approved, validated by `validate-data.mjs`.** The human gate is one gate: today that's PR review of scraper/form-sync PRs; once the member plane's review queue ships, its approval *is* the review and the approved row lands as a bot commit (see PROJECT.md §2b — the original "humans review diffs; robots produce them" was narrowed on purpose). Nothing ever edits `/data` in place without one of those gates.
+2. **No servers, no accounts, no database.** Every feature fits inside "static site built from CSVs." If a task seems to need otherwise, stop and flag it.
+3. **Humans review diffs; robots produce them.** Scrapers and form intake open PRs. Nothing edits data in place.
 
 ## Known user-visible bugs (verify against live site first — caching lies)
 

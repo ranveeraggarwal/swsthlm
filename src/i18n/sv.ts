@@ -187,6 +187,10 @@ export const sv = {
     subscribeCta: 'Prenumerera för att få veta',
     organizersCta: 'Arrangörer: lägg till ert evenemang',
   },
+  theme: {
+    switchToLight: 'Byt till ljust tema',
+    switchToDark: 'Byt till mörkt tema',
+  },
   footer: {
     tagline: 'Av dansare, för dansare. Gjord i Stockholm 🇸🇪 med ❤️.',
     github: 'GitHub-community (öppnas i en ny flik)',

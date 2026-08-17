@@ -162,6 +162,10 @@ export const en = {
     subscribeCta: 'Subscribe to get notified',
     organizersCta: 'Organizers: add your event',
   },
+  theme: {
+    switchToLight: 'Switch to light theme',
+    switchToDark: 'Switch to dark theme',
+  },
   footer: {
     tagline: 'By dancers, for dancers. Made in Stockholm 🇸🇪 with ❤️.',
     github: 'GitHub Community (opens in a new tab)',

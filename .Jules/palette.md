@@ -15,3 +15,7 @@
 ## 2026-08-05 - [Appended strings missing space]
 **Learning:** When appending a translation string like `bundle.card.opensInNewTab` (which already has a leading space) to another attribute, it works without a space. However, it's generally best to explicitly evaluate if the string needs a space when doing string interpolation to avoid runtime string bugs in visual tooltips.
 **Action:** When adding attributes via string interpolation, review the exact translation string source to confirm leading spaces.
+
+## 2026-08-12 - Explicit button types
+**Learning:** Reusable UX Pattern: Explicitly set `type="button"` on interactive `<button>` elements (e.g., toggles, resets) to prevent them from implicitly acting as submit buttons if ever nested inside a form.
+**Action:** Always verify that `<button>` elements that trigger client-side interactions have `type="button"`.

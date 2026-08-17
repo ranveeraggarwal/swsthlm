@@ -12,14 +12,14 @@ Stockholm Swing is built and maintained by the local swing community. Whether yo
 
 ## What this project is, and isn't
 
-The public calendar is a static website built from CSV files in this repository — no database, no account, and no server in its path. That shape is deliberate: it's what lets the site run for years on volunteer attention, and it is not changing. Alongside it, the project is building a **member plane** (Firebase — sign-in, event submission, a review queue; see [`architecture/BACKEND.md`](architecture/BACKEND.md)) so people can contribute events without touching GitHub. The boundary is strict: the member plane proposes data, the CSVs remain the truth, and nothing a logged-out visitor sees ever depends on Firebase. Please don't propose features that blur it (a CMS, editing live data in place, making the calendar read a database). If you're not sure whether something fits, open a discussion before a PR.
+Stockholm Swing is a static website built from CSV files in this repository. There is no database, no user accounts, and no server beyond the build pipeline on Vercel. The Google Form is an intake channel, not a backend; submissions land as PRs, just like a developer's would. This shape is deliberate — it's what lets the site run for years on volunteer attention. Please don't propose features that break it (accounts, dashboards, server-side state, a CMS). If you're not sure whether something fits, open a discussion before a PR.
 
 ## How decisions get made
 
 Two principles, in order:
 
 1. **Structured data is the truth; scraped or pasted prose is decoration.** When in doubt, add a field rather than parse a sentence.
-2. **Every change to `/data` is a commit a human approved.** Today that means scrapers and form intake open pull requests and maintainers merge them; once the member plane's review queue ships, an approval there counts as the review and lands as a validated bot commit ([`PROJECT.md`](PROJECT.md) §2b). Either way: one human gate, git as the audit log, and nothing edits the data in place without it.
+2. **Humans review diffs; robots produce them.** Scrapers and form intake open pull requests. Maintainers merge them. Nothing edits the data in place.
 
 A maintainer can merge most PRs solo. Anything that changes the data schema, the deploy pipeline, or the project's scope needs a second maintainer's review. See [`PROJECT.md`](PROJECT.md) for the longer rationale and roadmap.
 
@@ -90,7 +90,7 @@ A GitHub Action runs on every PR that touches `/data`: a **required** schema + i
 
 We use a small, opinionated label set:
 
-- **area:data, area:ux, area:distribution, area:infra, area:community, area:backend** — what the work touches (`area:backend` is the member plane: auth, Firestore, the review queue).
+- **area:data, area:ux, area:distribution, area:infra, area:community** — what the work touches.
 - **priority:p0** (do first), **p1** (high value), **p2** (when convenient). Priorities are guidance, not contracts.
 - **good first issue** — small, well-scoped, no architecture knowledge needed. Start here.
 

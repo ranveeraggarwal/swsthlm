@@ -88,7 +88,7 @@ export function FilterPanel({
               type="button"
               onClick={() => {
                 onChange({ search: '' });
-                searchInputRef.current?.focus();
+                setTimeout(() => searchInputRef.current?.focus(), 0);
               }}
               aria-label={t.clearSearch}
               title={t.clearSearch}

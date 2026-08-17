@@ -109,8 +109,15 @@ leave it `live`.
   stays out; the git log already has those. The file's header comment is the
   authority on the bar and the format, and `CLAUDE.md` carries the reminder.
   Nothing in CI enforces it, by design — see the header for why.
-- **Don't break the static-site shape.** If a task seems to need a server,
-  account, or database, **stop and flag it** rather than building it.
+- **Don't break the static-calendar shape.** The public calendar's path —
+  CSV → `expandAll` → static HTML/ICS/JSON-LD — must never gain a server,
+  account, or database dependency; if a task seems to push one into it,
+  **stop and flag it**. Auth and Firestore belong exclusively to the member
+  plane ([`architecture/BACKEND.md`](architecture/BACKEND.md)) — read that
+  doc before touching anything that signs a user in or handles a
+  submission. Two of its rules are load-bearing: roles never live in
+  client-writable documents, and `firebase-admin` is server-only (route
+  handlers), the same class of boundary as `node:fs` in `csv.ts`.
 
 ## Recurring feedback (read before you build)
 

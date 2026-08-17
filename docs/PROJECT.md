@@ -26,8 +26,11 @@ weekly maintenance load is "review a few pull requests on a phone."
 
 Three principles govern every decision here. They're stated in full in
 [`../CLAUDE.md`](../CLAUDE.md) and [`CONTRIBUTING.md`](CONTRIBUTING.md); in
-short: **structured data is the truth**, **no servers, accounts or database**,
-and **humans review diffs, robots produce them**.
+short: **structured data is the truth**, **the public calendar is static —
+no server, account or database in its path**, and **every change to `/data`
+is a commit a human approved**. (The last two used to read "no servers,
+accounts or database" and "humans review diffs, robots produce them"; §2b
+records how and why they were narrowed.)
 
 ## 2. Architecture decision: repo-as-database
 
@@ -70,6 +73,35 @@ per-date exception, never a deletion, so the site can *show* the cancellation.
 Past one-offs are retained as `status=ended`, never deleted — the build renders
 only `live`.
 
+## 2b. Architecture decision: the member plane (2026-08)
+
+**Decision:** The project adds a **member plane** — Firebase Auth
+(email-link sign-in) + Firestore — powering event submission, a role-scoped
+review queue (member / venue-scoped approver / admin), and eventually
+social features. This deliberately reverses two entries that stood on the
+"won't build" list from the start: *user accounts* and *a database*.
+
+**Why:** The repo-as-database argument (§2) rested on the PR workflow being
+a cheap, effective review gate fed by robots. In practice the robots'
+diffs were bad enough that reviewing them stopped being cheap, and the
+GitHub-or-Google-Form intake wall excluded most of the community — the
+people issue #253 is about. The survivability argument doesn't require
+*no* accounts anywhere; it requires the **public calendar** to need no
+server. That distinction is the whole decision.
+
+**The scope, which is the point:**
+
+- `/data/` CSVs remain the single source of truth for events; the build
+  never reads Firestore; a logged-out visitor's pages perform no Firebase
+  call. If Firebase vanishes, the calendar doesn't notice.
+- Auth exists only for submitting, reviewing, and social features.
+- Every change to `/data` still lands as a commit — but the human gate is
+  the **queue approval**, not PR review. One human gate, not two (the #210
+  lesson), with `validate-data.mjs` still gating every bot commit.
+
+Full architecture, security model, and phases:
+[`architecture/BACKEND.md`](architecture/BACKEND.md).
+
 ## 3. Decisions on record
 
 Choices that were made once, for reasons, and that a later contributor could
@@ -91,6 +123,18 @@ first and argue against it, rather than around it.
 | Cancellations are exceptions, never deletions; past events become `status=ended`, never deleted | [`DATA.md`](DATA.md) |
 | Nothing may invent a venue — an unknown one is flagged for a human, never created | [`DATA.md`](DATA.md), [`architecture/SCRAPERS.md`](architecture/SCRAPERS.md) |
 | Overlapping-event detection is a CI **warning**, not a failure — some venues genuinely run two things at once | [`DATA.md`](DATA.md) |
+
+### The member plane
+
+| Decision | Recorded in |
+|---|---|
+| Accounts and a database exist, scoped to intake/review/social — **never in the public calendar's path** | §2b above, [`architecture/BACKEND.md`](architecture/BACKEND.md) |
+| **Firebase over Supabase and SQL Connect**, with the reasoning recorded so it isn't re-litigated without new facts | [`architecture/BACKEND.md`](architecture/BACKEND.md) |
+| The queue approval is the **single human gate**; approved rows land as validated bot commits, not PRs | §2b above, [`architecture/BACKEND.md`](architecture/BACKEND.md) |
+| Roles never live in client-writable documents (admin/superadmin = custom claims, approver scope = admin-only collection) — row-scoped auth alone permits self-escalation | [`architecture/BACKEND.md`](architecture/BACKEND.md) |
+| **Superadmin is a separate role from admin**, because role changes are the one thing git can't revert; it is set only by the bootstrap script, never through the UI | [`architecture/BACKEND.md`](architecture/BACKEND.md) |
+| **Serving the calendar from Firestore was considered and rejected** — at runtime *and* at build time; the CSVs stay the calendar's source | [`architecture/BACKEND.md`](architecture/BACKEND.md) |
+| The social layer is **deferred and undesigned**, pending its own privacy review | [`architecture/BACKEND.md`](architecture/BACKEND.md) |
 
 ### Scrapers
 
@@ -154,16 +198,23 @@ status lives**; this is only what each one means.
 | **M3** | UX polish | Freshness signals, neighborhood tags, designed empty states, accessibility, PWA install. None urgent; all compounding. |
 | **M4** | Data platform & automation | The maintenance-cost milestone: repo-as-database, series expansion, CI validation, nightly scraper PRs, form intake. End state — the maintainer's recurring job is reviewing diffs. |
 | **M5** | Community & governance | Contributor docs, the corrections path, per-venue stewards, documented ownership, and a second maintainer. What makes the project outlive one person's attention. |
+| **M6** | Member plane | Sign-in, event submission, and the review queue on Firebase — intake without GitHub. §2b is the decision; [`architecture/BACKEND.md`](architecture/BACKEND.md) is the design and the phase list. |
 
 ## 5. What we deliberately will not build
 
 Before building a new page, section, or surface, check this list. It is short on
 purpose, and it is the cheapest thing in the repo to read.
 
-- **User accounts, an organizer dashboard, a CMS, or any server-side state.**
-  Breaks principle 2. The whole survivability argument rests on "static files
-  built from CSVs."
-- **A database.** `/data` is the database; git is its history and its audit log.
+- **Accounts, a database, or server-side state *in the public calendar's
+  path*.** The calendar stays "static files built from CSVs" forever — that's
+  the survivability argument, and it's intact. This entry used to ban
+  accounts and databases outright; §2b records the scoped reversal (the
+  Firebase member plane for submitting, reviewing, and social features).
+  Anything that would make the *calendar* read a database at build or
+  runtime is still on this list.
+- **A CMS or an organizer dashboard for editing live data.** `/data` is the
+  database; git is its history and its audit log. The member plane proposes
+  rows; it never edits truth in place.
 - **Push notifications.** The ICS feed already puts changes in people's pockets.
 - **A map view.** Maps links plus neighborhood tags cover it at a fraction of
   the maintenance surface. (`lat`/`lng` exist in `venues.csv` but nothing reads
@@ -200,4 +251,6 @@ DJ/band lineups the scrapers missed.
 has produced at least one non-empty diff in the last three weeks — a silent
 scraper usually means a changed selector, not a quiet venue.
 
-**Quarterly.** Review who has access to what: domain, Vercel, the form, the repo.
+**Quarterly.** Review who has access to what: domain, Vercel, the form, the
+repo, the Firebase project, and the `firebase-admin` service-account key in
+Vercel's env (the member plane's one long-lived secret).

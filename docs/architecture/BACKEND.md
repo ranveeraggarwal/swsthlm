@@ -125,12 +125,13 @@ re-litigates them without new facts:
 |---|---|---|
 | `users/{uid}` | Display profile: name, optional photo. | Own doc, **display fields only** (rules constrain the update's `affectedKeys`). |
 | `approvers/{uid}` | The venue scope for an approver: `venue_ids: string[]` matching `venues.csv` ids. | **None.** Admin-written only. |
+| `role_grants/{id}` | Append-only audit of every role change: who changed whom, to what, when. Git covers data history; nothing else covers this. | **None.** Written server-side by the grant endpoint; readable by admins. |
 | `submissions/{id}` | A proposed event (mirrors the `oneoffs.csv`/`series.csv` columns), plus `status: pending \| approved \| rejected`, submitter uid, timestamps. | Create by any member; edit own while `pending`, **never `status`**. Status transitions are approver/admin-only. |
 | *(later)* `attendance`, `friends`, `contributions` | The social layer — deliberately **not designed in this document**; it gets its own design round with a privacy review before any code. | — |
 
 ### Roles
 
-Three roles, stored where a client can't write them:
+Four roles, none of them stored anywhere a client can write:
 
 - **member** — the default for any signed-in user. Can submit and edit
   their own pending submissions.
@@ -138,7 +139,34 @@ Three roles, stored where a client can't write them:
   steward. Can approve/reject submissions for those venues only. This is
   the per-venue-steward idea (issue #31) given teeth.
 - **admin** — a **Firebase Auth custom claim**, settable only server-side.
-  Can do everything, including granting roles.
+  The whole review queue across every venue, plus appointing approvers and
+  setting their venue scope.
+- **superadmin** — a second custom claim. Grants and revokes **admin**,
+  grants superadmin (succession), and performs anything destructive and
+  irreversible (deleting a member account). Nothing day-to-day.
+
+The shape to remember: **admins run the content; the superadmin runs the
+people who run the content.** Admins appoint approvers; only the superadmin
+appoints admins.
+
+**Why the fourth role exists.** Not because admins are less trusted —
+because almost everything an admin does is *revertable* and role changes
+are not. A bad approval is a commit: `git revert` undoes it, with history.
+A role grant lives in Firebase state, outside git, with no diff and no
+audit trail, and a bad one can lock out everyone including the owner.
+Fencing off exactly that operation is the whole point; the line is drawn
+around irreversibility, not seniority.
+
+**Superadmin is never grantable through the UI.** The claim is set only by
+the bootstrap script, which requires the Firebase service-account key — so
+"root" is a property of possessing the credential, not of a button someone
+can click. That is the client-writable-roles rule applied one level up.
+
+**Bus factor.** A single superadmin is a single point of failure: lose that
+account and nobody can appoint an admin again. The recovery path is
+possession of the Firebase console and the service-account key, which makes
+it a `HANDOVER.md` concern (issue #30), not an argument for diluting the
+role.
 
 ### The approval bridge
 
@@ -161,9 +189,11 @@ equivalent — RLS row policies without column grants — has the identical
 hole. This is a property of row-scoped authorization, not of Firebase.)
 Hence the two structural rules above:
 
-1. **Roles never live in client-writable documents.** Admin is a custom
-   claim; approver scope is an admin-only collection. There is no `role`
-   field anywhere a client can reach.
+1. **Roles never live in client-writable documents.** Admin and superadmin
+   are custom claims; approver scope is an admin-only collection. There is
+   no `role` field anywhere a client can reach, and no client path writes
+   either claim — superadmin isn't even settable through an authenticated
+   endpoint, only by the bootstrap script holding the service-account key.
 2. **Every client-writable document's rules enumerate the writable
    fields** (via `request.resource.data.diff().affectedKeys().hasOnly(…)`),
    so adding a privileged field to a document later can't silently become
@@ -179,7 +209,8 @@ The rest of the posture:
 - **Rules get emulator tests in CI** (the Firestore emulator, wired into
   the existing test job): at minimum, "member cannot write `status`,"
   "member cannot create `approvers` docs," "approver cannot approve
-  outside their venues."
+  outside their venues," "admin cannot grant admin or superadmin," and
+  "nobody can write `role_grants`."
 - **One long-lived secret:** the `firebase-admin` service-account key, held
   as a Vercel env var, used only by route handlers. It joins the quarterly
   access review ([`../PROJECT.md`](../PROJECT.md) §6) alongside the domain,
@@ -239,8 +270,9 @@ Small on purpose; each lands alone and is useful alone.
 
 0. **Docs** — this document and the amendments around it. *(You are here.)*
 1. **Foundation** — Firebase project, auth config, `firestore.rules` +
-   emulator tests in CI, the three collections, an admin bootstrap script.
-   No UI. Deliverable: reviewable rules that pass the escalation tests.
+   emulator tests in CI, the collections above, and a bootstrap script that
+   sets the first superadmin claim from the service-account key. No UI.
+   Deliverable: reviewable rules that pass the escalation tests.
 2. **Submission form** — `/submit` (client component, both locales),
    writing to `submissions` with form-sync's normalization discipline:
    never invent a venue, withhold unparseable dates.

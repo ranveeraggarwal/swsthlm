@@ -242,13 +242,14 @@ not an architecture failure.
 
 ## Dependency budget
 
-Three packages, total:
+Four packages, total:
 
 | Package | Where | Why |
 |---|---|---|
 | `firebase` | client components only | Auth + Firestore SDK |
 | `firebase-admin` | Vercel route handlers only | token verification, the approval bridge |
 | `firebase-tools` | devDependency | rules/index deploys, the emulator for CI |
+| `@firebase/rules-unit-testing` | devDependency, test-only | drives the rules emulator from `firestore/rules.test.mjs`; never imported outside that suite |
 
 Anything beyond these — an ORM, a form library, a state manager, an
 Octokit client (the bridge uses plain `fetch` against the GitHub API) —

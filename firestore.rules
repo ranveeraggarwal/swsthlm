@@ -1,0 +1,198 @@
+rules_version = '2';
+
+// Stockholm Swing — member plane security rules.
+//
+// Authoritative spec: docs/architecture/BACKEND.md ("Collections", "Roles",
+// "Security model"). Two structural rules everything below serves:
+//
+//   1. Roles never live in client-writable documents. admin/superadmin are
+//      Firebase Auth custom claims (request.auth.token.admin /
+//      request.auth.token.superadmin), set only server-side (the bootstrap
+//      script / a future grant endpoint using firebase-admin). No rule below
+//      ever reads or trusts a "role" field inside a Firestore document.
+//   2. Every client-writable document enumerates its writable fields via
+//      request.resource.data.{keys,diff(resource.data).affectedKeys()}
+//      .hasOnly([...]) — never a blacklist, never a bare owner check.
+//
+// This file governs only the four Phase 1 collections. The public calendar
+// (/data/*.csv → expandAll → static HTML/ICS/JSON-LD) never touches
+// Firestore and is unaffected by anything here.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------------------------------------------------------------------
+    // Helpers
+    // ---------------------------------------------------------------------
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Custom claims — set only by server-side code (bootstrap script /
+    // future admin grant endpoint), never by a client write. See
+    // BACKEND.md "Roles" and "Superadmin is never grantable through the UI."
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.admin == true;
+    }
+
+    function isSuperadmin() {
+      return isSignedIn() && request.auth.token.superadmin == true;
+    }
+
+    // Deliberately NOT "isAdmin() || isSuperadmin()" for content actions:
+    // per BACKEND.md, the superadmin's job is people, not content ("nothing
+    // day-to-day"). An account that should be able to approve submissions
+    // needs the admin claim explicitly, even if it also holds superadmin.
+    // Superadmin is folded in only for reads of admin-only audit data,
+    // where "can see everything an admin can see" is the safe direction.
+    function isAdminReader() {
+      return isAdmin() || isSuperadmin();
+    }
+
+    // True if the signed-in user is an approver scoped to venueId, per
+    // their approvers/{uid} doc. Firestore rules default-deny on error, so
+    // a missing approvers doc (exists() false) or a missing venueId simply
+    // falls through to "not an approver for this venue" rather than
+    // throwing.
+    function isApproverForVenue(venueId) {
+      return isSignedIn()
+        && venueId != null
+        && exists(/databases/$(database)/documents/approvers/$(request.auth.uid))
+        && venueId in get(/databases/$(database)/documents/approvers/$(request.auth.uid)).data.venue_ids;
+    }
+
+    // The event-shaped fields a submission may carry, mirroring oneoffs.csv
+    // (docs/DATA.md) minus `id`/`status`, which are handled separately
+    // below. Phase 2 ("/submit", designed against DATA.md) owns the exact
+    // form field set; this list is a Phase 1 judgment call and may need a
+    // follow-up PR once that form ships. It is intentionally a whitelist,
+    // never a blacklist, per structural rule 2 above.
+    function submissionEventFields() {
+      return [
+        'name', 'style', 'venue_id', 'date', 'end_date', 'start', 'end',
+        'price', 'payment', 'beginner_class', 'music', 'dj', 'band',
+        'organizer', 'url', 'description'
+      ];
+    }
+
+    // ---------------------------------------------------------------------
+    // users/{uid} — display profile only
+    // ---------------------------------------------------------------------
+
+    match /users/{uid} {
+      allow read: if true;
+
+      // Owner may create/update ONLY display_name/photo_url. Whitelisting
+      // the full key set (not diffing) means a client can never sneak in
+      // e.g. `role` or `admin` on the initial write either.
+      allow create: if isSignedIn()
+        && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['display_name', 'photo_url']);
+
+      allow update: if isSignedIn()
+        && request.auth.uid == uid
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['display_name', 'photo_url']);
+
+      allow delete: if false;
+    }
+
+    // ---------------------------------------------------------------------
+    // approvers/{uid} — venue scope for an approver. Admin-written only,
+    // server-side. No client write path exists, full stop.
+    // ---------------------------------------------------------------------
+
+    match /approvers/{uid} {
+      allow read: if isSignedIn() && (request.auth.uid == uid || isAdminReader());
+      allow write: if false;
+    }
+
+    // ---------------------------------------------------------------------
+    // submissions/{id} — a proposed event in flight.
+    // ---------------------------------------------------------------------
+
+    match /submissions/{id} {
+      // Read is scoped, not public: the submitter, an approver scoped to
+      // the submission's venue, or an admin. This isn't spelled out
+      // verbatim in BACKEND.md (only the write model is), but "venue-scoped
+      // review queue" implies members shouldn't browse each other's pending
+      // submissions.
+      allow read: if isSignedIn() && (
+        resource.data.submitter_uid == request.auth.uid
+        || isAdmin()
+        || isApproverForVenue(resource.data.venue_id)
+      );
+
+      // Any signed-in member may propose an event. Must self-attribute and
+      // must start life pending — a client can never create a
+      // pre-approved submission.
+      allow create: if isSignedIn()
+        && request.resource.data.submitter_uid == request.auth.uid
+        && request.resource.data.status == 'pending'
+        && request.resource.data.keys()
+             .hasOnly(submissionEventFields().concat(['submitter_uid', 'status', 'created_at']));
+
+      allow update: if isSignedIn() && (
+        // The submitter may edit their own submission while it's still
+        // pending, but never `status` (or `submitter_uid` — that field is
+        // frozen after creation). Enumerating the allowed key set, rather
+        // than blacklisting `status`, is what actually prevents a
+        // submitter smuggling `status` in alongside a legitimate edit.
+        (
+          resource.data.submitter_uid == request.auth.uid
+          && resource.data.status == 'pending'
+          && request.resource.data.diff(resource.data).affectedKeys()
+               .hasOnly(submissionEventFields().concat(['updated_at']))
+        )
+        ||
+        // An approver may flip status to approved/rejected, only for a
+        // submission whose venue is in their scope, and may touch nothing
+        // else in the same write.
+        //
+        // The `resource.data.status == 'pending'` guard makes the
+        // transition one-way: pending -> approved|rejected, never back or
+        // sideways. That matters beyond tidiness — per BACKEND.md an
+        // approval fires the bridge that commits a row to /data, so a
+        // reversible status would let approved -> rejected -> approved
+        // commit the same event twice. A mistaken approval is undone with
+        // `git revert` on the committed row, not by rewinding this field.
+        (
+          isApproverForVenue(resource.data.venue_id)
+          && resource.data.status == 'pending'
+          && request.resource.data.status in ['approved', 'rejected']
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])
+        )
+        ||
+        // Admins may transition any submission's status, same field and
+        // same one-way restriction.
+        (
+          isAdmin()
+          && resource.data.status == 'pending'
+          && request.resource.data.status in ['approved', 'rejected']
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])
+        )
+      );
+
+      allow delete: if false;
+    }
+
+    // ---------------------------------------------------------------------
+    // role_grants/{id} — append-only audit of role changes. Written only
+    // by server-side code (the grant endpoint, using firebase-admin, which
+    // bypasses these rules entirely). No client — member, approver, admin,
+    // or superadmin — ever writes here directly.
+    // ---------------------------------------------------------------------
+
+    match /role_grants/{id} {
+      allow read: if isAdminReader();
+      allow write: if false;
+    }
+
+    // Default deny: any collection not matched above (and any field/path
+    // shape not explicitly allowed above) is denied by Firestore's default,
+    // but the four blocks above are exhaustive for Phase 1 on purpose —
+    // adding a fifth collection means adding a fifth block here, not
+    // widening an existing one.
+  }
+}

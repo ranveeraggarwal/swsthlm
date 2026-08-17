@@ -9,10 +9,14 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "validate:data": "node scripts/validate-data.mjs"
+    "test:rules": "VITEST_RULES=1 firebase emulators:exec --project demo-stockholm-swing --only firestore \"vitest run firestore/rules.test.mjs\"",
+    "validate:data": "node scripts/validate-data.mjs",
+    "bootstrap:superadmin": "node scripts/bootstrap-superadmin.mjs"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",
+    "firebase": "^12.17.1",
+    "firebase-admin": "^14.2.0",
     "lucide-react": "^1.17.0",
     "next": "^16.3.0",
     "papaparse": "^5.5.3",
@@ -21,6 +25,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
+    "@firebase/rules-unit-testing": "^5.0.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/papaparse": "^5.5.2",
@@ -29,6 +34,7 @@
     "cheerio": "^1.2.0",
     "eslint": "^9",
     "eslint-config-next": "^15.5.19",
+    "firebase-tools": "^15.27.0",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^4.1.8"

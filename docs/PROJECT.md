@@ -91,6 +91,7 @@ first and argue against it, rather than around it.
 | Cancellations are exceptions, never deletions; past events become `status=ended`, never deleted | [`DATA.md`](DATA.md) |
 | Nothing may invent a venue — an unknown one is flagged for a human, never created | [`DATA.md`](DATA.md), [`architecture/SCRAPERS.md`](architecture/SCRAPERS.md) |
 | Overlapping-event detection is a CI **warning**, not a failure — some venues genuinely run two things at once | [`DATA.md`](DATA.md) |
+| A Firebase **member plane** (accounts, in-site event submission, a venue-scoped review queue) was designed in Aug 2026 and **shelved before implementation**. Reviving it means re-reading that design and arguing with it — not re-deriving it. It covers the backend comparison, the static-calendar boundary, and the role/escalation model | commit `acd7bd9`, PR #315 |
 
 ### Scrapers
 

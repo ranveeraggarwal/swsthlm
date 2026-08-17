@@ -95,6 +95,12 @@ leave it `live`.
   writes them, and never invents a venue. New bands go in a *separate*
   `bot/new-bands` PR so event review isn't blocked on vetting an act — see
   SCRAPERS.md.
+- **A daily job (`.github/workflows/mark-ended.yml`, `scripts/mark-ended.mjs`)
+  flips `status: live -> ended`** on `oneoffs.csv` rows past their last day and
+  `series.csv` rows past `valid_to` — the exact condition
+  `validate-data.mjs` fails a PR on. Same shape as the scraper: surgical
+  text write, delta-validated, opens/updates one `bot/mark-ended` PR on a
+  non-empty diff, never touches main directly.
 - **The changelog is hand-curated, not generated.** `src/features/changelog/entries.ts`
   feeds the About page's collapsed "What's new" timeline. When you ship a
   major, user-visible feature, add one line to the current month (create the

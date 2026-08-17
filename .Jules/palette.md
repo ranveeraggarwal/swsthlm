@@ -15,3 +15,6 @@
 ## 2026-08-05 - [Appended strings missing space]
 **Learning:** When appending a translation string like `bundle.card.opensInNewTab` (which already has a leading space) to another attribute, it works without a space. However, it's generally best to explicitly evaluate if the string needs a space when doing string interpolation to avoid runtime string bugs in visual tooltips.
 **Action:** When adding attributes via string interpolation, review the exact translation string source to confirm leading spaces.
+## 2026-08-17 - Localize Global Control ARIA Labels
+**Learning:** Hardcoded English ARIA labels on global UI controls (like theme toggles) make the site inaccessible for non-English screen reader users, even when they've switched the site language.
+**Action:** Use `useLocale().bundle` to dynamically fetch and apply localized ARIA labels and title attributes for all global UI components to ensure accessibility across supported languages.

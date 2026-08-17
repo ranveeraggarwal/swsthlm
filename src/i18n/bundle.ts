@@ -271,6 +271,10 @@ export interface LocaleBundle {
     subscribeCta: string;
     organizersCta: string;
   };
+  theme: {
+    switchToLight: string;
+    switchToDark: string;
+  };
   footer: {
     tagline: string;
     github: string;

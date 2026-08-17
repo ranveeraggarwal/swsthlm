@@ -132,6 +132,7 @@ first and argue against it, rather than around it.
 | **Firebase over Supabase and SQL Connect**, with the reasoning recorded so it isn't re-litigated without new facts | [`architecture/BACKEND.md`](architecture/BACKEND.md) |
 | The queue approval is the **single human gate**; approved rows land as validated bot commits, not PRs | §2b above, [`architecture/BACKEND.md`](architecture/BACKEND.md) |
 | Roles never live in client-writable documents (admin = custom claim, approver scope = admin-only collection) — row-scoped auth alone permits self-escalation | [`architecture/BACKEND.md`](architecture/BACKEND.md) |
+| **Serving the calendar from Firestore was considered and rejected** — at runtime *and* at build time; the CSVs stay the calendar's source | [`architecture/BACKEND.md`](architecture/BACKEND.md) |
 | The social layer is **deferred and undesigned**, pending its own privacy review | [`architecture/BACKEND.md`](architecture/BACKEND.md) |
 
 ### Scrapers

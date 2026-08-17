@@ -48,6 +48,37 @@ Concretely:
 - **Auth applies only to submitting, reviewing, and social features.**
   Viewing the calendar never requires an account, and never will.
 
+### Considered and rejected: serving the calendar from Firestore
+
+Once Firestore exists, "why keep the CSVs at all?" is the obvious next
+question. It was asked during this design and answered no. Both versions
+fail, differently:
+
+- **Runtime reads** (pages query Firestore) put the only high-traffic
+  surface on a quota with no auth gate in front of it, turn every static
+  output — JSON-LD, OG images, permalinks, the ICS feed — into a dynamic
+  code path, and make a Firebase outage blank the calendar live. This is
+  precisely the architecture §2 exists to avoid.
+- **Build-time reads** (the build pulls Firestore, output stays static)
+  keep the pages static but move the dependency into the pipeline: during
+  an outage the site serves stale HTML and *cannot rebuild*, so a same-day
+  cancellation can't reach dancers — the one update the data contract cares
+  most about. It also discards, rather than simplifies: git stops being the
+  audit log of what was published, `validate-data.mjs` and the CI gate lose
+  their subject, scrapers and form-sync write to a file nothing reads, and
+  the "edit a CSV, save, reload" dev loop dies.
+
+**The two stores are not duplicates.** Firestore holds *proposals in
+flight* — mutable, unreviewed, member-owned. `/data` holds *what was
+published* — validated, diffable, revertable history. The approval bridge
+isn't a sync between two copies of one thing; it is the publish step, and
+the commit it writes is simultaneously the audit record, the CI trigger,
+and the deploy trigger. Rebuild-on-push already puts an approved event live
+in a couple of minutes, so there is no latency argument either.
+
+Reversing this means rewriting [`../PROJECT.md`](../PROJECT.md) §2 and §2b,
+not just this section.
+
 ## The single human gate
 
 The founding principle "humans review diffs; robots produce them" is

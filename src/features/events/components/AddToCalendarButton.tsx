@@ -132,7 +132,7 @@ export function AddToCalendarButton({ event }: { event: SwingEvent }) {
               >
                 <Mark />
                 {PROVIDER_LABELS[provider]}
-                <span className="sr-only"> (opens in a new tab)</span>
+                <span className="sr-only">{bundle.card.opensInNewTab}</span>
               </a>
             );
           })}

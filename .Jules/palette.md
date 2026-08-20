@@ -22,3 +22,6 @@
 ## 2026-08-17 - Localize Global Control ARIA Labels
 **Learning:** Hardcoded English ARIA labels on global UI controls (like theme toggles) make the site inaccessible for non-English screen reader users, even when they've switched the site language.
 **Action:** Use `useLocale().bundle` to dynamically fetch and apply localized ARIA labels and title attributes for all global UI components to ensure accessibility across supported languages.
+## 2026-08-20 - [Hardcoded English screen reader strings in new tab hints]
+**Learning:** Hardcoded English strings like ` (opens in a new tab)` were used for screen-reader-only labels on anchor elements with `target="_blank"`. This degrades the experience for users consuming the site in a non-English language (like Swedish) when using a screen reader.
+**Action:** Always use localized strings such as `bundle.card.opensInNewTab` via `useLocale().bundle` for hidden visually-hidden elements that provide accessibility hints (like `sr-only`).

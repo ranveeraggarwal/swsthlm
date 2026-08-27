@@ -63,7 +63,7 @@ Most contributions touch `/data/`, not `/src/`. A few rules:
 - **Don't paste dates into descriptions.** The structured date is the date. If a description contains "Lördag 14/3", strip it; the renderer will format the date itself.
 - **Cancellations are exceptions, not deletions.** Add a row to `exceptions.csv` with the cancelled flag — the site shows the cancellation, the calendar feed emits `STATUS:CANCELLED`, subscribers find out. Deleting the row hides the cancellation from everyone who needed to see it.
 - **Drafts are fine.** Set `status=draft` to commit data you're not ready to publish; it won't render on the site or in feeds.
-- **Past events are kept, not deleted.** When a one-off is over, set `status=ended` instead of removing the row — we retain it for a possible future archive. The build renders only `live`, so it drops off the calendar while the history survives. (Leaving a past event as `live` fails CI.)
+- **Past events are kept, not deleted.** When a one-off is over, set `status=ended` instead of removing the row — we retain it for a possible future archive. The build renders only `live`, so it drops off the calendar while the history survives. (A nightly job flips these for you; leaving one `live` for more than 30 days fails CI.)
 - **TBA is fine, but only when it's really TBA.** The renderer hides TBA dj/band fields. Don't put "TBA" in price, time, or venue.
 
 The full column-by-column contract lives in [`DATA.md`](DATA.md). CI validates every PR against that schema and will leave a comment if something doesn't fit.

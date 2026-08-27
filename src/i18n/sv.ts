@@ -231,8 +231,7 @@ export const sv = {
     organizers: {
       heading: 'Är du arrangör?',
       intro:
-        'Arrangerar du ett enstaka eller återkommande evenemang i Lindy Hop, Balboa, Blues eller Shag i Stockholm? Fyll i vårt {form} eller {email}. En bot gör formulärsvaren till pull requests som en underhållare granskar och slår ihop. Du behöver inget GitHub-konto.',
-      formLink: 'formulär för evenemang',
+        'Arrangerar du ett enstaka eller återkommande evenemang i Lindy Hop, Balboa, Blues eller Shag i Stockholm? Då kan du {email} med uppgifterna. En underhållare lägger in det i schemat. Du behöver inget GitHub-konto.',
       emailLink: 'skicka ett mejl till oss',
       series: 'Driver du en återkommande veckoserie? {contact} så lägger vi upp den.',
       contactLink: 'Hör av dig direkt',

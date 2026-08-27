@@ -329,9 +329,8 @@ export interface LocaleBundle {
     subtitle: string;
     organizers: {
       heading: string;
-      /** Takes `{form}` and `{email}`. */
+      /** Takes `{email}`. */
       intro: string;
-      formLink: string;
       emailLink: string;
       /** Takes `{contact}`. */
       series: string;

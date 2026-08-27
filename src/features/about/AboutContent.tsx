@@ -20,7 +20,6 @@ import { ContributorsWall } from '@/features/contributors/ContributorsWall';
 import {
   CONTACT_EMAIL,
   CORRECTIONS_EMAIL,
-  EVENT_SUBMISSION_FORM_URL,
   GITHUB_DISCUSSIONS_URL,
   GITHUB_REPO_URL,
 } from '@/lib/site';
@@ -58,17 +57,6 @@ export function AboutContent() {
               <Interpolate
                 template={t.organizers.intro}
                 values={{
-                  form: (
-                    <a
-                      href={EVENT_SUBMISSION_FORM_URL}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={LINK}
-                    >
-                      {t.organizers.formLink}
-                      {newTabHint}
-                    </a>
-                  ),
                   email: (
                     <a href={`mailto:${CONTACT_EMAIL}`} className={LINK}>
                       {t.organizers.emailLink}

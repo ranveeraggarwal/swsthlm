@@ -2,11 +2,11 @@
 
 // Shown when the filters match nothing. It names what emptied the page, offers to
 // clear the filters, and — because "no events" is also the moment someone is most
-// likely to help — routes them to the feed and the submission form.
+// likely to help — routes them to the feed and to the organizer inbox.
 
 import React from 'react';
 import { SlidersHorizontal } from 'lucide-react';
-import { CALENDAR_WEBCAL_URL, EVENT_SUBMISSION_FORM_URL } from '@/lib/site';
+import { CALENDAR_WEBCAL_URL, CONTACT_EMAIL } from '@/lib/site';
 import { emptyStateHeading, hasActiveFilters, type EventFilters } from '../model/sections';
 import { useLocale } from '@/components/providers/LocaleProvider';
 
@@ -49,13 +49,10 @@ export function EmptyState({ filters, onClearFilters }: EmptyStateProps) {
         </a>
         {' · '}
         <a
-          href={EVENT_SUBMISSION_FORM_URL}
-          target="_blank"
-          rel="noopener noreferrer"
+          href={`mailto:${CONTACT_EMAIL}`}
           className="text-[var(--primary)] underline hover:no-underline"
         >
           {bundle.empty.organizersCta}
-          <span className="sr-only">{bundle.card.opensInNewTab}</span>
         </a>
       </p>
     </div>

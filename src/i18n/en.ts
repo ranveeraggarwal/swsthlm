@@ -206,8 +206,7 @@ export const en = {
     organizers: {
       heading: 'Are you an organizer?',
       intro:
-        'If you host a one-time or occasional Lindy Hop, Balboa, Blues, or Shag event in Stockholm, fill in our {form} or {email}. A bot turns form submissions into pull requests; a maintainer reviews and merges. You don\'t need a GitHub account.',
-      formLink: 'event submission form',
+        'If you host a one-time or occasional Lindy Hop, Balboa, Blues, or Shag event in Stockholm, {email} with the details. A maintainer adds it to the schedule. You don\'t need a GitHub account.',
       emailLink: 'send us an email',
       series: 'Running a recurring weekly series? {contact} and we\'ll get it set up.',
       contactLink: 'Contact us directly',

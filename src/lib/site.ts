@@ -17,11 +17,6 @@ export const CALENDAR_FEED_URL = `${SITE_URL}${CALENDAR_FEED_PATH}`;
 export const CALENDAR_WEBCAL_URL = `webcal://${SITE_HOST}${CALENDAR_FEED_PATH}`;
 export const CALENDAR_NAME = 'Stockholm Swing Dance Calendar';
 
-/** Organizer-facing intake. An Action drains its responses into pull requests
- *  (see docs/architecture/FORM_SYNC.md). */
-export const EVENT_SUBMISSION_FORM_URL =
-  'https://docs.google.com/forms/d/e/1FAIpQLSd87pOy31N_3xKthqalT-sDrFB2yoe74Z8HGr8q1HSs6Pis2g/viewform';
-
 export const GITHUB_REPO_URL = 'https://github.com/ranveeraggarwal/swsthlm';
 export const GITHUB_DISCUSSIONS_URL = `${GITHUB_REPO_URL}/discussions`;
 

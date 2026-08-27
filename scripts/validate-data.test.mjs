@@ -166,9 +166,31 @@ describe('duplicate ids', () => {
 });
 
 describe('past live one-off', () => {
-  it('errors when a live one-off is entirely in the past', () => {
-    const { errors } = run({ oneoffs: { rows: [oneoff({ date: '2026-06-01' })] } });
+  it('warns, but does not error, on a recently-passed live one-off', () => {
+    // Inside the grace period the nightly mark-ended job owns this fix; failing
+    // here would redden every open PR while its review PR waits to be merged.
+    const { errors, warnings } = run({ oneoffs: { rows: [oneoff({ date: '2026-06-01' })] } });
+    expect(errors).toEqual([]);
+    expect(joined(warnings)).toMatch(/entirely in the past/);
+  });
+
+  it('still warns rather than errors on the last day of the grace period', () => {
+    const { errors, warnings } = run({ oneoffs: { rows: [oneoff({ date: '2026-05-14' })] } });
+    expect(errors).toEqual([]);
+    expect(joined(warnings)).toMatch(/entirely in the past/);
+  });
+
+  it('errors once a live one-off is stale beyond the grace period', () => {
+    const { errors } = run({ oneoffs: { rows: [oneoff({ date: '2026-05-13' })] } });
     expect(joined(errors)).toMatch(/entirely in the past/);
+    expect(joined(errors)).toMatch(/mark-ended job/);
+  });
+
+  it('measures staleness from end_date on a multi-day run', () => {
+    // The run started well beyond the grace period but ended inside it.
+    const { errors, warnings } = run({ oneoffs: { rows: [oneoff({ date: '2026-04-01', end_date: '2026-06-01' })] } });
+    expect(errors).toEqual([]);
+    expect(joined(warnings)).toMatch(/entirely in the past/);
   });
 
   it('does not error on a cancelled past one-off (history is allowed)', () => {
@@ -177,8 +199,9 @@ describe('past live one-off', () => {
   });
 
   it('does not error on an ended past one-off (kept for the archive)', () => {
-    const { errors } = run({ oneoffs: { rows: [oneoff({ date: '2026-06-01', status: 'ended' })] } });
+    const { errors, warnings } = run({ oneoffs: { rows: [oneoff({ date: '2026-06-01', status: 'ended' })] } });
     expect(errors).toEqual([]);
+    expect(joined(warnings)).not.toMatch(/entirely in the past/);
   });
 
   it('honours end_date — a multi-day run ending today is not past', () => {

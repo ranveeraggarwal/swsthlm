@@ -27,6 +27,15 @@ const WEEKDAYS = new Set([
 const SERIES_STATUS = new Set(['draft', 'live', 'ended']);
 const ONEOFF_STATUS = new Set(['draft', 'live', 'ended', 'cancelled']);
 const FLOOR_TYPES = new Set(['studio', 'hall', 'bar', 'outdoor']);
+// How long a `live` one-off may sit past its last day before the gate fails on
+// it. scripts/mark-ended.mjs flips those rows to `ended` nightly, but its PR
+// waits on a human merge, so a few days of lag is normal operation rather than
+// a data error — and this workflow runs on *every* PR (no path filter, see
+// .github/workflows/validate-data.yml), so failing on the lag reddens PRs that
+// touch no data at all, for a fix already sitting in the bot's review PR.
+// Inside the window it warns; past it, the automation itself is broken and
+// that is worth failing on.
+const ENDED_GRACE_DAYS = 30;
 // Band-roster trust flag: yes = trusted swing band, no = known not-swing
 // (suppressed), unknown = surfaced and awaiting a human decision.
 const SWING = new Set(['yes', 'no', 'unknown']);
@@ -264,10 +273,16 @@ export function validateData(datasets, opts = {}) {
     if (venueId && !venueIds.has(venueId)) err('oneoffs', n, `venue_id "${venueId}" not found in venues.csv`);
 
     // A live one-off entirely in the past should be marked `ended` (kept for
-    // the archive) rather than left `live`.
+    // the archive) rather than left `live` — but only warn about it while the
+    // nightly job still has a plausible shot at it. See ENDED_GRACE_DAYS.
     const last = endDate && isRealDate(endDate) ? endDate : date;
     if (status === 'live' && last && isRealDate(last) && last < today) {
-      err('oneoffs', n, `live one-off is entirely in the past (last day ${last} < ${today}) — mark it status=ended`);
+      const msg = `live one-off is entirely in the past (last day ${last} < ${today}) — mark it status=ended`;
+      if (last < addDays(today, -ENDED_GRACE_DAYS)) {
+        err('oneoffs', n, `${msg} (over ${ENDED_GRACE_DAYS} days stale — is the mark-ended job still running?)`);
+      } else {
+        warn('oneoffs', n, msg);
+      }
     }
     // TBA within 7 days for a live-music night.
     if (status === 'live' && val(row, 'music') === 'live' && date && isRealDate(date) && date >= today && date <= addDays(today, 7) && !val(row, 'band')) {

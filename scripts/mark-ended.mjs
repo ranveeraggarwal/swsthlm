@@ -8,9 +8,10 @@
 //
 // Two independent checks, both driven by DATA.md:
 //  - oneoffs.csv: a `live` row whose last day (`end_date` || `date`) is before
-//    today is entirely in the past → `status=ended`. This is exactly the
-//    condition validate-data.mjs's CI gate fails a PR on ("mark it
-//    status=ended"), so this job keeps the fleet from ever tripping it.
+//    today is entirely in the past → `status=ended`. This is the condition
+//    validate-data.mjs warns on ("mark it status=ended") and, once the row is
+//    ENDED_GRACE_DAYS stale, fails the build on — that error means this job
+//    has stopped running, so keeping it green is this job's whole purpose.
 //  - series.csv: a `live` row with a `valid_to` before today has finished its
 //    run → `status=ended` ("End a series" in DATA.md).
 //

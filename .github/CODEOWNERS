@@ -1,2 +1,6 @@
 # All files require review from the repo owner
 * @ranveeraggarwal
+
+# Event data — the last matching pattern wins, so either owner can approve
+# changes under /data/ (scraper and form-sync PRs land here).
+/data/ @ranveeraggarwal @hbjarre

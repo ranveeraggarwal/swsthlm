@@ -70,9 +70,11 @@ authority.** It deliberately does **not** import the TypeScript types — it
 re-declares the enums — so it runs on bare Node with **no build step**. Keep it
 that way.
 
-A common trap: **a `live` one-off entirely in the past fails CI.** Once an event
-is over, mark it `status=ended` (kept for the archive), don't delete it and don't
-leave it `live`.
+Once an event is over, mark it `status=ended` (kept for the archive) — don't
+delete it and don't leave it `live`. [`scripts/mark-ended.mjs`](../scripts/mark-ended.mjs)
+does this nightly, so the validator only **warns** for the first 30 days; past
+that it fails CI, which means that job has stopped running rather than that a
+row needs a manual flip.
 
 ## Gotchas
 

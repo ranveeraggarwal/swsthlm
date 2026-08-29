@@ -99,3 +99,9 @@ export function isTomorrow(dateStr: string, referenceDateStr: string): boolean {
   if (!isIsoDate(referenceDateStr)) return false;
   return dateStr === addDays(referenceDateStr, 1);
 }
+
+/** Whether a YYYY-MM-DD date is the day before the reference date. */
+export function isYesterday(dateStr: string, referenceDateStr: string): boolean {
+  if (!isIsoDate(referenceDateStr)) return false;
+  return dateStr === addDays(referenceDateStr, -1);
+}

@@ -7,11 +7,13 @@
 // reading forty lines instead of scrolling a component.
 
 import { getMonthKey, isCurrentWeek, isNextWeek, isSunday } from '@/lib/date/calendar';
+import type { Now } from '@/lib/date/clock';
 import type { Style } from '@/lib/data/types';
 import { bundle, DEFAULT_LOCALE, type Locale } from '@/i18n';
 import type { EventGroup, SwingEvent } from './event';
 import { firstNightOf } from './grouping';
 import { styleLabel } from './labels';
+import { isPastEvent } from './temporal';
 
 /** Sentinel meaning "don't filter on style". Also a real style value — see below. */
 export const ALL_STYLES = 'all';
@@ -74,16 +76,18 @@ function matchesMusic(event: SwingEvent, liveMusicOnly: boolean): boolean {
  * The past-date drop is not a user filter: the event list is baked at build
  * time, so once a calendar day passes without a rebuild that day's occurrences
  * are stale. Today's events may still look "ended" — that's a badge, and useful
- * — but yesterday's must not be on the page at all.
+ * — but yesterday's must not be on the page at all. An overnight event (e.g.
+ * 20:00–01:00) is the exception: it stays on the page past midnight until its
+ * end time, via `isPastEvent` — see `./temporal.ts`.
  */
 export function filterEvents(
   events: SwingEvent[],
   filters: EventFilters,
-  currentDate: string,
+  now: Now,
 ): SwingEvent[] {
   return events.filter(
     (event) =>
-      event.date >= currentDate &&
+      !isPastEvent(event, now) &&
       matchesSearch(event, filters.search) &&
       matchesStyle(event, filters.style) &&
       matchesVenue(event, filters.venue) &&

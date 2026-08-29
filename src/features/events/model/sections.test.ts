@@ -1,12 +1,31 @@
 import { describe, expect, it } from 'vitest';
+import type { SwingEvent } from './event';
 import {
   ALL_VENUES,
   NO_FILTERS,
   emptyStateHeading,
+  filterEvents,
   summariseFilters,
   venueFilterLabel,
   type EventFilters,
 } from './sections';
+
+const baseEvent: SwingEvent = {
+  id: 'test:2025-05-19',
+  sourceId: 'test',
+  sourceType: 'oneoff',
+  title: 'Late Night Social',
+  date: '2025-05-19',
+  start: '20:00',
+  end: '01:00',
+  cancelled: false,
+  venue: 'Nalen',
+  address: 'Regeringsgatan 74',
+  style: 'lindy-hop',
+  music: 'live',
+  organizer: 'Test Organizer',
+  body: '',
+};
 
 // Only the Swedish branch of each function is asserted exactly here —
 // `format.test.ts` established the pattern of exact-string assertions after
@@ -47,6 +66,29 @@ describe('emptyStateHeading', () => {
 
   it('falls back to the generic heading in Swedish', () => {
     expect(emptyStateHeading(NO_FILTERS, 'sv')).toBe('Inga evenemang matchar dina filter');
+  });
+});
+
+describe('filterEvents', () => {
+  it('keeps an overnight event past midnight, until its end time', () => {
+    // The event's date is yesterday; the clock has rolled over to today, but
+    // the event (20:00–01:00) hasn't ended yet.
+    const kept = filterEvents([baseEvent], NO_FILTERS, { date: '2025-05-20', time: '00:45' });
+    expect(kept).toEqual([baseEvent]);
+  });
+
+  it('drops the overnight event once its end time has passed', () => {
+    const kept = filterEvents([baseEvent], NO_FILTERS, { date: '2025-05-20', time: '01:15' });
+    expect(kept).toEqual([]);
+  });
+
+  it('drops an ordinary event from a prior date', () => {
+    const sameNightNoOvernight = { ...baseEvent, start: '19:00', end: '22:00' };
+    const kept = filterEvents([sameNightNoOvernight], NO_FILTERS, {
+      date: '2025-05-20',
+      time: '10:00',
+    });
+    expect(kept).toEqual([]);
   });
 });
 

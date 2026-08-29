@@ -88,8 +88,8 @@ export function EventCalendar({ events, initialNow }: EventCalendarProps) {
   const venues = useMemo(() => availableVenues(events), [events]);
 
   const groups = useMemo(
-    () => groupMultiDayOneoffs(filterEvents(events, filters, now.date)),
-    [events, filters, now.date],
+    () => groupMultiDayOneoffs(filterEvents(events, filters, now)),
+    [events, filters, now],
   );
   const sections = useMemo(() => buildSections(groups, now.date), [groups, now.date]);
 

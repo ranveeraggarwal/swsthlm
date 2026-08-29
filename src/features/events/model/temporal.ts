@@ -7,7 +7,7 @@
 // Lives with the events model rather than in `lib/date` because it reasons about
 // an event's start and end, not about dates in general.
 
-import { isToday, isTomorrow } from '@/lib/date/calendar';
+import { isToday, isTomorrow, isYesterday } from '@/lib/date/calendar';
 import type { Now } from '@/lib/date/clock';
 import { bundle, DEFAULT_LOCALE, type Locale } from '@/i18n';
 import type { SwingEvent } from './event';
@@ -30,39 +30,58 @@ type Timing = Pick<SwingEvent, 'date' | 'start' | 'end'>;
  * Strict `<`: an event whose end equals its start counts as same-day, so a
  * zero-length listing is treated as a moment in time rather than a 24-hour one.
  */
-function isOvernight({ start, end }: Timing): boolean {
+export function isOvernight({ start, end }: Timing): boolean {
   return end < start;
 }
 
 /**
  * Whether `now` falls inside the event's window. Times are HH:MM strings, which
  * compare correctly with `<=`; an overnight event matches on either side of
- * midnight.
+ * midnight — including the morning after its start date, once the calendar
+ * date has rolled over but the event hasn't reached its end time yet.
  */
 function isHappeningNow(timing: Timing, now: Now): boolean {
-  if (timing.date !== now.date) return false;
   if (!timing.start || !timing.end || !now.time) return false;
 
-  return isOvernight(timing)
-    ? now.time >= timing.start || now.time <= timing.end
-    : now.time >= timing.start && now.time <= timing.end;
+  if (timing.date === now.date) {
+    return isOvernight(timing)
+      ? now.time >= timing.start || now.time <= timing.end
+      : now.time >= timing.start && now.time <= timing.end;
+  }
+
+  return isYesterday(timing.date, now.date) && isOvernight(timing) && now.time <= timing.end;
+}
+
+/**
+ * Whether an event's window has entirely passed — used to drop stale events
+ * from the listing altogether, distinct from the `ended` badge which still
+ * shows a same-day event that's over. An overnight event stays "not past"
+ * until its end time, even after the calendar date has rolled over.
+ */
+export function isPastEvent(timing: Timing, now: Now): boolean {
+  if (timing.date >= now.date) return false;
+  if (!timing.start || !timing.end || !now.time) return true;
+  if (isYesterday(timing.date, now.date) && isOvernight(timing)) return now.time > timing.end;
+  return true;
 }
 
 /**
  * The badge for an event.
  *
- * Priority: a past date is `ended`; today is `happening-now`, then `ended` once
- * the end time has passed, otherwise `tonight`; then `tomorrow`, then
- * `this-week`, then nothing.
+ * Priority: `happening-now` (which, for an overnight event, can mean either
+ * its start date or the morning after); then a past date is `ended`; today is
+ * `ended` once the end time has passed, otherwise `tonight`; then `tomorrow`,
+ * then `this-week`, then nothing.
  *
  * `isThisWeek` is passed in rather than derived because the caller has already
  * bucketed events into sections and knows the answer — see `./sections.ts`.
  */
 export function getTemporalBadge(timing: Timing, now: Now, isThisWeek: boolean): TemporalBadge {
+  if (isHappeningNow(timing, now)) return 'happening-now';
+
   if (timing.date < now.date) return 'ended';
 
   if (isToday(timing.date, now.date)) {
-    if (isHappeningNow(timing, now)) return 'happening-now';
     // An overnight event is never "ended" on its own start date — its end time
     // sorts before its start, so comparing against it would retire the event
     // before it began.

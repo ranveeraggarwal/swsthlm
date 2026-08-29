@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { getTemporalBadge, temporalBadgeLabel } from './temporal';
+import { getTemporalBadge, isPastEvent, temporalBadgeLabel } from './temporal';
 
 const today = '2025-05-20';
+const yesterday = '2025-05-19';
 const tomorrow = '2025-05-21';
 
 /** `getTemporalBadge(timing, now, isThisWeek)`, spelled out for readability. */
@@ -26,6 +27,17 @@ describe('getTemporalBadge', () => {
     expect(badgeFor(today, '20:00', '01:00', '22:00')).toBe('happening-now');
     expect(badgeFor(today, '20:00', '01:00', '20:00')).toBe('happening-now');
     expect(badgeFor(today, '20:00', '01:00', '00:30')).toBe('happening-now');
+  });
+
+  it('stays "happening-now" the morning after an overnight event, until its end time', () => {
+    // 20:00–01:00 on yesterday's date is still active at 00:45 today.
+    expect(badgeFor(yesterday, '20:00', '01:00', '00:45', true, today)).toBe('happening-now');
+    // Inclusive at the end time itself.
+    expect(badgeFor(yesterday, '20:00', '01:00', '01:00', true, today)).toBe('happening-now');
+  });
+
+  it('returns "ended" once an overnight event\'s end time has passed the next morning', () => {
+    expect(badgeFor(yesterday, '20:00', '01:00', '01:15', true, today)).toBe('ended');
   });
 
   it('returns "ended" when the event finished earlier today', () => {
@@ -57,6 +69,34 @@ describe('getTemporalBadge', () => {
 
   it('returns null for future events not in the current week', () => {
     expect(badgeFor('2025-05-30', '19:00', '22:00', '17:00', false)).toBe(null);
+  });
+});
+
+describe('isPastEvent', () => {
+  const timing = (date: string, start: string, end: string) => ({ date, start, end });
+
+  it('is not past for today or future dates', () => {
+    expect(isPastEvent(timing(today, '19:00', '22:00'), { date: today, time: '23:00' })).toBe(false);
+    expect(isPastEvent(timing(tomorrow, '19:00', '22:00'), { date: today, time: '10:00' })).toBe(false);
+  });
+
+  it('is past for an ordinary event from a prior date', () => {
+    expect(isPastEvent(timing(yesterday, '19:00', '22:00'), { date: today, time: '10:00' })).toBe(true);
+  });
+
+  it('is not past for an overnight event from yesterday that has not reached its end time', () => {
+    expect(isPastEvent(timing(yesterday, '20:00', '01:00'), { date: today, time: '00:45' })).toBe(false);
+    expect(isPastEvent(timing(yesterday, '20:00', '01:00'), { date: today, time: '01:00' })).toBe(false);
+  });
+
+  it('is past for an overnight event from yesterday once its end time has passed', () => {
+    expect(isPastEvent(timing(yesterday, '20:00', '01:00'), { date: today, time: '01:15' })).toBe(true);
+  });
+
+  it('is past for an overnight event more than one day old, even before its end time', () => {
+    expect(
+      isPastEvent(timing('2025-05-18', '20:00', '01:00'), { date: today, time: '00:45' }),
+    ).toBe(true);
   });
 });
 

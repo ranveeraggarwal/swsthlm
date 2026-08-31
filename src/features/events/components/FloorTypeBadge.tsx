@@ -8,7 +8,7 @@ import { useLocale } from '@/components/providers/LocaleProvider';
 
 // The icon per floor type — structure, not a word, so it stays local rather
 // than moving to the locale bundle with the label (see `labels.ts`).
-const FLOOR_TYPE_ICONS: Record<FloorType, React.ComponentType<{ className?: string }>> = {
+const FLOOR_TYPE_ICONS: Record<FloorType, React.ComponentType<{ className?: string; 'aria-hidden'?: boolean | 'true' | 'false' }>> = {
   studio: LayoutGrid,
   hall: Landmark,
   bar: Beer,
@@ -25,7 +25,7 @@ export function FloorTypeBadge({ floorType }: { floorType?: FloorType }) {
 
   return (
     <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-[var(--surface-container)] text-[var(--on-surface-variant)] border border-[var(--surface-container-highest)] text-[10px] font-bold uppercase tracking-wider">
-      <Icon className="w-3 h-3" />
+      <Icon className="w-3 h-3" aria-hidden="true" />
       {label}
     </span>
   );

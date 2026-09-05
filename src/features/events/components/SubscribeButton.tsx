@@ -105,9 +105,11 @@ export function SubscribeButton() {
             type="text"
             readOnly
             aria-label={t.feedUrlLabel}
+            title={t.copyFeedLink}
             value={CALENDAR_FEED_URL}
             onFocus={(e) => e.currentTarget.select()}
-            className="min-w-0 flex-1 border-0 border-b-2 border-[var(--border-ink)] bg-transparent px-1 py-2 font-mono text-xs text-[var(--on-surface-variant)] focus:border-[var(--primary)] focus:outline-none"
+            onClick={handleCopy}
+            className="min-w-0 flex-1 border-0 border-b-2 border-[var(--border-ink)] bg-transparent px-1 py-2 font-mono text-xs text-[var(--on-surface-variant)] focus:border-[var(--primary)] focus:outline-none cursor-pointer"
           />
           <button
             type="button"

@@ -90,6 +90,10 @@ export function parse(html) {
   const music = djMatch || /\bDJs?\b/i.test(name) ? 'dj' : 'live';
   const dj = djMatch?.[1].trim();
 
+  // "Chicago Live Wednesdays - Hällgren's Lucky Quartet" → band:"Hällgren's Lucky Quartet"
+  const bandMatch = music === 'live' ? /^Chicago Live Wednesdays\s*-\s*(.+)$/.exec(name) : null;
+  const band = bandMatch?.[1].trim();
+
   return [{
     id: `${VENUE_ID}-${date}`,
     name,
@@ -100,6 +104,7 @@ export function parse(html) {
     end: time.end,
     music,
     dj,
+    band,
     organizer: ORGANIZER,
     url: eventUrl,
     description: '',

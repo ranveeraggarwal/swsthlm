@@ -57,6 +57,17 @@ describe('chicago parser', () => {
     expect(djEvents[0]?.dj).toBeFalsy();
   });
 
+  it('extracts the band from a "Chicago Live Wednesdays - [Band]" title', () => {
+    const liveHtml = html.replaceAll('Chicago Elevdans', "Chicago Live Wednesdays - Hällgren's Lucky Quartet");
+    const liveEvents = parse(liveHtml);
+    expect(liveEvents[0]?.music).toBe('live');
+    expect(liveEvents[0]?.band).toBe("Hällgren's Lucky Quartet");
+  });
+
+  it('leaves band unset for titles without the "Chicago Live Wednesdays -" pattern', () => {
+    expect(events[0]?.band).toBeFalsy();
+  });
+
   it('returns [] when there is no parseable time', () => {
     const noTime = html.replace(
       /Mellan \d{2}:\d{2} [–-] \d{2}:\d{2}[^""]*/,

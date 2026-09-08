@@ -68,6 +68,16 @@ describe('chicago parser', () => {
     expect(events[0]?.band).toBeFalsy();
   });
 
+  it('sets the beginner drop-in class for Chicago Live Wednesdays, at doors time', () => {
+    const liveHtml = html.replaceAll('Chicago Elevdans', "Chicago Live Wednesdays - Hällgren's Lucky Quartet");
+    const liveEvents = parse(liveHtml);
+    expect(liveEvents[0]?.beginnerClass).toBe(liveEvents[0]?.start);
+  });
+
+  it('leaves beginnerClass unset for nights that are not Chicago Live Wednesdays', () => {
+    expect(events[0]?.beginnerClass).toBeFalsy();
+  });
+
   it('returns [] when there is no parseable time', () => {
     const noTime = html.replace(
       /Mellan \d{2}:\d{2} [–-] \d{2}:\d{2}[^""]*/,

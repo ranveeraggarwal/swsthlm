@@ -90,6 +90,14 @@ export function parse(html) {
   const music = djMatch || /\bDJs?\b/i.test(name) ? 'dj' : 'live';
   const dj = djMatch?.[1].trim();
 
+  // "Chicago Live Wednesdays - Hällgren's Lucky Quartet" → band:"Hällgren's Lucky Quartet"
+  const isLiveWednesdays = music === 'live' && /^Chicago Live Wednesdays\b/.test(name);
+  const bandMatch = isLiveWednesdays ? /^Chicago Live Wednesdays\s*-\s*(.+)$/.exec(name) : null;
+  const band = bandMatch?.[1].trim();
+
+  // Chicago Live Wednesdays always runs a beginner drop-in at the door, same time as doors.
+  const beginnerClass = isLiveWednesdays ? time.start : undefined;
+
   return [{
     id: `${VENUE_ID}-${date}`,
     name,
@@ -100,6 +108,8 @@ export function parse(html) {
     end: time.end,
     music,
     dj,
+    band,
+    beginnerClass,
     organizer: ORGANIZER,
     url: eventUrl,
     description: '',

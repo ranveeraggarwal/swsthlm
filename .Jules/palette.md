@@ -25,3 +25,6 @@
 ## 2026-08-18 - [Localize Screen Reader Texts]
 **Learning:** Hardcoded English text like '(opens in a new tab)' for screen readers must be replaced by localized strings using `bundle.card.opensInNewTab` to ensure the site is fully accessible to non-English screen reader users. Also noting that `bundle.card.opensInNewTab` already contains a leading space so no extra space is needed before it in text nodes.
 **Action:** Use `useLocale().bundle` to dynamically fetch and apply localized screen reader text.
+## 2026-08-19 - [Read-only URL copy inputs]
+**Learning:** Reusable UX Pattern: Read-only `<input>` elements used for displaying copyable text (e.g., URLs) should include an `onClick` handler to trigger the copy action, a `cursor-pointer` utility class, and a localized `title` tooltip to provide an intuitive shortcut for users.
+**Action:** Enhance read-only URL inputs with copy-on-click functionality to reduce user friction.

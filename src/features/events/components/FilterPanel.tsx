@@ -81,6 +81,12 @@ export function FilterPanel({
             placeholder={t.searchPlaceholder}
             value={filters.search}
             onChange={(e) => onChange({ search: e.target.value })}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape' && filters.search) {
+                e.stopPropagation();
+                onChange({ search: '' });
+              }
+            }}
             className="w-full pl-11 pr-10 py-3.5 bg-transparent border-0 text-[var(--on-surface)] placeholder-[var(--outline)] focus:outline-none focus:ring-0 font-sans font-body-md"
           />
           {filters.search ? (
@@ -91,7 +97,7 @@ export function FilterPanel({
                 setTimeout(() => searchInputRef.current?.focus(), 0);
               }}
               aria-label={t.clearSearch}
-              title={t.clearSearch}
+              title={`${t.clearSearch} (Esc)`}
               className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--outline)] hover:text-[var(--on-surface)] transition-colors cursor-pointer"
             >
               <X aria-hidden="true" className="w-5 h-5" />

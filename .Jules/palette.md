@@ -28,3 +28,10 @@
 ## 2026-08-19 - [Read-only URL copy inputs]
 **Learning:** Reusable UX Pattern: Read-only `<input>` elements used for displaying copyable text (e.g., URLs) should include an `onClick` handler to trigger the copy action, a `cursor-pointer` utility class, and a localized `title` tooltip to provide an intuitive shortcut for users.
 **Action:** Enhance read-only URL inputs with copy-on-click functionality to reduce user friction.
+## 2026-08-20 - Search input Escape handler
+**Learning:** Reusable UX Pattern: When a search input is housed within a dismissible component (like a panel or modal), pressing the `Escape` key should clear the input's text and stop event propagation (`e.stopPropagation()`), rather than immediately closing the parent component.
+**Action:** Always intercept `Escape` on search inputs to clear them before allowing the event to bubble up.
+
+## 2026-08-20 - Shortcut Hints in Tooltips
+**Learning:** Reusable UX Pattern: Interactive elements with associated keyboard shortcuts (e.g., a 'Clear search' button triggered by `Escape`) should append a text hint like `(Esc)` to their `title` attribute to aid discoverability for pointer users.
+**Action:** When adding keyboard shortcuts to specific actions, update the corresponding button's `title` (but not necessarily the `aria-label`, to avoid verbose announcements) to indicate the shortcut.

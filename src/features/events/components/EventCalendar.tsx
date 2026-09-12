@@ -127,6 +127,7 @@ export function EventCalendar({ events, initialNow }: EventCalendarProps) {
             onClick={() => setIsPanelOpen((open) => !open)}
             aria-expanded={isPanelOpen}
             aria-controls={FILTER_PANEL_ID}
+            title={isPanelOpen ? `${bundle.listing.hideFilters} (Esc)` : `${bundle.listing.showFilters} (/)`}
             className={`flex items-center gap-1.5 hover:underline font-bold transition-colors cursor-pointer ${
               isPanelOpen ? 'text-[var(--primary)]' : 'text-[var(--secondary)]'
             }`}

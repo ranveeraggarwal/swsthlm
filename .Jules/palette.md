@@ -35,3 +35,6 @@
 ## 2026-08-20 - Shortcut Hints in Tooltips
 **Learning:** Reusable UX Pattern: Interactive elements with associated keyboard shortcuts (e.g., a 'Clear search' button triggered by `Escape`) should append a text hint like `(Esc)` to their `title` attribute to aid discoverability for pointer users.
 **Action:** When adding keyboard shortcuts to specific actions, update the corresponding button's `title` (but not necessarily the `aria-label`, to avoid verbose announcements) to indicate the shortcut.
+## 2026-08-21 - [Dynamically Injected UI Elements Accessibility]
+**Learning:** Reusable UX Pattern: Transient, dynamically injected UI elements like Toasts (e.g., `InstallToast`) must include `role="region"`, a localized `aria-label`, and `aria-live="polite"` to ensure screen readers correctly announce them upon appearing without interrupting the user.
+**Action:** When creating or updating transient, dynamically injected UI elements (like toasts or non-modal dialogues), always add `role="region"`, a proper localized `aria-label`, and `aria-live="polite"` or `aria-live="assertive"`.

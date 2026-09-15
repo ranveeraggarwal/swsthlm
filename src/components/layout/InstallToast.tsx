@@ -50,7 +50,12 @@ export function InstallToast() {
 
   return (
     <div className="animate-slide-up">
-      <div className="flex items-center gap-3 px-4 py-3 rounded-lg border border-[var(--border-ink)] bg-[var(--surface-container-lowest)] text-[var(--on-surface)] lift-card">
+      <div
+        role="region"
+        aria-label={bundle.install.title}
+        aria-live="polite"
+        className="flex items-center gap-3 px-4 py-3 rounded-lg border border-[var(--border-ink)] bg-[var(--surface-container-lowest)] text-[var(--on-surface)] lift-card"
+      >
         <div className="flex-1 min-w-0">
           <p className="font-sans font-bold text-sm">{bundle.install.title}</p>
           <p className="font-sans text-xs text-[var(--on-surface-variant)] mt-0.5">

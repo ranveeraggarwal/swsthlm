@@ -123,6 +123,7 @@ export function FilterPanel({
                 {styles.map((style) => (
                   <button
                     key={style}
+                    type="button"
                     onClick={() => onChange({ style })}
                     aria-pressed={filters.style === style}
                     className={`${CHIP_BASE} ${filters.style === style ? CHIP_SELECTED.primary : CHIP_IDLE}`}
@@ -139,6 +140,7 @@ export function FilterPanel({
               <Music aria-hidden="true" className="w-3.5 h-3.5 text-[var(--tertiary)]" /> {t.music}
             </span>
             <button
+              type="button"
               onClick={() => onChange({ liveMusicOnly: !filters.liveMusicOnly })}
               aria-pressed={filters.liveMusicOnly}
               className={`w-full flex items-center justify-center gap-2 ${CHIP_BASE} ${filters.liveMusicOnly ? CHIP_SELECTED.tertiary : CHIP_IDLE}`}
@@ -159,6 +161,7 @@ export function FilterPanel({
               {venues.map((venue) => (
                 <button
                   key={venue}
+                  type="button"
                   onClick={() => onChange({ venue })}
                   aria-pressed={filters.venue === venue}
                   className={`${CHIP_BASE} ${filters.venue === venue ? CHIP_SELECTED.secondary : CHIP_IDLE}`}

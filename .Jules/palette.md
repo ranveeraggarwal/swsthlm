@@ -42,6 +42,11 @@
 **Learning:** Reusable UX Pattern: Interactive elements with associated keyboard shortcuts (e.g., a 'Clear search' button triggered by `Escape`) should append a text hint like `(Esc)` to their `title` attribute to aid discoverability for pointer users.
 **Action:** When adding keyboard shortcuts to specific actions, update the corresponding button's `title` (but not necessarily the `aria-label`, to avoid verbose announcements) to indicate the shortcut.
 
+## 2026-08-25 - [Explicit type="button" on Filters]
+**Learning:** Reusable UX Pattern: Explicitly set `type="button"` on interactive `<button>` elements (e.g., toggles, resets) to prevent them from implicitly acting as submit buttons if ever nested inside a form. The `FilterPanel` filter chips lacked this.
+**Action:** Always verify that `<button>` elements that trigger client-side interactions have `type="button"`.
+
 ## 2026-09-12 - Dynamic Toast ARIA Live Regions
 **Learning:** Reusable UX Pattern: Dynamic toasts (like install prompts or notifications) must include `role="region"`, a descriptive `aria-label`, and `aria-live="polite"` so screen readers can announce them when they mount, ensuring blind users aren't left unaware of new transient UI.
 **Action:** Always apply `role="region"`, `aria-label`, and `aria-live` to dynamically appearing toast or prompt containers.
+

@@ -102,7 +102,7 @@ export function LanguagePrompt() {
         type="button"
         onClick={() => answer(locale)}
         aria-label={t.dismiss}
-        title={t.dismiss}
+        title={`${t.dismiss} (Esc)`}
         className="shrink-0 p-1 rounded text-[var(--on-surface-variant)] hover:text-[var(--on-surface)] cursor-pointer"
       >
         <X className="w-4 h-4" aria-hidden="true" />

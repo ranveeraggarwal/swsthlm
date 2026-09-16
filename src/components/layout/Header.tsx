@@ -85,7 +85,7 @@ export function Header() {
             className="flex items-center justify-center w-10 h-10 rounded transition-colors text-[var(--on-surface-variant)] hover:text-[var(--primary)]"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label={menuOpen ? bundle.nav.closeMenu : bundle.nav.openMenu}
-            title={menuOpen ? bundle.nav.closeMenu : bundle.nav.openMenu}
+            title={menuOpen ? `${bundle.nav.closeMenu} (Esc)` : bundle.nav.openMenu}
             aria-expanded={menuOpen}
             aria-controls="mobile-menu"
           >

@@ -45,7 +45,7 @@ export function ThemeToggle() {
   return (
     <button
       type="button"
-      className="w-10 h-10 rounded flex items-center justify-center transition-colors text-[var(--on-surface-variant)] hover:text-[var(--primary)] cursor-pointer"
+      className="w-10 h-10 rounded flex items-center justify-center transition-colors text-[var(--on-surface-variant)] hover:text-[var(--primary)] focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus:outline-none"
       onClick={handleToggle}
       aria-label={label}
       title={label}

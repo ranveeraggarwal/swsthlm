@@ -50,3 +50,4 @@
 **Learning:** Reusable UX Pattern: Dynamic toasts (like install prompts or notifications) must include `role="region"`, a descriptive `aria-label`, and `aria-live="polite"` so screen readers can announce them when they mount, ensuring blind users aren't left unaware of new transient UI.
 **Action:** Always apply `role="region"`, `aria-label`, and `aria-live` to dynamically appearing toast or prompt containers.
 
+\n## 2026-09-17 - [Keyboard Focus Visibility]\n**Learning:** Reusable UX Pattern: Interactive icon buttons and toggle controls (e.g., ThemeToggle, IconButton) should explicitly include focus visibility styles for keyboard accessibility using Tailwind classes `focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus:outline-none`.\n**Action:** Always ensure that interactive elements that do not have default browser outlines or custom hover states that suffice for focus, have explicitly defined `focus-visible` utility classes applied.

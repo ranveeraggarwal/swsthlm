@@ -81,6 +81,12 @@ export function FilterPanel({
             placeholder={t.searchPlaceholder}
             value={filters.search}
             onChange={(e) => onChange({ search: e.target.value })}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape' && filters.search) {
+                e.stopPropagation();
+                onChange({ search: '' });
+              }
+            }}
             className="w-full pl-11 pr-10 py-3.5 bg-transparent border-0 text-[var(--on-surface)] placeholder-[var(--outline)] focus:outline-none focus:ring-0 font-sans font-body-md"
           />
           {filters.search ? (
@@ -91,7 +97,7 @@ export function FilterPanel({
                 setTimeout(() => searchInputRef.current?.focus(), 0);
               }}
               aria-label={t.clearSearch}
-              title={t.clearSearch}
+              title={`${t.clearSearch} (Esc)`}
               className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--outline)] hover:text-[var(--on-surface)] transition-colors cursor-pointer"
             >
               <X aria-hidden="true" className="w-5 h-5" />
@@ -117,6 +123,7 @@ export function FilterPanel({
                 {styles.map((style) => (
                   <button
                     key={style}
+                    type="button"
                     onClick={() => onChange({ style })}
                     aria-pressed={filters.style === style}
                     className={`${CHIP_BASE} ${filters.style === style ? CHIP_SELECTED.primary : CHIP_IDLE}`}
@@ -133,6 +140,7 @@ export function FilterPanel({
               <Music aria-hidden="true" className="w-3.5 h-3.5 text-[var(--tertiary)]" /> {t.music}
             </span>
             <button
+              type="button"
               onClick={() => onChange({ liveMusicOnly: !filters.liveMusicOnly })}
               aria-pressed={filters.liveMusicOnly}
               className={`w-full flex items-center justify-center gap-2 ${CHIP_BASE} ${filters.liveMusicOnly ? CHIP_SELECTED.tertiary : CHIP_IDLE}`}
@@ -153,6 +161,7 @@ export function FilterPanel({
               {venues.map((venue) => (
                 <button
                   key={venue}
+                  type="button"
                   onClick={() => onChange({ venue })}
                   aria-pressed={filters.venue === venue}
                   className={`${CHIP_BASE} ${filters.venue === venue ? CHIP_SELECTED.secondary : CHIP_IDLE}`}

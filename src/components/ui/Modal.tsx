@@ -81,8 +81,8 @@ export function Modal({ open, onClose, title, id, icon: Icon, width = 'sm', chil
           type="button"
           onClick={onClose}
           aria-label={bundle.modal.close}
-          title={bundle.modal.close}
-          className="absolute right-3 top-3 rounded-full p-1.5 text-[var(--outline)] hover:bg-[var(--surface-container)] transition-colors cursor-pointer"
+          title={`${bundle.modal.close} (Esc)`}
+          className="absolute right-3 top-3 rounded-full p-1.5 text-[var(--outline)] hover:bg-[var(--surface-container)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus:outline-none"
         >
           <X className="h-4 w-4" aria-hidden="true" />
         </button>

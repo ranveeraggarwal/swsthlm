@@ -85,7 +85,7 @@ export function LanguagePrompt() {
       <button
         type="button"
         onClick={() => answer(offer)}
-        className="shrink-0 inline-flex items-center gap-1.5 px-3 py-2 rounded bg-[var(--primary)] text-[var(--on-primary)] font-bold uppercase tracking-wider text-xs lift-btn-primary cursor-pointer"
+        className="shrink-0 inline-flex items-center gap-1.5 px-3 py-2 rounded bg-[var(--primary)] text-[var(--on-primary)] font-bold uppercase tracking-wider text-xs lift-btn-primary"
       >
         {t.accept}
       </button>
@@ -93,7 +93,7 @@ export function LanguagePrompt() {
       <button
         type="button"
         onClick={() => answer(locale)}
-        className="shrink-0 px-2 py-2 font-sans text-xs font-bold text-[var(--on-surface-variant)] hover:text-[var(--on-surface)] cursor-pointer"
+        className="shrink-0 px-2 py-2 font-sans text-xs font-bold text-[var(--on-surface-variant)] hover:text-[var(--on-surface)]"
       >
         {t.decline}
       </button>
@@ -102,8 +102,8 @@ export function LanguagePrompt() {
         type="button"
         onClick={() => answer(locale)}
         aria-label={t.dismiss}
-        title={t.dismiss}
-        className="shrink-0 p-1 rounded text-[var(--on-surface-variant)] hover:text-[var(--on-surface)] cursor-pointer"
+        title={`${t.dismiss} (Esc)`}
+        className="shrink-0 p-1 rounded text-[var(--on-surface-variant)] hover:text-[var(--on-surface)]"
       >
         <X className="w-4 h-4" aria-hidden="true" />
       </button>

@@ -20,7 +20,7 @@ import Papa from 'papaparse';
 import { validateData } from './validate-data.mjs';
 import { isSwingRelevant, looksLikeNoise } from './scrapers/lib/genre.mjs';
 import { loadBands, classify, normalizeBand, slugifyBand } from './scrapers/lib/bands.mjs';
-import { ONEOFF_FIELDS, candidateToRow, formatRow } from './scrapers/lib/candidate.mjs';
+import { candidateToRow, computeRowUpdate, formatRow } from './scrapers/lib/candidate.mjs';
 import { EXCEPTION_FIELDS, resolveOccurrence, computeExceptionChanges } from './scrapers/lib/exceptions.mjs';
 import * as staclara from './scrapers/sources/staclara.mjs';
 import * as chicago from './scrapers/sources/chicago.mjs';
@@ -194,11 +194,11 @@ async function main() {
     const row = candidateToRow(c);
     const prior = existingById.get(c.id);
     if (prior) {
-      // Scraper-owned row exists: apply changed fields (human reviews the diff).
-      const changes = ONEOFF_FIELDS
-        .filter((f) => (val(prior, f)) !== (row[f] ?? ''))
-        .map((f) => `${f}: "${val(prior, f)}" → "${row[f]}"`);
-      if (changes.length) updated.push({ row, changes });
+      // Scraper-owned row exists: merge in the fields that actually changed
+      // (human reviews the diff). computeRowUpdate ignores empty scraped
+      // values, so a parser gap can never blank a curated field.
+      const { changedFields, merged, changes } = computeRowUpdate(prior, row);
+      if (changedFields.length) updated.push({ row: merged, changes });
       else skipped += 1;
     } else {
       const seriesId = coverage.seriesIdFor(c.venueId, c.date);

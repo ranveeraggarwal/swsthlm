@@ -4,6 +4,11 @@
 // dates ("Onsdag 17/6") but no times. Times live on individual event pages,
 // in the meta description: "Mellan 19:00 – 23:00 är vi stolta att presentera…"
 //
+// Each event page also carries a labelled facts panel (Datum / Tid / Pris) and
+// a rich-text blurb. Price and description are read from there — they are
+// published as structured fields, so per the project's first principle they
+// belong in their columns rather than being left for a human to retype.
+//
 // Architecture: scrape() fetches the listing to discover event page URLs, then
 // fetches each event page; parse() operates on a single event page so the
 // fixture test can verify all field extraction without network.
@@ -60,6 +65,52 @@ function parseMetaTime(content) {
   return { start: m[1], end: m[2] };
 }
 
+// Webflow pads rich text with invisible filler characters. Strip those and
+// collapse whitespace so a blurb round-trips through CSV as one clean line.
+const INVISIBLE = /[\u200b\u200c\u200d\u2060\ufeff\u00a0]/g;
+const clean = (s) => (s ?? '').replace(INVISIBLE, ' ').replace(/\s+/g, ' ').trim();
+
+// DATA.md description hygiene: the structured date is the date, so a stray
+// "Lördag 13/6" in the prose gets stripped rather than shipped.
+const DATE_IN_PROSE =
+  /\s*\b(?:(?:mån|tis|ons|tors|fre|lör|sön)dagen?\s+)?\d{1,2}\/\d{1,2}(?:\s+\d{4})?\b/gi;
+
+// The event template renders a small facts panel of label/value pairs:
+// "Datum" / "Lördag 13/6", "Tid" / "20:00 – 23:00", "Pris" / "200 kr (150 kr
+// för rabatterade)". Labels are matched on their own text, not on the
+// Webflow-generated class name, which is not stable across template edits.
+function factValue($, label) {
+  const cell = $('div')
+    .filter((_, el) => {
+      const $el = $(el);
+      return $el.children().length === 0 && $el.text().trim() === label;
+    })
+    .first();
+  return clean(cell.next().text());
+}
+
+// The rich-text body is the organizer's blurb. Two pieces of chrome come off:
+// a leading line repeating the event title, and the studio sign-off that
+// closes every post.
+function parseDescription($, name) {
+  const $body = $('.w-richtext').first();
+  if (!$body.length) return '';
+
+  // A <br> inside a paragraph separates two logical lines; treat it as one.
+  $body.find('br').replaceWith('\n');
+
+  const lines = $body
+    .find('p')
+    .toArray()
+    .flatMap((el) => $(el).text().split('\n'))
+    .map(clean)
+    .filter(Boolean)
+    .filter((line) => line.toLowerCase() !== clean(name).toLowerCase())
+    .filter((line) => !/^chicago swing dance studio$/i.test(line));
+
+  return clean(lines.join(' ').replace(DATE_IN_PROSE, ''));
+}
+
 /**
  * Parse one Chicago event page HTML → CandidateEvent[]. Pure — no network.
  * Returns a single-element array on success, [] if the page can't be parsed.
@@ -110,9 +161,10 @@ export function parse(html) {
     dj,
     band,
     beginnerClass,
+    price: factValue($, 'Pris'),
     organizer: ORGANIZER,
     url: eventUrl,
-    description: '',
+    description: parseDescription($, name),
     status: 'live',
   }];
 }

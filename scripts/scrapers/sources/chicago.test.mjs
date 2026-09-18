@@ -28,6 +28,33 @@ describe('chicago parser', () => {
     });
   });
 
+  it('extracts the price from the facts panel', () => {
+    expect(events[0].price).toBe('200 kr (150 kr för rabatterade)');
+  });
+
+  it('leaves price empty when the page has no Pris row', () => {
+    const noPrice = html.replace('>Pris<', '>Plats<');
+    expect(parse(noPrice)[0]?.price).toBe('');
+  });
+
+  it('extracts the description from the rich-text body', () => {
+    expect(events[0].description).toMatch(/^I slutet av varje kursomgång/);
+    expect(events[0].description).toMatch(/Varmt välkomna alla!$/);
+  });
+
+  it('drops the repeated title line and the studio sign-off', () => {
+    expect(events[0].description).not.toMatch(/chicago elevdans/i);
+    expect(events[0].description).not.toMatch(/swing dance studio/i);
+  });
+
+  it('keeps dates out of the description (DATA.md hygiene)', () => {
+    expect(events[0].description).not.toMatch(/\d{1,2}\/\d{1,2}/);
+  });
+
+  it('strips Webflow invisible filler from the description', () => {
+    expect(events[0].description).not.toMatch(/[\u200b\u200c\u200d\u2060\ufeff\u00a0]/);
+  });
+
   it('sets the event URL from the Webflow item slug', () => {
     expect(events[0].url).toBe(
       'https://www.chicago75.se/evenemang/chicago-elevdans-3',

@@ -37,7 +37,7 @@ scripts/scrapers/
   sources/<venue>.mjs               # one module per source
   sources/<venue>.test.mjs          # fixture-driven parser test
   lib/genre.mjs                     # shared swing-relevance keyword filter
-  lib/candidate.mjs                 # CandidateEvent shape, ONEOFF_FIELDS, titleCase, candidateToRow, formatRow
+  lib/candidate.mjs                 # CandidateEvent shape, ONEOFF_FIELDS, titleCase, candidateToRow, computeRowUpdate, formatRow
   lib/exceptions.mjs                # resolveOccurrence, computeExceptionChanges — exception-proposal helpers
   fixtures/<venue>.html             # saved source snapshot for tests
 .github/workflows/scrape.yml        # nightly cron + manual dispatch
@@ -160,8 +160,14 @@ In order:
      alone would let a scraped row duplicate a human-entered one at the same
      venue on the same night.
 6. **Classify each surviving candidate:**
-   - Scraper-owned id already exists **and a field changed** → **UPDATE** (record
-     the field-level `old → new`).
+   - Scraper-owned id already exists **and a non-empty scraped field differs**
+     → **UPDATE** (record the field-level `old → new`). As on the exception
+     path, only **non-empty** candidate fields are compared, and the proposed
+     row is the **existing row with those fields merged in** — never a wholesale
+     rebuild from the candidate. An empty field means "unknown to the scraper,"
+     not "should be blank," so a parser that doesn't read a column yet can
+     never erase a human-curated price, description or URL. The shared helper is
+     `computeRowUpdate` in [`lib/candidate.mjs`](../../scripts/scrapers/lib/candidate.mjs).
    - `(venue_id, date)` is covered by a **series** and at least one of `{music,
      dj, band, start, end}` differs from the resolved occurrence (series defaults
      merged with any existing exception for that date) → **EXCEPTION**. Deduped

@@ -65,6 +65,31 @@ export function candidateToRow(c) {
   };
 }
 
+// Existing scraper-owned row + freshly scraped row -> what to propose.
+//
+// Only non-empty scraped values count as changes. An empty field means
+// "unknown to the scraper," not "should be blank," so a parser that doesn't
+// read a column yet can never erase a human-curated value. This mirrors
+// computeExceptionChanges, which has guarded the exception path all along.
+//
+// `merged` is the existing row with the changed fields applied, never a
+// wholesale rebuild from the candidate: rebuilding is what let empty fields
+// overwrite curated ones.
+export function computeRowUpdate(prior, row) {
+  const before = (f) => (prior?.[f] ?? '').trim();
+  const changedFields = ONEOFF_FIELDS.filter(
+    (f) => (row[f] ?? '') !== '' && (row[f] ?? '') !== before(f),
+  );
+  const merged = Object.fromEntries(
+    ONEOFF_FIELDS.map((f) => [f, prior?.[f] ?? '']),
+  );
+  for (const f of changedFields) merged[f] = row[f];
+  const changes = changedFields.map(
+    (f) => `${f}: "${before(f)}" → "${row[f]}"`,
+  );
+  return { changedFields, merged, changes };
+}
+
 // Format one row object as a single CSV line, quoted exactly like Papa writes
 // the rest of the file. No trailing newline.
 export function formatRow(row) {

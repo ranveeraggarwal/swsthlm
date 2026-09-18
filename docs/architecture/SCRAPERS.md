@@ -166,8 +166,13 @@ In order:
      row is the **existing row with those fields merged in** — never a wholesale
      rebuild from the candidate. An empty field means "unknown to the scraper,"
      not "should be blank," so a parser that doesn't read a column yet can
-     never erase a human-curated price, description or URL. The shared helper is
+     never erase a human-curated price or description. The shared helper is
      `computeRowUpdate` in [`lib/candidate.mjs`](../../scripts/scrapers/lib/candidate.mjs).
+     The guard covers fields the scraper **didn't read**, not ones it disagrees
+     on: where both values are non-empty the scrape wins and the human reviews
+     the diff. `url` is the case that matters — the venue's own event page is
+     the authority, because a ticket link can go stale or point at the wrong
+     night while still answering 200, which the advisory URL check won't catch.
    - `(venue_id, date)` is covered by a **series** and at least one of `{music,
      dj, band, start, end}` differs from the resolved occurrence (series defaults
      merged with any existing exception for that date) → **EXCEPTION**. Deduped

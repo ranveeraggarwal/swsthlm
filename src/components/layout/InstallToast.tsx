@@ -75,7 +75,7 @@ export function InstallToast() {
           onClick={handleDismiss}
           aria-label={bundle.install.dismiss}
           title={bundle.install.dismiss}
-          className="shrink-0 p-1 rounded text-[var(--on-surface-variant)] hover:text-[var(--on-surface)] cursor-pointer"
+          className="shrink-0 p-1 rounded text-[var(--on-surface-variant)] hover:text-[var(--on-surface)] cursor-pointer focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus:outline-none"
         >
           <X className="w-4 h-4" aria-hidden="true" />
         </button>

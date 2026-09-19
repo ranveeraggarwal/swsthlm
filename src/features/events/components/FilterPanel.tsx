@@ -98,7 +98,7 @@ export function FilterPanel({
               }}
               aria-label={t.clearSearch}
               title={`${t.clearSearch} (Esc)`}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--outline)] hover:text-[var(--on-surface)] transition-colors cursor-pointer"
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--outline)] hover:text-[var(--on-surface)] transition-colors cursor-pointer rounded focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus:outline-none"
             >
               <X aria-hidden="true" className="w-5 h-5" />
             </button>

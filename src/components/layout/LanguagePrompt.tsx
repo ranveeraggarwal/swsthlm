@@ -103,7 +103,7 @@ export function LanguagePrompt() {
         onClick={() => answer(locale)}
         aria-label={t.dismiss}
         title={`${t.dismiss} (Esc)`}
-        className="shrink-0 p-1 rounded text-[var(--on-surface-variant)] hover:text-[var(--on-surface)]"
+        className="shrink-0 p-1 rounded text-[var(--on-surface-variant)] hover:text-[var(--on-surface)] focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus:outline-none"
       >
         <X className="w-4 h-4" aria-hidden="true" />
       </button>

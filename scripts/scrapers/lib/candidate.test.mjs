@@ -86,13 +86,16 @@ describe('computeRowUpdate', () => {
     }
   });
 
-  // Documents a known gap rather than asserting desired behaviour: a non-empty
-  // scraped URL still wins over a curated ticket link, so the venue's own event
-  // page keeps getting re-proposed. Deciding URL precedence is a separate call.
-  it('still proposes its own URL over a curated ticket link', () => {
-    const scraped = { ...curated, url: 'https://www.chicago75.se/evenemang/x' };
-    const { changedFields } = computeRowUpdate(curated, scraped);
+  // The venue's own event page is the authority for `url`. A ticket link can
+  // go stale or point at the wrong night while still answering 200, which the
+  // advisory URL check cannot catch, so a non-empty scraped URL wins. This is
+  // intended behaviour, not a gap: the empty-field guard above deliberately
+  // does not protect a field the scraper genuinely read.
+  it('proposes the venue event page over a stale ticket link', () => {
+    const page = 'https://www.chicago75.se/evenemang/chicago-live-saturdays---tba-4';
+    const { changedFields, merged } = computeRowUpdate(curated, { ...curated, url: page });
 
     expect(changedFields).toEqual(['url']);
+    expect(merged.url).toBe(page);
   });
 });

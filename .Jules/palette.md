@@ -51,3 +51,6 @@
 **Action:** Always apply `role="region"`, `aria-label`, and `aria-live` to dynamically appearing toast or prompt containers.
 
 \n## 2026-09-17 - [Keyboard Focus Visibility]\n**Learning:** Reusable UX Pattern: Interactive icon buttons and toggle controls (e.g., ThemeToggle, IconButton) should explicitly include focus visibility styles for keyboard accessibility using Tailwind classes `focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus:outline-none`.\n**Action:** Always ensure that interactive elements that do not have default browser outlines or custom hover states that suffice for focus, have explicitly defined `focus-visible` utility classes applied.
+## 2024-11-20 - Focus Rings in Overflow Containers
+**Learning:** When applying keyboard focus rings (`focus-visible:ring-2`) to interactive elements inside containers with `overflow: hidden` (like button groups), the focus ring can be visually clipped and become invisible.
+**Action:** Use the Tailwind `ring-inset` utility (e.g., `focus-visible:ring-inset`) on these elements to ensure the focus ring is drawn inside the element's boundary and remains visible regardless of parent overflow settings.

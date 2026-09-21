@@ -51,3 +51,7 @@
 **Action:** Always apply `role="region"`, `aria-label`, and `aria-live` to dynamically appearing toast or prompt containers.
 
 \n## 2026-09-17 - [Keyboard Focus Visibility]\n**Learning:** Reusable UX Pattern: Interactive icon buttons and toggle controls (e.g., ThemeToggle, IconButton) should explicitly include focus visibility styles for keyboard accessibility using Tailwind classes `focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus:outline-none`.\n**Action:** Always ensure that interactive elements that do not have default browser outlines or custom hover states that suffice for focus, have explicitly defined `focus-visible` utility classes applied.
+
+## 2024-09-21 - Accessible Clipboard Copy Feedback
+**Learning:** When actions like copying to a clipboard provide feedback by changing the button's icon and label (e.g. from "Copy" to "Copied"), updating the `aria-label` dynamically is insufficient for screen readers because they may not re-announce the label while focus remains on the button.
+**Action:** Always include a visually hidden `<span aria-live="polite">` adjacent to clipboard actions that renders the success message, while keeping the trigger button's `aria-label` static (though its `title` can still change dynamically for sighted users).

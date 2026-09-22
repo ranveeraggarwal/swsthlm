@@ -24,7 +24,7 @@ const SCROLLER =
   'flex overflow-x-auto pb-2 -mb-2 gap-2.5 snap-x md:flex-wrap [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]';
 
 const CHIP_BASE =
-  'snap-start whitespace-nowrap px-4 py-2 rounded text-xs font-bold uppercase tracking-wider border-2 border-[var(--border-ink)] transition-all cursor-pointer';
+  'snap-start whitespace-nowrap px-4 py-2 rounded text-xs font-bold uppercase tracking-wider border-2 border-[var(--border-ink)] transition-all focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus:outline-none';
 
 const CHIP_IDLE =
   'bg-[var(--surface-container)] hover:bg-[var(--surface-container-high)] text-[var(--on-surface)] shadow-[0px_0px_0px_0px_var(--shadow-ink)]';
@@ -98,7 +98,7 @@ export function FilterPanel({
               }}
               aria-label={t.clearSearch}
               title={`${t.clearSearch} (Esc)`}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--outline)] hover:text-[var(--on-surface)] transition-colors cursor-pointer"
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--outline)] hover:text-[var(--on-surface)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus:outline-none rounded-sm"
             >
               <X aria-hidden="true" className="w-5 h-5" />
             </button>

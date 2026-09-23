@@ -42,10 +42,16 @@ export function ShareButton({ event }: { event: SwingEvent }) {
   };
 
   return (
-    <IconButton
-      onClick={handleShare}
-      label={copied ? bundle.actions.linkCopied : bundle.actions.share}
-      icon={copied ? Check : Share2}
-    />
+    <>
+      <IconButton
+        onClick={handleShare}
+        label={bundle.actions.share}
+        title={copied ? bundle.actions.linkCopied : bundle.actions.share}
+        icon={copied ? Check : Share2}
+      />
+      <span aria-live="polite" className="sr-only">
+        {copied ? bundle.actions.linkCopied : ''}
+      </span>
+    </>
   );
 }

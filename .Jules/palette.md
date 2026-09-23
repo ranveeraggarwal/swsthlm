@@ -51,3 +51,6 @@
 **Action:** Always apply `role="region"`, `aria-label`, and `aria-live` to dynamically appearing toast or prompt containers.
 
 \n## 2026-09-17 - [Keyboard Focus Visibility]\n**Learning:** Reusable UX Pattern: Interactive icon buttons and toggle controls (e.g., ThemeToggle, IconButton) should explicitly include focus visibility styles for keyboard accessibility using Tailwind classes `focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus:outline-none`.\n**Action:** Always ensure that interactive elements that do not have default browser outlines or custom hover states that suffice for focus, have explicitly defined `focus-visible` utility classes applied.
+## 2024-03-24 - Dynamic aria-label context loss
+**Learning:** Changing `aria-label` dynamically upon interaction (e.g., changing "Share" to "Copied!" on click) can cause screen readers to drop context or fail to announce the change effectively because the focus is already on the element.
+**Action:** Keep `aria-label` static for the trigger button, update the `title` attribute dynamically for sighted users, and use a visually hidden `aria-live="polite"` region to announce the success state.

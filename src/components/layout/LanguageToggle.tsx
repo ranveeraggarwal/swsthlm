@@ -53,7 +53,7 @@ export function LanguageToggle() {
               aria-pressed={active}
               aria-label={t.switchTo.replace('{language}', t.names[option])}
               title={t.switchTo.replace('{language}', t.names[option])}
-              className={`px-2 py-1 font-sans text-[11px] font-bold uppercase tracking-wider transition-colors focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--primary)] focus:outline-none ${
+              className={`px-2 py-1 font-sans text-[11px] font-bold uppercase tracking-wider transition-colors cursor-pointer ${
                 active
                   ? 'bg-[var(--primary)] text-[var(--on-primary)]'
                   : 'text-[var(--on-surface-variant)] hover:text-[var(--primary)]'

@@ -114,13 +114,16 @@ export function SubscribeButton() {
           <button
             type="button"
             onClick={handleCopy}
-            aria-label={copied ? t.copied : t.copyFeedLink}
+            aria-label={t.copyFeedLink}
             title={copied ? t.copied : t.copyFeedLink}
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded border border-[var(--border-ink)] bg-[var(--surface-container)] text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] font-bold uppercase tracking-wider text-xs transition-colors cursor-pointer shrink-0"
           >
             {copied ? <Check aria-hidden="true" className="h-4 w-4" /> : <Copy aria-hidden="true" className="h-4 w-4" />}
             {copied ? t.copied : t.copy}
           </button>
+          <span aria-live="polite" className="sr-only">
+            {copied ? t.copied : ''}
+          </span>
         </div>
       </Modal>
     </>

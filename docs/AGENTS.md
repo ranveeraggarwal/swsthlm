@@ -72,9 +72,10 @@ that way.
 
 Once an event is over, mark it `status=ended` (kept for the archive) — don't
 delete it and don't leave it `live`. [`scripts/mark-ended.mjs`](../scripts/mark-ended.mjs)
-does this nightly, so the validator only **warns** for the first 30 days; past
-that it fails CI, which means that job has stopped running rather than that a
-row needs a manual flip.
+does this once a month, only flipping rows that are two months old or more
+(issue #358 — this month and last month stay `live`), so the validator only
+**warns** for the first 100 days; past that it fails CI, which means that job
+has stopped running rather than that a row needs a manual flip.
 
 ## Gotchas
 
@@ -97,12 +98,14 @@ row needs a manual flip.
   writes them, and never invents a venue. New bands go in a *separate*
   `bot/new-bands` PR so event review isn't blocked on vetting an act — see
   SCRAPERS.md.
-- **A daily job (`.github/workflows/mark-ended.yml`, `scripts/mark-ended.mjs`)
-  flips `status: live -> ended`** on `oneoffs.csv` rows past their last day and
-  `series.csv` rows past `valid_to` — the exact condition
-  `validate-data.mjs` fails a PR on. Same shape as the scraper: surgical
-  text write, delta-validated, opens/updates one `bot/mark-ended` PR on a
-  non-empty diff, never touches main directly.
+- **A monthly job (`.github/workflows/mark-ended.yml`, `scripts/mark-ended.mjs`)
+  flips `status: live -> ended`** on `oneoffs.csv` rows two months past their
+  last day and `series.csv` rows two months past `valid_to` — keeping this
+  month and last month `live` rather than flipping every event the moment it
+  ends (issue #358). That two-month-stale point is the condition
+  `validate-data.mjs` eventually fails a PR on. Same shape as the scraper:
+  surgical text write, delta-validated, opens/updates one `bot/mark-ended` PR
+  on a non-empty diff, never touches main directly.
 - **The changelog is hand-curated, not generated.** `src/features/changelog/entries.ts`
   feeds the About page's collapsed "What's new" timeline. When you ship a
   major, user-visible feature, add one line to the current month (create the

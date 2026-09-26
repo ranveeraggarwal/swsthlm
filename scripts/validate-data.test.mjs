@@ -167,7 +167,7 @@ describe('duplicate ids', () => {
 
 describe('past live one-off', () => {
   it('warns, but does not error, on a recently-passed live one-off', () => {
-    // Inside the grace period the nightly mark-ended job owns this fix; failing
+    // Inside the grace period the monthly mark-ended job owns this fix; failing
     // here would redden every open PR while its review PR waits to be merged.
     const { errors, warnings } = run({ oneoffs: { rows: [oneoff({ date: '2026-06-01' })] } });
     expect(errors).toEqual([]);
@@ -175,13 +175,13 @@ describe('past live one-off', () => {
   });
 
   it('still warns rather than errors on the last day of the grace period', () => {
-    const { errors, warnings } = run({ oneoffs: { rows: [oneoff({ date: '2026-05-14' })] } });
+    const { errors, warnings } = run({ oneoffs: { rows: [oneoff({ date: '2026-03-05' })] } });
     expect(errors).toEqual([]);
     expect(joined(warnings)).toMatch(/entirely in the past/);
   });
 
   it('errors once a live one-off is stale beyond the grace period', () => {
-    const { errors } = run({ oneoffs: { rows: [oneoff({ date: '2026-05-13' })] } });
+    const { errors } = run({ oneoffs: { rows: [oneoff({ date: '2026-03-04' })] } });
     expect(joined(errors)).toMatch(/entirely in the past/);
     expect(joined(errors)).toMatch(/mark-ended job/);
   });

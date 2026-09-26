@@ -28,14 +28,16 @@ const SERIES_STATUS = new Set(['draft', 'live', 'ended']);
 const ONEOFF_STATUS = new Set(['draft', 'live', 'ended', 'cancelled']);
 const FLOOR_TYPES = new Set(['studio', 'hall', 'bar', 'outdoor']);
 // How long a `live` one-off may sit past its last day before the gate fails on
-// it. scripts/mark-ended.mjs flips those rows to `ended` nightly, but its PR
-// waits on a human merge, so a few days of lag is normal operation rather than
-// a data error — and this workflow runs on *every* PR (no path filter, see
+// it. Since issue #358, scripts/mark-ended.mjs only flips a row to `ended`
+// once it's two months old or more, and runs monthly rather than continuously,
+// so staying `live` for a while after its date is now normal, not just PR-merge
+// lag — the grace window has to cover that intentional delay plus the human
+// merge on top. This workflow runs on *every* PR (no path filter, see
 // .github/workflows/validate-data.yml), so failing on the lag reddens PRs that
 // touch no data at all, for a fix already sitting in the bot's review PR.
 // Inside the window it warns; past it, the automation itself is broken and
 // that is worth failing on.
-const ENDED_GRACE_DAYS = 30;
+const ENDED_GRACE_DAYS = 100;
 // Band-roster trust flag: yes = trusted swing band, no = known not-swing
 // (suppressed), unknown = surfaced and awaiting a human decision.
 const SWING = new Set(['yes', 'no', 'unknown']);

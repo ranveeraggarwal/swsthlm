@@ -112,7 +112,7 @@ Same shape as `series.csv` minus the recurrence columns, plus explicit dates.
 
 For multi-day events with different content per day (e.g. a festival with separate band lineups), use one row per day with distinct IDs. The dedupe-collapse logic on the renderer only merges rows that share an ID.
 
-**Past one-offs are retained, not deleted.** Once an event is over, set its `status` to `ended` rather than removing the row — we keep the history for a future archive view. The build excludes anything that isn't `live` from the calendar, so an `ended` row is invisible today but available later. (Leaving a past event as `live` is a warning for 30 days and fails CI after that — the nightly `mark-ended` job normally does the flip for you; see the validation rules.)
+**Past one-offs are retained, not deleted.** Once an event is over, set its `status` to `ended` rather than removing the row — we keep the history for a future archive view. The build excludes anything that isn't `live` from the calendar, so an `ended` row is invisible today but available later. (The calendar itself also drops anything past today's date regardless of `status`, so a past-but-`live` row is never visible on the site either way — this is purely data bookkeeping.) The `mark-ended` job (see below) runs once a month and only flips events that are two months old or more, keeping this month and last month `live`; leaving a past event `live` is a warning until it's over 100 days stale, then fails CI — see the validation rules.
 
 ## `bands.csv`
 
@@ -152,11 +152,11 @@ The schema check runs on every PR touching `/data/`. It fails the PR on:
 - A duplicate `id` within a file
 - A date-like string inside a description (warning, not fail)
 - A URL that doesn't respond 200 (warning, not fail — Facebook events fail constantly)
-- A `live` oneoff more than 30 days past its last day — that long a lag means the nightly `mark-ended` job has stopped running
+- A `live` oneoff more than 100 days past its last day — that long a lag means the monthly `mark-ended` job has stopped running
 
 Lints that open a comment but don't fail:
 
-- A `live` oneoff entirely in the past (mark it `ended` to keep it for the archive). Warning, not fail, for the first 30 days: [`scripts/mark-ended.mjs`](../scripts/mark-ended.mjs) flips these nightly but its review PR waits on a human merge, and the data workflow runs on *every* PR — so failing on the lag would redden PRs that touch no data at all, for a fix already queued.
+- A `live` oneoff entirely in the past (mark it `ended` to keep it for the archive). Warning, not fail, for the first 100 days: [`scripts/mark-ended.mjs`](../scripts/mark-ended.mjs) only flips a row once it's two months old, runs monthly rather than continuously, and its review PR waits on a human merge — and the data workflow runs on *every* PR — so failing on the lag would redden PRs that touch no data at all, for a fix already queued.
 - TBA in `dj` or `band` for any live event within 7 days
 - Series approaching `valid_to` (within 4 weeks)
 - A source whose scraper hasn't produced a non-empty diff in 3+ weeks

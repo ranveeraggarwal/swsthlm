@@ -18,7 +18,6 @@ import { useLocale } from '@/components/providers/LocaleProvider';
 import { AddToCalendarButton } from './AddToCalendarButton';
 import { BeginnerChip, NightsChip, StyleChip } from './EventChips';
 import { EventFacts } from './EventFacts';
-import { EventDescriptionText } from './EventDescriptionText';
 import { FloorTypeBadge } from './FloorTypeBadge';
 import { ShareButton } from './ShareButton';
 import { TemporalBadgeDisplay, badgeStripeClass } from './TemporalBadgeDisplay';
@@ -130,7 +129,7 @@ export function EventCard({ group, isThisWeek, showDate, now }: EventCardProps) 
                 id={descriptionId}
                 className={`text-sm text-[var(--on-surface-variant)] leading-relaxed whitespace-pre-line ${descriptionExpanded ? '' : DESCRIPTION_CLAMP}`}
               >
-                <EventDescriptionText text={event.body} />
+                {event.body}
               </p>
               {descriptionTruncated && (
                 <button

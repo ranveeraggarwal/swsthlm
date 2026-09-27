@@ -17,6 +17,7 @@ import { domIdFor, venueMapsUrl, type EventGroup } from '../model/event';
 import { musicLines } from '../model/labels';
 import { AddToCalendarButton } from './AddToCalendarButton';
 import { BeginnerChip, NightsChip, PaymentChip, PriceChip, StyleChip } from './EventChips';
+import { EventDescriptionText } from './EventDescriptionText';
 import { FloorTypeBadge } from './FloorTypeBadge';
 import { ShareButton } from './ShareButton';
 
@@ -144,7 +145,7 @@ export function EventRow({ group }: { group: EventGroup }) {
 
           {event.body && (
             <p className="text-sm text-[var(--on-surface-variant)] leading-relaxed whitespace-pre-line px-1">
-              {event.body}
+              <EventDescriptionText text={event.body} />
             </p>
           )}
 

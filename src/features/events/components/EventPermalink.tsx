@@ -21,7 +21,6 @@ import { ReportCorrectionButton } from '@/features/corrections/ReportCorrectionB
 import { AddToCalendarButton } from './AddToCalendarButton';
 import { BeginnerChip, StyleChip } from './EventChips';
 import { EventFacts } from './EventFacts';
-import { EventDescriptionText } from './EventDescriptionText';
 import { FloorTypeBadge } from './FloorTypeBadge';
 import { ShareButton } from './ShareButton';
 import type { SwingEvent } from '../model/event';
@@ -63,7 +62,7 @@ export function EventPermalink({ event }: { event: SwingEvent }) {
 
           {event.body && (
             <p className="text-sm text-[var(--on-surface-variant)] leading-relaxed whitespace-pre-line">
-              <EventDescriptionText text={event.body} />
+              {event.body}
             </p>
           )}
 

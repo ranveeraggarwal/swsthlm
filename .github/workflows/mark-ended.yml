@@ -9,7 +9,7 @@ name: Mark ended events
 
 on:
   schedule:
-    - cron: '5 3 * * *' # ~03:05 UTC daily, after the nightly scrape
+    - cron: '5 3 1 * *' # ~monthly
   workflow_dispatch: {}
 
 permissions:

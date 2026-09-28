@@ -136,13 +136,14 @@ describe('mapResponse', () => {
     expect(row.venue_id).toBe('norrport');
   });
 
-  it('collapses a multi-paragraph description to a single line, keeping the CSV to one row per event', () => {
+  it('keeps description line breaks as a literal \\n escape, keeping the CSV to one row per event', () => {
     const { row, issues } = mapResponse(
-      response({ 'Event description': 'Line one.\n\nLine two.\r\nLine three with   extra   spaces.' }),
+      response({ 'Event description': '  Line one.\n\n\n\nLine two.\r\nLine three with   extra   spaces.\n' }),
       VENUES,
     );
     expect(issues).toEqual([]);
-    expect(row.description).toBe('Line one. Line two. Line three with extra spaces.');
+    expect(row.description).toBe('Line one.\\n\\nLine two.\\nLine three with extra spaces.');
+    expect(row.description).not.toContain('\n');
   });
 
   it('flags missing required fields instead of writing an incomplete row', () => {

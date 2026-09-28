@@ -197,6 +197,16 @@ export function mapResponse(response, venues) {
   // into a quoted multi-line CSV field and turns a one-event diff into dozens
   // of added lines, which reads as "several rows" even though it's one record.
   const g = (col) => (response[col] ?? '').replace(/\s+/g, ' ').trim();
+  // The description keeps its paragraph breaks, but written as the
+  // two-character escape `\n` (docs/DATA.md "Description hygiene"), so the row
+  // is still one physical line. At most one blank line between paragraphs.
+  const prose = (col) => (response[col] ?? '')
+    .split(/\r\n|\n|\r/)
+    .map((ln) => ln.replace(/\s+/g, ' ').trim())
+    .join('\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
+    .replace(/\n/g, '\\n');
   const issues = [];
   const notes = [];
 
@@ -269,7 +279,7 @@ export function mapResponse(response, venues) {
     band,
     organizer,
     url,
-    description: g('Event description'),
+    description: prose('Event description'),
     status: 'live',
   };
 

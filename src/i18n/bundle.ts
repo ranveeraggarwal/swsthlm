@@ -171,6 +171,11 @@ export interface LocaleBundle {
     /** Takes `{time}`. */
     atTime: string;
   };
+  /** The standalone taster/workshop class before a one-off's main event. */
+  tasterClass: {
+    /** Takes `{time}`. */
+    atTime: string;
+  };
   /** The homepage hero. */
   home: {
     title: EmphasisedText;

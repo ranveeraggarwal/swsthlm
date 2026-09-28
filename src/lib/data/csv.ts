@@ -125,6 +125,7 @@ export function loadOneoffs(): Oneoff[] {
       price: opt(r.price),
       payment: opt(r.payment),
       beginnerClass: opt(r.beginner_class),
+      tasterClass: opt(r.taster_class),
       music: req(r.music) as Music,
       dj: opt(r.dj),
       band: opt(r.band),

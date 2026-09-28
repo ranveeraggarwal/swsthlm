@@ -51,6 +51,9 @@ export interface SwingEvent {
   body: string;
   /** 'yes', or a HH:MM class start time. */
   beginnerClass?: string;
+  /** HH:MM start time of a standalone taster/workshop class before the main
+   *  event. One-offs only — see docs/DATA.md `taster_class`. */
+  tasterClass?: string;
 }
 
 /**

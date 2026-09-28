@@ -92,6 +92,9 @@ export const en = {
     friendly: 'Beginner friendly',
     atTime: 'Beginner class {time}',
   },
+  tasterClass: {
+    atTime: 'Taster class {time}',
+  },
   home: {
     title: { lead: 'Stockholm in ', em: 'Full Swing' },
     subtitle: 'Your guide to Lindy Hop, Balboa, Shag, and Blues social dancing in Stockholm.',

@@ -47,6 +47,14 @@ describe('chicago parser', () => {
     expect(events[0].description).not.toMatch(/swing dance studio/i);
   });
 
+  it('keeps paragraph and line breaks as literal \\n escapes, never real newlines', () => {
+    expect(events[0].description).toMatch(/socialdansgolvet ännu\.\\n\\nVarmt välkomna alla!$/);
+    expect(events[0].description).not.toMatch(/[\r\n]/);
+
+    const withBr = html.replace('Varmt välkomna alla!<br/>', 'Varmt välkomna alla!<br/>Ta med vänner!<br/>');
+    expect(parse(withBr)[0].description).toMatch(/Varmt välkomna alla!\\nTa med vänner!$/);
+  });
+
   it('keeps dates out of the description (DATA.md hygiene)', () => {
     expect(events[0].description).not.toMatch(/\d{1,2}\/\d{1,2}/);
   });

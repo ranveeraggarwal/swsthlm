@@ -110,4 +110,25 @@ describe('getEvents', () => {
     expect(event).toBeDefined();
     expect(event?.cancelled).toBe(true);
   });
+
+  it('turns a literal \\n in a description into a real line break', async () => {
+    const mockVenues = 'id,name,address,neighborhood\nchicago,Chicago,Hornsgatan 75,Södermalm';
+    const mockSeries = 'id,name,style,venue_id,weekday,start,end,price,payment,beginner_class,music,dj,band,organizer,url,description,status,valid_from,valid_to';
+    const mockExceptions = 'series_id,date,cancelled,start,end,dj,band,music,price,note,description';
+    const mockOneoffs = 'id,name,style,venue_id,date,end_date,start,end,price,payment,beginner_class,music,dj,band,organizer,url,description,status\n' +
+      'oneoff-1,Oneoff 1,lindy-hop,chicago,2026-06-05,,19:00,22:00,,,,dj,,,Organizer,https://example.com,First paragraph.\\n\\nSecond paragraph.,live';
+
+    vi.mocked(fs.readFileSync).mockImplementation((path: string | number | URL | Buffer) => {
+      const p = path.toString();
+      if (p.endsWith('venues.csv')) return mockVenues;
+      if (p.endsWith('series.csv')) return mockSeries;
+      if (p.endsWith('exceptions.csv')) return mockExceptions;
+      if (p.endsWith('oneoffs.csv')) return mockOneoffs;
+      return '';
+    });
+
+    const events = await getEvents();
+
+    expect(events.find(e => e.id.startsWith('oneoff-1'))?.body).toBe('First paragraph.\n\nSecond paragraph.');
+  });
 });

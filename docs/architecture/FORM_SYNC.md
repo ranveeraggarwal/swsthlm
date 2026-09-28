@@ -80,7 +80,7 @@ a clear error rather than silently doing nothing.
 | `band` | Band Name | |
 | `organizer` | Organizer Name | The org/collective, not the submitter. |
 | `url` | Event Page / Ticket URL | |
-| `description` | Event description | Whitespace-collapsed to a single line (see below). |
+| `description` | Event description | Line breaks kept as the literal escape `\n` (see below). |
 | `status` | — | Always `live`. |
 
 **Never written anywhere:** `Timestamp`, `Email address`, `Your Name` (the
@@ -96,6 +96,12 @@ into a quoted multi-line CSV field, and a single new event turns into a
 diff spanning dozens of added lines — hard to review, and easy to mistake
 for several rows instead of one. Every other row in `oneoffs.csv` is a
 single physical line; this keeps form-sync's output consistent with that.
+
+The one exception is `description`: its paragraph breaks are worth keeping,
+so each line is collapsed on its own and the breaks are written as the
+two-character escape `\n` (at most one blank line between paragraphs). The
+row stays on one physical line, and the site's CSV loader turns `\n` back
+into a real line break — see `docs/DATA.md` "Description hygiene".
 
 ## Data-safety rules (mirrors `docs/architecture/SCRAPERS.md`)
 

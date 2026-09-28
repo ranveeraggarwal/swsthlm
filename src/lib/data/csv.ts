@@ -46,7 +46,15 @@ const opt = (v?: string) => {
   return trimmed === '' ? undefined : trimmed;
 };
 
-const isYes = (v?: string) => req(v).toLowerCase() === 'yes';
+/**
+ * A prose cell (description): like `opt`, but the two-character escape
+ * `\n` becomes a real line break. Rows stay one physical line in the file —
+ * the intake scripts edit the CSVs line by line — so this is how a
+ * description gets paragraphs. See docs/DATA.md "Description hygiene".
+ */
+const prose = (v?: string) => opt(v)?.replace(/\\n/g, '\n');
+
+const isYes =(v?: string) => req(v).toLowerCase() === 'yes';
 
 export function loadVenues(): Map<string, Venue> {
   const venues = new Map<string, Venue>();
@@ -85,7 +93,7 @@ export function loadSeries(): Series[] {
       band: opt(r.band),
       organizer: req(r.organizer),
       url: req(r.url),
-      description: opt(r.description),
+      description: prose(r.description),
       status: req(r.status) as SeriesStatus,
       validFrom: req(r.valid_from),
       validTo: opt(r.valid_to),
@@ -106,7 +114,7 @@ export function loadExceptions(): Exception[] {
       music: opt(r.music) as Music | undefined,
       price: opt(r.price),
       note: opt(r.note),
-      description: opt(r.description),
+      description: prose(r.description),
     }));
 }
 
@@ -130,7 +138,7 @@ export function loadOneoffs(): Oneoff[] {
       band: opt(r.band),
       organizer: req(r.organizer),
       url: req(r.url),
-      description: opt(r.description),
+      description: prose(r.description),
       status: req(r.status) as OneoffStatus,
     }));
 }

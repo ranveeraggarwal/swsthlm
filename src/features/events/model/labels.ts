@@ -73,6 +73,13 @@ export function beginnerClassLabel(beginnerClass: string, locale: Locale = DEFAU
     : words.atTime.replace('{time}', beginnerClass);
 }
 
+/** "Taster class {time}" — the standalone class before a one-off's main event.
+ *  Unlike `beginnerClassLabel` there's no bare "friendly" form: a taster is
+ *  always at a specific time (see `docs/DATA.md` `taster_class`). */
+export function tasterClassLabel(tasterClass: string, locale: Locale = DEFAULT_LOCALE): string {
+  return bundle(locale).tasterClass.atTime.replace('{time}', tasterClass);
+}
+
 /** Display name for a venue's floor type badge. */
 export function floorTypeLabel(floorType: FloorType, locale: Locale = DEFAULT_LOCALE): string {
   return bundle(locale).floors[floorType];

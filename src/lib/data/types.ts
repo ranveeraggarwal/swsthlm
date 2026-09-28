@@ -80,6 +80,7 @@ export interface Oneoff {
   price?: string;
   payment?: string;
   beginnerClass?: string;
+  tasterClass?: string; // HH:MM, one-offs only
   music: Music;
   dj?: string;
   band?: string;
@@ -104,6 +105,7 @@ export interface Occurrence {
   price?: string;
   payment?: string;
   beginnerClass?: string;
+  tasterClass?: string; // one-offs only
   music: Music;
   dj?: string;
   band?: string;

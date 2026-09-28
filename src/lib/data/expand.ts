@@ -150,6 +150,7 @@ export function expandOneoff(
         price: oneoff.price,
         payment: oneoff.payment,
         beginnerClass: oneoff.beginnerClass,
+        tasterClass: oneoff.tasterClass,
         music: oneoff.music,
         dj: oneoff.dj,
         band: oneoff.band,

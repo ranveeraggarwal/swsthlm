@@ -106,6 +106,9 @@ export const sv = {
     friendly: 'Nybörjarvänlig',
     atTime: 'Nybörjarkurs {time}',
   },
+  tasterClass: {
+    atTime: 'Smakprovskurs {time}',
+  },
   home: {
     // "i full swing" is the same idiom in Swedish, which is lucky — the hero
     // keeps its pun without needing a different joke.

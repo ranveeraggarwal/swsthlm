@@ -10,9 +10,9 @@
 // in the list below it. Words now come from `../model/labels.ts`.
 
 import React from 'react';
-import { Banknote, GraduationCap, Moon, Wallet } from 'lucide-react';
+import { Banknote, GraduationCap, Moon, Sparkles, Wallet } from 'lucide-react';
 import type { Style } from '@/lib/data/types';
-import { beginnerClassLabel, styleChipClass, styleLabel } from '../model/labels';
+import { beginnerClassLabel, styleChipClass, styleLabel, tasterClassLabel } from '../model/labels';
 import { useLocale } from '@/components/providers/LocaleProvider';
 
 const CHIP_TYPE = 'rounded text-[10px] font-bold uppercase tracking-wider border';
@@ -76,6 +76,22 @@ export function BeginnerChip({ beginnerClass }: { beginnerClass?: string }) {
     >
       <GraduationCap aria-hidden="true" className="w-3 h-3" />
       {beginnerClassLabel(beginnerClass, locale)}
+    </span>
+  );
+}
+
+/** "Taster class {time}" — a standalone class before a one-off's main event,
+ *  distinct from `BeginnerChip` (see docs/DATA.md `taster_class`). Its own
+ *  color keeps it from reading as "this event has a beginner class." */
+export function TasterClassChip({ tasterClass }: { tasterClass?: string }) {
+  const { locale } = useLocale();
+  if (!tasterClass) return null;
+  return (
+    <span
+      className={`${CHIP} bg-[var(--info-container)] text-[var(--on-info-container)] border-[var(--on-info-container)]/25`}
+    >
+      <Sparkles aria-hidden="true" className="w-3 h-3" />
+      {tasterClassLabel(tasterClass, locale)}
     </span>
   );
 }

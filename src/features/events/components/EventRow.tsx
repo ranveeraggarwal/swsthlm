@@ -16,7 +16,7 @@ import { ReportCorrectionButton } from '@/features/corrections/ReportCorrectionB
 import { domIdFor, venueMapsUrl, type EventGroup } from '../model/event';
 import { musicLines } from '../model/labels';
 import { AddToCalendarButton } from './AddToCalendarButton';
-import { BeginnerChip, NightsChip, PaymentChip, PriceChip, StyleChip } from './EventChips';
+import { BeginnerChip, NightsChip, PaymentChip, PriceChip, StyleChip, TasterClassChip } from './EventChips';
 import { FloorTypeBadge } from './FloorTypeBadge';
 import { ShareButton } from './ShareButton';
 
@@ -106,6 +106,7 @@ export function EventRow({ group }: { group: EventGroup }) {
             <PaymentChip payment={event.payment} />
             <NightsChip nightCount={nightCount} />
             <BeginnerChip beginnerClass={event.beginnerClass} />
+            <TasterClassChip tasterClass={event.tasterClass} />
             <FloorTypeBadge floorType={event.floorType} />
           </div>
 

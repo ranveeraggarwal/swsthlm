@@ -19,7 +19,7 @@ import { useLocale } from '@/components/providers/LocaleProvider';
 import { formatEventDate } from '@/lib/date/format';
 import { ReportCorrectionButton } from '@/features/corrections/ReportCorrectionButton';
 import { AddToCalendarButton } from './AddToCalendarButton';
-import { BeginnerChip, StyleChip } from './EventChips';
+import { BeginnerChip, StyleChip, TasterClassChip } from './EventChips';
 import { EventFacts } from './EventFacts';
 import { FloorTypeBadge } from './FloorTypeBadge';
 import { ShareButton } from './ShareButton';
@@ -58,6 +58,7 @@ export function EventPermalink({ event }: { event: SwingEvent }) {
             <StyleChip style={event.style} layout="permalink" />
             <FloorTypeBadge floorType={event.floorType} />
             <BeginnerChip beginnerClass={event.beginnerClass} />
+            <TasterClassChip tasterClass={event.tasterClass} />
           </div>
 
           {event.body && (

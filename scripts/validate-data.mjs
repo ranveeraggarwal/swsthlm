@@ -62,7 +62,7 @@ const SCHEMA = {
       'id', 'name', 'style', 'venue_id', 'date', 'start', 'end', 'music',
       'organizer', 'url', 'status',
     ],
-    optional: ['end_date', 'price', 'payment', 'beginner_class', 'dj', 'band', 'description'],
+    optional: ['end_date', 'price', 'payment', 'beginner_class', 'taster_class', 'dj', 'band', 'description'],
   },
   bands: {
     required: ['id', 'name', 'style', 'swing'],
@@ -260,6 +260,9 @@ export function validateData(datasets, opts = {}) {
     }
     const bc = val(row, 'beginner_class');
     if (bc && bc !== 'yes' && !isTime(bc)) err('oneoffs', n, `beginner_class must be "yes" or HH:MM ("${bc}")`);
+
+    const tc = val(row, 'taster_class');
+    if (tc && !isTime(tc)) err('oneoffs', n, `taster_class must be HH:MM ("${tc}")`);
 
     const date = val(row, 'date');
     if (date && !isRealDate(date)) err('oneoffs', n, `date is not a real date ("${date}")`);

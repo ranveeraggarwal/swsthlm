@@ -78,6 +78,7 @@ function toSwingEvent(occurrence: Occurrence, venues: Map<string, Venue>): Swing
     ticket: occurrence.url,
     body: occurrence.description ?? '',
     beginnerClass: occurrence.beginnerClass,
+    tasterClass: occurrence.tasterClass,
   };
 }
 

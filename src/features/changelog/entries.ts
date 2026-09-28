@@ -53,6 +53,17 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    month: '2026-09',
+    summary: 'Taster classes get their own tag',
+    items: [
+      {
+        title: 'Taster classes stand out from the schedule',
+        description:
+          'A one-off class before the main event — like a musicality taster ahead of a jam — now gets its own badge with the start time, instead of being buried in the description.',
+      },
+    ],
+  },
+  {
     month: '2026-07',
     summary: 'Dark mode, organizer intake, and a big polish pass',
     items: [

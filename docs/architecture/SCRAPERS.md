@@ -237,7 +237,7 @@ In order:
 | `music` | From the source (`live` for band nights). |
 | `band` | The act, for live nights. |
 | `organizer` | The venue (or the band, for band-aggregator sources). |
-| `description` | **Short genre/flavour only** — no dates, times, prices, or addresses. |
+| `description` | **Short genre/flavour only** — no dates, times, prices, or addresses. Never a real newline; a source that keeps the organizer's paragraphs (`chicago.mjs`) writes them as the literal `\n` escape. |
 | `status` | `live`. |
 | `price`, `payment`, `dj`, `beginner_class`, `end_date` | Left **empty** for a human. |
 

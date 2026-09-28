@@ -92,23 +92,31 @@ function factValue($, label) {
 // The rich-text body is the organizer's blurb. Two pieces of chrome come off:
 // a leading line repeating the event title, and the studio sign-off that
 // closes every post.
+//
+// The organizer's layout is kept: each <p> is a paragraph and each <br> a line
+// break, written as the literal `\n` escape the loader turns back into a real
+// newline (docs/DATA.md "Description hygiene") — the CSV row stays one line.
 function parseDescription($, name) {
   const $body = $('.w-richtext').first();
   if (!$body.length) return '';
 
-  // A <br> inside a paragraph separates two logical lines; treat it as one.
   $body.find('br').replaceWith('\n');
 
-  const lines = $body
+  const title = clean(name).toLowerCase();
+  const paragraphs = $body
     .find('p')
     .toArray()
-    .flatMap((el) => $(el).text().split('\n'))
-    .map(clean)
-    .filter(Boolean)
-    .filter((line) => line.toLowerCase() !== clean(name).toLowerCase())
-    .filter((line) => !/^chicago swing dance studio$/i.test(line));
+    .map((el) => $(el)
+      .text()
+      .split('\n')
+      .map((line) => clean(line.replace(DATE_IN_PROSE, '')))
+      .filter(Boolean)
+      .filter((line) => line.toLowerCase() !== title)
+      .filter((line) => !/^chicago swing dance studio$/i.test(line))
+      .join('\\n'))
+    .filter(Boolean);
 
-  return clean(lines.join(' ').replace(DATE_IN_PROSE, ''));
+  return paragraphs.join('\\n\\n');
 }
 
 /**

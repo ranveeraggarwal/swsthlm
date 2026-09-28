@@ -32,7 +32,7 @@ const DRY_RUN = process.argv.includes('--dry-run');
 const ONEOFF_FIELDS = [
   'id', 'name', 'style', 'venue_id', 'date', 'end_date', 'start', 'end',
   'price', 'payment', 'beginner_class', 'music', 'dj', 'band', 'organizer',
-  'url', 'description', 'status',
+  'url', 'description', 'status', 'taster_class',
 ];
 const SERIES_FIELDS = [
   'id', 'name', 'style', 'venue_id', 'weekday', 'start', 'end', 'price',

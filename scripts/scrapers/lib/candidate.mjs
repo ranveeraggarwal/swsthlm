@@ -10,7 +10,7 @@ import Papa from 'papaparse';
 export const ONEOFF_FIELDS = [
   'id', 'name', 'style', 'venue_id', 'date', 'end_date', 'start', 'end',
   'price', 'payment', 'beginner_class', 'music', 'dj', 'band', 'organizer',
-  'url', 'description', 'status',
+  'url', 'description', 'status', 'taster_class',
 ];
 
 /**
@@ -40,8 +40,8 @@ export function titleCase(str) {
 }
 
 // CandidateEvent -> a plain row object keyed by ONEOFF_FIELDS. Structured fields
-// the scraper can't know (price/dj/beginner_class…) are left empty for a human
-// to fill on review — never guessed into prose.
+// the scraper can't know (price/dj/beginner_class/taster_class…) are left empty
+// for a human to fill on review — never guessed into prose.
 export function candidateToRow(c) {
   return {
     id: c.id,
@@ -62,6 +62,7 @@ export function candidateToRow(c) {
     url: c.url,
     description: c.description ?? '',
     status: c.status ?? 'live',
+    taster_class: '',
   };
 }
 

@@ -8,7 +8,7 @@ const FIELDS = {
   venues: ['id', 'name', 'address', 'neighborhood', 'lat', 'lng', 'maps_url', 'floor_type'],
   series: ['id', 'name', 'style', 'venue_id', 'weekday', 'start', 'end', 'price', 'payment', 'beginner_class', 'music', 'dj', 'band', 'organizer', 'url', 'description', 'status', 'valid_from', 'valid_to'],
   exceptions: ['series_id', 'date', 'cancelled', 'start', 'end', 'dj', 'band', 'music', 'price', 'note', 'description'],
-  oneoffs: ['id', 'name', 'style', 'venue_id', 'date', 'end_date', 'start', 'end', 'price', 'payment', 'beginner_class', 'music', 'dj', 'band', 'organizer', 'url', 'description', 'status'],
+  oneoffs: ['id', 'name', 'style', 'venue_id', 'date', 'end_date', 'start', 'end', 'price', 'payment', 'beginner_class', 'music', 'dj', 'band', 'organizer', 'url', 'description', 'status', 'taster_class'],
   bands: ['id', 'name', 'aliases', 'style', 'swing', 'notes'],
 };
 
@@ -121,6 +121,12 @@ describe('dates and times', () => {
     expect(run({ series: { rows: [series({ beginner_class: 'yes' })] } }).errors).toEqual([]);
     expect(run({ series: { rows: [series({ beginner_class: '19:00' })] } }).errors).toEqual([]);
     expect(joined(run({ series: { rows: [series({ beginner_class: 'soonish' })] } }).errors)).toMatch(/beginner_class/);
+  });
+
+  it('accepts a taster_class time on a oneoff, rejects junk, rejects "yes"', () => {
+    expect(run({ oneoffs: { rows: [oneoff({ taster_class: '18:00' })] } }).errors).toEqual([]);
+    expect(joined(run({ oneoffs: { rows: [oneoff({ taster_class: 'yes' })] } }).errors)).toMatch(/taster_class/);
+    expect(joined(run({ oneoffs: { rows: [oneoff({ taster_class: 'soonish' })] } }).errors)).toMatch(/taster_class/);
   });
 });
 

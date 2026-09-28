@@ -16,7 +16,7 @@ import { domIdFor, type EventGroup } from '../model/event';
 import { getTemporalBadge } from '../model/temporal';
 import { useLocale } from '@/components/providers/LocaleProvider';
 import { AddToCalendarButton } from './AddToCalendarButton';
-import { BeginnerChip, NightsChip, StyleChip } from './EventChips';
+import { BeginnerChip, NightsChip, StyleChip, TasterClassChip } from './EventChips';
 import { EventFacts } from './EventFacts';
 import { FloorTypeBadge } from './FloorTypeBadge';
 import { ShareButton } from './ShareButton';
@@ -118,6 +118,7 @@ export function EventCard({ group, isThisWeek, showDate, now }: EventCardProps) 
             <FloorTypeBadge floorType={event.floorType} />
             <NightsChip nightCount={nightCount} />
             <BeginnerChip beginnerClass={event.beginnerClass} />
+            <TasterClassChip tasterClass={event.tasterClass} />
           </div>
         </div>
 

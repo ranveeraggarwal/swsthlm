@@ -109,6 +109,7 @@ Same shape as `series.csv` minus the recurrence columns, plus explicit dates.
 | `start`, `end` | yes | `HH:MM` | |
 | `price`, `payment`, `beginner_class`, `music`, `dj`, `band`, `organizer`, `url`, `description` | as for series | | |
 | `status` | yes | `draft` \| `live` \| `ended` \| `cancelled` | `cancelled` is a row-level status for one-offs (no exception to attach). `ended` is terminal: the event happened and the row is **kept for the archive**, but it never renders on the live calendar. |
+| `taster_class` | no | `HH:MM` | Appended as the last column, one-off only — a standalone taster/workshop class before the main event (e.g. a musicality taster before a jam), distinct from `beginner_class`. A time means "taster starts at this time." Renders its own chip; unlike `beginner_class` there's no bare `yes` form, since a taster is always at a specific time. Who teaches it and what it covers stays in `description` — only the time is structured. |
 
 For multi-day events with different content per day (e.g. a festival with separate band lineups), use one row per day with distinct IDs. The dedupe-collapse logic on the renderer only merges rows that share an ID.
 

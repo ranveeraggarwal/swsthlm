@@ -159,6 +159,14 @@ In order:
      schemes than the scraper's deterministic `<venue>-<date>` ids. Keying on id
      alone would let a scraped row duplicate a human-entered one at the same
      venue on the same night.
+   - **One candidate per id.** Because ids are `<venue>-<date>`, two events a
+     source finds on the same night collide. A source that knows how its
+     same-night events relate folds them itself — Chicago's `mergeSameNight`
+     folds a taster class into the main event (the main event keeps its name,
+     url and end; the taster adds the earlier start, `taster_class`, its price
+     and its blurb). Any collision left over is caught by the runner: it keeps
+     the first candidate and flags the rest in the report, rather than letting
+     the last one silently overwrite the row.
 6. **Classify each surviving candidate:**
    - Scraper-owned id already exists **and a non-empty scraped field differs**
      → **UPDATE** (record the field-level `old → new`). As on the exception
@@ -240,6 +248,7 @@ In order:
 | `description` | **Short genre/flavour only** — no dates, times, prices, or addresses. Never a real newline; a source that keeps the organizer's paragraphs (`chicago.mjs`) writes them as the literal `\n` escape. |
 | `status` | `live`. |
 | `price`, `payment`, `dj`, `beginner_class`, `end_date` | Left **empty** for a human. |
+| `taster_class` | The taster's start, when a source folds a same-night class into the main event (Chicago). Otherwise empty. |
 
 ## The nightly Action (`.github/workflows/scrape.yml`)
 

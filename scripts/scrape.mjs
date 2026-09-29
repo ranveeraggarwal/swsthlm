@@ -184,13 +184,27 @@ async function main() {
     }
   }
 
+  // Two candidates with the same id would both be classified against the same
+  // existing row, and the text write would let the last one silently replace
+  // the first. Keep the first and flag the rest for a human instead.
+  const seenIds = new Set();
+  const unique = [];
+  for (const c of candidates) {
+    if (seenIds.has(c.id)) {
+      sourceNotes.push(`⚠️ \`${c.id}\`: more than one event scraped for this id — kept the first, dropped "${c.name}"; add it by hand if it's a separate event`);
+      continue;
+    }
+    seenIds.add(c.id);
+    unique.push(c);
+  }
+
   const added = [];
   const updated = [];
   const addedExceptions = [];
   const updatedExceptions = [];
   let skipped = 0;
 
-  for (const c of candidates) {
+  for (const c of unique) {
     const row = candidateToRow(c);
     const prior = existingById.get(c.id);
     if (prior) {

@@ -29,6 +29,7 @@ export const ONEOFF_FIELDS = [
  * @property {string} [dj]
  * @property {string} [price]
  * @property {string} [description]
+ * @property {string} [tasterClass] HH:MM start of a taster class before the main event
  */
 
 // Uppercase source text -> display case. "JESSES JAZZ BAND" -> "Jesses Jazz Band".
@@ -40,7 +41,7 @@ export function titleCase(str) {
 }
 
 // CandidateEvent -> a plain row object keyed by ONEOFF_FIELDS. Structured fields
-// the scraper can't know (price/dj/beginner_class/taster_class…) are left empty
+// the source didn't read (price/dj/beginner_class/taster_class…) are left empty
 // for a human to fill on review — never guessed into prose.
 export function candidateToRow(c) {
   return {
@@ -62,7 +63,7 @@ export function candidateToRow(c) {
     url: c.url,
     description: c.description ?? '',
     status: c.status ?? 'live',
-    taster_class: '',
+    taster_class: c.tasterClass ?? '',
   };
 }
 

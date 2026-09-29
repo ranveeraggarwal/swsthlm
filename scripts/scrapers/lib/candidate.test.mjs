@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ONEOFF_FIELDS, computeRowUpdate } from './candidate.mjs';
+import { ONEOFF_FIELDS, candidateToRow, computeRowUpdate } from './candidate.mjs';
 
 const blank = () => Object.fromEntries(ONEOFF_FIELDS.map((f) => [f, '']));
 
@@ -97,5 +97,12 @@ describe('computeRowUpdate', () => {
 
     expect(changedFields).toEqual(['url']);
     expect(merged.url).toBe(page);
+  });
+});
+
+describe('candidateToRow', () => {
+  it('writes a taster class time into its column, empty when the source has none', () => {
+    expect(candidateToRow({ id: 'x', tasterClass: '18:00' }).taster_class).toBe('18:00');
+    expect(candidateToRow({ id: 'x' }).taster_class).toBe('');
   });
 });

@@ -177,6 +177,74 @@ export function parse(html) {
   }];
 }
 
+// A class page rather than a dance night: "Lindy Hop Musicality Class with
+// Live Music", "Balboa workshop", "Prova-på-klass".
+const CLASS_TITLE = /\b(?:class|klass|kurs|workshop|taster|prova[- ]?på)\b/i;
+
+// How close a class has to end before the main event starts to count as its
+// taster ("starting in immediate connection to the class"). A course that
+// ends hours before the evening's dance is its own thing, not a taster.
+const TASTER_GAP_MIN = 60;
+
+const minutes = (hhmm) => {
+  const [h, m] = hhmm.split(':').map(Number);
+  return h * 60 + m;
+};
+
+/**
+ * Fold a taster class into the main event on the same night. Pure.
+ *
+ * Chicago publishes a taster (e.g. a musicality class before a jam) as its own
+ * event page on the same date as the main event. The scraper's ids are
+ * `<venue>-<date>`, so without this both pages claim the same row and whichever
+ * is processed last overwrites the other — the taster replaced the jam.
+ *
+ * The site models this as one event with a `taster_class` time (DATA.md), so
+ * the main event is preferred for everything that identifies the night (name,
+ * url, band, end); the taster contributes the earlier start, its own start as
+ * `taster_class`, its price alongside the main one, and its blurb as a second
+ * paragraph (who teaches it and what it covers belong in the description).
+ */
+export function mergeSameNight(events) {
+  const byDate = new Map();
+  for (const e of events) {
+    if (!byDate.has(e.date)) byDate.set(e.date, []);
+    byDate.get(e.date).push(e);
+  }
+
+  const out = [];
+  for (const group of byDate.values()) {
+    const classes = group.filter((e) => CLASS_TITLE.test(e.name));
+    const mains = group.filter((e) => !CLASS_TITLE.test(e.name));
+    if (mains.length !== 1 || classes.length !== 1) {
+      out.push(...group);
+      continue;
+    }
+    const [main] = mains;
+    const [taster] = classes;
+    const gap = minutes(main.start) - minutes(taster.end);
+    if (gap < 0 || gap > TASTER_GAP_MIN) {
+      out.push(...group);
+      continue;
+    }
+
+    const price = [main.price, taster.price && `taster class: ${taster.price}`]
+      .filter(Boolean)
+      .join('; ');
+    const tasterBlurb = [taster.name, taster.description].filter(Boolean).join('\\n');
+    const description = [main.description, tasterBlurb].filter(Boolean).join('\\n\\n');
+
+    out.push({
+      ...main,
+      start: taster.start,
+      tasterClass: taster.start,
+      price,
+      description,
+    });
+  }
+  return out;
+}
+
 export async function scrape() {
   const listRes = await fetch(url, { redirect: 'follow' });
   if (!listRes.ok) throw new Error(`${label}: HTTP ${listRes.status}`);
@@ -202,5 +270,5 @@ export async function scrape() {
     }
   }));
 
-  return results.flat();
+  return mergeSameNight(results.flat());
 }

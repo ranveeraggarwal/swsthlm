@@ -122,7 +122,12 @@ export function EventRow({ group }: { group: EventGroup }) {
                   ) : (
                     <Disc aria-hidden="true" className="w-3.5 h-3.5 shrink-0" />
                   )}
-                  <span>{line.name}</span>
+                  <span>
+                    <span className="sr-only">
+                      {line.type === 'live' ? bundle.card.livePrefix : bundle.card.djPrefix}
+                    </span>
+                    {line.name}
+                  </span>
                 </div>
               ))}
             </div>

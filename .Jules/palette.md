@@ -55,3 +55,7 @@
 ## 2026-09-25 - [Clipboard Copy Accessibility]
 **Learning:** Reusable UX Pattern: Actions that copy text to the clipboard must provide an explicit screen reader announcement (e.g., using a visually hidden `<span aria-live="polite">Copied!</span>`) since the focus remains on the triggering element and visual feedback alone is insufficient. When doing this, keep the trigger button's `aria-label` static (to avoid screen readers dropping context) while updating its `title` dynamically for sighted users.
 **Action:** When implementing copy-to-clipboard functionality, use a static `aria-label`, a dynamic `title`, and a persistent `aria-live` region to provide reliable feedback to all users.
+
+## 2026-10-02 - [Screen Reader Context for Icon-Based Data]
+**Learning:** Reusable UX Pattern: When indicating performer types using decorative icons (like `<Music>` for live bands or `<Disc>` for DJs), provide equivalent context for screen readers using localized, visually hidden prefixes (e.g., `<span className="sr-only">{bundle.card.livePrefix}</span>`) immediately preceding the performer's name. This ensures visually impaired users hear the distinction between a DJ and a live band.
+**Action:** Always pair meaning-bearing decorative icons with an adjacent `sr-only` span containing a localized text equivalent.

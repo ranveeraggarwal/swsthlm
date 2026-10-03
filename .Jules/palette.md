@@ -59,3 +59,6 @@
 ## 2026-10-02 - [Screen Reader Context for Icon-Based Data]
 **Learning:** Reusable UX Pattern: When indicating performer types using decorative icons (like `<Music>` for live bands or `<Disc>` for DJs), provide equivalent context for screen readers using localized, visually hidden prefixes (e.g., `<span className="sr-only">{bundle.card.livePrefix}</span>`) immediately preceding the performer's name. This ensures visually impaired users hear the distinction between a DJ and a live band.
 **Action:** Always pair meaning-bearing decorative icons with an adjacent `sr-only` span containing a localized text equivalent.
+## 2024-05-18 - Enforcing `opensInNewTab` over descriptive `sourceHint`
+**Learning:** Hardcoded text values inside translation hints like `sourceHint` meant for external link warnings (`target="_blank"`) can introduce inconsistent verbiage across the codebase, violating the established pattern of uniformly appending `bundle.card.opensInNewTab` to provide clear, consistent context change warnings for screen readers.
+**Action:** When auditing external links (`target="_blank"`), ensure that the visually hidden text (`<span className="sr-only">`) rigidly uses `bundle.card.opensInNewTab` rather than other localized strings that might mix descriptive content with the context change warning.

@@ -180,6 +180,9 @@ export interface LocaleBundle {
   home: {
     title: EmphasisedText;
     subtitle: string;
+    /** Label and hover title for the Kanelbullens dag (4 October) easter-egg
+     *  button after the hero title. Only rendered on that one day. */
+    cinnamonBun: string;
   };
   /** The listing's summary bar, its controls, and the section headings. */
   listing: {

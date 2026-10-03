@@ -114,6 +114,7 @@ export const sv = {
     // keeps its pun without needing a different joke.
     title: { lead: 'Stockholm i ', em: 'full swing' },
     subtitle: 'Din guide till socialdans i Lindy Hop, Balboa, Shag och Blues i Stockholm.',
+    cinnamonBun: 'Glad kanelbullens dag! Kasta en bulle',
   },
   listing: {
     showingAll: 'Visar alla {count} {noun}',

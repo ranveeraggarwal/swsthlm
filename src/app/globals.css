@@ -276,6 +276,45 @@ body {
   animation: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* Kanelbullens dag easter egg (CinnamonBunEgg.tsx). Each bun falls the full
+   viewport height; duration and spin are set per bun as custom properties. */
+@keyframes bun-fall {
+  from { transform: translateY(-80px) rotate(0deg); }
+  to   { transform: translateY(calc(100vh + 80px)) rotate(var(--bun-spin)); }
+}
+@keyframes bun-fade {
+  0%, 100% { opacity: 0; }
+  30%, 70% { opacity: 1; }
+}
+.falling-bun {
+  top: 0;
+  animation: bun-fall var(--bun-duration) cubic-bezier(0.45, 0, 0.9, 0.6) forwards;
+}
+.cinnamon-bun-button {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.cinnamon-bun-button:hover,
+.cinnamon-bun-button:focus-visible {
+  transform: rotate(-20deg) scale(1.1);
+}
+.cinnamon-bun-button:active {
+  transform: rotate(-20deg) scale(0.95);
+}
+@media (prefers-reduced-motion: reduce) {
+  /* No falling or spinning: the bun appears mid-screen and fades away. */
+  .falling-bun {
+    top: 40%;
+    animation: bun-fade 1.5s ease-in-out forwards;
+  }
+  .cinnamon-bun-button,
+  .cinnamon-bun-button:hover,
+  .cinnamon-bun-button:focus-visible,
+  .cinnamon-bun-button:active {
+    transition: none;
+    transform: none;
+  }
+}
+
 /* Paper Layering logic */
 .paper-layer {
   background-color: var(--surface-container-lowest);

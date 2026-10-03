@@ -156,7 +156,7 @@ export function EventCard({ group, isThisWeek, showDate, now }: EventCardProps) 
               >
                 <Ticket aria-hidden="true" className="w-4 h-4" />
                 {bundle.card.source}
-                <span className="sr-only">{bundle.card.sourceHint}</span>
+                <span className="sr-only">{bundle.card.opensInNewTab}</span>
               </a>
             )}
             <AddToCalendarButton event={event} />

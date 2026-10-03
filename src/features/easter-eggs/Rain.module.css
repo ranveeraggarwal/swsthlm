@@ -1,0 +1,38 @@
+/* Each drop falls the full viewport height; duration and spin are set per drop
+   as custom properties by Rain.tsx. */
+@keyframes rain-fall {
+  from { transform: translateY(-80px) rotate(0deg); }
+  to   { transform: translateY(calc(100vh + 80px)) rotate(var(--drop-spin)); }
+}
+@keyframes rain-fade {
+  0%, 100% { opacity: 0; }
+  30%, 70% { opacity: 1; }
+}
+.drop {
+  top: 0;
+  animation: rain-fall var(--drop-duration) cubic-bezier(0.45, 0, 0.9, 0.6) forwards;
+}
+.button {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.button:hover,
+.button:focus-visible {
+  transform: rotate(-20deg) scale(1.1);
+}
+.button:active {
+  transform: rotate(-20deg) scale(0.95);
+}
+@media (prefers-reduced-motion: reduce) {
+  /* No falling or spinning: each drop appears mid-screen and fades away. */
+  .drop {
+    top: 40%;
+    animation: rain-fade 1.5s ease-in-out forwards;
+  }
+  .button,
+  .button:hover,
+  .button:focus-visible,
+  .button:active {
+    transition: none;
+    transform: none;
+  }
+}

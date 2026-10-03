@@ -181,6 +181,12 @@ export interface LocaleBundle {
     title: EmphasisedText;
     subtitle: string;
   };
+  /** Label and hover title for each rain easter egg's button after the hero
+   *  title, keyed by rain id — see `features/easter-eggs/rains.ts`. Each is
+   *  only rendered on its one day. */
+  rains: {
+    kanelbulle: string;
+  };
   /** The listing's summary bar, its controls, and the section headings. */
   listing: {
     /** Takes `{count}` (rendered bold) and `{noun}` — see `filters.eventNoun`. */

@@ -115,6 +115,9 @@ export const sv = {
     title: { lead: 'Stockholm i ', em: 'full swing' },
     subtitle: 'Din guide till socialdans i Lindy Hop, Balboa, Shag och Blues i Stockholm.',
   },
+  rains: {
+    kanelbulle: 'Glad kanelbullens dag! Kasta en bulle',
+  },
   listing: {
     showingAll: 'Visar alla {count} {noun}',
     showingFiltered: 'Visar {description}',

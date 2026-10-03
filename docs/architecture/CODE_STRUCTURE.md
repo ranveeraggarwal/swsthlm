@@ -47,6 +47,7 @@ src/
         AddToCalendarButton.tsx ShareButton.tsx SubscribeButton.tsx
     corrections/              "Wrong info?" dialog + the mailto it builds
     changelog/               "What's new" timeline + its entries
+    easter-eggs/              one-day surprises: the "rains" (rains.ts lists them, svg/ holds the art)
 
   components/               Shared across features. Nothing domain-specific.
     layout/                   Header, Footer, ThemeToggle, InstallToast,

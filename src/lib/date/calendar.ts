@@ -105,12 +105,3 @@ export function isYesterday(dateStr: string, referenceDateStr: string): boolean 
   if (!isIsoDate(referenceDateStr)) return false;
   return dateStr === addDays(referenceDateStr, -1);
 }
-
-/**
- * Whether a YYYY-MM-DD date is 4 October — Kanelbullens dag, Cinnamon Bun Day.
- * Drives the homepage's one-day easter egg. A string check rather than a
- * `Date`, for the same reasons as everything else in this file.
- */
-export function isCinnamonBunDay(referenceDateStr: string): boolean {
-  return isIsoDate(referenceDateStr) && referenceDateStr.slice(5) === '10-04';
-}

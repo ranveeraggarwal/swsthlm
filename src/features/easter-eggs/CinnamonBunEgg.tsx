@@ -16,7 +16,8 @@ import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocale } from '@/components/providers/LocaleProvider';
 import { getStockholmCurrentDate } from '@/lib/date/clock';
-import { isCinnamonBunDay } from '@/lib/date/calendar';
+import { isCinnamonBunDay } from './cinnamonBunDay';
+import styles from './CinnamonBunEgg.module.css';
 
 const CLOCK_TICK_MS = 60_000;
 /** Enough for a satisfying pile-up; past this, clicks wait for buns to land. */
@@ -74,7 +75,7 @@ export function CinnamonBunEgg() {
         onClick={dropBun}
         aria-label={bundle.home.cinnamonBun}
         title={bundle.home.cinnamonBun}
-        className="cinnamon-bun-button ml-2 inline-block align-middle rounded-full cursor-pointer"
+        className={`${styles.button} ml-2 inline-block align-middle rounded-full cursor-pointer`}
       >
         <CinnamonBunIcon className="w-[0.9em] h-[0.9em]" />
       </button>
@@ -83,7 +84,7 @@ export function CinnamonBunEgg() {
           {buns.map((bun) => (
             <div
               key={bun.id}
-              className="falling-bun absolute"
+              className={`${styles.fallingBun} absolute`}
               style={
                 {
                   left: `${bun.left}%`,

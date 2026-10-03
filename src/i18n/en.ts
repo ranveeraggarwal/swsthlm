@@ -98,7 +98,9 @@ export const en = {
   home: {
     title: { lead: 'Stockholm in ', em: 'Full Swing' },
     subtitle: 'Your guide to Lindy Hop, Balboa, Shag, and Blues social dancing in Stockholm.',
-    cinnamonBun: 'Happy Cinnamon Bun Day! Throw a bun',
+  },
+  rains: {
+    kanelbulle: 'Happy Cinnamon Bun Day! Throw a bun',
   },
   listing: {
     showingAll: 'Showing all {count} {noun}',

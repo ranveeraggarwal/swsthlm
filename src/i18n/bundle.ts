@@ -180,9 +180,12 @@ export interface LocaleBundle {
   home: {
     title: EmphasisedText;
     subtitle: string;
-    /** Label and hover title for the Kanelbullens dag (4 October) easter-egg
-     *  button after the hero title. Only rendered on that one day. */
-    cinnamonBun: string;
+  };
+  /** Label and hover title for each rain easter egg's button after the hero
+   *  title, keyed by rain id — see `features/easter-eggs/rains.ts`. Each is
+   *  only rendered on its one day. */
+  rains: {
+    kanelbulle: string;
   };
   /** The listing's summary bar, its controls, and the section headings. */
   listing: {

@@ -2,7 +2,7 @@ import React from 'react';
 import type { Metadata } from 'next';
 import { stockholmNow } from '@/lib/date/clock';
 import { HomeHero } from '@/components/layout/HomeHero';
-import { CinnamonBunEgg } from '@/features/easter-eggs/CinnamonBunEgg';
+import { Rain } from '@/features/easter-eggs/Rain';
 import { EventCalendar } from '@/features/events/components/EventCalendar';
 import { getEvents } from '@/features/events/loader';
 import { eventsJsonLd } from '@/features/events/jsonld';
@@ -33,7 +33,7 @@ export default async function Page() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: eventsJsonLd(events) }}
       />
-      <HomeHero titleSuffix={<CinnamonBunEgg />} />
+      <HomeHero titleSuffix={<Rain />} />
 
       {/* The listing is a client component: filtering and the temporal badges
           both need a live clock, which static HTML can't have. It's seeded with

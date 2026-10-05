@@ -62,3 +62,11 @@
 ## 2024-05-18 - Enforcing `opensInNewTab` over descriptive `sourceHint`
 **Learning:** Hardcoded text values inside translation hints like `sourceHint` meant for external link warnings (`target="_blank"`) can introduce inconsistent verbiage across the codebase, violating the established pattern of uniformly appending `bundle.card.opensInNewTab` to provide clear, consistent context change warnings for screen readers.
 **Action:** When auditing external links (`target="_blank"`), ensure that the visually hidden text (`<span className="sr-only">`) rigidly uses `bundle.card.opensInNewTab` rather than other localized strings that might mix descriptive content with the context change warning.
+
+## 2026-11-20 - Explicit button types for accessibility
+**Learning:** Reusable UX Pattern: Explicitly set `type="button"` on interactive `<button>` elements (e.g., toggles, resets) to prevent them from implicitly acting as submit buttons if ever nested inside a form.
+**Action:** Always verify that `<button>` elements that trigger client-side interactions have `type="button"`.
+
+## 2026-11-20 - Missing cursor-pointer class
+**Learning:** Reusable UX Pattern: Interactive UI elements like buttons normally inherit cursor styling. However, when Tailwind's preflight behaves uniquely or specific configurations are used, standard `<button>`s might not show a pointer cursor on hover unless the `cursor-pointer` utility class is added explicitly.
+**Action:** Verify pointer behavior on interactive elements and apply `cursor-pointer` where hover states should clearly indicate clickability.

@@ -74,11 +74,13 @@ export const sv = {
   },
   // Dance style names stay in English — "Lindy Hop", "Balboa", "Shag",
   // "Blues" are what Swedish dancers say, not translations waiting to happen.
+  // "Rock'n'roll" is spelled the same way in Swedish.
   styles: {
     'lindy-hop': { label: 'Lindy Hop' },
     balboa: { label: 'Balboa' },
     blues: { label: 'Blues' },
     shag: { label: 'Shag' },
+    'rock-n-roll': { label: 'Rock\'n\'roll' },
     // The event data already calls a style-agnostic social "socialdans" — see
     // e.g. data/oneoffs.csv — so the label matches rather than inventing a
     // second word for the same thing.

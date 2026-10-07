@@ -13,7 +13,7 @@ import Papa from 'papaparse';
 
 const DATA_DIR = path.join(process.cwd(), 'data');
 
-const STYLES = new Set(['lindy-hop', 'balboa', 'blues', 'shag', 'all']);
+const STYLES = new Set(['lindy-hop', 'balboa', 'blues', 'shag', 'rock-n-roll', 'all']);
 const MUSIC = new Set(['live', 'dj', 'mixed']);
 const WEEKDAYS = new Set([
   'monday',

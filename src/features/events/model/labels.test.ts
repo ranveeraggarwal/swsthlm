@@ -5,6 +5,13 @@ describe('styleLabel', () => {
   it('leaves dance style names untranslated in Swedish — that is what dancers call them', () => {
     expect(styleLabel('lindy-hop', undefined, 'sv')).toBe('Lindy Hop');
     expect(styleLabel('balboa', undefined, 'sv')).toBe('Balboa');
+    expect(styleLabel('rock-n-roll', undefined, 'sv')).toBe('Rock\'n\'roll');
+  });
+
+  it('names rock-n-roll as itself, never as an all-styles social', () => {
+    expect(styleLabel('rock-n-roll')).toBe('Rock\'n\'roll');
+    expect(styleLabel('rock-n-roll', { compact: true })).toBe('Rock\'n\'roll');
+    expect(styleFilterLabel('rock-n-roll')).toBe('Rock\'n\'roll');
   });
 
   it('translates the "all styles" sentence in Swedish, matching the data\'s "socialdans"', () => {

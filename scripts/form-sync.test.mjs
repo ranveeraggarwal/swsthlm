@@ -152,6 +152,14 @@ describe('mapResponse', () => {
     expect(issues.some((i) => i.includes('Ticket URL'))).toBe(true);
   });
 
+  it('maps a free-text rock\'n\'roll or rockabilly answer to rock-n-roll, not "all"', () => {
+    for (const answer of ["Rock'n'roll", 'Rockabilly', 'Rock and roll']) {
+      const { row, notes } = mapResponse(response({ 'Dance Style': answer }), VENUES);
+      expect(row.style).toBe('rock-n-roll');
+      expect(notes.some((n) => n.startsWith('style:'))).toBe(false);
+    }
+  });
+
   it('defaults an unrecognized style to "all" and notes it', () => {
     const { row, notes } = mapResponse(response({ 'Dance Style': 'Not sure' }), VENUES);
     expect(row.style).toBe('all');

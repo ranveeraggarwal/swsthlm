@@ -17,7 +17,7 @@ export const ONEOFF_FIELDS = [
  * @typedef {Object} CandidateEvent
  * @property {string} id          deterministic, stable across runs (`<venue>-<date>`)
  * @property {string} name
- * @property {string} style       'lindy-hop' | 'balboa' | 'blues' | 'shag' | 'all'
+ * @property {string} style       'lindy-hop' | 'balboa' | 'blues' | 'shag' | 'rock-n-roll' | 'all'
  * @property {string} venueId
  * @property {string} date        YYYY-MM-DD
  * @property {string} start       HH:MM

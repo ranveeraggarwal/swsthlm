@@ -36,7 +36,7 @@ const ONEOFFS_PATH = path.join(DATA_DIR, 'oneoffs.csv');
 const REPORT_PATH = path.join(process.cwd(), 'form-sync-report.md');
 const DRY_RUN = process.argv.includes('--dry-run');
 
-const STYLES = new Set(['lindy-hop', 'balboa', 'blues', 'shag', 'all']);
+const STYLES = new Set(['lindy-hop', 'balboa', 'blues', 'shag', 'rock-n-roll', 'all']);
 const MUSIC = new Set(['live', 'dj', 'mixed']);
 
 const slugify = (str) =>
@@ -133,6 +133,10 @@ function mapStyle(raw, notes) {
   if (v.includes('balboa')) return 'balboa';
   if (v.includes('blues')) return 'blues';
   if (v.includes('shag')) return 'shag';
+  // Not a form option, so this catches it typed as free text — "rockabilly"
+  // included. Falling through to 'all' would list a rock'n'roll night as a
+  // swing social, which is the one guess that's always wrong.
+  if (v.includes('rock')) return 'rock-n-roll';
   if (STYLES.has(v)) return v;
   notes.push(`style: unrecognized answer "${raw}", defaulted to "all"`);
   return 'all';

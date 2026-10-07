@@ -28,6 +28,7 @@ const STYLE_CHIP_CLASSES: Record<Style, string> = {
   blues:
     'bg-[var(--surface-container-high)] text-[var(--on-surface-variant)] border-[var(--outline-variant)]',
   shag: NEUTRAL_CHIP,
+  'rock-n-roll': NEUTRAL_CHIP,
   all: NEUTRAL_CHIP,
 };
 

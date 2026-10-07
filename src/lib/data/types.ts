@@ -2,7 +2,7 @@
 // occurrence stream the site / ICS / JSON-LD consume. See docs/DATA.md for the
 // authoritative schema; these mirror it. CSV parsing + coercion lives in #7.
 
-export type Style = 'lindy-hop' | 'balboa' | 'blues' | 'shag' | 'all';
+export type Style = 'lindy-hop' | 'balboa' | 'blues' | 'shag' | 'rock-n-roll' | 'all';
 export type Music = 'live' | 'dj' | 'mixed';
 export type Weekday =
   | 'monday'

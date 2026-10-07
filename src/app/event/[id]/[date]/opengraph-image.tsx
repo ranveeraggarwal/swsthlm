@@ -37,6 +37,7 @@ const STYLE_COLORS: Record<Style, { bg: string; fg: string }> = {
   balboa: { bg: '#4f5e7e', fg: '#ffffff' },
   blues: { bg: '#eae8de', fg: '#594138' },
   shag: { bg: '#f0eee3', fg: '#594138' },
+  'rock-n-roll': { bg: '#f0eee3', fg: '#594138' },
   all: { bg: '#f0eee3', fg: '#594138' },
 };
 

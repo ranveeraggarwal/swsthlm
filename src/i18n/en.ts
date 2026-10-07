@@ -68,6 +68,7 @@ export const en = {
     balboa: { label: 'Balboa' },
     blues: { label: 'Blues' },
     shag: { label: 'Shag' },
+    'rock-n-roll': { label: 'Rock\'n\'roll' },
     all: { label: 'Social – all styles', compact: 'All styles', filter: 'All Styles' },
   },
   music: {

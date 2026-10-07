@@ -58,7 +58,7 @@ The most-edited file. Most weekly entries live here.
 |---|---|---|---|
 | `id` | yes | slug | `p-tzz-dah`, `chicago-live-weds`, `zinkens-rhythm-club`. |
 | `name` | yes | string | Display name. |
-| `style` | yes | `lindy-hop` \| `balboa` \| `blues` \| `shag` \| `all` | `all` means "social, all styles welcome." Renders as "Social – all styles" on cards and event pages, shortened to "All styles" in the compact list. Never "All Swing Styles." Wording lives in `src/features/events/model/labels.ts`. |
+| `style` | yes | `lindy-hop` \| `balboa` \| `blues` \| `shag` \| `rock-n-roll` \| `all` | `rock-n-roll` is the one style outside swing proper — see "Picking a `style`" below. `all` means "social, all styles welcome." Renders as "Social – all styles" on cards and event pages, shortened to "All styles" in the compact list. Never "All Swing Styles." Wording lives in `src/features/events/model/labels.ts`. |
 | `venue_id` | yes | venue slug | Must exist in `venues.csv`. |
 | `weekday` | yes | `monday`…`sunday` | Lowercase. |
 | `start`, `end` | yes | `HH:MM` | 24h, Stockholm local. |
@@ -74,6 +74,12 @@ The most-edited file. Most weekly entries live here.
 | `status` | yes | `draft` \| `live` \| `ended` | `draft` doesn't render. `ended` doesn't render and produces no future occurrences. |
 | `valid_from` | yes | `YYYY-MM-DD` | First date the series runs. |
 | `valid_to` | no | `YYYY-MM-DD` | Last date inclusive. Empty = open-ended. |
+
+**Picking a `style`.** The four swing styles and `all` cover almost everything. `rock-n-roll` exists for the edge of scope: rock'n'roll and rockabilly nights — swing's descendants, which swing dancers turn up to and dance at, but which aren't swing socials. The test for listing one is *would a swing dancer go there to dance to swing-family music?* A museum's rockabilly night with a live band: yes. A vintage fair with no dance floor: no. Never file one of these under `all` — that renders as "Social – all styles" and tells a dancer it's a swing social.
+
+There is deliberately no `other`. The chip is there to tell a dancer what they'll be dancing, and "other" doesn't; a catch-all would also give every borderline submission a home without anyone deciding whether it belongs. If something genuinely new comes up, name it and add it to the enum, with the same judgment.
+
+`rock-n-roll` events come in by hand or through the form, never from a scraper: the mixed-venue genre filter excludes `rock` on purpose (see `docs/architecture/SCRAPERS.md`), so a human always makes the call.
 
 ## `exceptions.csv`
 
@@ -124,7 +130,7 @@ The swing-band registry. One row per band the project has an opinion about. Its 
 | `id` | yes | slug | Stable, immutable. `tommy-lobel-swing-band`. |
 | `name` | yes | string | Display name. "Tommy Löbel Swing Band". |
 | `aliases` | no | `\|`-separated strings | Alternate spellings the scraper should also recognise. `Tommy Löbel\|Tommy Lobel`. |
-| `style` | yes | style enum | Same set as elsewhere: `lindy-hop` \| `balboa` \| `blues` \| `shag` \| `all`. |
+| `style` | yes | style enum | Same set as elsewhere: `lindy-hop` \| `balboa` \| `blues` \| `shag` \| `rock-n-roll` \| `all`. |
 | `swing` | yes | `yes` \| `no` \| `unknown` | The trust gate. `yes` = trusted swing band; `no` = known not-swing (scraper suppresses it); `unknown` = surfaced, awaiting a human decision. |
 | `notes` | no | string | Free-form. |
 

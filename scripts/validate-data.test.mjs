@@ -82,6 +82,17 @@ describe('enums', () => {
       expect(errors).toEqual([]);
     }
   });
+
+  it('accepts every valid style in series, oneoffs and bands', () => {
+    for (const style of ['lindy-hop', 'balboa', 'blues', 'shag', 'rock-n-roll', 'all']) {
+      const { errors } = run({
+        series: { rows: [series({ style })] },
+        oneoffs: { rows: [oneoff({ style })] },
+        bands: { rows: [band({ style })] },
+      });
+      expect(errors).toEqual([]);
+    }
+  });
 });
 
 describe('required emptiness', () => {

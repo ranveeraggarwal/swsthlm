@@ -70,3 +70,7 @@
 ## 2026-11-20 - Missing cursor-pointer class
 **Learning:** Reusable UX Pattern: Interactive UI elements like buttons normally inherit cursor styling. However, when Tailwind's preflight behaves uniquely or specific configurations are used, standard `<button>`s might not show a pointer cursor on hover unless the `cursor-pointer` utility class is added explicitly.
 **Action:** Verify pointer behavior on interactive elements and apply `cursor-pointer` where hover states should clearly indicate clickability.
+
+## 2026-11-20 - Explicit cursor-pointer class for interactive buttons
+**Learning:** Reusable UX Pattern: Interactive UI elements like buttons normally inherit cursor styling. However, when Tailwind's preflight behaves uniquely or specific configurations are used, standard `<button>`s might not show a pointer cursor on hover unless the `cursor-pointer` utility class is added explicitly.
+**Action:** Verify pointer behavior on interactive elements (e.g. `IconButton` and `Modal` close buttons) and apply `cursor-pointer` where hover states should clearly indicate clickability.

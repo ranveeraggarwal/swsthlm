@@ -325,6 +325,7 @@ export interface LocaleBundle {
       shouldSay: string;
       howYouKnow: string;
     };
+    missingWhatsWrong: string;
     currentlySays: string;
     /** Precedes the contact address, for someone with no mail client. */
     noMailApp: string;

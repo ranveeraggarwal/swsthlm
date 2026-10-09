@@ -118,7 +118,7 @@ export function ReportCorrectionButton({ event, dates }: ReportCorrectionButtonP
                 id={`${dialogId}-wrong-error`}
                 className="mt-1.5 font-sans text-xs font-medium text-[var(--error)]"
               >
-                Tell us what&apos;s wrong so we know what to fix.
+                {t.missingWhatsWrong}
               </p>
             )}
           </div>

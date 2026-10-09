@@ -228,6 +228,7 @@ export const sv = {
       shouldSay: 'Insläpp 19:30, 120 kr…',
       howYouKnow: 'Jag var där ikväll / jag arrangerar det',
     },
+    missingWhatsWrong: 'Berätta vad som är fel så vi vet vad vi ska åtgärda.',
     currentlySays: 'Vad sajten säger just nu',
     noMailApp: 'Ingen mejlapp? Skriv till',
     currentlySaysHint: 'Följer med i mejlet så att vi hittar rätt evenemang.',

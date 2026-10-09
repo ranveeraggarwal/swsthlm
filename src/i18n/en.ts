@@ -202,6 +202,7 @@ export const en = {
       shouldSay: 'Doors at 19:30, 120 kr…',
       howYouKnow: 'I was there tonight / I organise it',
     },
+    missingWhatsWrong: "Tell us what's wrong so we know what to fix.",
     currentlySays: 'What the site currently says',
     noMailApp: 'No mail app? Write to',
     currentlySaysHint: 'Included in the email so we can find the listing.',

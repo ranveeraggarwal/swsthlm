@@ -74,3 +74,7 @@
 ## 2026-11-20 - Explicit cursor-pointer class for interactive buttons
 **Learning:** Reusable UX Pattern: Interactive UI elements like buttons normally inherit cursor styling. However, when Tailwind's preflight behaves uniquely or specific configurations are used, standard `<button>`s might not show a pointer cursor on hover unless the `cursor-pointer` utility class is added explicitly.
 **Action:** Verify pointer behavior on interactive elements (e.g. `IconButton` and `Modal` close buttons) and apply `cursor-pointer` where hover states should clearly indicate clickability.
+
+## 2026-11-20 - [Localize Form Error Messages]
+**Learning:** Reusable UX Pattern: Form validation error messages rendered in the UI (e.g., below input fields) must use localized strings from the i18n bundle rather than hardcoded text, ensuring they are accessible and comprehensible to non-English users.
+**Action:** When adding or auditing inline form validation feedback, ensure that the error text is fetched dynamically using `useLocale().bundle` rather than hardcoding English strings into the JSX.

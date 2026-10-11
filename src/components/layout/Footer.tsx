@@ -27,7 +27,7 @@ export function Footer() {
               title={`${bundle.footer.github}${bundle.card.opensInNewTab}`}
               className="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors"
             >
-              <GitHubIcon className="w-4 h-4" />
+              <GitHubIcon className="w-4 h-4" aria-hidden="true" />
             </a>
           </div>
           <FreshnessSignal />

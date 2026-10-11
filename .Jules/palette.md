@@ -78,3 +78,6 @@
 ## 2026-11-20 - [Localize Form Error Messages]
 **Learning:** Reusable UX Pattern: Form validation error messages rendered in the UI (e.g., below input fields) must use localized strings from the i18n bundle rather than hardcoded text, ensuring they are accessible and comprehensible to non-English users.
 **Action:** When adding or auditing inline form validation feedback, ensure that the error text is fetched dynamically using `useLocale().bundle` rather than hardcoding English strings into the JSX.
+## 2026-12-05 - Decorative Icons within Described Links
+**Learning:** Decorative icons placed inside parent elements (like `<a>` or `<button>`) that already possess complete accessible names (via `aria-label` or `title`) will cause screen readers to announce redundant or confusing information if not explicitly hidden.
+**Action:** Always append `aria-hidden="true"` to SVG or generic icons (e.g., `GitHubIcon`, `Ticket`) that serve only as visual embellishments when nested within a fully labelled parent control.

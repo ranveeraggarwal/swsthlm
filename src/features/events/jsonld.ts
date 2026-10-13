@@ -8,6 +8,8 @@
 import { SITE_URL } from '@/lib/site';
 import { eventUrl, type SwingEvent } from './model/event';
 
+const FREE_PRICE = /\b(free|gratis)\b|fri entr[ée]/i;
+
 function stockholmOffset(date: string, time: string): string {
   const dt = new Date(`${date}T${time}:00`);
   const utc = new Date(dt.toLocaleString('en-US', { timeZone: 'UTC' }));
@@ -67,18 +69,21 @@ export function eventToJsonLd(event: SwingEvent): Record<string, unknown> {
     jsonLd.description = event.body.slice(0, 300);
   }
 
+  // An empty price means "unknown" (docs/DATA.md), never "free" — only a price
+  // that says so marks the event free. Unknown gets no offer at all.
   if (event.price) {
     const numericMatch = event.price.match(/(\d+)/);
-    jsonLd.offers = {
-      '@type': 'Offer',
-      url: event.ticket || url,
-      availability: 'https://schema.org/InStock',
-      ...(numericMatch
-        ? { price: numericMatch[1], priceCurrency: 'SEK' }
-        : { price: 0, priceCurrency: 'SEK' }),
-    };
-  } else {
-    jsonLd.isAccessibleForFree = true;
+    const isFree = !numericMatch && FREE_PRICE.test(event.price);
+    if (isFree) jsonLd.isAccessibleForFree = true;
+    if (numericMatch || isFree) {
+      jsonLd.offers = {
+        '@type': 'Offer',
+        url: event.ticket || url,
+        availability: 'https://schema.org/InStock',
+        price: numericMatch ? numericMatch[1] : 0,
+        priceCurrency: 'SEK',
+      };
+    }
   }
 
   const performers: Record<string, unknown>[] = [];

@@ -50,4 +50,4 @@ export const PROVIDER_LABELS: Record<CalendarProvider, string> = {
 
 /** The shared "sticker" button styling: heavy border, lift on hover. */
 export const PROVIDER_BUTTON_CLASS =
-  'flex items-center justify-center gap-2.5 rounded border-2 border-[var(--border-ink)] px-4 py-3 font-sans text-sm font-bold transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[2px_2px_0px_0px_var(--shadow-ink)]';
+  'flex items-center justify-center gap-2.5 rounded border-2 border-[var(--border-ink)] px-4 py-3 font-sans text-sm font-bold transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[2px_2px_0px_0px_var(--shadow-ink)] cursor-pointer';

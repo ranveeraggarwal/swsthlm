@@ -62,12 +62,11 @@ export function ContributorsWall() {
                   href={contributor.githubUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label={t.onGitHub.replace('{name}', contributor.name)}
-                  title={t.onGitHub.replace('{name}', contributor.name)}
+                  aria-label={`${t.onGitHub.replace('{name}', contributor.name)}${bundle.card.opensInNewTab}`}
+                  title={`${t.onGitHub.replace('{name}', contributor.name)}${bundle.card.opensInNewTab}`}
                   className="shrink-0 text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors"
                 >
                   <GitHubIcon className="w-4 h-4" aria-hidden="true" />
-                  <span className="sr-only">{bundle.card.opensInNewTab}</span>
                 </a>
               )}
             </li>

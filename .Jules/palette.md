@@ -81,3 +81,7 @@
 ## 2026-12-05 - Decorative Icons within Described Links
 **Learning:** Decorative icons placed inside parent elements (like `<a>` or `<button>`) that already possess complete accessible names (via `aria-label` or `title`) will cause screen readers to announce redundant or confusing information if not explicitly hidden.
 **Action:** Always append `aria-hidden="true"` to SVG or generic icons (e.g., `GitHubIcon`, `Ticket`) that serve only as visual embellishments when nested within a fully labelled parent control.
+
+## 2026-12-08 - Icon-only links and screen reader context change hints
+**Learning:** Reusable UX Pattern: For icon-only links that open in a new tab (target="_blank"), appending a visually hidden `span` with the context change warning is ineffective if the parent link has an `aria-label`, because the `aria-label` overrides all inner content for screen readers.
+**Action:** For icon-only links, append the context change warning (e.g., `bundle.card.opensInNewTab`) directly to the `aria-label` and `title` attributes instead of using a visually hidden `span`.

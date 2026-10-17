@@ -53,6 +53,7 @@ export function EventRow({ group }: { group: EventGroup }) {
           </span>
           {/* Title takes the full width on mobile, narrowed on desktop by the date column. */}
           <span
+            title={event.title}
             className={`flex-1 min-w-0 font-serif font-bold text-sm text-[var(--on-surface)] truncate ${event.cancelled ? 'line-through' : ''}`}
           >
             {event.title}

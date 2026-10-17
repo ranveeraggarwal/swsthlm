@@ -85,3 +85,7 @@
 ## 2026-12-08 - Icon-only links and screen reader context change hints
 **Learning:** Reusable UX Pattern: For icon-only links that open in a new tab (target="_blank"), appending a visually hidden `span` with the context change warning is ineffective if the parent link has an `aria-label`, because the `aria-label` overrides all inner content for screen readers.
 **Action:** For icon-only links, append the context change warning (e.g., `bundle.card.opensInNewTab`) directly to the `aria-label` and `title` attributes instead of using a visually hidden `span`.
+
+## 2026-12-15 - [Truncated text tooltip accessibility]
+**Learning:** Reusable UX Pattern: Text elements that visually truncate their content (e.g., using Tailwind's `truncate` class) should include a `title` attribute matching the full text to provide a native hover tooltip, ensuring users can read the overflowing content on smaller screens.
+**Action:** Always add a `title` attribute to text elements that apply `truncate` or similar overflow-clipping CSS, ensuring the complete text is accessible via hover.

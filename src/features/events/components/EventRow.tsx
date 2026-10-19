@@ -80,7 +80,10 @@ export function EventRow({ group }: { group: EventGroup }) {
             {event.start}–{event.end}
           </span>
           {/* Venue is desktop-only — mobile needs the space for date, time and style. */}
-          <span className="hidden sm:block min-w-0 font-sans text-xs text-[var(--on-surface-variant)] truncate">
+          <span
+            title={[event.venue, event.neighborhood].filter(Boolean).join(' · ')}
+            className="hidden sm:block min-w-0 font-sans text-xs text-[var(--on-surface-variant)] truncate"
+          >
             {event.venue}
             {event.neighborhood ? ` · ${event.neighborhood}` : ''}
           </span>

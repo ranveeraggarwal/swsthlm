@@ -89,3 +89,6 @@
 ## 2026-12-15 - [Truncated text tooltip accessibility]
 **Learning:** Reusable UX Pattern: Text elements that visually truncate their content (e.g., using Tailwind's `truncate` class) should include a `title` attribute matching the full text to provide a native hover tooltip, ensuring users can read the overflowing content on smaller screens.
 **Action:** Always add a `title` attribute to text elements that apply `truncate` or similar overflow-clipping CSS, ensuring the complete text is accessible via hover.
+## 2026-12-15 - Truncated text tooltip accessibility
+**Learning:** Reusable UX Pattern: Text elements that visually truncate their content (e.g., using Tailwind's `truncate` class) should include a `title` attribute matching the full text to provide a native hover tooltip, ensuring users can read the overflowing content on smaller screens.
+**Action:** Always add a `title` attribute to text elements that apply `truncate` or similar overflow-clipping CSS, ensuring the complete text is accessible via hover.

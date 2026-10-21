@@ -88,13 +88,23 @@ export function EventRow({ group }: { group: EventGroup }) {
             {event.neighborhood ? ` · ${event.neighborhood}` : ''}
           </span>
           <span className="shrink-0 flex items-center gap-1 text-[var(--on-surface-variant)]">
-            {performers.map((line) =>
-              line.type === 'live' ? (
-                <Music key="live" aria-hidden="true" className="w-3 h-3 text-[var(--tertiary)]" />
-              ) : (
-                <Disc key="dj" aria-hidden="true" className="w-3 h-3" />
-              ),
-            )}
+            {performers.map((line, idx) => {
+              const fallback = line.type === 'live' ? bundle.music.live : bundle.music.dj;
+              const prefix = line.type === 'live' ? bundle.card.livePrefix : bundle.card.djPrefix;
+              const text = line.name ?? fallback;
+              return (
+                <span key={`${line.type}-${idx}`} title={text} className="flex">
+                  <span className="sr-only">
+                    {prefix} {text}
+                  </span>
+                  {line.type === 'live' ? (
+                    <Music aria-hidden="true" className="w-3 h-3 text-[var(--tertiary)]" />
+                  ) : (
+                    <Disc aria-hidden="true" className="w-3 h-3" />
+                  )}
+                </span>
+              );
+            })}
           </span>
           <StyleChip style={event.style} layout="row" />
         </div>

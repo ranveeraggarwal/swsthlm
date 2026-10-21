@@ -92,3 +92,7 @@
 ## 2026-12-15 - Truncated text tooltip accessibility
 **Learning:** Reusable UX Pattern: Text elements that visually truncate their content (e.g., using Tailwind's `truncate` class) should include a `title` attribute matching the full text to provide a native hover tooltip, ensuring users can read the overflowing content on smaller screens.
 **Action:** Always add a `title` attribute to text elements that apply `truncate` or similar overflow-clipping CSS, ensuring the complete text is accessible via hover.
+
+## 2026-12-25 - Context for Icon-Only Status Indicators in Lists
+**Learning:** Reusable UX Pattern: In list views or collapsed rows, using icon-only representations (like `<Music>` or `<Disc>`) to save space can remove critical context. Sighted users miss out on meaning without a tooltip, and screen readers entirely skip them if they are marked `aria-hidden="true"`.
+**Action:** When displaying icon-only data indicators, always wrap the icon in a `span` with a `title` attribute for native tooltips, and include a localized `sr-only` span so screen reader users hear the context during list scanning.

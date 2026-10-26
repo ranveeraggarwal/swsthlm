@@ -288,7 +288,7 @@ venue registry.
 |---|---|---|---|
 | **Chicago** | `chicago75.se/evenemang` | swing-dance studio → `'all'` | Keep every event. |
 | **S:ta Clara Bierhaus** | `staclara.se/calendar.html` | jazz/blues pub → `'roster'` | Events live in custom `<calendar-event>` elements under a month `<h2>` header; `BAND 19-22<BR>genre` lines. |
-| **Norrport** | `norrport.se/kalender/` | mixed venue → `'roster'` | Grid of `.np-grid-card` divs; date from booking-button onclick; band name from title before `\|`. |
+| **Norrport** | `norrport.se/kalender/` | mixed venue → `'roster'` | Grid of `.np-grid-card` divs; date from the booking button's `data-date`; band name from title before `\|` (emoji and trailing `!`/`:` stripped). Cards usually list a start time only, so a missing `end` is filled as start + 3h, the venue's usual slot. Private ("Abonnerat") and closed days have no bookable button and are skipped. |
 | **Årstaliden** | `arstablick.com/Lindyhop.html` | Lindy night → `'all'` | Static `<li>` list; year from page text ("sommaren 2026"); `parse(html, refDate)` for test determinism. |
 | **Swing Magnifique (band)** | `swingmagnifique.com/gigs` | band gig list → `'all'` | **Hand-entered** — Bandzoogle page structure is complex and fragile; gigs added directly to `oneoffs.csv`. Cross-venue (Georgian House, S:t Eriks Jazzbar). |
 

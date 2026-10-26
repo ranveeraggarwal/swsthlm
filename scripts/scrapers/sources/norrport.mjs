@@ -1,11 +1,16 @@
 // Source: Norrport live-music calendar (norrport.se/kalender/).
 //
 // The page is a grid of `.np-grid-card` divs, each containing:
-//   - a title in `h3.np-grid-title > a` ("Old Boy Stompers | Norrport Live")
-//   - a meta line in `p.np-grid-meta` ("📅 Torsdag 18 juni kl 19:00 - 22:00")
-//   - a booking button whose onclick carries the ISO date:
-//       openBookingForEvent('2026-06-18', …)
+//   - a title in `h3.np-grid-title > a` ("Old Boy Stompers! 🎉| Norrport Live")
+//   - a meta line in `p.np-grid-meta` ("📅 Torsdag 29 okt kl 19:00")
+//   - a booking button whose `data-date` carries the ISO date:
+//       <button class="np-grid-btn-book" data-date="2026-10-29" …>
 //   - an event detail link in the title anchor
+//
+// The meta line carries a start time and, only sometimes, an end ("kl 19:00 -
+// 22:00"). Most nights list the start alone, and `end` is required downstream
+// (the ICS feed and JSON-LD both compute from it), so a missing end is filled
+// with the venue's usual slot — see SLOT_HOURS.
 //
 // Cards without a booking button (STÄNGT/closed days) are skipped.
 // Hidden cards (np-hidden-grid, behind "load more") are real future events.
@@ -25,24 +30,39 @@ const ORGANIZER = 'Norrport';
 
 const pad = (n) => String(n).padStart(2, '0');
 
-function parseTimeRange(text) {
-  const m = text.match(/kl\s+(\d{1,2}):(\d{2})\s*[-–]\s*(\d{1,2}):(\d{2})/);
+// Norrport's shows run three hours: every Norrport row in oneoffs.csv is
+// 19:00–22:00 or 20:00–23:00. Used only when the card gives a start alone.
+const SLOT_HOURS = 3;
+
+// "… kl 19:00" or "… kl 19:00 - 22:00" -> { start, end }. When the card has no
+// end, `end` is start + SLOT_HOURS (wrapping past midnight, which the data
+// contract allows). null if there is no valid start time.
+function parseTimes(text) {
+  const m = text.match(/kl\s+(\d{1,2}):(\d{2})(?:\s*[-–]\s*(\d{1,2}):(\d{2}))?/);
   if (!m) return null;
   const sh = Number(m[1]);
   const sm = Number(m[2]);
+  if (sh > 23 || sm > 59) return null;
+  const start = `${pad(sh)}:${pad(sm)}`;
+  if (m[3] === undefined) {
+    return { start, end: `${pad((sh + SLOT_HOURS) % 24)}:${pad(sm)}` };
+  }
   const eh = Number(m[3]);
   const em = Number(m[4]);
-  if (sh > 23 || eh > 23 || sm > 59 || em > 59) return null;
-  return { start: `${pad(sh)}:${pad(sm)}`, end: `${pad(eh)}:${pad(em)}` };
+  if (eh > 23 || em > 59) return null;
+  return { start, end: `${pad(eh)}:${pad(em)}` };
 }
 
 function extractBand(title) {
-  let name = title.split('|')[0].trim()
+  let name = title.split('|')[0]
+    .replace(/[\p{Extended_Pictographic}\uFE0F\u200D]/gu, '')
     .replace(/[‘’]/g, "'")
-    .replace(/[“”]/g, '"');
+    .replace(/[“”]/g, '"')
+    .trim();
   name = name.replace(/\s*(live\s+)?(at|på)\s+norrport!?\s*$/i, '');
   name = name.replace(/^konsert\s+med\s+/i, '');
-  return name.trim();
+  // Decorative trailing punctuation: "Old Boy Stompers! 🎉", "Selander Quartet:".
+  return name.replace(/[\s!:]+$/, '').trim();
 }
 
 export function parse(html) {
@@ -54,13 +74,11 @@ export function parse(html) {
 
     const bookBtn = card.find('button.np-grid-btn-book');
     if (!bookBtn.length) return;
-    const onclick = bookBtn.attr('onclick') ?? '';
-    const dateMatch = onclick.match(/openBookingForEvent\('(\d{4}-\d{2}-\d{2})'/);
-    if (!dateMatch) return;
-    const date = dateMatch[1];
+    const date = bookBtn.attr('data-date') ?? '';
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return;
 
     const meta = card.find('p.np-grid-meta').text();
-    const time = parseTimeRange(meta);
+    const time = parseTimes(meta);
     if (!time) return;
 
     const titleEl = card.find('h3.np-grid-title a').first();

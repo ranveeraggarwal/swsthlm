@@ -55,6 +55,11 @@
   --ended-surface: #fafafa;        /* ended card background */
   --ended-surface-outline: #d4d4d8;
 
+  /* A live-music ticket's header band: manila stock — the palette's
+     tertiary-fixed-dim brass (#e5c273) at 55% on the card's cream
+     (#f6f4e9). Tan, not the full gold. --on-surface reads on it. */
+  --ticket-stock: #edd8a8;
+
   /* Structural keylines (card/button/chip borders). Same as --on-surface in
      light mode, but its own token: in dark mode ink must NOT flip to cream —
      a bright 2px outline on a dark ground glows. There it becomes a warm
@@ -136,6 +141,11 @@
   --ended-outline: #55555c;
   --ended-surface: #272321;
   --ended-surface-outline: #4c4540;
+
+  /* Kraft stock: the same brass at 20% on the espresso card (#2d231c) — a
+     step lighter than the card, as a raised layer should be after dark, and
+     warm enough to stay clear of olive. */
+  --ticket-stock: #52432d;
 
   /* Warm umber keyline — visible against the espresso card fill, never glowing */
   --border-ink: #614a3c;

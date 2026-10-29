@@ -18,7 +18,12 @@ const BADGE_CLASSES: Record<NonNullable<TemporalBadge>, string> = {
     'bg-[var(--ended-container)] text-[var(--on-ended-container)] border border-[var(--ended-outline)]',
   tonight: 'bg-[var(--primary)] text-[var(--on-primary)]',
   tomorrow: 'bg-[var(--secondary)] text-[var(--on-secondary)]',
-  'this-week': 'bg-[var(--primary)]/15 text-[var(--primary)] border border-[var(--primary)]/20',
+  // Opaque, unlike a plain `/15` tint: on a live card the badge sits on the
+  // ticket's tan stock, where a see-through wash darkens with it and the text
+  // drops below AA. Mixed with the card's own paper instead, it looks exactly
+  // as the tint does on a plain card.
+  'this-week':
+    'bg-[color-mix(in_srgb,var(--primary)_15%,var(--surface-container-low))] text-[var(--primary)] border border-[var(--primary)]/20',
 };
 
 export function TemporalBadgeDisplay({ badge }: { badge: TemporalBadge }) {

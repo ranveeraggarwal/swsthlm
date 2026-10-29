@@ -73,8 +73,9 @@ export function EventCard({ group, isThisWeek, showDate, now }: EventCardProps) 
     // A one-column grid, each section pinned to its own row, so a ticket's
     // notches can share a cell with the band or the actions; and no
     // `overflow-hidden`, so they can paint over this card's own border.
+    // `isolate` keeps the stripe's z-index below inside the card.
     <div
-      className={`relative lift-card rounded border-2 grid grid-cols-1 text-[var(--on-surface)] ${
+      className={`relative isolate lift-card rounded border-2 grid grid-cols-1 text-[var(--on-surface)] ${
         event.cancelled
           ? 'border-[var(--error)]/50 bg-[var(--error-container)]/40'
           : badge === 'ended'
@@ -83,13 +84,14 @@ export function EventCard({ group, isThisWeek, showDate, now }: EventCardProps) 
       } ${!event.cancelled && badge === 'happening-now' ? 'ring-2 ring-[var(--live)]/30' : ''}`}
     >
       {/* Accent stripe — red for cancelled, temporal colour otherwise. Rounded
-          itself, as the card no longer clips its corners. */}
+          itself, as the card no longer clips its corners, and lifted over the
+          header band, which can now have a fill (and a stamp) of its own. */}
       {event.cancelled ? (
-        <div className="absolute top-0 left-0 right-0 h-1.5 rounded-t-sm bg-[var(--error)]" />
+        <div className="absolute z-[1] top-0 left-0 right-0 h-1.5 rounded-t-sm bg-[var(--error)]" />
       ) : (
         (isThisWeek || badge) && (
           <div
-            className={`absolute top-0 left-0 right-0 h-1.5 rounded-t-sm ${badgeStripeClass(badge, isThisWeek)}`}
+            className={`absolute z-[1] top-0 left-0 right-0 h-1.5 rounded-t-sm ${badgeStripeClass(badge, isThisWeek)}`}
           />
         )
       )}

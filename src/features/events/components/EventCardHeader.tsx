@@ -5,9 +5,10 @@
 // sleeve with a 78 half out of it when a DJ is. It carries the time and the
 // badges, so the kind of night reads before the title does.
 //
-// It's printed on the card's own paper, in the card's own ink — the shapes do
-// the telling, not a new colour — so an ended or cancelled card's surface
-// shows straight through it.
+// It's printed in the card's own ink, and on its own paper — bar a ticket's
+// stub, which is tan stock (`--ticket-stock`). The shapes do the telling, so
+// an ended or cancelled card drops the tan and its muted surface shows
+// straight through.
 
 import React, { useId } from 'react';
 import { formatEventDateRange, formatEventDateShort } from '@/lib/date/format';
@@ -44,10 +45,17 @@ export function EventCardHeader({
   return (
     <>
       <div
-        className={`relative col-start-1 row-start-1 rounded-t-sm border-b-2 border-[var(--border-ink)] overflow-hidden px-5 pt-5 pb-4 font-sans ${
-          // The ticket's perforation, or the sleeve's edge — and room on the
-          // right for the stamp or the record, which the band clips.
-          isTicket ? 'border-dashed pr-26' : 'pr-32'
+        className={`relative col-start-1 row-start-1 rounded-t-sm border-b-2 overflow-hidden px-5 pt-5 pb-4 font-sans ${
+          isTicket
+            ? // The perforation: slots punched through the stock, so inked in
+              // the deepest tone rather than as a keyline — the same as
+              // --border-ink in light; in dark, an umber dash would vanish into
+              // the kraft. Room on the right for the stamp, which the band
+              // clips. The stub is printed on tan stock unless the night is
+              // over: then it takes the card's own muted surface, like the rest.
+              `border-dashed border-[var(--shadow-ink)] pr-26 ${isOver ? '' : 'bg-[var(--ticket-stock)]'}`
+            : // The sleeve's edge, and room on the right for the record.
+              'border-[var(--border-ink)] pr-32'
         }`}
       >
         {(nightCount > 1 || showDate) && (

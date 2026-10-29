@@ -116,3 +116,8 @@ const MUSIC_FALLBACK: Record<Music, MusicLine[]> = {
   dj: [{ type: 'dj' }],
   mixed: [{ type: 'live' }, { type: 'dj' }],
 };
+
+/** The event card header's badge: "Live band", "DJ set", or both for `mixed`. */
+export function musicBadgeLabel(music: Music, locale: Locale = DEFAULT_LOCALE): string {
+  return bundle(locale).musicBadge[music];
+}

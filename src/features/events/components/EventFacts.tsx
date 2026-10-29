@@ -81,21 +81,27 @@ export function PriceFact({ event }: { event: SwingEvent }) {
  * The full list, as the card and the permalink page render it.
  *
  * `className` carries the surrounding spacing so callers can keep their own
- * margins without wrapping this in another div.
+ * margins without wrapping this in another div. `namedPerformersOnly` drops
+ * the unnamed "Live music" / "DJ set" lines, for a surface that already says
+ * which kind of night it is — the card's header band — where they'd only
+ * repeat it.
  */
 export function EventFacts({
   event,
   struckThrough,
+  namedPerformersOnly,
   className,
 }: {
   event: SwingEvent;
   struckThrough?: boolean;
+  namedPerformersOnly?: boolean;
   className?: string;
 }) {
+  const performers = musicLines(event).filter((line) => line.name || !namedPerformersOnly);
   return (
     <div className={joinClasses('space-y-3 font-sans text-sm', className)}>
       <VenueFact event={event} struckThrough={struckThrough} />
-      {musicLines(event).map((line) => (
+      {performers.map((line) => (
         <MusicFact key={line.type} line={line} />
       ))}
       <PriceFact event={event} />

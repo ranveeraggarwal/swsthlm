@@ -91,6 +91,11 @@ export const sv = {
     dj: 'DJ-set',
     mixed: 'Livemusik & DJ-set',
   },
+  musicBadge: {
+    live: 'Liveband',
+    dj: 'DJ-set',
+    mixed: 'Liveband + DJ',
+  },
   floors: {
     studio: 'Dansstudio',
     hall: 'Danssal',

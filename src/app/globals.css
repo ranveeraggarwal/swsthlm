@@ -251,6 +251,74 @@ body {
   border-color: var(--on-surface);
 }
 
+/* Ticket punch-outs: the semicircular bites at each end of a live-music
+   card's perforation (see EventCardHeader.tsx). Each is a circle in the page
+   colour laid across the card's edge, rimmed only on the half inside the
+   card — a border split by side, turned 45° so the split lands on the edge.
+
+   The rim is `inherit`, taken straight from the card's own border rather
+   than from a token, so it can't drift from the edge it bites into: not at
+   rest, not on an ended or cancelled card, and not mid-way through
+   `.lift-card:hover` above, which in the dark theme brightens that border
+   from --border-ink to --on-surface. That holds only while the notch is the
+   card's direct child, which is why it's a grid item sharing the header
+   band's cell rather than a child of the band. */
+.ticket-notch {
+  --notch-size: 22px;
+  position: relative;
+  width: var(--notch-size);
+  height: var(--notch-size);
+  border: 2px solid transparent;
+  border-radius: 9999px;
+  background-color: var(--background);
+  rotate: 45deg;
+  /* Centred on the band's 2px perforation... */
+  align-self: end;
+  margin-bottom: calc(var(--notch-size) / -2 + 1px);
+}
+
+/* ...and on the card's 2px edge, one at each end. */
+.ticket-notch-start {
+  justify-self: start;
+  margin-left: calc(var(--notch-size) / -2 - 1px);
+  border-top-color: inherit;
+  border-right-color: inherit;
+}
+
+.ticket-notch-end {
+  justify-self: end;
+  margin-right: calc(var(--notch-size) / -2 - 1px);
+  border-bottom-color: inherit;
+  border-left-color: inherit;
+}
+
+/* A DJ card's 78, peeking out of its sleeve. Lifting the card draws it a
+   little further out and gives it a turn — on the same hover as the lift,
+   but slower, the way a record keeps moving after the hand stops. */
+.sleeve-record {
+  transition:
+    translate 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    rotate 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.lift-card:hover .sleeve-record,
+.lift-card:focus-visible .sleeve-record {
+  translate: 0 -6px;
+  rotate: 45deg;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sleeve-record {
+    transition: none;
+  }
+
+  .lift-card:hover .sleeve-record,
+  .lift-card:focus-visible .sleeve-record {
+    translate: none;
+    rotate: none;
+  }
+}
+
 /* Tactile lift states for buttons */
 .lift-btn-primary {
   transition: var(--transition-physics);

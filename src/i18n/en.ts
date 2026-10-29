@@ -76,6 +76,11 @@ export const en = {
     dj: 'DJ set',
     mixed: 'Live music & DJ set',
   },
+  musicBadge: {
+    live: 'Live band',
+    dj: 'DJ set',
+    mixed: 'Live band + DJ',
+  },
   floors: {
     studio: 'Dance studio',
     hall: 'Dance hall',

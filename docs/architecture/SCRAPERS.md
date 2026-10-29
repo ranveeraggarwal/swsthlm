@@ -242,12 +242,12 @@ In order:
 | `date` | From the source. |
 | `start`, `end` | Source times, converted to Europe/Stockholm `HH:MM` (DST-correct). |
 | `style` | Defaults to `all` (or a keyword override). |
-| `music` | From the source (`live` for band nights). |
+| `music` | From the source (`live` for band nights). It is required on a one-off, so a source with no signal falls back to `live`; a source whose titles don't say (`chicago.mjs`: "Zinken's Rhythm Club") must read the blurb too — "DJ music", "DJ: …" — or DJ nights ship as live. |
 | `band` | The act, for live nights. |
 | `organizer` | The venue (or the band, for band-aggregator sources). |
 | `description` | **Short genre/flavour only** — no dates, times, prices, or addresses. Never a real newline; a source that keeps the organizer's paragraphs (`chicago.mjs`) writes them as the literal `\n` escape. |
 | `status` | `live`. |
-| `price`, `payment`, `dj`, `beginner_class`, `end_date` | Left **empty** for a human. |
+| `price`, `payment`, `dj`, `beginner_class`, `end_date` | Left **empty** for a human — except where the source publishes the fact as a field of its own: `chicago.mjs` fills `price` from the facts panel and `dj` from a "DJ: …" line (removed from the description; "DJ: TBA" stays empty). |
 | `taster_class` | The taster's start, when a source folds a same-night class into the main event (Chicago). Otherwise empty. |
 
 ## The nightly Action (`.github/workflows/scrape.yml`)

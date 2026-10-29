@@ -22,7 +22,9 @@ describe('chicago parser', () => {
       start: '20:00',
       end: '23:00',
       style: 'all',
-      music: 'live',
+      // The blurb says "Elevdanserna är DJ-kvällar" — a DJ night despite a
+      // title that doesn't mention a DJ.
+      music: 'dj',
       organizer: 'Chicago Swing Dance Studio',
       status: 'live',
     });
@@ -90,6 +92,53 @@ describe('chicago parser', () => {
     const djEvents = parse(djHtml);
     expect(djEvents[0]?.music).toBe('dj');
     expect(djEvents[0]?.dj).toBeFalsy();
+  });
+
+  describe('DJ nights whose title does not say DJ', () => {
+    // Zinken's Rhythm Club (Thursdays): the title has no "DJ", the blurb does.
+    // Swapping the fixture's title and rich-text body keeps everything else
+    // (date, time, slug) parseable.
+    const withBlurb = (title, paragraphs) => html
+      .replaceAll('Chicago Elevdans', title)
+      .replace(
+        /<div class="text-rich-text w-richtext">.*?<\/div>/,
+        `<div class="text-rich-text w-richtext">${paragraphs.map((p) => `<p>${p}</p>`).join('')}</div>`,
+      );
+
+    const intro = 'Zinken’s Rhythm Club. An almost weekly social dance evening with up-tempo DJ music for fast dancing.';
+    const outro = 'We think this will be a good complement to our Live Music dance evenings on Wednesdays and Saturdays.';
+
+    it('reads "DJ music" in the blurb as a DJ night, not the live default', () => {
+      const [e] = parse(withBlurb("Zinken's Rhythm Club", [intro, outro]));
+      expect(e.music).toBe('dj');
+      expect(e.dj).toBeFalsy();
+    });
+
+    it('reads the DJ from a "DJ: Name" line and takes it out of the prose', () => {
+      const [e] = parse(withBlurb("Zinken's Rhythm Club", [intro, 'DJ: Andreas Ohlsson', outro]));
+      expect(e.music).toBe('dj');
+      expect(e.dj).toBe('Andreas Ohlsson');
+      expect(e.description).not.toMatch(/Andreas|DJ:/);
+      expect(e.description).toBe(`${intro}\\n\\n${outro}`);
+    });
+
+    it('treats "DJ: TBA" as an unknown DJ: still a DJ night, no name, line dropped', () => {
+      const [e] = parse(withBlurb("Zinken's Rhythm Club - Saturday Edition", [intro, 'DJ: TBA', outro]));
+      expect(e.music).toBe('dj');
+      expect(e.dj).toBeFalsy();
+      expect(e.description).not.toMatch(/TBA|DJ:/);
+    });
+
+    it('lets a Live title win over a blurb that mentions DJs', () => {
+      const [e] = parse(withBlurb('Chicago Live Saturdays - TBA', [intro, 'DJ: Andreas Ohlsson']));
+      expect(e.music).toBe('live');
+    });
+
+    it('stays live when neither the title nor the blurb mentions a DJ', () => {
+      const [e] = parse(withBlurb('Chicago Swing Jam', ['Bandet spelar tre set. Det blir fest helt enkelt.']));
+      expect(e.music).toBe('live');
+      expect(e.dj).toBeFalsy();
+    });
   });
 
   it('extracts the band from a "Chicago Live Wednesdays - [Band]" title', () => {

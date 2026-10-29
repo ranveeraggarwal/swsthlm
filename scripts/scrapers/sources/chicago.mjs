@@ -89,6 +89,16 @@ function factValue($, label) {
   return clean(cell.next().text());
 }
 
+// Some blurbs publish the DJ as a line of its own: "DJ: Andreas Ohlsson". That
+// is a structured fact, so it goes in `dj` and comes out of the prose (DATA.md:
+// DJ/band are never written in prose). "DJ: TBA" is an unknown, not a name.
+const DJ_LINE = /^DJs?\s*:\s*(.*)$/i;
+const DJ_UNKNOWN = /^(?:tba|tbc|t\.b\.a\.?)?$/i;
+
+// Prose that says the night is DJ-played, for pages whose title doesn't:
+// "up-tempo DJ music for fast dancing", "Elevdanserna är DJ-kvällar".
+const DJ_PROSE = /\bDJ[\s-]?(?:music\b|musik\b|kväll)/i;
+
 // The rich-text body is the organizer's blurb. Two pieces of chrome come off:
 // a leading line repeating the event title, and the studio sign-off that
 // closes every post.
@@ -96,9 +106,12 @@ function factValue($, label) {
 // The organizer's layout is kept: each <p> is a paragraph and each <br> a line
 // break, written as the literal `\n` escape the loader turns back into a real
 // newline (docs/DATA.md "Description hygiene") — the CSV row stays one line.
-function parseDescription($, name) {
+//
+// Besides the prose, the blurb is read for who is playing: `dj` from a
+// "DJ: …" line, and `djNight` when it says the night is DJ-played at all.
+function parseBody($, name) {
   const $body = $('.w-richtext').first();
-  if (!$body.length) return '';
+  if (!$body.length) return { description: '', dj: undefined, djNight: false };
 
   $body.find('br').replaceWith('\n');
 
@@ -112,11 +125,21 @@ function parseDescription($, name) {
       .map((line) => clean(line.replace(DATE_IN_PROSE, '')))
       .filter(Boolean)
       .filter((line) => line.toLowerCase() !== title)
-      .filter((line) => !/^chicago swing dance studio$/i.test(line))
-      .join('\\n'))
-    .filter(Boolean);
+      .filter((line) => !/^chicago swing dance studio$/i.test(line)));
 
-  return paragraphs.join('\\n\\n');
+  const lines = paragraphs.flat();
+  const djName = lines.map((line) => DJ_LINE.exec(line)?.[1].trim()).find((n) => n !== undefined);
+
+  const description = paragraphs
+    .map((para) => para.filter((line) => !DJ_LINE.test(line)).join('\\n'))
+    .filter(Boolean)
+    .join('\\n\\n');
+
+  return {
+    description,
+    dj: djName && !DJ_UNKNOWN.test(djName) ? djName : undefined,
+    djNight: djName !== undefined || lines.some((line) => DJ_PROSE.test(line)),
+  };
 }
 
 /**
@@ -143,11 +166,18 @@ export function parse(html) {
   const slug = $('html').attr('data-wf-item-slug');
   const eventUrl = slug ? `${BASE}/evenemang/${slug}` : url;
 
+  const body = parseBody($, name);
+
   // "DJs The Hot Shots" → music:'dj', dj:'The Hot Shots'
   // "DJ-kväll"         → music:'dj', no dj name (no space after DJs?)
+  // Titles like "Zinken's Rhythm Club" don't say, so the blurb gets a say
+  // ("DJ music", "DJ: …") — unless the title itself says Live, which wins: a
+  // live night's blurb can mention DJs without being one. With no signal at
+  // all it stays 'live': `music` is required on a one-off, so it can't be blank.
   const djMatch = /\bDJs?\s+(.+)/i.exec(name);
-  const music = djMatch || /\bDJs?\b/i.test(name) ? 'dj' : 'live';
-  const dj = djMatch?.[1].trim();
+  const isDj = djMatch || /\bDJs?\b/i.test(name) || (body.djNight && !/\blive\b/i.test(name));
+  const music = isDj ? 'dj' : 'live';
+  const dj = djMatch?.[1].trim() || body.dj;
 
   // "Chicago Live Wednesdays - Hällgren's Lucky Quartet" → band:"Hällgren's Lucky Quartet"
   const isLiveWednesdays = music === 'live' && /^Chicago Live Wednesdays\b/.test(name);
@@ -172,7 +202,7 @@ export function parse(html) {
     price: factValue($, 'Pris'),
     organizer: ORGANIZER,
     url: eventUrl,
-    description: parseDescription($, name),
+    description: body.description,
     status: 'live',
   }];
 }

@@ -261,6 +261,14 @@ export interface LocaleBundle {
     /** Prefixes a performer line for screen readers. */
     livePrefix: string;
     djPrefix: string;
+    /** The round admission stamp inked on a live night's ticket stub: `top`
+     *  runs over the star, `bottom` under it. Decoration (hidden from screen
+     *  readers), but seen, so it's translated — keep both short: each wraps
+     *  half of a stamp under 100px across. */
+    admissionStamp: {
+      top: string;
+      bottom: string;
+    };
   };
   /** The three action buttons on a card, and the calendar sheets they open. */
   actions: {

@@ -169,12 +169,12 @@ The shape language is **Soft (0.25rem)**. This provides enough roundness to feel
 ### Cards
 Cards are the primary container for events and classes. They should use a subtle Cream-on-Cream tonal shift with a 1px border. Headlines within cards should always be Playfair Display.
 
-An event card opens with a **header band** carrying the time, a `LIVE BAND` / `DJ SET` badge and the temporal badge, drawn as the night's music. The shape does the telling — the band is printed on the card's own paper in the card's own ink, with no colour of its own:
+An event card opens with a **header band** carrying the time, a `LIVE BAND` / `DJ SET` badge and the temporal badge, and the whole card is drawn as the night's music. The shapes do the telling — everything is printed on the card's own paper in the card's own ink, with no colour of its own:
 
-- **Live band → ticket stub.** A 2px dashed perforation under the band, with a semicircular punch-out at each end. A `mixed` night counts as live, as it does in the Live Music Only filter.
-- **DJ set → record sleeve.** A solid edge, with a flat 78 peeking out above it that slides a little further out and turns when the card lifts (and stays put under `prefers-reduced-motion`).
+- **Live band → ticket.** A 2px dashed perforation under the band, a semicircular punch-out at each end of it and of the actions divider, and a round admission stamp ("Live swing ★ Admit one") inked in `--primary` across the stub's corner, running off the edge. Rubber never prints clean, so the stamp is textured — flecks where the ink didn't take, slightly ragged edges, one side pressed harder — and each lands at its own slant and grain, seeded from the event's id. When the card lifts, it squares up and swells as if pressed. A `mixed` night counts as live, as it does in the Live Music Only filter.
+- **DJ set → record sleeve.** A solid edge with a flat 78 half tucked behind it; when the card lifts, it pops most of the way out with a quarter-turn spin.
 
-Because the badge already says which it is, the card's fact list only names performers; an unnamed band or DJ gets no "Live music" / "DJ set" line. The punch-outs' rims follow the card's border in every state, `.lift-card:hover` included — how, and why the card is a grid without `overflow-hidden`, is in the `.ticket-notch` comment in `globals.css`.
+Both motions stay put under `prefers-reduced-motion`. Because the badge already says which kind of night it is, the card's fact list only names performers; an unnamed band or DJ gets no "Live music" / "DJ set" line. The punch-outs' rims follow the card's border in every state, `.lift-card:hover` included — how, and why the card is a grid without `overflow-hidden`, is in the `.ticket-notch` comment in `globals.css`.
 
 ### Input Fields
 Two treatments are in use, and the difference is deliberate:

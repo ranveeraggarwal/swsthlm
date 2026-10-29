@@ -1,16 +1,15 @@
 'use client';
 
 // The band across the top of an event card, drawn as the night's music: a
-// ticket stub when a band is playing, a record sleeve with a 78 peeking out
-// when a DJ is. It carries the time and the badges, so the kind of night
-// reads before the title does.
+// ticket stub, inked with an admission stamp, when a band is playing; a record
+// sleeve with a 78 half out of it when a DJ is. It carries the time and the
+// badges, so the kind of night reads before the title does.
 //
 // It's printed on the card's own paper, in the card's own ink — the shapes do
 // the telling, not a new colour — so an ended or cancelled card's surface
 // shows straight through it.
 
-import React from 'react';
-import type { Music } from '@/lib/data/types';
+import React, { useId } from 'react';
 import { formatEventDateRange, formatEventDateShort } from '@/lib/date/format';
 import { useLocale } from '@/components/providers/LocaleProvider';
 import type { EventGroup } from '../model/event';
@@ -18,45 +17,37 @@ import { musicBadgeLabel } from '../model/labels';
 import type { TemporalBadge } from '../model/temporal';
 import { TemporalBadgeDisplay } from './TemporalBadgeDisplay';
 
-// A band on stage gets a ticket stub; a DJ set gets a record sleeve. `mixed`
-// has a band, so it's a ticket — the same call the "Live Music Only" filter
-// makes in `../model/sections.ts`. Structure rather than a word or a colour,
-// so it stays here, like `FloorTypeBadge`'s icons.
-const SHAPE: Record<Music, 'ticket' | 'sleeve'> = {
-  live: 'ticket',
-  mixed: 'ticket',
-  dj: 'sleeve',
-};
+export type CardShape = 'ticket' | 'sleeve';
 
 /**
- * The header band, plus a ticket's two punch-out notches.
+ * The header band, plus a ticket's punch-outs at the foot of it.
  *
  * The notches come back as the band's siblings, for the card's grid, rather
- * than inside it: they take their rim colour from the card's border (see
- * `.ticket-notch` in `globals.css`), which only works for the card's own
- * children. Sharing the band's grid cell is what puts them on its bottom
- * edge, whatever its height.
+ * than inside it — see `TicketNotches`.
  */
 export function EventCardHeader({
   group,
+  shape,
   badge,
   showDate,
 }: {
   group: EventGroup;
+  shape: CardShape;
   badge: TemporalBadge;
   showDate?: boolean;
 }) {
   const { locale, bundle } = useLocale();
   const { event, dates, nightCount } = group;
-  const isTicket = SHAPE[event.music] === 'ticket';
+  const isTicket = shape === 'ticket';
+  const isOver = event.cancelled || badge === 'ended';
 
   return (
     <>
       <div
-        className={`relative col-start-1 row-start-1 rounded-t-sm border-b-2 border-[var(--border-ink)] px-5 pt-5 pb-4 font-sans ${
-          // The ticket's perforation; the sleeve's edge, and room on the right
-          // for the record.
-          isTicket ? 'border-dashed' : 'overflow-hidden pr-28'
+        className={`relative col-start-1 row-start-1 rounded-t-sm border-b-2 border-[var(--border-ink)] overflow-hidden px-5 pt-5 pb-4 font-sans ${
+          // The ticket's perforation, or the sleeve's edge — and room on the
+          // right for the stamp or the record, which the band clips.
+          isTicket ? 'border-dashed pr-26' : 'pr-32'
         }`}
       >
         {(nightCount > 1 || showDate) && (
@@ -85,16 +76,131 @@ export function EventCardHeader({
           )}
         </div>
 
-        {!isTicket && <SleeveRecord faded={event.cancelled || badge === 'ended'} />}
+        {isTicket ? (
+          <AdmissionStamp impression={event.id} faded={isOver} />
+        ) : (
+          <SleeveRecord faded={isOver} />
+        )}
       </div>
 
-      {isTicket && (
-        <>
-          <span aria-hidden="true" className="ticket-notch ticket-notch-start col-start-1 row-start-1" />
-          <span aria-hidden="true" className="ticket-notch ticket-notch-end col-start-1 row-start-1" />
-        </>
-      )}
+      {isTicket && <TicketNotches className="col-start-1 row-start-1 ticket-notch-bottom" />}
     </>
+  );
+}
+
+/**
+ * A ticket's two punch-outs, one on each edge of the card, centred on the
+ * bottom or top edge of the grid row `className` places them in.
+ *
+ * They have to be the card's own children: they take their rim colour from
+ * the card's border (see `.ticket-notch` in `globals.css`). Sharing a grid
+ * cell with the band or the actions is what lines them up with its
+ * perforation or divider, whatever its height.
+ */
+export function TicketNotches({ className }: { className: string }) {
+  return (
+    <>
+      <span aria-hidden="true" className={`ticket-notch ticket-notch-start ${className}`} />
+      <span aria-hidden="true" className={`ticket-notch ticket-notch-end ${className}`} />
+    </>
+  );
+}
+
+/**
+ * A small, stable number from a string: the same on the server and in the
+ * browser, so anything drawn from it can't trip hydration.
+ */
+function hashOf(key: string): number {
+  let hash = 0;
+  for (let i = 0; i < key.length; i++) hash = (hash * 31 + key.charCodeAt(i)) | 0;
+  return Math.abs(hash);
+}
+
+/**
+ * A live night's admission stamp, inked across the ticket's corner and half
+ * off the edge, the way a hurried one at the door lands. Decoration only —
+ * the badge beside the time is what says "Live band" — but its words are
+ * still read from the locale bundle, since a Swedish visitor sees them.
+ *
+ * Rubber never prints clean, so it's inked like the real thing: flecks where
+ * the ink didn't take, edges a touch ragged, one side pressed harder than the
+ * other. And no two land alike — `impression` (the event's id) picks each
+ * one's slant and fleck pattern, so a page of tickets isn't a page of clip-art.
+ *
+ * The lettering runs round two arcs with `<textPath>`, and the ink is a
+ * filter and a mask, all of which need ids; each card's are its own, from
+ * `useId`, so a page of stamps can't cross-wire.
+ */
+function AdmissionStamp({ impression, faded }: { impression: string; faded: boolean }) {
+  const { bundle } = useLocale();
+  const id = `stamp-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
+  const words = bundle.card.admissionStamp;
+  const hash = hashOf(impression);
+  const tilt = -(9 + (hash % 9)); // -9° to -17°
+  const seed = hash % 997;
+
+  return (
+    <svg
+      aria-hidden="true"
+      focusable="false"
+      viewBox="0 0 120 120"
+      style={{ '--stamp-tilt': `${tilt}deg` } as React.CSSProperties}
+      className={`ticket-stamp absolute -top-1.5 -right-0.5 w-24 h-24 ${
+        faded ? 'text-[var(--outline)]' : 'text-[var(--primary)]'
+      }`}
+    >
+      <defs>
+        {/* Over the top, left to right, letters standing outward... */}
+        <path id={`${id}-top`} d="M22 60a38 38 0 0 1 76 0" />
+        {/* ...and under the bottom, left to right, letters standing inward. */}
+        <path id={`${id}-bottom`} d="M14 60a46 46 0 0 0 92 0" />
+
+        <filter id={`${id}-ink`} x="-5%" y="-5%" width="110%" height="110%">
+          {/* Ragged edges: nudge every line by a pixel or so of noise... */}
+          <feTurbulence type="fractalNoise" baseFrequency={0.9} numOctaves={2} seed={seed} result="wobble" />
+          <feDisplacementMap in="SourceGraphic" in2="wobble" scale={1} xChannelSelector="R" yChannelSelector="G" result="ragged" />
+          {/* ...then knock out flecks where the noise runs high: full ink
+              below 0.6, none above 0.7. */}
+          <feTurbulence type="fractalNoise" baseFrequency={0.45} numOctaves={3} seed={seed + 1} result="grain" />
+          <feColorMatrix in="grain" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -10 0 0 0 7" result="flecks" />
+          <feComposite in="ragged" in2="flecks" operator="in" />
+        </filter>
+
+        {/* Pressed harder at the top left, lifting off towards the bottom right. */}
+        <linearGradient id={`${id}-press`} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0.25" stopOpacity={1} />
+          <stop offset="1" stopOpacity={0.7} />
+        </linearGradient>
+        <mask id={`${id}-pressure`} style={{ maskType: 'alpha' }}>
+          <rect width="120" height="120" fill={`url(#${id}-press)`} />
+        </mask>
+      </defs>
+
+      <g mask={`url(#${id}-pressure)`}>
+        <g filter={`url(#${id}-ink)`}>
+          <g className="fill-none stroke-current">
+            <circle cx="60" cy="60" r="56" strokeWidth={3.5} />
+            <circle cx="60" cy="60" r="51" strokeWidth={1.2} />
+            <circle cx="60" cy="60" r="33" strokeWidth={1.2} />
+          </g>
+          <g className="fill-current font-sans uppercase" fontSize={9.5} fontWeight={800} letterSpacing={1.5}>
+            <text>
+              <textPath href={`#${id}-top`} startOffset="50%" textAnchor="middle">
+                {words.top}
+              </textPath>
+            </text>
+            <text>
+              <textPath href={`#${id}-bottom`} startOffset="50%" textAnchor="middle">
+                {words.bottom}
+              </textPath>
+            </text>
+            <circle cx="18" cy="60" r="1.8" />
+            <circle cx="102" cy="60" r="1.8" />
+            <polygon points="60,47 63.23,55.55 72.36,55.98 65.23,61.7 67.64,70.52 60,65.5 52.36,70.52 54.77,61.7 47.64,55.98 56.77,55.55" />
+          </g>
+        </g>
+      </g>
+    </svg>
   );
 }
 
@@ -114,7 +220,7 @@ function SleeveRecord({ faded }: { faded: boolean }) {
       aria-hidden="true"
       focusable="false"
       viewBox="0 0 100 100"
-      className={`sleeve-record absolute -right-4 top-3 w-28 h-28 ${faded ? 'grayscale opacity-50' : ''}`}
+      className={`sleeve-record absolute right-3 ${faded ? 'grayscale opacity-50' : ''}`}
     >
       <path className="fill-[var(--border-ink)]" fillRule="evenodd" d={circle(50) + circle(2.5)} />
       <g className="fill-none stroke-[var(--outline)]" strokeOpacity={0.45} strokeWidth={0.75}>

@@ -252,17 +252,18 @@ body {
 }
 
 /* Ticket punch-outs: the semicircular bites at each end of a live-music
-   card's perforation (see EventCardHeader.tsx). Each is a circle in the page
-   colour laid across the card's edge, rimmed only on the half inside the
-   card — a border split by side, turned 45° so the split lands on the edge.
+   card's perforation and of its actions divider (see EventCardHeader.tsx).
+   Each is a circle in the page colour laid across the card's edge, rimmed
+   only on the half inside the card — a border split by side, turned 45° so
+   the split lands on the edge.
 
    The rim is `inherit`, taken straight from the card's own border rather
    than from a token, so it can't drift from the edge it bites into: not at
    rest, not on an ended or cancelled card, and not mid-way through
    `.lift-card:hover` above, which in the dark theme brightens that border
    from --border-ink to --on-surface. That holds only while the notch is the
-   card's direct child, which is why it's a grid item sharing the header
-   band's cell rather than a child of the band. */
+   card's direct child, which is why it's a grid item sharing a cell with
+   the band or the actions rather than a child of either. */
 .ticket-notch {
   --notch-size: 22px;
   position: relative;
@@ -272,9 +273,18 @@ body {
   border-radius: 9999px;
   background-color: var(--background);
   rotate: 45deg;
-  /* Centred on the band's 2px perforation... */
+}
+
+/* Centred on a 2px line at the bottom of its grid row (the perforation)... */
+.ticket-notch-bottom {
   align-self: end;
   margin-bottom: calc(var(--notch-size) / -2 + 1px);
+}
+
+/* ...or at the top of it (the actions divider)... */
+.ticket-notch-top {
+  align-self: start;
+  margin-top: calc(var(--notch-size) / -2 + 1px);
 }
 
 /* ...and on the card's 2px edge, one at each end. */
@@ -292,23 +302,46 @@ body {
   border-left-color: inherit;
 }
 
-/* A DJ card's 78, peeking out of its sleeve. Lifting the card draws it a
-   little further out and gives it a turn — on the same hover as the lift,
-   but slower, the way a record keeps moving after the hand stops. */
+/* A DJ card's 78, half in its sleeve: centred on the sleeve's edge (the
+   bottom of the header band, which clips it), so exactly half of it shows
+   at any band height. Lifting the card pops it most of the way out — with a
+   little overshoot — and spins it a quarter turn. */
 .sleeve-record {
+  --record-size: 100px;
+  width: var(--record-size);
+  height: var(--record-size);
+  bottom: calc(var(--record-size) / -2);
   transition:
-    translate 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-    rotate 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    translate 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+    rotate 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .lift-card:hover .sleeve-record,
 .lift-card:focus-visible .sleeve-record {
-  translate: 0 -6px;
-  rotate: 45deg;
+  translate: 0 -40%;
+  rotate: 90deg;
+}
+
+/* A live card's admission stamp, inked at a slant across the stub's corner —
+   each at its own slant, set per card as --stamp-tilt. Lifting the card
+   presses it: it squares up a little and swells, with the same overshoot as
+   the record's pop. */
+.ticket-stamp {
+  rotate: var(--stamp-tilt, -14deg);
+  transition:
+    rotate 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+    scale 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.lift-card:hover .ticket-stamp,
+.lift-card:focus-visible .ticket-stamp {
+  rotate: calc(var(--stamp-tilt, -14deg) + 8deg);
+  scale: 1.08;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sleeve-record {
+  .sleeve-record,
+  .ticket-stamp {
     transition: none;
   }
 
@@ -316,6 +349,12 @@ body {
   .lift-card:focus-visible .sleeve-record {
     translate: none;
     rotate: none;
+  }
+
+  .lift-card:hover .ticket-stamp,
+  .lift-card:focus-visible .ticket-stamp {
+    rotate: var(--stamp-tilt, -14deg);
+    scale: none;
   }
 }
 

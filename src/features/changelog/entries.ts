@@ -59,7 +59,7 @@ export const CHANGELOG: ChangelogEntry[] = [
       {
         title: 'Ticket stubs for bands, record sleeves for DJs',
         description:
-          'Event cards now open with a header that shows what is playing — a perforated ticket stub when a band is on stage, a record peeking out of its sleeve when a DJ is spinning — so you can spot the kind of night you want before reading a word.',
+          'Event cards now show what is playing at a glance — a stamped, perforated ticket when a band is on stage, a record half out of its sleeve when a DJ is spinning — so you can spot the kind of night you want before reading a word.',
       },
     ],
   },

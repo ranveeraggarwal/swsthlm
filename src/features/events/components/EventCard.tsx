@@ -3,9 +3,9 @@
 // The full event card, used in the highlighted grid at the top of the homepage.
 // `EventRow` is the compact form for events further out.
 //
-// It opens with a header band drawn as the night's music — a ticket stub for a
-// live band, a record sleeve for a DJ set — which carries the time and the
-// badges; see `EventCardHeader`.
+// It's drawn as the night's music: a stamped ticket, punched out at its stub
+// and at its actions, for a live band; a record sleeve for a DJ set. The header
+// band carries the time and the badges; see `EventCardHeader`.
 //
 // Cancelled and ended cards are de-emphasised with border, background tint,
 // stripe, badge and (for cancelled) strikethrough — deliberately *not* opacity,
@@ -13,13 +13,14 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { Ticket } from 'lucide-react';
+import type { Music } from '@/lib/data/types';
 import type { Now } from '@/lib/date/clock';
 import { ReportCorrectionButton } from '@/features/corrections/ReportCorrectionButton';
 import { domIdFor, type EventGroup } from '../model/event';
 import { getTemporalBadge } from '../model/temporal';
 import { useLocale } from '@/components/providers/LocaleProvider';
 import { AddToCalendarButton } from './AddToCalendarButton';
-import { EventCardHeader } from './EventCardHeader';
+import { EventCardHeader, TicketNotches, type CardShape } from './EventCardHeader';
 import { BeginnerChip, NightsChip, StyleChip, TasterClassChip } from './EventChips';
 import { EventFacts } from './EventFacts';
 import { FloorTypeBadge } from './FloorTypeBadge';
@@ -37,6 +38,16 @@ interface EventCardProps {
 
 /** How many lines of the organizer's description to show before "Read more". */
 const DESCRIPTION_CLAMP = 'line-clamp-2';
+
+// A band on stage gets a ticket; a DJ set gets a record sleeve. `mixed` has a
+// band, so it's a ticket — the same call the "Live Music Only" filter makes in
+// `../model/sections.ts`. Structure rather than a word or a colour, so it stays
+// here, like `FloorTypeBadge`'s icons.
+const SHAPE: Record<Music, CardShape> = {
+  live: 'ticket',
+  mixed: 'ticket',
+  dj: 'sleeve',
+};
 
 export function EventCard({ group, isThisWeek, showDate, now }: EventCardProps) {
   const { bundle } = useLocale();
@@ -56,10 +67,12 @@ export function EventCard({ group, isThisWeek, showDate, now }: EventCardProps) 
   }, [event.body, descriptionExpanded]);
 
   const badge = getTemporalBadge(event, now, isThisWeek);
+  const shape = SHAPE[event.music];
 
   return (
-    // A one-column grid so the header's notches can share the band's cell, and
-    // no `overflow-hidden`, so they can paint over this card's own border.
+    // A one-column grid, each section pinned to its own row, so a ticket's
+    // notches can share a cell with the band or the actions; and no
+    // `overflow-hidden`, so they can paint over this card's own border.
     <div
       className={`relative lift-card rounded border-2 grid grid-cols-1 text-[var(--on-surface)] ${
         event.cancelled
@@ -81,9 +94,9 @@ export function EventCard({ group, isThisWeek, showDate, now }: EventCardProps) 
         )
       )}
 
-      <EventCardHeader group={group} badge={badge} showDate={showDate} />
+      <EventCardHeader group={group} shape={shape} badge={badge} showDate={showDate} />
 
-      <div className="p-5">
+      <div className="col-start-1 row-start-2 p-5">
         <h3
           title={event.title}
           className={`font-serif text-xl font-bold tracking-tight text-[var(--on-surface)] leading-snug mb-1.5 truncate ${event.cancelled ? 'line-through' : ''}`}
@@ -109,7 +122,7 @@ export function EventCard({ group, isThisWeek, showDate, now }: EventCardProps) 
         </div>
       </div>
 
-      <div className="border-t-2 border-[var(--border-ink)] p-5 space-y-3 font-sans">
+      <div className="col-start-1 row-start-3 border-t-2 border-[var(--border-ink)] p-5 space-y-3 font-sans">
         {event.body && (
           <div>
             <p
@@ -151,6 +164,8 @@ export function EventCard({ group, isThisWeek, showDate, now }: EventCardProps) 
           <ReportCorrectionButton event={event} dates={dates} />
         </div>
       </div>
+
+      {shape === 'ticket' && <TicketNotches className="col-start-1 row-start-3 ticket-notch-top" />}
     </div>
   );
 }

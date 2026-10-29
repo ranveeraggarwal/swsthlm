@@ -42,7 +42,7 @@ src/
       components/               the UI
         EventCalendar.tsx         the homepage listing (stateful; the only one)
         FilterPanel.tsx EmptyState.tsx EventSections.tsx
-        EventCard.tsx EventRow.tsx
+        EventCard.tsx EventCardHeader.tsx EventRow.tsx
         EventFacts.tsx EventChips.tsx FloorTypeBadge.tsx TemporalBadgeDisplay.tsx
         AddToCalendarButton.tsx ShareButton.tsx SubscribeButton.tsx
     corrections/              "Wrong info?" dialog + the mailto it builds

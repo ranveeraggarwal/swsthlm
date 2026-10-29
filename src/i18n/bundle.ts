@@ -154,6 +154,11 @@ export interface LocaleBundle {
    *  but the table stays `Record<Music, …>` so it can't drift from the data
    *  contract if a third music value is ever added. */
   music: Record<Music, string>;
+  /** The `music` column as the badge on an event card's header band — the
+   *  stamp on a live night's ticket stub or a DJ night's record sleeve.
+   *  Unlike `music` above, `mixed` displays as itself: the header carries
+   *  one badge for the whole night. */
+  musicBadge: Record<Music, string>;
   /** The venue's floor type badge. */
   floors: Record<FloorType, string>;
   /** The event-card badge's word. Colour, priority and layout stay in
@@ -256,6 +261,14 @@ export interface LocaleBundle {
     /** Prefixes a performer line for screen readers. */
     livePrefix: string;
     djPrefix: string;
+    /** The round admission stamp inked on a live night's ticket stub: `top`
+     *  runs over the star, `bottom` under it. Decoration (hidden from screen
+     *  readers), but seen, so it's translated — keep both short: each wraps
+     *  half of a stamp under 100px across. */
+    admissionStamp: {
+      top: string;
+      bottom: string;
+    };
   };
   /** The three action buttons on a card, and the calendar sheets they open. */
   actions: {

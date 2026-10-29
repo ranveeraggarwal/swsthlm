@@ -53,6 +53,17 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    month: '2026-10',
+    summary: 'Live bands and DJ nights at a glance',
+    items: [
+      {
+        title: 'Ticket stubs for bands, record sleeves for DJs',
+        description:
+          'Event cards now show what is playing at a glance — a stamped, perforated ticket when a band is on stage, a record half out of its sleeve when a DJ is spinning — so you can spot the kind of night you want before reading a word.',
+      },
+    ],
+  },
+  {
     month: '2026-09',
     summary: 'Taster classes get their own tag',
     items: [

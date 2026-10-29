@@ -91,6 +91,11 @@ export const sv = {
     dj: 'DJ-set',
     mixed: 'Livemusik & DJ-set',
   },
+  musicBadge: {
+    live: 'Liveband',
+    dj: 'DJ-set',
+    mixed: 'Liveband + DJ',
+  },
   floors: {
     studio: 'Dansstudio',
     hall: 'Danssal',
@@ -172,6 +177,12 @@ export const sv = {
     opensInNewTab: ' (öppnas i en ny flik)',
     livePrefix: 'Live: ',
     djPrefix: 'DJ: ',
+    // "Entré" is what a Swedish ticket says where an English one says
+    // "Admit one"; "live swing" needs no translating.
+    admissionStamp: {
+      top: 'Live swing',
+      bottom: 'Entré',
+    },
   },
   actions: {
     addToCalendar: 'Lägg till i kalendern',

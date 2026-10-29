@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { beginnerClassLabel, floorTypeLabel, styleFilterLabel, styleLabel } from './labels';
+import {
+  beginnerClassLabel,
+  floorTypeLabel,
+  musicBadgeLabel,
+  styleFilterLabel,
+  styleLabel,
+} from './labels';
 
 describe('styleLabel', () => {
   it('leaves dance style names untranslated in Swedish — that is what dancers call them', () => {
@@ -42,5 +48,17 @@ describe('floorTypeLabel', () => {
     expect(floorTypeLabel('hall', 'sv')).toBe('Danssal');
     expect(floorTypeLabel('bar', 'sv')).toBe('Bar/restaurang');
     expect(floorTypeLabel('outdoor', 'sv')).toBe('Utomhus');
+  });
+});
+
+describe('musicBadgeLabel', () => {
+  it('names a mixed night as both, since the header carries one badge', () => {
+    expect(musicBadgeLabel('mixed')).toBe('Live band + DJ');
+  });
+
+  it('translates every music value in Swedish', () => {
+    expect(musicBadgeLabel('live', 'sv')).toBe('Liveband');
+    expect(musicBadgeLabel('dj', 'sv')).toBe('DJ-set');
+    expect(musicBadgeLabel('mixed', 'sv')).toBe('Liveband + DJ');
   });
 });

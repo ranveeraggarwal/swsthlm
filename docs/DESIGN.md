@@ -169,6 +169,13 @@ The shape language is **Soft (0.25rem)**. This provides enough roundness to feel
 ### Cards
 Cards are the primary container for events and classes. They should use a subtle Cream-on-Cream tonal shift with a 1px border. Headlines within cards should always be Playfair Display.
 
+An event card opens with a **header band** carrying the time, a `LIVE BAND` / `DJ SET` badge and the temporal badge, and the whole card is drawn as the night's music. The shapes do the telling, in the card's own ink:
+
+- **Live band → ticket.** The stub is printed on tan stock (`--ticket-stock`: manila in light, kraft in dark — the palette's brass at partial strength on the card), which an ended or cancelled night drops for its own muted surface. Under it runs a 2px dashed perforation, inked in `--shadow-ink` as slots punched through (an umber `--border-ink` dash vanishes into the kraft), with a semicircular punch-out at each end of it and of the actions divider. Across the stub's corner, running off the edge, is a round admission stamp ("Live swing ★ Admit one") inked in `--primary`. Rubber never prints clean, so the stamp is textured — flecks where the ink didn't take, slightly ragged edges, one side pressed harder — and each lands at its own slant and grain, seeded from the event's id. When the card lifts, it squares up and swells as if pressed. A `mixed` night counts as live, as it does in the Live Music Only filter.
+- **DJ set → record sleeve.** A solid edge with a flat 78 half tucked behind it; when the card lifts, it pops most of the way out with a quarter-turn spin.
+
+Both motions stay put under `prefers-reduced-motion`. Because the badge already says which kind of night it is, the card's fact list only names performers; an unnamed band or DJ gets no "Live music" / "DJ set" line. The punch-outs' rims follow the card's border in every state, `.lift-card:hover` included — how, and why the card is a grid without `overflow-hidden`, is in the `.ticket-notch` comment in `globals.css`.
+
 ### Input Fields
 Two treatments are in use, and the difference is deliberate:
 
@@ -244,6 +251,7 @@ Exact values as merged in `src/app/globals.css` (`:root` vs. `:root[data-theme='
 | `--ended-outline` | `#a1a1aa` | `#55555c` |
 | `--ended-surface` | `#fafafa` | `#272321` |
 | `--ended-surface-outline` | `#d4d4d8` | `#4c4540` |
+| `--ticket-stock` | `#edd8a8` | `#52432d` (live-music ticket stub — see Cards) |
 | `--border-ink` | `#1b1c16` | `#614a3c` |
 | `--shadow-ink` | `#1b1c16` | `#110b07` |
 

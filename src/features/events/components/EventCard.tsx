@@ -69,6 +69,11 @@ export function EventCard({ group, isThisWeek, showDate, now }: EventCardProps) 
   const badge = getTemporalBadge(event, now, isThisWeek);
   const shape = SHAPE[event.music];
 
+  // A red halo while it's on. An outline, not a `ring-*`: rings are drawn as a
+  // box-shadow, and `.lift-card`'s unlayered box-shadow — the sticker offset —
+  // beats every Tailwind utility, so the ring this used to be never rendered.
+  const halo = !event.cancelled && badge === 'happening-now' ? 'outline-2 outline-[var(--live)]/30' : '';
+
   return (
     // A one-column grid, each section pinned to its own row, so a ticket's
     // notches can share a cell with the band or the actions; and no
@@ -81,7 +86,7 @@ export function EventCard({ group, isThisWeek, showDate, now }: EventCardProps) 
           : badge === 'ended'
             ? 'border-[var(--ended-surface-outline)] bg-[var(--ended-surface)]'
             : 'border-[var(--border-ink)] bg-[var(--surface-container-low)]'
-      } ${!event.cancelled && badge === 'happening-now' ? 'ring-2 ring-[var(--live)]/30' : ''}`}
+      } ${halo}`}
     >
       {/* Accent stripe — red for cancelled, temporal colour otherwise. Rounded
           itself, as the card no longer clips its corners, and lifted over the

@@ -54,6 +54,9 @@ export function EventCard({ group, isThisWeek, showDate, now }: EventCardProps) 
   const { event, dates, nightCount } = group;
 
   const [descriptionExpanded, setDescriptionExpanded] = useState(false);
+  // Touch has no hover, so a tap toggles the lift instead (see `.lift-card`).
+  const [lifted, setLifted] = useState(false);
+  const lastPointer = useRef('');
   const [descriptionTruncated, setDescriptionTruncated] = useState(false);
   const descriptionRef = useRef<HTMLParagraphElement>(null);
   const descriptionId = domIdFor(event, 'event-desc');
@@ -80,6 +83,15 @@ export function EventCard({ group, isThisWeek, showDate, now }: EventCardProps) 
     // `overflow-hidden`, so they can paint over this card's own border.
     // `isolate` keeps the stripe's z-index below inside the card.
     <div
+      data-lifted={lifted}
+      onPointerDown={(e) => {
+        lastPointer.current = e.pointerType;
+      }}
+      onClick={(e) => {
+        if (lastPointer.current === 'touch' && !(e.target as HTMLElement).closest('a, button')) {
+          setLifted((v) => !v);
+        }
+      }}
       className={`relative isolate lift-card rounded border-2 grid grid-cols-1 text-[var(--on-surface)] ${
         event.cancelled
           ? 'border-[var(--error)]/50 bg-[var(--error-container)]/40'

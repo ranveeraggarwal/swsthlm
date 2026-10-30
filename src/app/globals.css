@@ -254,11 +254,22 @@ body {
   box-shadow: 2px 2px 0px 0px var(--shadow-ink);
 }
 
-.lift-card:hover,
-.lift-card:focus-visible {
+.lift-card:focus-visible,
+.lift-card[data-lifted='true'] {
   transform: translate(-4px, -4px);
   box-shadow: 6px 6px 0px 0px var(--shadow-ink);
   border-color: var(--on-surface);
+}
+
+/* Hover only where there's a real pointer: on touch, :hover sticks after a
+   tap, so a lifted card could never be put back down. Touch toggles
+   data-lifted instead (see EventCard.tsx). */
+@media (hover: hover) {
+  .lift-card:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 6px 6px 0px 0px var(--shadow-ink);
+    border-color: var(--on-surface);
+  }
 }
 
 /* Ticket punch-outs: the semicircular bites at each end of a live-music
@@ -326,10 +337,17 @@ body {
     rotate 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.lift-card:hover .sleeve-record,
-.lift-card:focus-visible .sleeve-record {
+.lift-card:focus-visible .sleeve-record,
+.lift-card[data-lifted='true'] .sleeve-record {
   translate: 0 -40%;
   rotate: 90deg;
+}
+
+@media (hover: hover) {
+  .lift-card:hover .sleeve-record {
+    translate: 0 -40%;
+    rotate: 90deg;
+  }
 }
 
 /* A live card's admission stamp, inked at a slant across the stub's corner —
@@ -343,10 +361,17 @@ body {
     scale 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.lift-card:hover .ticket-stamp,
-.lift-card:focus-visible .ticket-stamp {
+.lift-card:focus-visible .ticket-stamp,
+.lift-card[data-lifted='true'] .ticket-stamp {
   rotate: calc(var(--stamp-tilt, -14deg) + 8deg);
   scale: 1.08;
+}
+
+@media (hover: hover) {
+  .lift-card:hover .ticket-stamp {
+    rotate: calc(var(--stamp-tilt, -14deg) + 8deg);
+    scale: 1.08;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -356,13 +381,15 @@ body {
   }
 
   .lift-card:hover .sleeve-record,
-  .lift-card:focus-visible .sleeve-record {
+  .lift-card:focus-visible .sleeve-record,
+  .lift-card[data-lifted='true'] .sleeve-record {
     translate: none;
     rotate: none;
   }
 
   .lift-card:hover .ticket-stamp,
-  .lift-card:focus-visible .ticket-stamp {
+  .lift-card:focus-visible .ticket-stamp,
+  .lift-card[data-lifted='true'] .ticket-stamp {
     rotate: var(--stamp-tilt, -14deg);
     scale: none;
   }

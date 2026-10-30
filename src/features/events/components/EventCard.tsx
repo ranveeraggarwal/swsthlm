@@ -57,6 +57,17 @@ export function EventCard({ group, isThisWeek, showDate, now }: EventCardProps) 
   // Touch has no hover, so a tap toggles the lift instead (see `.lift-card`).
   const [lifted, setLifted] = useState(false);
   const lastPointer = useRef('');
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  // A tap anywhere outside a lifted card puts it back down.
+  useEffect(() => {
+    if (!lifted) return;
+    const onOutside = (e: PointerEvent) => {
+      if (!cardRef.current?.contains(e.target as Node)) setLifted(false);
+    };
+    document.addEventListener('pointerdown', onOutside);
+    return () => document.removeEventListener('pointerdown', onOutside);
+  }, [lifted]);
   const [descriptionTruncated, setDescriptionTruncated] = useState(false);
   const descriptionRef = useRef<HTMLParagraphElement>(null);
   const descriptionId = domIdFor(event, 'event-desc');
@@ -83,6 +94,7 @@ export function EventCard({ group, isThisWeek, showDate, now }: EventCardProps) 
     // `overflow-hidden`, so they can paint over this card's own border.
     // `isolate` keeps the stripe's z-index below inside the card.
     <div
+      ref={cardRef}
       data-lifted={lifted}
       onPointerDown={(e) => {
         lastPointer.current = e.pointerType;

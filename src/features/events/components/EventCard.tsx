@@ -127,11 +127,12 @@ export function EventCard({ group, isThisWeek, showDate, now }: EventCardProps) 
           <BeginnerChip beginnerClass={event.beginnerClass} />
           <TasterClassChip tasterClass={event.tasterClass} />
         </div>
-      </div>
 
-      <div className="col-start-1 row-start-3 border-t-2 border-[var(--border-ink)] p-5 space-y-3 font-sans">
+        {/* Here rather than with the actions, so the header band and the
+            actions keep the same height from card to card; only this middle
+            section grows with the organizer's prose. */}
         {event.body && (
-          <div>
+          <div className="mt-4 font-sans">
             <p
               ref={descriptionRef}
               id={descriptionId}
@@ -152,24 +153,24 @@ export function EventCard({ group, isThisWeek, showDate, now }: EventCardProps) 
             )}
           </div>
         )}
+      </div>
 
-        <div className="flex items-center gap-2">
-          {event.ticket && (
-            <a
-              href={event.ticket}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded border border-[var(--border-ink)] bg-[var(--primary)] text-[var(--on-primary)] hover:bg-[var(--primary-container)] font-bold uppercase tracking-wider text-xs lift-btn-primary"
-            >
-              <Ticket aria-hidden="true" className="w-4 h-4" />
-              {bundle.card.source}
-              <span className="sr-only">{bundle.card.opensInNewTab}</span>
-            </a>
-          )}
-          <AddToCalendarButton event={event} />
-          <ShareButton event={event} />
-          <ReportCorrectionButton event={event} dates={dates} />
-        </div>
+      <div className="col-start-1 row-start-3 border-t-2 border-[var(--border-ink)] p-5 flex items-center gap-2 font-sans">
+        {event.ticket && (
+          <a
+            href={event.ticket}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded border border-[var(--border-ink)] bg-[var(--primary)] text-[var(--on-primary)] hover:bg-[var(--primary-container)] font-bold uppercase tracking-wider text-xs lift-btn-primary"
+          >
+            <Ticket aria-hidden="true" className="w-4 h-4" />
+            {bundle.card.source}
+            <span className="sr-only">{bundle.card.opensInNewTab}</span>
+          </a>
+        )}
+        <AddToCalendarButton event={event} />
+        <ShareButton event={event} />
+        <ReportCorrectionButton event={event} dates={dates} />
       </div>
 
       {shape === 'ticket' && <TicketNotches className="col-start-1 row-start-3 ticket-notch-top" />}

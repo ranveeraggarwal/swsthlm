@@ -96,3 +96,7 @@
 ## 2026-12-25 - Context for Icon-Only Status Indicators in Lists
 **Learning:** Reusable UX Pattern: In list views or collapsed rows, using icon-only representations (like `<Music>` or `<Disc>`) to save space can remove critical context. Sighted users miss out on meaning without a tooltip, and screen readers entirely skip them if they are marked `aria-hidden="true"`.
 **Action:** When displaying icon-only data indicators, always wrap the icon in a `span` with a `title` attribute for native tooltips, and include a localized `sr-only` span so screen reader users hear the context during list scanning.
+
+## 2026-12-30 - Interactive Elements Cursor Styling
+**Learning:** Reusable UX Pattern: Explicitly apply the `cursor-pointer` Tailwind utility class to interactive custom components like buttons or elements that trigger actions (e.g., `LanguagePrompt` action buttons, `LanguageToggle` buttons) to ensure consistent pointer cursors, as default button cursors may be overridden by environments or nested styles.
+**Action:** Verify pointer behavior on interactive elements and apply `cursor-pointer` where hover states should clearly indicate clickability.

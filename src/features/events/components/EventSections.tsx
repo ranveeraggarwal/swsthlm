@@ -82,7 +82,10 @@ export function HighlightedEvents({
                 : formatEventDate(date, locale)}
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
+            {/* Cards stretch to the tallest in their row (the grid default), so a
+                row reads as one even strip; see `EventCard` for how the extra
+                height is absorbed. */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {groups.map((group) => (
                 <EventCard
                   key={group.event.id}

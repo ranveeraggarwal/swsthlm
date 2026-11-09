@@ -90,7 +90,9 @@ export function EventCard({ group, isThisWeek, showDate, now }: EventCardProps) 
 
   return (
     // A one-column grid, each section pinned to its own row, so a ticket's
-    // notches can share a cell with the band or the actions; and no
+    // notches can share a cell with the band or the actions. The middle row
+    // takes any spare height, so when the listing stretches a card to match
+    // the tallest one beside it, the actions stay pinned to the bottom. And no
     // `overflow-hidden`, so they can paint over this card's own border.
     // `isolate` keeps the stripe's z-index below inside the card.
     <div
@@ -104,7 +106,7 @@ export function EventCard({ group, isThisWeek, showDate, now }: EventCardProps) 
           setLifted((v) => !v);
         }
       }}
-      className={`relative isolate lift-card rounded border-2 grid grid-cols-1 text-[var(--on-surface)] ${
+      className={`relative isolate lift-card rounded border-2 grid grid-cols-1 grid-rows-[auto_1fr_auto] text-[var(--on-surface)] ${
         event.cancelled
           ? 'border-[var(--error)]/50 bg-[var(--error-container)]/40'
           : badge === 'ended'

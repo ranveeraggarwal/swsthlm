@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { X, Download } from 'lucide-react';
 import { useLocale } from '@/components/providers/LocaleProvider';
 
@@ -40,11 +40,22 @@ export function InstallToast() {
     setDeferredPrompt(null);
   };
 
-  const handleDismiss = () => {
+  const handleDismiss = useCallback(() => {
     setVisible(false);
     setDeferredPrompt(null);
     localStorage.setItem(DISMISSED_KEY, '1');
-  };
+  }, []);
+
+  // Escape declines. Cheaper than hunting for the button, and a prompt that
+  // can only be dismissed by mouse is a trap on a keyboard.
+  useEffect(() => {
+    if (!visible) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') handleDismiss();
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [visible, handleDismiss]);
 
   if (!visible) return null;
 
@@ -74,7 +85,7 @@ export function InstallToast() {
           type="button"
           onClick={handleDismiss}
           aria-label={bundle.install.dismiss}
-          title={bundle.install.dismiss}
+          title={`${bundle.install.dismiss} (Esc)`}
           className="shrink-0 p-1 rounded text-[var(--on-surface-variant)] hover:text-[var(--on-surface)] cursor-pointer"
         >
           <X className="w-4 h-4" aria-hidden="true" />

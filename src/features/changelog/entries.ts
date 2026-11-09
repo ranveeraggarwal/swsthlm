@@ -53,6 +53,17 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    month: '2026-11',
+    summary: 'A logo that dances',
+    items: [
+      {
+        title: 'The logo dances when you click it',
+        description:
+          'Click the orange note in the top corner to head home and it does a little rock step while a couple of notes float out.',
+      },
+    ],
+  },
+  {
     month: '2026-10',
     summary: 'Live bands and DJ nights at a glance',
     items: [

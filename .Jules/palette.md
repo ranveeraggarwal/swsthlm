@@ -100,3 +100,7 @@
 ## 2026-12-30 - Interactive Elements Cursor Styling
 **Learning:** Reusable UX Pattern: Explicitly apply the `cursor-pointer` Tailwind utility class to interactive custom components like buttons or elements that trigger actions (e.g., `LanguagePrompt` action buttons, `LanguageToggle` buttons) to ensure consistent pointer cursors, as default button cursors may be overridden by environments or nested styles.
 **Action:** Verify pointer behavior on interactive elements and apply `cursor-pointer` where hover states should clearly indicate clickability.
+
+## 2026-12-31 - Transient prompt dismissal keyboard shortcuts
+**Learning:** Reusable UX Pattern: Transient, non-modal prompts or toasts that include a dismiss button (such as `InstallToast`) can become a trap for keyboard users if they can only be dismissed by tabbing to the button or using a mouse. They should support dismissal via the `Escape` key to maintain keyboard accessibility, and this shortcut should be indicated in the tooltip (`title`) of the dismiss button.
+**Action:** When adding dismiss buttons to transient UI components (like toasts or prompts), always implement an `Escape` key handler and append `(Esc)` to the button's `title` attribute.

@@ -1,0 +1,70 @@
+/* The home tile's dance — see HomeLink.tsx for why it's built this way.
+   Everything here animates `transform` or `opacity` and nothing else, so the
+   browser can hand it to the compositor: no layout, no repaint. */
+
+/* Press, then a swing count: two slow sways (the rock step), three quick ones
+   (the triple step), settling home. Pivots on its bottom edge like a dancer's
+   feet on the floor. */
+@keyframes rock-step {
+  0%   { transform: none; }
+  10%  { transform: translate(2px, 2px); }
+  26%  { transform: translateY(-3px) rotate(-12deg); }
+  44%  { transform: translateY(-2px) rotate(10deg); }
+  56%  { transform: rotate(-6deg); }
+  68%  { transform: rotate(5deg); }
+  80%  { transform: rotate(-3deg); }
+  100% { transform: none; }
+}
+
+.rock {
+  transform-origin: 50% 100%;
+  animation: rock-step 0.8s ease-in-out;
+}
+
+/* Each note pops out of the tile's top-right corner and drifts up and away,
+   swaying as it goes. */
+@keyframes note-float {
+  0%   { opacity: 0; transform: translate(0, 0) rotate(0deg) scale(0.6); }
+  20%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--drift-x), -16px) rotate(var(--sway)) scale(1); }
+}
+
+.note {
+  position: absolute;
+  top: 0;
+  right: -6px;
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+  opacity: 0;
+  animation: note-float 0.9s ease-out forwards;
+}
+
+.first {
+  --drift-x: 16px;
+  --sway: -20deg;
+  animation-delay: 0.08s;
+}
+
+.second {
+  --drift-x: 30px;
+  --sway: 18deg;
+  animation-delay: 0.3s;
+}
+
+/* The reduced-motion stand-in for note-float. */
+@keyframes note-fade {
+  0%, 100% { opacity: 0; }
+  30%, 70% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* No rocking or drifting: the notes just appear beside the tile and fade. */
+  .rock {
+    animation: none;
+  }
+
+  .note {
+    animation-name: note-fade;
+  }
+}

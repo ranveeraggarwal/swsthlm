@@ -225,26 +225,52 @@ body {
   background: var(--primary);
 }
 
-/* Filter pill scroll container with fade edges */
+/* Filter pill scroll container with fade edges. Each edge fades only while
+   there is more to scroll to on that side; `ScrollFade` sets the data
+   attributes from the live scroll position (#463). */
 .filter-scroll-container {
   position: relative;
 }
 
+.filter-scroll-container::before,
 .filter-scroll-container::after {
   content: '';
   position: absolute;
-  right: 0;
   top: 0;
   bottom: 0;
   width: 48px;
-  background: linear-gradient(to right, transparent, var(--surface-container-low));
   pointer-events: none;
   z-index: 1;
+  opacity: 0;
+  transition: opacity 150ms ease-out;
+}
+
+.filter-scroll-container::before {
+  left: 0;
+  background: linear-gradient(to left, transparent, var(--surface-container-low));
+}
+
+.filter-scroll-container::after {
+  right: 0;
+  background: linear-gradient(to right, transparent, var(--surface-container-low));
+}
+
+.filter-scroll-container[data-fade-start='true']::before,
+.filter-scroll-container[data-fade-end='true']::after {
+  opacity: 1;
 }
 
 @media (min-width: 768px) {
+  .filter-scroll-container::before,
   .filter-scroll-container::after {
     display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .filter-scroll-container::before,
+  .filter-scroll-container::after {
+    transition: none;
   }
 }
 

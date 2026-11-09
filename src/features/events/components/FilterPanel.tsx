@@ -10,6 +10,7 @@ import type { Style } from '@/lib/data/types';
 import { styleFilterLabel } from '../model/labels';
 import { venueFilterLabel, type EventFilters } from '../model/sections';
 import { useLocale } from '@/components/providers/LocaleProvider';
+import { ScrollFade } from '@/components/ui/ScrollFade';
 
 interface FilterPanelProps {
   id: string;
@@ -118,21 +119,19 @@ export function FilterPanel({
             <span id={`${id}-style-label`} className={FACET_LABEL}>
               <Sparkles aria-hidden="true" className="w-3.5 h-3.5 text-[var(--primary)]" /> {t.byStyle}
             </span>
-            <div className="filter-scroll-container">
-              <div role="group" aria-labelledby={`${id}-style-label`} className={SCROLLER}>
-                {styles.map((style) => (
-                  <button
-                    key={style}
-                    type="button"
-                    onClick={() => onChange({ style })}
-                    aria-pressed={filters.style === style}
-                    className={`${CHIP_BASE} ${filters.style === style ? CHIP_SELECTED.primary : CHIP_IDLE}`}
-                  >
-                    {styleFilterLabel(style, locale)}
-                  </button>
-                ))}
-              </div>
-            </div>
+            <ScrollFade role="group" aria-labelledby={`${id}-style-label`} className={SCROLLER}>
+              {styles.map((style) => (
+                <button
+                  key={style}
+                  type="button"
+                  onClick={() => onChange({ style })}
+                  aria-pressed={filters.style === style}
+                  className={`${CHIP_BASE} ${filters.style === style ? CHIP_SELECTED.primary : CHIP_IDLE}`}
+                >
+                  {styleFilterLabel(style, locale)}
+                </button>
+              ))}
+            </ScrollFade>
           </div>
 
           <div className="md:w-48">
@@ -156,21 +155,19 @@ export function FilterPanel({
           <span id={`${id}-venue-label`} className={FACET_LABEL}>
             <MapPin aria-hidden="true" className="w-3.5 h-3.5 text-[var(--secondary)]" /> {t.byVenue}
           </span>
-          <div className="filter-scroll-container">
-            <div role="group" aria-labelledby={`${id}-venue-label`} className={SCROLLER}>
-              {venues.map((venue) => (
-                <button
-                  key={venue}
-                  type="button"
-                  onClick={() => onChange({ venue })}
-                  aria-pressed={filters.venue === venue}
-                  className={`${CHIP_BASE} ${filters.venue === venue ? CHIP_SELECTED.secondary : CHIP_IDLE}`}
-                >
-                  {venueFilterLabel(venue, locale)}
-                </button>
-              ))}
-            </div>
-          </div>
+          <ScrollFade role="group" aria-labelledby={`${id}-venue-label`} className={SCROLLER}>
+            {venues.map((venue) => (
+              <button
+                key={venue}
+                type="button"
+                onClick={() => onChange({ venue })}
+                aria-pressed={filters.venue === venue}
+                className={`${CHIP_BASE} ${filters.venue === venue ? CHIP_SELECTED.secondary : CHIP_IDLE}`}
+              >
+                {venueFilterLabel(venue, locale)}
+              </button>
+            ))}
+          </ScrollFade>
         </div>
       </div>
     </div>

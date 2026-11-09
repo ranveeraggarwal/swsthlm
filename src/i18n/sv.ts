@@ -117,10 +117,15 @@ export const sv = {
     atTime: 'Smakprovskurs {time}',
   },
   home: {
-    // "i full swing" is the same idiom in Swedish, which is lucky — the hero
-    // keeps its pun without needing a different joke.
-    title: { lead: 'Stockholm i ', em: 'full swing' },
-    subtitle: 'Din guide till socialdans i Lindy Hop, Balboa, Shag och Blues i Stockholm.',
+    kicker: 'Swingdanskalendern för Stockholm',
+    title: { lead: 'Stockholm dansar i en ', em: 'annan takt.' },
+    subtitle:
+      'Upptäck livemusiken, socialdansen och människorna som håller swingen vid liv i Stockholm — från Lindy Hop och Balboa till Blues och Shag.',
+    exploreEvents: 'Utforska evenemang',
+    discoverMusic: 'Upptäck musiken',
+    // "i full swing" is the same idiom in Swedish, which is lucky — the
+    // record sleeve keeps its pun without needing a different joke.
+    cover: { lead: 'Stockholm i ', em: 'full swing' },
   },
   rains: {
     kanelbulle: 'Glad kanelbullens dag! Kasta en bulle',
@@ -132,11 +137,69 @@ export const sv = {
     showFilters: 'Filtrera & sök',
     reset: 'Återställ',
     sections: {
-      comingUp: { lead: '', em: 'På gång' },
-      thisWeek: { lead: 'Händer ', em: 'denna vecka' },
-      later: { lead: '', em: 'Senare' },
-      upcoming: { lead: 'Kommande ', em: 'evenemang' },
+      comingUp: { lead: 'På dansgolvet ', em: 'snart.' },
+      thisWeek: { lead: 'På dansgolvet ', em: 'i veckan.' },
+      later: { lead: 'Längre ', em: 'fram.' },
+      upcoming: { lead: 'På gång ', em: 'i Stockholm.' },
     },
+    kickers: {
+      comingUp: 'De närmaste två veckorna',
+      thisWeek: 'Denna vecka',
+      later: 'Kalendern',
+      upcoming: 'Kalendern',
+      music: 'Scenen',
+      styles: 'Danserna',
+    },
+  },
+  musicFeature: {
+    heading: { lead: 'Musiken ', em: 'tar aldrig slut.' },
+    standfirst:
+      'Swing skapades för att dansas till ett band i samma rum. Här är vilka som står på scenen härnäst.',
+    sideA: 'Sida A · På scenen',
+    sideB: 'Sida B · Konvolutet',
+    stats: {
+      liveNights: { one: 'kväll med liveband', other: 'kvällar med liveband' },
+      bands: { one: 'band på affischen', other: 'band på affischen' },
+      djNights: { one: 'DJ-kväll', other: 'DJ-kvällar' },
+    },
+    statsNote: 'Räknat på allt som ligger i kalendern just nu.',
+    showLive: 'Visa kvällar med livemusik',
+    moreNights: { one: '+ {count} kväll till', other: '+ {count} kvällar till' },
+  },
+  danceStyles: {
+    heading: { lead: 'Hitta din ', em: 'rytm.' },
+    standfirst:
+      'Fyra danser, en musik. Socialdanser för alla stilar välkomnar dem alla; vissa kvällar tillhör en enda dans.',
+    tempo: 'Tempo',
+    entries: {
+      'lindy-hop': {
+        origin: 'Harlem · sent 1920-tal',
+        tempo: 'Medel till snabbt',
+        description:
+          'Den ursprungliga swingdansen, född i Harlems danspalats: jordad, glädjefylld och gjord för att svänga ut och improvisera med bandet.',
+      },
+      balboa: {
+        origin: 'Sydkalifornien · 1930-tal',
+        tempo: 'Snabbt',
+        description:
+          'En dans i nära fattning, gjord för fulla dansgolv och höga tempon — små, mjuka steg med mycket som händer mellan två personer.',
+      },
+      shag: {
+        origin: 'USA · 1930-tal',
+        tempo: 'Snabbt',
+        description:
+          'Studsig, sparkglad och lekfull: dansen för när bandet drar upp tempot i taket.',
+      },
+      blues: {
+        origin: 'Juke joints · tidigt 1900-tal',
+        tempo: 'Långsamt',
+        description:
+          'Långsam, jordad och nära musiken — man dansar grooven och känslan mer än stegen.',
+      },
+    },
+    dedicated: { one: '{count} egen kväll i kalendern', other: '{count} egna kvällar i kalendern' },
+    none: 'Inga egna kvällar i kalendern just nu — alla socialdanser för alla stilar är dina.',
+    show: 'Visa {style}-kvällar',
   },
   filters: {
     title: { lead: 'Filter ', em: '& sök' },
@@ -212,7 +275,9 @@ export const sv = {
   },
   footer: {
     tagline: 'Av dansare, för dansare. Gjord i Stockholm 🇸🇪 med ❤️.',
-    github: 'GitHub-community (öppnas i en ny flik)',
+    subscribe: 'Prenumerera på kalendern',
+    addEvent: 'Lägg till ert evenemang',
+    sourceCode: 'Communityn på GitHub',
   },
   install: {
     title: 'Lägg till på hemskärmen',

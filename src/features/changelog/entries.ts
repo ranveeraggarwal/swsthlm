@@ -53,6 +53,17 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    month: '2026-11',
+    summary: 'A homepage that sounds like the music',
+    items: [
+      {
+        title: 'A new front page',
+        description:
+          'The homepage now reads like a little jazz magazine: a big date beside each night, a "bandstand" of the next live bands to play, and an introduction to Lindy Hop, Balboa, Shag and Blues that jumps straight to each dance\'s nights.',
+      },
+    ],
+  },
+  {
     month: '2026-10',
     summary: 'Live bands and DJ nights at a glance',
     items: [

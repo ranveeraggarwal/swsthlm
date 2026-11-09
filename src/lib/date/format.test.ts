@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
+  dateBlockParts,
   formatCompactDateRange,
   formatCompactWeekdayDate,
   formatEventDate,
@@ -154,5 +155,26 @@ describe('formatCompactDateRange', () => {
   it('names both months across a boundary', () => {
     expect(formatCompactDateRange(['2026-08-30', '2026-09-01'])).toBe('30 Aug–1 Sep');
     expect(formatCompactDateRange(['2026-08-30', '2026-09-01'], 'sv')).toBe('30 aug–1 sep');
+  });
+});
+
+describe('dateBlockParts', () => {
+  it('splits a date into the block\'s pieces, in either locale', () => {
+    expect(dateBlockParts('2026-11-11')).toEqual({
+      weekdayLong: 'Wednesday',
+      weekdayShort: 'Wed',
+      day: 11,
+      monthShort: 'Nov',
+    });
+    expect(dateBlockParts('2026-11-11', 'sv')).toEqual({
+      weekdayLong: 'onsdag',
+      weekdayShort: 'ons',
+      day: 11,
+      monthShort: 'nov',
+    });
+  });
+
+  it('returns null for an unparseable date', () => {
+    expect(dateBlockParts('not-a-date')).toBeNull();
   });
 });

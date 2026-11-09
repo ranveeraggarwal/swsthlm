@@ -70,6 +70,18 @@
      in dark mode this becomes the deepest surface tone, NOT cream. */
   --shadow-ink: #1b1c16;
 
+  /* The bandstand's record sleeve (MusicFeature): a deep navy jacket — the
+     palette's secondary family, darkened to a sleeve — with cream lettering
+     and the dark theme's lamplight peach and brass as its spot colours. It
+     stays a dark object in both themes, the way a record cover doesn't change
+     with the room's lighting. */
+  --sleeve: #232a3d;
+  --on-sleeve: #f3f1e6;
+  --on-sleeve-variant: #c9cfdd;
+  --sleeve-accent: #ffb597;
+  --sleeve-brass: #e5c273;
+  --sleeve-rule: #3d4660;
+
   --transition-physics: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -153,6 +165,15 @@
   /* Near-true black: with cards lifted off the floor tonally, the offset
      sticker shadow reads again */
   --shadow-ink: #110b07;
+
+  /* Still a navy jacket after dark, but lifted a step so it reads as an
+     object on the espresso floor rather than a hole in it. */
+  --sleeve: #283149;
+  --on-sleeve: #f3f1e6;
+  --on-sleeve-variant: #c9cfdd;
+  --sleeve-accent: #ffb597;
+  --sleeve-brass: #e5c273;
+  --sleeve-rule: #435072;
 }
 
 @theme inline {
@@ -187,11 +208,24 @@
   
   --font-serif: var(--font-playfair), Georgia, serif;
   --font-sans: var(--font-jakarta), Arial, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, 'SFMono-Regular', Menlo, monospace;
   
   --radius-sm: 0.125rem;
   --radius-md: 0.375rem;
   --radius-lg: 0.5rem;
   --radius-xl: 0.75rem;
+}
+
+/* Anchor jumps (the hero's CTAs) and focus scrolling land below the sticky
+   header instead of under it. */
+html {
+  scroll-padding-top: 5.5rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 body {
@@ -484,4 +518,37 @@ body {
   font-size: 12px;
   font-weight: 700;
   line-height: 1.2;
+}
+
+/* Halftone: a printed dot screen, the poster/record-sleeve texture. Inked in
+   `currentColor`, so the element's text colour picks the ink and the token
+   rules hold. Decoration only — never behind body text. */
+.halftone {
+  background-image: radial-gradient(currentColor 1.1px, transparent 1.3px);
+  background-size: 9px 9px;
+}
+
+/* The hero's 78, tucked into its sleeve. A slow quarter-turn when the
+   masthead is hovered — the only motion on the cover, and none at all under
+   reduced motion. */
+.hero-record {
+  transition: rotate 1.2s cubic-bezier(0.16, 1, 0.3, 1), translate 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@media (hover: hover) {
+  .hero-cover:hover .hero-record {
+    rotate: 120deg;
+    translate: 6% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-record {
+    transition: none;
+  }
+
+  .hero-cover:hover .hero-record {
+    rotate: none;
+    translate: none;
+  }
 }

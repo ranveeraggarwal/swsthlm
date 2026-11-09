@@ -181,10 +181,17 @@ export interface LocaleBundle {
     /** Takes `{time}`. */
     atTime: string;
   };
-  /** The homepage hero. */
+  /** The homepage hero — a magazine cover: a kicker over the headline, the
+   *  standfirst, two CTAs, and the record-sleeve art beside them. */
   home: {
+    kicker: string;
     title: EmphasisedText;
     subtitle: string;
+    exploreEvents: string;
+    discoverMusic: string;
+    /** The title printed on the hero's record sleeve. Decorative (the art is
+     *  `aria-hidden`), but sighted Swedish visitors read it. */
+    cover: EmphasisedText;
   };
   /** Label and hover title for each rain easter egg's button after the hero
    *  title, keyed by rain id — see `features/easter-eggs/rains.ts`. Each is
@@ -207,6 +214,52 @@ export interface LocaleBundle {
       later: EmphasisedText;
       upcoming: EmphasisedText;
     };
+    /** The small numbered label above each homepage section heading
+     *  ("No. 01 — This week"). Same keys as `sections`, plus the two
+     *  editorial sections. */
+    kickers: {
+      comingUp: string;
+      thisWeek: string;
+      later: string;
+      upcoming: string;
+      music: string;
+      styles: string;
+    };
+  };
+  /** "The music never stops" — the bandstand feature, built from the
+   *  listing's own band names and music types. */
+  musicFeature: {
+    heading: EmphasisedText;
+    standfirst: string;
+    sideA: string;
+    sideB: string;
+    /** Under each Side B figure. */
+    stats: {
+      liveNights: PluralForms;
+      bands: PluralForms;
+      djNights: PluralForms;
+    };
+    /** Under the figures: what window they count. */
+    statsNote: string;
+    showLive: string;
+    /** "+ {count} more nights" after a band's next date. */
+    moreNights: PluralForms;
+  };
+  /** "Find your rhythm" — one entry per dance, each able to filter the
+   *  listing to its own nights. */
+  danceStyles: {
+    heading: EmphasisedText;
+    standfirst: string;
+    tempo: string;
+    entries: Record<
+      'lindy-hop' | 'balboa' | 'shag' | 'blues',
+      { origin: string; tempo: string; description: string }
+    >;
+    /** Takes `{count}`. */
+    dedicated: PluralForms;
+    none: string;
+    /** Takes `{style}`. */
+    show: string;
   };
   // The words `features/events/model/sections.ts` builds its filter prose
   // from, plus the panel's own controls.
@@ -301,7 +354,10 @@ export interface LocaleBundle {
   };
   footer: {
     tagline: string;
-    github: string;
+    /** The footer's link list. */
+    subscribe: string;
+    addEvent: string;
+    sourceCode: string;
   };
   /** The PWA install prompt. */
   install: {

@@ -8,7 +8,14 @@
 //   • the filter state           → `FilterPanel` renders it, `../model/sections.ts` applies it
 //   • "now", ticking every minute → the badges and the This Week / Later split
 //   • whether the panel is open   → plus the `/` and Escape shortcuts
-//   • the derived lists           → `EventSections`
+//   • the derived lists           → `EventSections`, plus the two editorial
+//                                   sections (`MusicFeature`, `DanceStyles`)
+//
+// The editorial sections sit between and after the lists — This week, the
+// bandstand, Coming up, Find your rhythm — and step aside while any filter is
+// on: a filtered page is someone looking for something, and a bandstand of
+// unfiltered acts between their results would only be in the way. Both can
+// *set* a filter, which is why they live here rather than in the route.
 //
 // It was previously called `EventFilters` and was 662 lines, because it also
 // owned the filter markup, both list layouts, the empty state, the month
@@ -19,8 +26,10 @@ import { SlidersHorizontal } from 'lucide-react';
 import { stockholmNow, type Now } from '@/lib/date/clock';
 import { useLocale } from '@/components/providers/LocaleProvider';
 import { splitTemplate } from '@/i18n/template';
+import type { Style } from '@/lib/data/types';
 import type { SwingEvent } from '../model/event';
 import { groupMultiDayOneoffs } from '../model/grouping';
+import { bandstand, dedicatedNights, musicStats } from '../model/highlights';
 import {
   NO_FILTERS,
   availableStyles,
@@ -31,9 +40,11 @@ import {
   summariseFilters,
   type EventFilters,
 } from '../model/sections';
+import { DanceStyles } from './DanceStyles';
 import { EmptyState } from './EmptyState';
 import { FilterPanel } from './FilterPanel';
 import { HighlightedEvents, UpcomingEvents } from './EventSections';
+import { MusicFeature } from './MusicFeature';
 import { SubscribeButton } from './SubscribeButton';
 
 const FILTER_PANEL_ID = 'filters-panel';
@@ -68,6 +79,18 @@ export function EventCalendar({ events, initialNow }: EventCalendarProps) {
     setTimeout(() => panelToggleRef.current?.focus(), 0);
   }, []);
 
+  // The bandstand's and the style index's buttons swap the whole filter for
+  // one facet, then hand focus to the panel toggle: the button that was
+  // pressed unmounts with its section, and focus mustn't drop to <body>. The
+  // panel opens so the chosen chip is visible as the active filter.
+  const applyFacet = useCallback((patch: Partial<EventFilters>) => {
+    setFilters({ ...NO_FILTERS, ...patch });
+    setIsPanelOpen(true);
+    setTimeout(() => panelToggleRef.current?.focus(), 0);
+  }, []);
+  const showLiveMusic = useCallback(() => applyFacet({ liveMusicOnly: true }), [applyFacet]);
+  const showStyle = useCallback((style: Style) => applyFacet({ style }), [applyFacet]);
+
   const closePanel = useCallback(() => {
     setIsPanelOpen(false);
     setTimeout(() => panelToggleRef.current?.focus(), 0);
@@ -93,9 +116,24 @@ export function EventCalendar({ events, initialNow }: EventCalendarProps) {
   );
   const sections = useMemo(() => buildSections(groups, now.date), [groups, now.date]);
 
+  // The editorial sections read the unfiltered list — they're hidden while a
+  // filter is on anyway.
+  const bands = useMemo(() => bandstand(events, now), [events, now]);
+  const stats = useMemo(() => musicStats(events, now), [events, now]);
+  const styleCounts = useMemo(() => dedicatedNights(events, now), [events, now]);
+
   // Cards, not raw occurrences — a three-night workshop counts once.
   const summary = summariseFilters(filters, groups.length, locale);
   const filtersActive = hasActiveFilters(filters);
+
+  // Sections are numbered in the order they render, so one stepping aside
+  // doesn't leave "No. 02" missing between "No. 01" and "No. 03".
+  const showEditorial = !filtersActive;
+  let sectionNumber = 0;
+  const highlightedNumber = sections.highlighted.length > 0 ? ++sectionNumber : 0;
+  const musicNumber = showEditorial && bands.length > 0 ? ++sectionNumber : 0;
+  const upcomingNumber = sections.upcoming.length > 0 ? ++sectionNumber : 0;
+  const stylesNumber = showEditorial ? ++sectionNumber : 0;
 
   // The count and the filter description render bold inside the sentence, so
   // the template is split around the placeholder rather than substituted into
@@ -113,8 +151,8 @@ export function EventCalendar({ events, initialNow }: EventCalendarProps) {
       : renderWithEmphasis(bundle.listing.showingFiltered, 'description', summary.description);
 
   return (
-    <div className="w-full">
-      <div className="flex items-center justify-between mb-8 pb-4 border-b border-[var(--surface-container-highest)] font-sans text-xs text-[var(--on-surface-variant)] uppercase tracking-wider font-semibold">
+    <div id="events" className="w-full">
+      <div className="flex items-center justify-between mb-6 font-mono text-[11px] text-[var(--on-surface-variant)] uppercase tracking-[0.12em]">
         <span aria-live="polite" aria-atomic="true">
           {summaryNode}
         </span>
@@ -158,7 +196,7 @@ export function EventCalendar({ events, initialNow }: EventCalendarProps) {
         />
       )}
 
-      <div className="space-y-12">
+      <div className="space-y-16 lg:space-y-24">
         {groups.length === 0 ? (
           <EmptyState filters={filters} onClearFilters={clearFilters} />
         ) : (
@@ -167,12 +205,25 @@ export function EventCalendar({ events, initialNow }: EventCalendarProps) {
               sections={sections.highlighted}
               showNextWeek={sections.showNextWeek}
               now={now}
+              number={highlightedNumber}
             />
+            {showEditorial && (
+              <MusicFeature
+                entries={bands}
+                stats={stats}
+                number={musicNumber}
+                onShowLive={showLiveMusic}
+              />
+            )}
             <UpcomingEvents
               sections={sections.upcoming}
               showNextWeek={sections.showNextWeek}
+              number={upcomingNumber}
             />
           </>
+        )}
+        {showEditorial && (
+          <DanceStyles counts={styleCounts} number={stylesNumber} onSelectStyle={showStyle} />
         )}
       </div>
     </div>

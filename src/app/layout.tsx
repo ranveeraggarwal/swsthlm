@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { SITE_URL } from '@/lib/site';
-import { Playfair_Display, Plus_Jakarta_Sans } from 'next/font/google';
+import { IBM_Plex_Mono, Playfair_Display, Plus_Jakarta_Sans } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
@@ -20,6 +20,14 @@ const playfair = Playfair_Display({
 const jakarta = Plus_Jakarta_Sans({
   variable: '--font-jakarta',
   subsets: ['latin'],
+});
+
+// The printer's face: times, dates and catalogue-style labels, the way a
+// ticket stub or a record label sets them. Used sparingly — see DESIGN.md.
+const plexMono = IBM_Plex_Mono({
+  variable: '--font-plex-mono',
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
 });
 
 export const metadata: Metadata = {
@@ -62,7 +70,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${playfair.variable} ${jakarta.variable} h-full antialiased`}
+      className={`${playfair.variable} ${jakarta.variable} ${plexMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>

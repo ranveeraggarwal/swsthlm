@@ -102,8 +102,13 @@ export const en = {
     atTime: 'Taster class {time}',
   },
   home: {
-    title: { lead: 'Stockholm in ', em: 'Full Swing' },
-    subtitle: 'Your guide to Lindy Hop, Balboa, Shag, and Blues social dancing in Stockholm.',
+    kicker: 'The swing dance calendar for Stockholm',
+    title: { lead: 'Stockholm dances to a ', em: 'different beat.' },
+    subtitle:
+      'Discover the live music, social dancing and people keeping swing alive in Stockholm — from Lindy Hop and Balboa to Blues and Shag.',
+    exploreEvents: 'Explore events',
+    discoverMusic: 'Discover the music',
+    cover: { lead: 'Stockholm in ', em: 'Full Swing' },
   },
   rains: {
     kanelbulle: 'Happy Cinnamon Bun Day! Throw a bun',
@@ -115,11 +120,69 @@ export const en = {
     showFilters: 'Filter & Search',
     reset: 'Reset',
     sections: {
-      comingUp: { lead: '', em: 'Coming Up' },
-      thisWeek: { lead: 'Happening ', em: 'This Week' },
-      later: { lead: '', em: 'Later' },
-      upcoming: { lead: 'Upcoming ', em: 'Events' },
+      comingUp: { lead: 'On the dance floor ', em: 'soon.' },
+      thisWeek: { lead: 'On the dance floor ', em: 'this week.' },
+      later: { lead: 'Further ', em: 'ahead.' },
+      upcoming: { lead: 'Coming up ', em: 'in Stockholm.' },
     },
+    kickers: {
+      comingUp: 'The next two weeks',
+      thisWeek: 'This week',
+      later: 'The calendar',
+      upcoming: 'The calendar',
+      music: 'The bandstand',
+      styles: 'Dance styles',
+    },
+  },
+  musicFeature: {
+    heading: { lead: 'The music ', em: 'never stops.' },
+    standfirst:
+      'Swing was made for dancing to a band in the room. Here’s who’s on the bandstand next.',
+    sideA: 'Side A · On the bandstand',
+    sideB: 'Side B · Liner notes',
+    stats: {
+      liveNights: { one: 'night with a live band', other: 'nights with a live band' },
+      bands: { one: 'band on the bill', other: 'bands on the bill' },
+      djNights: { one: 'DJ night', other: 'DJ nights' },
+    },
+    statsNote: 'Counted from everything in the calendar right now.',
+    showLive: 'Show live-music nights',
+    moreNights: { one: '+ {count} more night', other: '+ {count} more nights' },
+  },
+  danceStyles: {
+    heading: { lead: 'Find your ', em: 'rhythm.' },
+    standfirst:
+      'Four dances, one music. All-styles socials welcome every one of them; some nights belong to a single dance.',
+    tempo: 'Tempo',
+    entries: {
+      'lindy-hop': {
+        origin: 'Harlem · late 1920s',
+        tempo: 'Medium to fast',
+        description:
+          'The original swing dance, born in Harlem’s ballrooms: grounded, joyful, and built to swing out and improvise with the band.',
+      },
+      balboa: {
+        origin: 'Southern California · 1930s',
+        tempo: 'Fast',
+        description:
+          'A close-embrace dance made for crowded floors and hot tempos — small, smooth footwork with a lot going on between two people.',
+      },
+      shag: {
+        origin: 'USA · 1930s',
+        tempo: 'Fast',
+        description:
+          'Bouncy, kick-happy and playful: the dance for when the band takes the tempo through the roof.',
+      },
+      blues: {
+        origin: 'Juke joints · early 1900s',
+        tempo: 'Slow',
+        description:
+          'Slow, grounded and close to the music — dancing the groove and the feeling more than the steps.',
+      },
+    },
+    dedicated: { one: '{count} dedicated night listed', other: '{count} dedicated nights listed' },
+    none: 'No dedicated nights listed right now — every all-styles social is yours.',
+    show: 'Show {style} nights',
   },
   filters: {
     title: { lead: 'Filters ', em: '& Search' },
@@ -184,7 +247,9 @@ export const en = {
   },
   footer: {
     tagline: 'By dancers, for dancers. Made in Stockholm 🇸🇪 with ❤️.',
-    github: 'GitHub Community (opens in a new tab)',
+    subscribe: 'Subscribe to the calendar',
+    addEvent: 'Add your event',
+    sourceCode: 'Community on GitHub',
   },
   install: {
     title: 'Add to Home Screen',

@@ -146,3 +146,19 @@ export function formatCompactDateRange(dates: string[], locale: Locale = DEFAULT
     ? `${first.getUTCDate()}–${last.getUTCDate()} ${lastMonth}`
     : `${first.getUTCDate()} ${firstMonth}–${last.getUTCDate()} ${lastMonth}`;
 }
+
+/**
+ * The pieces of the listing's big date block — "Wednesday / 11 / Nov" —
+ * stacked by the component rather than joined into one string, so each can
+ * take its own typeface. Same lookup tables as every format above, so it's
+ * byte-identical between SSR and hydration.
+ */
+export function dateBlockParts(
+  dateStr: string,
+  locale: Locale = DEFAULT_LOCALE,
+): { weekdayLong: string; weekdayShort: string; day: number; monthShort: string } | null {
+  const date = new Date(dateStr);
+  if (!isValid(date)) return null;
+  const { weekdayLong, weekdayShort, day, monthShort } = partsOf(date, datesOf(locale));
+  return { weekdayLong, weekdayShort, day, monthShort };
+}

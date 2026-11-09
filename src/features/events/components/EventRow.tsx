@@ -45,16 +45,16 @@ export function EventRow({ group }: { group: EventGroup }) {
         onClick={() => setIsExpanded((v) => !v)}
         aria-expanded={isExpanded}
         aria-controls={panelId}
-        className="w-full text-left py-2.5 px-1 hover:bg-[var(--surface-container-low)] transition-colors cursor-pointer"
+        className="w-full text-left py-3 px-1 hover:bg-[var(--surface-container-low)] transition-colors cursor-pointer"
       >
         <div className="flex items-baseline gap-2">
-          <span className="hidden sm:block shrink-0 w-24 whitespace-nowrap font-sans text-xs font-medium text-[var(--on-surface-variant)]">
+          <span className="hidden sm:block shrink-0 w-24 whitespace-nowrap font-mono text-xs uppercase text-[var(--primary)]">
             {dateLabel}
           </span>
           {/* Title takes the full width on mobile, narrowed on desktop by the date column. */}
           <span
             title={event.title}
-            className={`flex-1 min-w-0 font-serif font-bold text-sm text-[var(--on-surface)] truncate ${event.cancelled ? 'line-through' : ''}`}
+            className={`flex-1 min-w-0 font-serif font-bold text-base text-[var(--on-surface)] truncate ${event.cancelled ? 'line-through' : ''}`}
           >
             {event.title}
           </span>
@@ -71,11 +71,11 @@ export function EventRow({ group }: { group: EventGroup }) {
 
         {/* Secondary line, aligned under the title on desktop. */}
         <div className="flex items-center gap-2 mt-0.5 sm:pl-[calc(6rem+8px)] overflow-hidden">
-          <span className="sm:hidden shrink-0 font-sans text-xs font-medium text-[var(--on-surface-variant)] whitespace-nowrap">
+          <span className="sm:hidden shrink-0 font-mono text-[11px] uppercase text-[var(--primary)] whitespace-nowrap">
             {dateLabel}
           </span>
           <span
-            className={`shrink-0 font-sans font-bold text-xs tabular-nums text-[var(--on-surface-variant)] ${event.cancelled ? 'line-through' : ''}`}
+            className={`shrink-0 font-mono text-xs tabular-nums text-[var(--on-surface-variant)] ${event.cancelled ? 'line-through' : ''}`}
           >
             {event.start}–{event.end}
           </span>

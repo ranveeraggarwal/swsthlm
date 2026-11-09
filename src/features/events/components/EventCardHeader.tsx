@@ -59,14 +59,14 @@ export function EventCardHeader({
         }`}
       >
         {(nightCount > 1 || showDate) && (
-          <div className="text-[11px] font-bold uppercase tracking-wider text-[var(--on-surface-variant)] mb-0.5">
+          <div className="font-mono text-[11px] font-medium uppercase tracking-wider text-[var(--on-surface-variant)] mb-0.5">
             {nightCount > 1
               ? formatEventDateRange(dates[0], dates[dates.length - 1], locale)
               : formatEventDateShort(dates[0], locale)}
           </div>
         )}
         <div
-          className={`text-lg font-bold tabular-nums tracking-tight leading-tight text-[var(--on-surface)] ${event.cancelled ? 'line-through' : ''}`}
+          className={`font-mono text-lg font-semibold tabular-nums tracking-tight leading-tight text-[var(--on-surface)] ${event.cancelled ? 'line-through' : ''}`}
         >
           {event.start} – {event.end}
         </div>

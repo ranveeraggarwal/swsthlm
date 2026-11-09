@@ -128,12 +128,12 @@ export function EventCard({ group, isThisWeek, showDate, now }: EventCardProps) 
       <EventCardHeader group={group} shape={shape} badge={badge} showDate={showDate} />
 
       <div className="col-start-1 row-start-2 p-5">
-        <h3
+        <h4
           title={event.title}
           className={`font-serif text-xl font-bold tracking-tight text-[var(--on-surface)] leading-snug mb-1.5 truncate ${event.cancelled ? 'line-through' : ''}`}
         >
           {event.title}
-        </h3>
+        </h4>
 
         {/* The header band already says whether it's a band or a DJ, so
             only a performer's name earns a line here. */}

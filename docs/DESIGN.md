@@ -124,12 +124,13 @@ The palette is built on high-contrast, nostalgic tones that evoke a sunset over 
 
 ## Typography
 
-Typography is the rhythmic engine of this design system. We pair the high-contrast, elegant **Playfair Display** for headlines with the friendly, highly legible **Plus Jakarta Sans** for utility and body text.
+Typography is the rhythmic engine of this design system. We pair the high-contrast, elegant **Playfair Display** for headlines with the friendly, highly legible **Plus Jakarta Sans** for utility and body text, and set the printed facts — times, dates, catalogue-style labels — in **IBM Plex Mono**, the way a ticket stub or a record label sets them.
 
 **Key Stylistic Rules:**
 1. **The Syncopated Headline:** Large headlines should occasionally use *Italic* styles for specific words to create visual "swing" and emphasis.
 2. **Uppercase Labels:** All labels and navigation items use uppercase Plus Jakarta Sans with slightly increased letter spacing to create a clean, "organized" look against the more decorative headlines.
 3. **Line Height:** Generous line heights are used in body text to ensure accessibility and an open, community-focused feel.
+4. **Mono is for metadata, sparingly.** `font-mono` (IBM Plex Mono, `--font-plex-mono`) sets a card's time, the row list's dates and times, the date block's weekday and month, section kickers ("No. 01 — This week"), and the bandstand's dates and figures' captions. Never body copy, never an event title, never a button label — if it isn't a fact a dancer scans for, it isn't mono.
 
 ## Layout & Spacing
 
@@ -188,6 +189,21 @@ Both go through tokens; neither uses a raw colour.
 Small tags carrying the facts a dancer scans for: dance style, floor type, beginner class, price, "3 nights". They are `rounded` (not pill), uppercase, and 10px.
 
 Each chip family has its own semantic token pair rather than one shared accent — beginner uses `--success-container`, the multi-night badge uses `--info-container`, an ended card uses `--ended-container`, and the style chips map per style (Lindy → tertiary, Balboa → secondary, the rest neutral). Adding a new chip family means adding a token pair, not reaching for a Tailwind palette class. The wording and the colour mapping both live in `src/features/events/model/labels.ts`; the chip components are in `src/features/events/components/EventChips.tsx`.
+
+### The homepage, as a magazine
+
+The homepage reads top to bottom as an issue: a cover, then numbered departments.
+
+- **Masthead (`HomeHero`).** A mono kicker over a large Playfair headline with its syncopated italic in `--primary`, the standfirst, and two CTAs — the primary sticker button to `#events`, an outlined secondary to `#music`. From `lg` up, a record slips out of a printed sleeve beside it: `--primary` stock with an `--on-primary` halftone, the site's old "in Full Swing" headline as its album title, the 78 inked like the DJ card's. It's `aria-hidden` and hidden below `lg` — on a phone the listing matters more than the art.
+- **Section headings (`SectionHeading`).** A 2px `--border-ink` rule, a mono kicker numbered in render order ("No. 01"), then a Playfair headline. Numbers are assigned as sections render, so a section that steps aside never leaves a gap.
+- **This week.** Each night sits under a **date block**: weekday and month in mono, the day numeral large in Playfair. On desktop it's a sticky left rail beside the cards; on a phone it's a single header line. It's the `h3`; the card titles under it are `h4`.
+- **The bandstand (`MusicFeature`)** is a record sleeve: a dark navy jacket (`--sleeve`, its own token family) with cream lettering, lamplight-peach and brass spot colours, a halftone corner and a sticker shadow. Side A is a numbered track listing of the next bands to play; Side B is the liner notes — counts of band nights, bands, and DJ nights. Every line comes from the data (`model/highlights.ts`); nothing on it is written by hand, and it doesn't render if no band is listed.
+- **Coming up.** The compact row list under month headings set in Playfair italic over a 2px rule, with the month's count in mono.
+- **Find your rhythm (`DanceStyles`).** The four dances as newspaper columns, not cards: each under a 4px rule and a small record label in the dance's accent colour (`styleAccentClass` in `labels.ts`), with origin and tempo in mono, a short introduction, the number of nights given to that dance, and a button that applies the real style filter.
+
+The bandstand and the style index step aside while any filter is on; both of their buttons replace the filter with one facet and move focus to the filter toggle, since the button pressed unmounts with its section.
+
+**Photography.** There is none, deliberately: the project has no licensed photos of Stockholm's scene, and stock or generated dancers would be exactly the generic look this system avoids. The record, sleeve and stamp graphics carry the identity instead. If real, credited photographs become available, the hero's art column is where they'd go.
 
 ### Navigation
 The navigation bar should be a simple, centered list of uppercase labels. It remains fixed to the top but uses a semi-transparent Cream backdrop with a "glass" blur to keep the focus on the content underneath as the user scrolls through the "rhythm" of the page.
@@ -254,6 +270,12 @@ Exact values as merged in `src/app/globals.css` (`:root` vs. `:root[data-theme='
 | `--ticket-stock` | `#edd8a8` | `#52432d` (live-music ticket stub — see Cards) |
 | `--border-ink` | `#1b1c16` | `#614a3c` |
 | `--shadow-ink` | `#1b1c16` | `#110b07` |
+| `--sleeve` | `#232a3d` | `#283149` (the bandstand's navy jacket — a dark object in both themes, lifted a step after dark) |
+| `--on-sleeve` | `#f3f1e6` | `#f3f1e6` |
+| `--on-sleeve-variant` | `#c9cfdd` | `#c9cfdd` |
+| `--sleeve-accent` | `#ffb597` | `#ffb597` (lamplight peach) |
+| `--sleeve-brass` | `#e5c273` | `#e5c273` |
+| `--sleeve-rule` | `#3d4660` | `#435072` |
 
 `color-scheme` is also set per theme (`light` / `dark`) on the same `:root` blocks, so native form controls and the scrollbar follow automatically.
 

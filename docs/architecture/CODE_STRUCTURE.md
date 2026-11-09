@@ -39,9 +39,11 @@ src/
         grouping.ts               multi-night runs → one card
         sections.ts               filtering, faceting, week/month bucketing
         temporal.ts               "happening now / tonight / ended"
+        highlights.ts             the bandstand + style counts for the homepage's editorial sections
       components/               the UI
         EventCalendar.tsx         the homepage listing (stateful; the only one)
-        FilterPanel.tsx EmptyState.tsx EventSections.tsx
+        FilterPanel.tsx EmptyState.tsx EventSections.tsx SectionHeading.tsx
+        MusicFeature.tsx DanceStyles.tsx  the editorial sections between and after the lists
         EventCard.tsx EventCardHeader.tsx EventRow.tsx
         EventFacts.tsx EventChips.tsx FloorTypeBadge.tsx TemporalBadgeDisplay.tsx
         AddToCalendarButton.tsx ShareButton.tsx SubscribeButton.tsx

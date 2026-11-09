@@ -58,6 +58,24 @@ export function styleFilterLabel(style: Style, locale: Locale = DEFAULT_LOCALE):
   return words.filter ?? words.label;
 }
 
+// The accent each dance is drawn in on "Find your rhythm" — its record label
+// and its rule. Follows the chips (Lindy → tertiary, Balboa → secondary) and
+// gives the two neutral-chip dances a colour of their own, since there the
+// accent is the only thing telling four columns apart.
+const STYLE_ACCENT_CLASSES: Record<Style, string> = {
+  'lindy-hop': 'text-[var(--tertiary)]',
+  balboa: 'text-[var(--secondary)]',
+  shag: 'text-[var(--primary)]',
+  blues: 'text-[var(--on-surface-variant)]',
+  'rock-n-roll': 'text-[var(--outline)]',
+  all: 'text-[var(--outline)]',
+};
+
+/** Text-colour class for a dance's accent; draw with `currentColor`. */
+export function styleAccentClass(style: Style): string {
+  return STYLE_ACCENT_CLASSES[style];
+}
+
 /** Chip classes for an event's style. */
 export function styleChipClass(style: Style): string {
   return STYLE_CHIP_CLASSES[style] ?? NEUTRAL_CHIP;

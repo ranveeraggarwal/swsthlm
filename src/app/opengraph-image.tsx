@@ -7,9 +7,11 @@ export const contentType = 'image/png';
 
 async function loadFont(
   family: string,
-  weight: number
+  weight: number,
+  style: 'normal' | 'italic' = 'normal'
 ): Promise<ArrayBuffer> {
-  const url = `https://fonts.googleapis.com/css2?family=${family.replace(/ /g, '+')}:wght@${weight}`;
+  const axis = style === 'italic' ? `ital,wght@1,${weight}` : `wght@${weight}`;
+  const url = `https://fonts.googleapis.com/css2?family=${family.replace(/ /g, '+')}:${axis}`;
   const css = await (await fetch(url)).text();
   const match = css.match(/url\(([^)]+)\)/);
   if (!match) throw new Error(`Failed to load font: ${family}`);
@@ -17,9 +19,10 @@ async function loadFont(
 }
 
 export default async function Image() {
-  const [playfair, jakarta] = await Promise.all([
-    loadFont('Playfair Display', 700),
-    loadFont('Plus Jakarta Sans', 600),
+  const [besley, besleyItalic, schibsted] = await Promise.all([
+    loadFont('Besley', 700, 'normal'),
+    loadFont('Besley', 700, 'italic'),
+    loadFont('Schibsted Grotesk', 600),
   ]);
 
   return new ImageResponse(
@@ -88,7 +91,7 @@ export default async function Image() {
               fontSize: 40,
               color: '#a03b00',
               marginBottom: 16,
-              fontFamily: 'Plus Jakarta Sans',
+              fontFamily: 'Schibsted Grotesk',
               opacity: 0.6,
               display: 'flex',
             }}
@@ -100,7 +103,7 @@ export default async function Image() {
           <div
             style={{
               fontSize: 72,
-              fontFamily: 'Playfair Display',
+              fontFamily: 'Besley',
               fontWeight: 700,
               color: '#1b1c16',
               textAlign: 'center',
@@ -137,7 +140,7 @@ export default async function Image() {
           <div
             style={{
               fontSize: 24,
-              fontFamily: 'Plus Jakarta Sans',
+              fontFamily: 'Schibsted Grotesk',
               fontWeight: 600,
               color: '#594138',
               textAlign: 'center',
@@ -151,7 +154,7 @@ export default async function Image() {
           <div
             style={{
               fontSize: 20,
-              fontFamily: 'Plus Jakarta Sans',
+              fontFamily: 'Schibsted Grotesk',
               fontWeight: 600,
               color: '#8d7166',
               textAlign: 'center',
@@ -176,7 +179,7 @@ export default async function Image() {
         >
           <span
             style={{
-              fontFamily: 'Plus Jakarta Sans',
+              fontFamily: 'Schibsted Grotesk',
               fontSize: 16,
               fontWeight: 600,
               color: '#ffffff',
@@ -193,8 +196,9 @@ export default async function Image() {
     {
       ...size,
       fonts: [
-        { name: 'Playfair Display', data: playfair, weight: 700 as const },
-        { name: 'Plus Jakarta Sans', data: jakarta, weight: 600 as const },
+        { name: 'Besley', data: besley, weight: 700 as const, style: 'normal' as const },
+        { name: 'Besley', data: besleyItalic, weight: 700 as const, style: 'italic' as const },
+        { name: 'Schibsted Grotesk', data: schibsted, weight: 600 as const, style: 'normal' as const },
       ],
     }
   );

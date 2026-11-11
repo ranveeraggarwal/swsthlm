@@ -50,44 +50,44 @@ colors:
   surface-variant: '#e4e3d8'
 typography:
   headline-xl:
-    fontFamily: Playfair Display
+    fontFamily: Besley
     fontSize: 48px
-    fontWeight: '700'
+    fontWeight: '800'
     lineHeight: '1.1'
     letterSpacing: -0.02em
   headline-xl-mobile:
-    fontFamily: Playfair Display
+    fontFamily: Besley
     fontSize: 36px
-    fontWeight: '700'
+    fontWeight: '800'
     lineHeight: '1.2'
   headline-lg:
-    fontFamily: Playfair Display
+    fontFamily: Besley
     fontSize: 32px
     fontWeight: '700'
     lineHeight: '1.2'
   headline-md:
-    fontFamily: Playfair Display
+    fontFamily: Besley
     fontSize: 24px
     fontWeight: '600'
     lineHeight: '1.3'
   body-lg:
-    fontFamily: Plus Jakarta Sans
+    fontFamily: Schibsted Grotesk
     fontSize: 18px
     fontWeight: '400'
     lineHeight: '1.6'
   body-md:
-    fontFamily: Plus Jakarta Sans
+    fontFamily: Schibsted Grotesk
     fontSize: 16px
     fontWeight: '400'
     lineHeight: '1.6'
   label-md:
-    fontFamily: Plus Jakarta Sans
+    fontFamily: Schibsted Grotesk
     fontSize: 14px
     fontWeight: '600'
     lineHeight: '1.2'
     letterSpacing: 0.05em
   label-sm:
-    fontFamily: Plus Jakarta Sans
+    fontFamily: Schibsted Grotesk
     fontSize: 12px
     fontWeight: '700'
     lineHeight: '1.2'
@@ -124,12 +124,13 @@ The palette is built on high-contrast, nostalgic tones that evoke a sunset over 
 
 ## Typography
 
-Typography is the rhythmic engine of this design system. We pair the high-contrast, elegant **Playfair Display** for headlines with the friendly, highly legible **Plus Jakarta Sans** for utility and body text.
+Typography is the rhythmic engine of this design system. We pair the sturdy, letterpress Clarendon slab **Besley** for headlines with the crisp Scandinavian grotesque **Schibsted Grotesk** for utility, compact schedule rows, and body text.
 
 **Key Stylistic Rules:**
 1. **The Syncopated Headline:** Large headlines should occasionally use *Italic* styles for specific words to create visual "swing" and emphasis.
-2. **Uppercase Labels:** All labels and navigation items use uppercase Plus Jakarta Sans with slightly increased letter spacing to create a clean, "organized" look against the more decorative headlines.
-3. **Line Height:** Generous line heights are used in body text to ensure accessibility and an open, community-focused feel.
+2. **Uppercase Labels:** All labels and navigation items use uppercase Schibsted Grotesk with slightly increased letter spacing to create a clean, "organized" look against the bracketed slab headlines.
+3. **Display Floor (`>= 18px`):** Reserve Besley (`font-serif`) for hero, section, modal, and card headings. Compact `14px` schedule rows (`EventRow`) use Schibsted Grotesk (`font-sans font-semibold`) so fifty rows scan cleanly at a glance.
+4. **Line Height:** Generous line heights are used in body text to ensure accessibility and an open, community-focused feel.
 
 ## Layout & Spacing
 
@@ -167,7 +168,7 @@ The shape language is **Soft (0.25rem)**. This provides enough roundness to feel
 - **Tertiary/Ghost:** Text-only with an underline that appears on hover, mimicking a rhythmic "beat."
 
 ### Cards
-Cards are the primary container for events and classes. They should use a subtle Cream-on-Cream tonal shift with a 1px border. Headlines within cards should always be Playfair Display.
+Cards are the primary container for events and classes. They should use a subtle Cream-on-Cream tonal shift with a 1px border. Headlines within cards should always be Besley.
 
 An event card opens with a **header band** carrying the time, a `LIVE BAND` / `DJ SET` badge and the temporal badge, and the whole card is drawn as the night's music. The shapes do the telling, in the card's own ink:
 

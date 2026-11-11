@@ -37,9 +37,9 @@ export function AboutContent() {
       <div className="max-w-2xl mx-auto">
         {/* Hero Title */}
         <div className="text-center mb-4 mt-0">
-          <h1 className="font-serif text-3xl md:text-4xl lg:text-5xl font-black tracking-tight text-[var(--on-surface)] leading-tight">
+          <h1 className="font-serif text-[26px] sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[var(--on-surface)] leading-tight">
             {t.title.lead}
-            <span className="italic font-normal">{t.title.em}</span>
+            <span className="italic font-medium">{t.title.em}</span>
           </h1>
           <p className="mt-1 font-sans text-xs md:text-sm text-[var(--on-surface-variant)] leading-relaxed max-w-md mx-auto">
             {t.subtitle}

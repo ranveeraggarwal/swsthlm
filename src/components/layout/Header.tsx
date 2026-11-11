@@ -55,7 +55,7 @@ export function Header() {
 
   return (
     <header className="w-full border-b border-[var(--surface-container-highest)] bg-[var(--surface)]/80 backdrop-blur-md sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-row items-center justify-between gap-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-row items-center justify-between gap-2 sm:gap-4">
         <HomeLink />
 
         <nav aria-label="Primary" className="hidden sm:flex items-center gap-2">
@@ -69,7 +69,7 @@ export function Header() {
           <ThemeToggle />
         </nav>
 
-        <div className="sm:hidden flex items-center gap-1">
+        <div className="sm:hidden flex items-center gap-1 shrink-0">
           <ThemeToggle />
           <button
             ref={menuButtonRef}

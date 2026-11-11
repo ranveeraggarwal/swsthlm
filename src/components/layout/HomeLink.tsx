@@ -29,7 +29,7 @@ export function HomeLink() {
   };
 
   return (
-    <Link href="/" onClick={dance} className="flex items-center gap-3 hover:opacity-90 transition-opacity">
+    <Link href="/" onClick={dance} className="flex items-center gap-2.5 sm:gap-3 min-w-0 hover:opacity-90 transition-opacity">
       <span className="relative block w-10 h-10 shrink-0" aria-hidden="true">
         <span className="absolute inset-0 translate-x-[2px] translate-y-[2px] rounded bg-[var(--shadow-ink)]" />
         <span
@@ -51,11 +51,11 @@ export function HomeLink() {
           </span>
         )}
       </span>
-      <span>
-        <span className="font-serif text-xl font-bold tracking-tight text-[var(--on-surface)] flex items-center gap-1.5">
+      <span className="min-w-0">
+        <span className="font-serif text-[17px] sm:text-xl font-bold tracking-tight text-[var(--on-surface)] flex items-center gap-1.5 whitespace-nowrap">
           Stockholm <span className="text-[var(--primary)]">Swing</span>
         </span>
-        <span className="block font-sans text-[10px] text-[var(--on-surface-variant)] uppercase tracking-widest font-extrabold mt-0.5">
+        <span className="block font-sans text-[10px] text-[var(--on-surface-variant)] uppercase tracking-widest font-extrabold mt-0.5 whitespace-nowrap">
           Dance Calendar
         </span>
       </span>

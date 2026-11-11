@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { SITE_URL } from '@/lib/site';
-import { Playfair_Display, Plus_Jakarta_Sans } from 'next/font/google';
+import { Besley, Schibsted_Grotesk } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
@@ -11,15 +11,16 @@ import { SkipToContentLink } from '@/components/layout/SkipToContentLink';
 import { LocaleProvider } from '@/components/providers/LocaleProvider';
 import './globals.css';
 
-const playfair = Playfair_Display({
-  variable: '--font-playfair',
-  subsets: ['latin'],
+const besley = Besley({
+  variable: '--font-besley',
+  subsets: ['latin', 'latin-ext'],
   style: ['normal', 'italic'],
 });
 
-const jakarta = Plus_Jakarta_Sans({
-  variable: '--font-jakarta',
-  subsets: ['latin'],
+const schibsted = Schibsted_Grotesk({
+  variable: '--font-schibsted',
+  subsets: ['latin', 'latin-ext'],
+  style: ['normal', 'italic'],
 });
 
 export const metadata: Metadata = {
@@ -62,7 +63,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${playfair.variable} ${jakarta.variable} h-full antialiased`}
+      className={`${besley.variable} ${schibsted.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>

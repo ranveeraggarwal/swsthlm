@@ -44,7 +44,7 @@ export function EventPermalink({ event }: { event: SwingEvent }) {
             {formatEventDate(event.date, locale)}
           </p>
 
-          <h1 className="font-serif text-3xl font-bold tracking-tight text-[var(--on-surface)] leading-snug">
+          <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-[var(--on-surface)] leading-snug break-words">
             {event.title}
           </h1>
 

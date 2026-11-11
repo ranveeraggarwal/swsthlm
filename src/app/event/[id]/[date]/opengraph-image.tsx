@@ -77,9 +77,9 @@ export default async function Image({
     );
   }
 
-  const [playfair, jakarta] = await Promise.all([
-    loadFont('Playfair Display', 700),
-    loadFont('Plus Jakarta Sans', 600),
+  const [besley, schibsted] = await Promise.all([
+    loadFont('Besley', 700),
+    loadFont('Schibsted Grotesk', 600),
   ]);
 
   const styleColor = STYLE_COLORS[event.style] ?? STYLE_COLORS.all;
@@ -129,7 +129,7 @@ export default async function Image({
         >
           <span
             style={{
-              fontFamily: 'Plus Jakarta Sans',
+              fontFamily: 'Schibsted Grotesk',
               fontSize: 16,
               fontWeight: 600,
               color: '#ffffff',
@@ -156,7 +156,7 @@ export default async function Image({
           <div style={{ display: 'flex', marginBottom: 20 }}>
             <span
               style={{
-                fontFamily: 'Plus Jakarta Sans',
+                fontFamily: 'Schibsted Grotesk',
                 fontSize: 14,
                 fontWeight: 600,
                 color: styleColor.fg,
@@ -174,7 +174,7 @@ export default async function Image({
             {floorLabel && (
               <span
                 style={{
-                  fontFamily: 'Plus Jakarta Sans',
+                  fontFamily: 'Schibsted Grotesk',
                   fontSize: 14,
                   fontWeight: 600,
                   color: '#594138',
@@ -193,7 +193,7 @@ export default async function Image({
             {event.beginnerClass && (
               <span
                 style={{
-                  fontFamily: 'Plus Jakarta Sans',
+                  fontFamily: 'Schibsted Grotesk',
                   fontSize: 14,
                   fontWeight: 600,
                   color: '#2f5934',
@@ -214,7 +214,7 @@ export default async function Image({
           <div
             style={{
               fontSize: 52,
-              fontFamily: 'Playfair Display',
+              fontFamily: 'Besley',
               fontWeight: 700,
               color: '#1b1c16',
               lineHeight: 1.15,
@@ -229,7 +229,7 @@ export default async function Image({
           <div
             style={{
               fontSize: 24,
-              fontFamily: 'Plus Jakarta Sans',
+              fontFamily: 'Schibsted Grotesk',
               fontWeight: 600,
               color: '#a03b00',
               marginBottom: 12,
@@ -243,7 +243,7 @@ export default async function Image({
           <div
             style={{
               fontSize: 22,
-              fontFamily: 'Plus Jakarta Sans',
+              fontFamily: 'Schibsted Grotesk',
               fontWeight: 600,
               color: '#594138',
               marginBottom: 16,
@@ -257,7 +257,7 @@ export default async function Image({
           <div
             style={{
               fontSize: 20,
-              fontFamily: 'Plus Jakarta Sans',
+              fontFamily: 'Schibsted Grotesk',
               fontWeight: 600,
               color: '#8d7166',
               display: 'flex',
@@ -274,7 +274,7 @@ export default async function Image({
             <div
               style={{
                 fontSize: 20,
-                fontFamily: 'Plus Jakarta Sans',
+                fontFamily: 'Schibsted Grotesk',
                 fontWeight: 600,
                 color: '#8d7166',
                 display: 'flex',
@@ -291,7 +291,7 @@ export default async function Image({
             <div
               style={{
                 fontSize: 18,
-                fontFamily: 'Plus Jakarta Sans',
+                fontFamily: 'Schibsted Grotesk',
                 fontWeight: 600,
                 color: '#8d7166',
                 display: 'flex',
@@ -317,8 +317,8 @@ export default async function Image({
     {
       ...size,
       fonts: [
-        { name: 'Playfair Display', data: playfair, weight: 700 as const },
-        { name: 'Plus Jakarta Sans', data: jakarta, weight: 600 as const },
+        { name: 'Besley', data: besley, weight: 700 as const },
+        { name: 'Schibsted Grotesk', data: schibsted, weight: 600 as const },
       ],
     }
   );

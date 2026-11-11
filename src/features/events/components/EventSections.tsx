@@ -31,9 +31,9 @@ function SectionHeading({
     <div className="flex items-center gap-3 mb-6 border-b border-[var(--surface-container-highest)] pb-3">
       <CalendarDays
         aria-hidden="true"
-        className={`w-5 h-5 ${muted ? 'text-[var(--on-surface-variant)]' : 'text-[var(--primary)]'}`}
+        className={`w-5 h-5 shrink-0 ${muted ? 'text-[var(--on-surface-variant)]' : 'text-[var(--primary)]'}`}
       />
-      <h2 className="font-serif text-3xl font-bold tracking-tight text-[var(--on-surface)]">
+      <h2 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-[var(--on-surface)]">
         {children}
       </h2>
     </div>

@@ -274,6 +274,8 @@ export interface LocaleBundle {
       top: string;
       bottom: string;
     };
+    /** Decorative speed mark printed on a DJ night's 78-rpm record label. */
+    recordLabel: string;
   };
   /** The three action buttons on a card, and the calendar sheets they open. */
   actions: {

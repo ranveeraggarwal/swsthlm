@@ -52,9 +52,19 @@ export function DanceabilityMeter({
           const segmentClass = filled
             ? muted
               ? 'bg-[var(--outline)]'
-              : tone.barClass
+              : `${tone.barClass} danceability-bar`
             : 'bg-[var(--outline)]/20';
-          return <span key={step} className={`h-1.5 rounded-[1px] ${segmentClass}`} />;
+          return (
+            <span
+              key={step}
+              style={
+                filled && !muted
+                  ? ({ '--bar-delay': `${(step - 1) * 35}ms` } as React.CSSProperties)
+                  : undefined
+              }
+              className={`h-1.5 rounded-[1px] ${segmentClass}`}
+            />
+          );
         })}
       </div>
     </div>

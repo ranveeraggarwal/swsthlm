@@ -2,14 +2,17 @@ import { describe, expect, it } from 'vitest';
 import {
   beginnerClassLabel,
   beginnerEyebrowLabel,
+  cardLiftTilt,
   danceabilityLabel,
   danceabilityTone,
   formatPriceLine,
   isFreePrice,
   musicBadgeLabel,
+  recordLabelTone,
   styleFilterLabel,
   styleLabel,
   tasterEyebrowLabel,
+  ticketSerial,
 } from './labels';
 
 describe('styleLabel', () => {
@@ -102,5 +105,32 @@ describe('musicBadgeLabel', () => {
     expect(musicBadgeLabel('live', 'sv')).toBe('Liveband');
     expect(musicBadgeLabel('dj', 'sv')).toBe('DJ-set');
     expect(musicBadgeLabel('mixed', 'sv')).toBe('Liveband + DJ');
+  });
+});
+
+describe('card print & whimsy helpers', () => {
+  it('pairs each 78 record label fill with its matching --on-* ink token', () => {
+    expect(recordLabelTone('lindy-hop').fillClass).toContain('--tertiary');
+    expect(recordLabelTone('lindy-hop').strokeClass).toContain('--on-tertiary');
+    expect(recordLabelTone('balboa').fillClass).toContain('--secondary');
+    expect(recordLabelTone('balboa').strokeClass).toContain('--on-secondary');
+    expect(recordLabelTone('all').fillClass).toContain('--primary');
+    expect(recordLabelTone('all').strokeClass).toContain('--on-primary');
+  });
+
+  it('formats deterministic MMDD·NNN roll-ticket serial numbers without Date math', () => {
+    const first = ticketSerial({ id: 'chicago-live-weds:2026-11-18', date: '2026-11-18' });
+    const second = ticketSerial({ id: 'chicago-live-weds:2026-11-25', date: '2026-11-25' });
+    expect(first).toMatch(/^№ 1118·\d{3}$/);
+    expect(second).toMatch(/^№ 1125·\d{3}$/);
+    expect(first).not.toBe(second);
+    expect(ticketSerial({ id: 'chicago-live-weds:2026-11-18', date: '2026-11-18' })).toBe(first);
+  });
+
+  it('picks a subtle, non-zero deterministic lift tilt per occurrence id', () => {
+    const tilt = cardLiftTilt('danshuset-2026-08:2026-08-28');
+    expect(Math.abs(tilt)).toBeGreaterThan(0);
+    expect(Math.abs(tilt)).toBeLessThanOrEqual(1);
+    expect(cardLiftTilt('danshuset-2026-08:2026-08-28')).toBe(tilt);
   });
 });

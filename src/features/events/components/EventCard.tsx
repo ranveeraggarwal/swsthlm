@@ -29,6 +29,7 @@ import { ReportCorrectionButton } from '@/features/corrections/ReportCorrectionB
 import { domIdFor, type EventGroup } from '../model/event';
 import {
   beginnerEyebrowLabel,
+  cardLiftTilt,
   formatPriceLine,
   isFreePrice,
   musicLines,
@@ -62,12 +63,11 @@ interface EventCardProps {
 /** How many lines of the organizer's description to show before "Read more". */
 const DESCRIPTION_CLAMP = 'line-clamp-2';
 
-// A band on stage gets a ticket; a DJ set gets a record sleeve. `mixed` has a
-// band, so it's a ticket — the same call the "Live Music Only" filter makes in
-// `../model/sections.ts`.
+// A band on stage gets a perforated ticket; a DJ set gets a record sleeve; a
+// bill with both (`mixed`) tucks the 78 behind the stamped ticket stub.
 const SHAPE: Record<Music, CardShape> = {
   live: 'ticket',
-  mixed: 'ticket',
+  mixed: 'mixed',
   dj: 'sleeve',
 };
 
@@ -122,7 +122,9 @@ export function EventCard({
 
   const badge = getTemporalBadge(event, now, isThisWeek);
   const shape = SHAPE[event.music];
+  const isTicket = shape === 'ticket' || shape === 'mixed';
   const isOver = event.cancelled || badge === 'ended';
+  const isFree = isFreePrice(event.price) && !isOver;
   const priceLine = formatPriceLine(event.price, event.payment);
   const titleKey = event.title.trim().toLowerCase();
   const namedPerformers = musicLines(event).filter(
@@ -135,6 +137,11 @@ export function EventCard({
   // beats every Tailwind utility.
   const halo = !event.cancelled && badge === 'happening-now' ? 'outline-2 outline-[var(--live)]/30' : '';
 
+  const cardStyle: React.CSSProperties = {
+    ...(minHeight ? { minHeight } : undefined),
+    ...(!isOver ? ({ '--card-tilt': `${cardLiftTilt(event.id)}deg` } as React.CSSProperties) : undefined),
+  };
+
   return (
     // A one-column grid, each section pinned to its own row, so a ticket's
     // notches can share a cell with the header band or the actions; and no
@@ -144,7 +151,7 @@ export function EventCard({
       ref={cardRef}
       data-card-id={event.id}
       data-lifted={lifted}
-      style={minHeight ? { minHeight } : undefined}
+      style={cardStyle}
       onPointerDown={(e) => {
         lastPointer.current = e.pointerType;
       }}
@@ -241,13 +248,12 @@ export function EventCard({
         {hasSubline && (
           <p className="mt-1.5 font-sans text-sm text-[var(--on-surface-variant)] leading-relaxed">
             {priceLine && (
-              <span
-                className={
-                  isFreePrice(event.price) && !isOver
-                    ? 'font-semibold text-[var(--on-success-container)]'
-                    : ''
-                }
-              >
+              <span className={isFree ? 'font-semibold text-[var(--on-success-container)]' : ''}>
+                {isFree && (
+                  <span aria-hidden="true" className="mr-1">
+                    ✦
+                  </span>
+                )}
                 {priceLine}
               </span>
             )}
@@ -305,8 +311,12 @@ export function EventCard({
         <DanceabilityMeter danceability={event.danceability} muted={isOver} className="mt-2.5" />
       </div>
 
-      {/* Row 4: Action footer */}
-      <div className="col-start-1 row-start-4 border-t-2 border-[var(--border-ink)] px-5 py-3.5 flex items-center gap-2 font-sans">
+      {/* Row 4: Action footer — perforated like the header stub on ticket cards */}
+      <div
+        className={`col-start-1 row-start-4 border-t-2 px-5 py-3.5 flex items-center gap-2 font-sans ${
+          isTicket ? 'border-dashed border-[var(--shadow-ink)]' : 'border-[var(--border-ink)]'
+        }`}
+      >
         {event.ticket && (
           <a
             href={event.ticket}
@@ -314,7 +324,7 @@ export function EventCard({
             rel="noopener noreferrer"
             className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded border border-[var(--border-ink)] bg-[var(--primary)] text-[var(--on-primary)] hover:bg-[var(--primary-container)] font-bold uppercase tracking-wider text-xs lift-btn-primary"
           >
-            <Ticket aria-hidden="true" className="w-4 h-4" />
+            <Ticket aria-hidden="true" className="w-4 h-4 ticket-snip" />
             {bundle.card.source}
             <span className="sr-only">{bundle.card.opensInNewTab}</span>
           </a>
@@ -324,7 +334,7 @@ export function EventCard({
         <ReportCorrectionButton event={event} dates={dates} />
       </div>
 
-      {shape === 'ticket' && <TicketNotches className="col-start-1 row-start-4 ticket-notch-top" />}
+      {isTicket && <TicketNotches className="col-start-1 row-start-4 ticket-notch-top" />}
     </div>
   );
 }

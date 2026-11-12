@@ -24,8 +24,8 @@ const joinClasses = (...parts: (string | undefined | false)[]) => parts.filter(B
 export function VenueFact({ event, struckThrough }: { event: SwingEvent; struckThrough?: boolean }) {
   const { bundle } = useLocale();
   return (
-    <div className={ROW}>
-      <MapPin className={`w-3.5 h-3.5 shrink-0 ${MUTED}`} aria-hidden="true" />
+    <div className={`${ROW} [&:has(a:hover)_svg]:-translate-y-0.5 [&:has(a:hover)_svg]:text-[var(--primary)]`}>
+      <MapPin className={`w-3.5 h-3.5 shrink-0 transition-transform motion-reduce:transition-none ${MUTED}`} aria-hidden="true" />
       <span>
         <a
           href={venueMapsUrl(event)}

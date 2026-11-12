@@ -206,3 +206,72 @@ const MUSIC_FALLBACK: Record<Music, MusicLine[]> = {
 export function musicBadgeLabel(music: Music, locale: Locale = DEFAULT_LOCALE): string {
   return bundle(locale).musicBadge[music];
 }
+
+export interface RecordLabelTone {
+  fillClass: string;
+  strokeClass: string;
+  textFillClass: string;
+}
+
+const PRIMARY_RECORD_LABEL: RecordLabelTone = {
+  fillClass: 'fill-[var(--primary)]',
+  strokeClass: 'stroke-[var(--on-primary)]',
+  textFillClass: 'fill-[var(--on-primary)]',
+};
+
+// Keyed by `Style` so a DJ card's 78 center label echoes the night's dance
+// family (brass for Lindy, navy for Balboa, sunset otherwise), using paired
+// `--on-*` ink tokens so the micro-print stays legible in dark mode too.
+const RECORD_LABEL_TONES: Record<Style, RecordLabelTone> = {
+  'lindy-hop': {
+    fillClass: 'fill-[var(--tertiary)]',
+    strokeClass: 'stroke-[var(--on-tertiary)]',
+    textFillClass: 'fill-[var(--on-tertiary)]',
+  },
+  balboa: {
+    fillClass: 'fill-[var(--secondary)]',
+    strokeClass: 'stroke-[var(--on-secondary)]',
+    textFillClass: 'fill-[var(--on-secondary)]',
+  },
+  blues: PRIMARY_RECORD_LABEL,
+  shag: PRIMARY_RECORD_LABEL,
+  'rock-n-roll': PRIMARY_RECORD_LABEL,
+  all: PRIMARY_RECORD_LABEL,
+};
+
+/** Disc center-label fill and micro-print ink classes for a 78-rpm sleeve header. */
+export function recordLabelTone(style: Style): RecordLabelTone {
+  return RECORD_LABEL_TONES[style];
+}
+
+/**
+ * Small, deterministic non-negative integer from a string — identical on the
+ * server and in the browser so decorative print variations never trip hydration.
+ */
+export function hashOf(key: string): number {
+  let hash = 0;
+  for (let i = 0; i < key.length; i++) hash = (hash * 31 + key.charCodeAt(i)) | 0;
+  return Math.abs(hash);
+}
+
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+
+/**
+ * Decorative roll-ticket serial number (`№ MMDD·NNN`), derived purely from the
+ * date string and occurrence id with no `Date` or `Math.random()` calls.
+ */
+export function ticketSerial(event: Pick<SwingEvent, 'id' | 'date'>): string {
+  const mmdd = ISO_DATE.test(event.date)
+    ? `${event.date.slice(5, 7)}${event.date.slice(8, 10)}`
+    : '0000';
+  const seq = String(hashOf(event.id) % 1000).padStart(3, '0');
+  return `№ ${mmdd}·${seq}`;
+}
+
+const LIFT_TILTS = [-0.75, -0.5, 0.5, 0.75] as const;
+
+/** Subtle hand-dealt slant (degrees) applied when an active card is lifted. */
+export function cardLiftTilt(id: string): number {
+  return LIFT_TILTS[hashOf(id) % LIFT_TILTS.length];
+}
+

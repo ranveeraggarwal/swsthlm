@@ -187,6 +187,8 @@ export const sv = {
       top: 'Live swing',
       bottom: 'Entré',
     },
+    // Swedish shellac 78s (Sonora, Cupol) marked speed in "varv per minut".
+    recordLabel: '78 V/M',
   },
   actions: {
     addToCalendar: 'Lägg till i kalendern',

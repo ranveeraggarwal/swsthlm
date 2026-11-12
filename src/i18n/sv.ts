@@ -96,11 +96,15 @@ export const sv = {
     dj: 'DJ-set',
     mixed: 'Liveband + DJ',
   },
-  floors: {
-    studio: 'Dansstudio',
-    hall: 'Danssal',
-    bar: 'Bar/restaurang',
-    outdoor: 'Utomhus',
+  danceability: {
+    heading: 'Dansvänlighet',
+    levels: {
+      5: 'Dansstudio',
+      4: 'Danssal',
+      3: 'Utomhus / paviljong',
+      2: 'Litet bargolv',
+      1: 'Pub / mest lyssning',
+    },
   },
   temporal: {
     'happening-now': 'Pågår nu',
@@ -112,9 +116,11 @@ export const sv = {
   beginnerClass: {
     friendly: 'Nybörjarvänlig',
     atTime: 'Nybörjarkurs {time}',
+    eyebrowAtTime: 'Prova-på {time}',
   },
   tasterClass: {
     atTime: 'Smakprovskurs {time}',
+    eyebrowAtTime: 'Smakprov {time}',
   },
   home: {
     // "i full swing" is the same idiom in Swedish, which is lucky — the hero
@@ -177,12 +183,6 @@ export const sv = {
     opensInNewTab: ' (öppnas i en ny flik)',
     livePrefix: 'Live: ',
     djPrefix: 'DJ: ',
-    // "Entré" is what a Swedish ticket says where an English one says
-    // "Admit one"; "live swing" needs no translating.
-    admissionStamp: {
-      top: 'Live swing',
-      bottom: 'Entré',
-    },
   },
   actions: {
     addToCalendar: 'Lägg till i kalendern',

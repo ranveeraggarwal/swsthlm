@@ -4,12 +4,12 @@
 // same enforcement `features/events/model/labels.ts` gets from
 // `Record<Style, StylePresentation>`, no lint rule or script involved.
 //
-// S3 moved the domain vocabulary in: `styles`, `music`, `floors` and
+// S3 moved the domain vocabulary in: `styles`, `music`, `danceability` and
 // `temporal` below are keyed by the data contract's own unions
-// (`lib/data/types.ts`), so a style or floor type added there is a compile
-// error here until it has a word in both `en.ts` and `sv.ts`.
+// (`lib/data/types.ts`), so a style or danceability score added there is a
+// compile error here until it has a word in both `en.ts` and `sv.ts`.
 
-import type { FloorType, Music, Style } from '@/lib/data/types';
+import type { Danceability, Music, Style } from '@/lib/data/types';
 import type { Locale } from './locale';
 
 /** Weekday names indexed by `Date.getUTCDay()`, so Sunday is 0. The tuple
@@ -154,13 +154,17 @@ export interface LocaleBundle {
    *  but the table stays `Record<Music, …>` so it can't drift from the data
    *  contract if a third music value is ever added. */
   music: Record<Music, string>;
-  /** The `music` column as the badge on an event card's header band — the
-   *  stamp on a live night's ticket stub or a DJ night's record sleeve.
-   *  Unlike `music` above, `mixed` displays as itself: the header carries
-   *  one badge for the whole night. */
+  /** The `music` column as the eyebrow music indicator on an event card.
+   *  Unlike `music` above, `mixed` displays as itself: the eyebrow carries
+   *  one label for the whole night. */
   musicBadge: Record<Music, string>;
-  /** The venue's floor type badge. */
-  floors: Record<FloorType, string>;
+  /** Venue danceability meter (1–5 scale). */
+  danceability: {
+    /** Micro-heading above the 5-segment meter ("Danceability" / "Dansvänlighet"). */
+    heading: string;
+    /** Fixed one-line meaning for each 1–5 venue danceability score. */
+    levels: Record<Danceability, string>;
+  };
   /** The event-card badge's word. Colour, priority and layout stay in
    *  `features/events/model/temporal.ts` / `TemporalBadgeDisplay.tsx`; only
    *  the text moves here. Keys are `TemporalBadge` minus `null` (no badge
@@ -173,13 +177,17 @@ export interface LocaleBundle {
   /** "Beginner friendly" for a plain yes; the class start time otherwise. */
   beginnerClass: {
     friendly: string;
-    /** Takes `{time}`. */
+    /** Takes `{time}` (chips on permalink & expanded row). */
     atTime: string;
+    /** Compact card eyebrow form, takes `{time}` ("Intro 19:00" / "Prova-på 19:00"). */
+    eyebrowAtTime: string;
   };
   /** The standalone taster/workshop class before a one-off's main event. */
   tasterClass: {
     /** Takes `{time}`. */
     atTime: string;
+    /** Compact card eyebrow form, takes `{time}` ("Taster 18:30" / "Smakprov 18:30"). */
+    eyebrowAtTime: string;
   };
   /** The homepage hero. */
   home: {
@@ -261,14 +269,6 @@ export interface LocaleBundle {
     /** Prefixes a performer line for screen readers. */
     livePrefix: string;
     djPrefix: string;
-    /** The round admission stamp inked on a live night's ticket stub: `top`
-     *  runs over the star, `bottom` under it. Decoration (hidden from screen
-     *  readers), but seen, so it's translated — keep both short: each wraps
-     *  half of a stamp under 100px across. */
-    admissionStamp: {
-      top: string;
-      bottom: string;
-    };
   };
   /** The three action buttons on a card, and the calendar sheets they open. */
   actions: {

@@ -37,18 +37,19 @@ A build step expands `series` plus `exceptions` into concrete occurrences for th
 | `neighborhood` | yes | string | "Söder", "Vasastan", "Norrmalm", "Hammarby Sjöstad", "Skanstull", "Östermalm", "Solna". |
 | `lat`, `lng` | no | float | **Nothing reads these.** Retained speculatively; a map view is on the ["won't build" list](PROJECT.md#5-what-we-deliberately-will-not-build). Leave empty. |
 | `maps_url` | no | URL | **Not implemented — see issue #249.** It is meant to override the Maps link, but every venue link is currently built from name + address. Setting it has no effect today. |
-| `floor_type` | no | `studio` \| `hall` \| `bar` \| `outdoor` | What kind of space the dancing happens in. Empty = unknown — leave it blank rather than guess; a venue steward who's actually danced there should fill it in. See below for how to pick. |
+| `danceability` | no | `1` \| `2` \| `3` \| `4` \| `5` | How suitable the floor is for social swing dancing, on a 1–5 scale. Empty = unknown — leave it blank rather than guess; a venue steward who's actually danced there should fill it in. See below for how to pick. |
 
 Adding a new venue is a separate PR from the event that needed it — keeps the diff focused.
 
-**Picking a `floor_type`.** This isn't about square meters — nobody has a floor plan, and a numeric capacity guess is worse than no data. It's a single gut call answering "what kind of place is this to dance in":
+**Picking a `danceability` score (`1`–`5`).** This isn't a restaurant review or a square-meter measurement — a cozy jazz pub with world-class music can be a `1` for dancing and still be a wonderful night out. Each number has one fixed meaning on the card:
 
-- **`studio`** — a dedicated dance studio or sprung floor, no furniture to dodge (Chicago Swing Dance Studio, Swedish Swing Society's course studio on Odengatan).
-- **`hall`** — a big multi-use room cleared/set up for dancing: a community hall, theater, or ballroom (Stockholms stadshus, Scalateatern, Kulturhuset Stadsteatern, Augustas Folksalong).
-- **`bar`** — dancing happens among tables, stools, or a bar counter; a real dance floor isn't the room's main purpose (S:ta Clara Bierhaus, Nomad, S:t Eriks Jazzbar, Norrport, Georgian House — a restaurant that hosts events).
-- **`outdoor`** — grass, patio, or other open-air space (Vintervikens Trädgård; Sprallen and Årstaliden — both roofless public "dansbana" pavilions run by local dance associations).
+- **`5` (`Studio floor`)** — a dedicated dance studio with a sprung wood floor and zero furniture or obstacles to dodge (Chicago Swing Dance Studio, Swedish Swing Society on Odengatan).
+- **`4` (`Ballroom / hall`)** — a spacious multi-use hall, foyer, or ballroom set up for dancing with room for full swing-outs (Stockholms stadshus, Scalateatern, Kulturhuset Stadsteatern, Augustas Folksalong).
+- **`3` (`Open-air / pavilion`)** — an outdoor wooden *dansbana* pavilion, garden patio, pier, or park floor (Sprallen, Årstaliden, Stora Skuggans Dansbana, Vintervikens Trädgård, Skeppsholmen).
+- **`2` (`Small bar floor`)** — a bar, cellar pub, or music club with a pocket floor cleared in front of the band — comfortable for Balboa, Shag, or compact Lindy, tight when crowded (Twang, Nomad, S:ta Clara Bierhaus).
+- **`1` (`Tableside / pub`)** — a listening bar or restaurant ("vardagsrumskänsla") where tables and seating come first and any dancing happens tableside if space allows (Norrport, S:t Eriks Jazzbar, Källarbyn, Georgian House).
 
-The anchor question for the `hall`-vs-`bar` judgment call: *can you do a full swing-out without dodging furniture?* Yes → `hall`. No → `bar`. This is a venue-level fact, not a per-event one — if a normally-small venue is transformed for a one-off (e.g. a ball at a hired hall), that's out of scope for now; don't relabel the venue for one exceptional night.
+The anchor questions: *is it a purpose-built sprung studio (`5`), or can you do a full indoor swing-out without dodging furniture (`4`), or is it outdoors (`3`), or is there a small pocket floor in front of the band (`2`), or are you squeezing in beside tables (`1`)?* This is a venue-level fact, not a per-event one — if a normally-small venue is transformed for a one-off, don't relabel the venue for one exceptional night.
 
 ## `series.csv`
 

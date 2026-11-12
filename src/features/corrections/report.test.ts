@@ -124,6 +124,13 @@ describe('correctionBody', () => {
   it('reports a single date plainly when the card covers one night', () => {
     expect(correctionBody(baseEvent(), ['2026-07-03'])).toContain('Date: 2026-07-03');
   });
+
+  it('includes the 1–5 danceability score and label when present', () => {
+    expect(correctionBody(baseEvent({ danceability: 5 }))).toContain(
+      'Danceability: 5/5 (Studio floor)'
+    );
+    expect(correctionBody(baseEvent())).not.toContain('Danceability:');
+  });
 });
 
 describe('buildCorrectionMailto', () => {
@@ -176,7 +183,7 @@ describe('buildCorrectionMailto', () => {
         dj: 'DJ Someone With A Long Name',
         payment: 'Swish, card or cash at the door',
         beginnerClass: '19:00',
-        floorType: 'studio',
+        danceability: 5,
       }),
       ['2026-07-03', '2026-07-04', '2026-07-05']
     );

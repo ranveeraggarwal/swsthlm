@@ -12,6 +12,7 @@
 
 import { CORRECTIONS_EMAIL } from '@/lib/site';
 import { eventUrl, type SwingEvent } from '@/features/events/model/event';
+import { danceabilityLabel } from '@/features/events/model/labels';
 
 export { CORRECTIONS_EMAIL };
 
@@ -50,7 +51,9 @@ export function currentDetails(event: SwingEvent, dates?: string[]): string[] {
   if (event.price) lines.push(`Price: ${event.price}`);
   if (event.payment) lines.push(`Payment: ${event.payment}`);
   if (event.beginnerClass) lines.push(`Beginner class: ${event.beginnerClass}`);
-  if (event.floorType) lines.push(`Floor: ${event.floorType}`);
+  if (event.danceability) {
+    lines.push(`Danceability: ${event.danceability}/5 (${danceabilityLabel(event.danceability)})`);
+  }
   if (event.ticket) lines.push(`Tickets / info: ${event.ticket}`);
   if (event.cancelled) lines.push('Listed as: CANCELLED');
 

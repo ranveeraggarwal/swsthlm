@@ -1,25 +1,25 @@
-id,name,address,neighborhood,lat,lng,maps_url,floor_type
-chicago,Chicago Swing Dance Studio,Hornsgatan 75,Söder,,,,studio
-sprallen,Sprallen,Hammarby Slussväg 15,Skanstull,,,,outdoor
-norrport,Norrport,Roslagsgatan 38,Vasastan,,,,bar
-sss,Swedish Swing Society,Odengatan 89,Vasastan,,,,studio
-augustas,Augustas Folksalong,Öfvre Källarbyn,,,,,hall
-scala,Scalateatern,Wallingatan 32-34,Norrmalm,,,,hall
-stadshuset,Stockholms stadshus,Hantverkargatan 1,Kungsholmen,,,,hall
-vinterviken,Vintervikens Trädgård,Vinterviksvägen 30,Aspudden,,,,outdoor
-arstaliden,Årstaliden,Ottsjövägen 35,Årsta,,,,outdoor
-staclara,S:ta Clara Bierhaus,Lilla Nygatan 17,Gamla Stan,,,,bar
-nomad,Nomad Swedish Food & Bar,Upplandsgatan 2A,Norrmalm,,,,bar
-georgian-house,Georgian House,Drottningholmsvägen 322,Bromma,,,,bar
-sankteriksj,S:t Eriks Jazzbar,Rörstrandsgatan 21,Vasastan,,,,bar
+id,name,address,neighborhood,lat,lng,maps_url,danceability
+chicago,Chicago Swing Dance Studio,Hornsgatan 75,Söder,,,,5
+sprallen,Sprallen,Hammarby Slussväg 15,Skanstull,,,,3
+norrport,Norrport,Roslagsgatan 38,Vasastan,,,,1
+sss,Swedish Swing Society,Odengatan 89,Vasastan,,,,5
+augustas,Augustas Folksalong,Öfvre Källarbyn,,,,,4
+scala,Scalateatern,Wallingatan 32-34,Norrmalm,,,,4
+stadshuset,Stockholms stadshus,Hantverkargatan 1,Kungsholmen,,,,4
+vinterviken,Vintervikens Trädgård,Vinterviksvägen 30,Aspudden,,,,3
+arstaliden,Årstaliden,Ottsjövägen 35,Årsta,,,,3
+staclara,S:ta Clara Bierhaus,Lilla Nygatan 17,Gamla Stan,,,,2
+nomad,Nomad Swedish Food & Bar,Upplandsgatan 2A,Norrmalm,,,,2
+georgian-house,Georgian House,Drottningholmsvägen 322,Bromma,,,,1
+sankteriksj,S:t Eriks Jazzbar,Rörstrandsgatan 21,Vasastan,,,,1
 knowhere,Knowhere,Knowhere Stockholm,Knowhere,,,,
-kulturhuset,Kulturhuset Stadsteatern,Sergels torg 3,Norrmalm,,,,hall
-stora-skuggan,Stora Skuggans Dansbana,Stora Skuggans väg 14,Norra Djurgården,,,,outdoor
-skeppsholmen,Skeppsholmen Vid Vattnet,"Skeppsholmen, brygga vid af Chapman",Skeppsholmen,,,,outdoor
+kulturhuset,Kulturhuset Stadsteatern,Sergels torg 3,Norrmalm,,,,4
+stora-skuggan,Stora Skuggans Dansbana,Stora Skuggans väg 14,Norra Djurgården,,,,3
+skeppsholmen,Skeppsholmen Vid Vattnet,"Skeppsholmen, brygga vid af Chapman",Skeppsholmen,,,,3
 ska-festplats,Skå Festplats,Färentunavägen 123,Ekerö,,,,
-twang,Twang,Katarina Bangata 25,Söder,,,,bar
-kallarbyn,Källarbyn,Stora Nygatan 31,Gamla Stan,,,,bar
-vasaparken,Vasaparken,Vasaparken,Vasastan,,,,outdoor
+twang,Twang,Katarina Bangata 25,Söder,,,,2
+kallarbyn,Källarbyn,Stora Nygatan 31,Gamla Stan,,,,1
+vasaparken,Vasaparken,Vasaparken,Vasastan,,,,3
 sparvagsmuseet,Spårvägsmuseet,Gasverkstorget 1,Hjorthagen,,,,
 alvik,Alviks Kulturhus,Gustavslundsvägen 168A,Bromma,,,,
 motesplats-mariatorget,Mötesplats Mariatorget,Mariatorget 10,Söder,,,,

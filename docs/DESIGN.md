@@ -168,14 +168,13 @@ The shape language is **Soft (0.25rem)**. This provides enough roundness to feel
 - **Tertiary/Ghost:** Text-only with an underline that appears on hover, mimicking a rhythmic "beat."
 
 ### Cards
-Cards are the primary container for events and classes. They should use a subtle Cream-on-Cream tonal shift with a 1px border. Headlines within cards should always be Besley.
+Cards are the primary container for near-term events (`EventCard`). Each card is framed as an **Editorial Playbill** — a crisp rectangular paper-stock sheet (`border-2 border-[var(--border-ink)] bg-[var(--surface-container-low)]`) with a `2px 2px 0px` `--shadow-ink` offset (`.lift-card`) and a `6px` temporal accent stripe across the top. Cards sharing a horizontal grid row stretch to equal height (`grid-rows-[1fr_auto_auto]`) so their venue bands and action footers align cleanly across columns.
 
-An event card opens with a **header band** carrying the time, a `LIVE BAND` / `DJ SET` badge and the temporal badge, and the whole card is drawn as the night's music. The shapes do the telling, in the card's own ink:
+Rather than wrapping every fact in competing pill borders, the Playbill separates the event into three calm zones:
 
-- **Live band → ticket.** The stub is printed on tan stock (`--ticket-stock`: manila in light, kraft in dark — the palette's brass at partial strength on the card), which an ended or cancelled night drops for its own muted surface. Under it runs a 2px dashed perforation, inked in `--shadow-ink` as slots punched through (an umber `--border-ink` dash vanishes into the kraft), with a semicircular punch-out at each end of it and of the actions divider. Across the stub's corner, running off the edge, is a round admission stamp ("Live swing ★ Admit one") inked in `--primary`. Rubber never prints clean, so the stamp is textured — flecks where the ink didn't take, slightly ragged edges, one side pressed harder — and each lands at its own slant and grain, seeded from the event's id. When the card lifts, it squares up and swells as if pressed. A `mixed` night counts as live, as it does in the Live Music Only filter.
-- **DJ set → record sleeve.** A solid edge with a flat 78 half tucked behind it; when the card lifts, it pops most of the way out with a quarter-turn spin.
-
-Both motions stay put under `prefers-reduced-motion`. Because the badge already says which kind of night it is, the card's fact list only names performers; an unnamed band or DJ gets no "Live music" / "DJ set" line. The punch-outs' rims follow the card's border in every state, `.lift-card:hover` included — how, and why the card is a grid without `overflow-hidden`, is in the `.ticket-notch` comment in `globals.css`.
+1. **Editorial Body (`p-5`)** — opens with a tracked uppercase **eyebrow row** pairing the dance style + class callout (`BLUES · INTRO 19:00`) on the left with the music format (`● LIVE BAND` in `--primary` ink or `DJ SET` in `--on-surface-variant`) on the right, followed by the `Besley` headline (`line-clamp-2`), a flowing **dateline sentence** (`19:00–22:00 · Free / 100 kr · Performer`), and optional 2-line clamped organizer prose.
+2. **Venue & Danceability Band (`bg-[var(--surface-container)]`)** — a full-width paper-tinted band carrying the linked venue + neighborhood above a **5-segment horizontal danceability meter** (`DanceabilityMeter`, `1/5`–`5/5` with its fixed room label). High danceability (`4`–`5`, ballrooms and sprung studios) fills in `--on-success-container`; outdoor/medium (`3`) fills in `--tertiary`; cozy listening bars and pocket floors (`1`–`2`) fill in `--on-caution-container`. Unverified venues omit the meter cleanly.
+3. **Action Footer (`border-t-2 border-[var(--border-ink)]`)** — the primary `Source` button alongside calendar, share, and correction icon controls.
 
 ### Input Fields
 Two treatments are in use, and the difference is deliberate:
@@ -186,9 +185,9 @@ Two treatments are in use, and the difference is deliberate:
 Both go through tokens; neither uses a raw colour.
 
 ### Chips & Badges
-Small tags carrying the facts a dancer scans for: dance style, floor type, beginner class, price, "3 nights". They are `rounded` (not pill), uppercase, and 10px.
+Small tags used on the permalink page and in expanded `EventRow` details: dance style, compact `DanceabilityBadge` (`1/5`–`5/5`), beginner/taster class, price, payment, and "3 nights". They are `rounded` (not pill), uppercase, and 10px.
 
-Each chip family has its own semantic token pair rather than one shared accent — beginner uses `--success-container`, the multi-night badge uses `--info-container`, an ended card uses `--ended-container`, and the style chips map per style (Lindy → tertiary, Balboa → secondary, the rest neutral). Adding a new chip family means adding a token pair, not reaching for a Tailwind palette class. The wording and the colour mapping both live in `src/features/events/model/labels.ts`; the chip components are in `src/features/events/components/EventChips.tsx`.
+Each chip family has its own semantic token pair rather than one shared accent — beginner and `4–5` danceability use `--success-container`, `1–2` danceability uses `--caution-container`, multi-night and taster classes use `--info-container`, an ended card uses `--ended-container`, and style chips map per style (Lindy → tertiary, Balboa → secondary, the rest neutral). Adding a new chip family means adding a token pair, not reaching for a Tailwind palette class. The wording and the colour mapping both live in `src/features/events/model/labels.ts`; the chip components are in `src/features/events/components/EventChips.tsx` and `DanceabilityMeter.tsx`.
 
 ### Navigation
 The navigation bar should be a simple, centered list of uppercase labels. It remains fixed to the top but uses a semi-transparent Cream backdrop with a "glass" blur to keep the focus on the content underneath as the user scrolls through the "rhythm" of the page.
@@ -247,6 +246,8 @@ Exact values as merged in `src/app/globals.css` (`:root` vs. `:root[data-theme='
 | `--on-live` | `#ffffff` | `#ffffff` (unchanged) |
 | `--success-container` | `#e5f3e6` | `#1f3622` |
 | `--on-success-container` | `#2f5934` | `#b3d8b5` |
+| `--caution-container` | `#fde8d7` | `#4a2810` |
+| `--on-caution-container` | `#8a3400` | `#ffbe94` |
 | `--info-container` | `#eef2ff` | `#2c3254` |
 | `--on-info-container` | `#3730a3` | `#c5cdf7` |
 | `--ended-container` | `#e4e4e7` | `#2e2f33` |
@@ -254,7 +255,6 @@ Exact values as merged in `src/app/globals.css` (`:root` vs. `:root[data-theme='
 | `--ended-outline` | `#a1a1aa` | `#55555c` |
 | `--ended-surface` | `#fafafa` | `#272321` |
 | `--ended-surface-outline` | `#d4d4d8` | `#4c4540` |
-| `--ticket-stock` | `#edd8a8` | `#52432d` (live-music ticket stub — see Cards) |
 | `--border-ink` | `#1b1c16` | `#614a3c` |
 | `--shadow-ink` | `#1b1c16` | `#110b07` |
 

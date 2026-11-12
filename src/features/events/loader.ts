@@ -66,7 +66,7 @@ function toSwingEvent(occurrence: Occurrence, venues: Map<string, Venue>): Swing
     venue: venue?.name ?? occurrence.venueId,
     address: venue?.address ?? '',
     neighborhood: venue?.neighborhood,
-    floorType: venue?.floorType,
+    danceability: venue?.danceability,
 
     style: occurrence.style,
     music: occurrence.music,

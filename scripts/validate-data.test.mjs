@@ -5,7 +5,7 @@ const TODAY = '2026-06-13';
 
 // Full header sets so row tests don't trip the column checks.
 const FIELDS = {
-  venues: ['id', 'name', 'address', 'neighborhood', 'lat', 'lng', 'maps_url', 'floor_type'],
+  venues: ['id', 'name', 'address', 'neighborhood', 'lat', 'lng', 'maps_url', 'danceability'],
   series: ['id', 'name', 'style', 'venue_id', 'weekday', 'start', 'end', 'price', 'payment', 'beginner_class', 'music', 'dj', 'band', 'organizer', 'url', 'description', 'status', 'valid_from', 'valid_to'],
   exceptions: ['series_id', 'date', 'cancelled', 'start', 'end', 'dj', 'band', 'music', 'price', 'note', 'description'],
   oneoffs: ['id', 'name', 'style', 'venue_id', 'date', 'end_date', 'start', 'end', 'price', 'payment', 'beginner_class', 'music', 'dj', 'band', 'organizer', 'url', 'description', 'status', 'taster_class'],
@@ -68,17 +68,19 @@ describe('enums', () => {
     expect(j).toMatch(/invalid weekday "someday"/);
   });
 
-  it('rejects a bad venue floor_type but allows it blank', () => {
-    const { errors } = run({ venues: { rows: [venue({ floor_type: 'huge' })] } });
-    expect(joined(errors)).toMatch(/invalid floor_type "huge"/);
+  it('rejects an out-of-range venue danceability but allows it blank', () => {
+    for (const bad of ['0', '6', 'studio', '3.5']) {
+      const { errors } = run({ venues: { rows: [venue({ danceability: bad })] } });
+      expect(joined(errors)).toMatch(new RegExp(`invalid danceability "${bad}"`));
+    }
 
-    const { errors: okErrors } = run({ venues: { rows: [venue({ floor_type: '' })] } });
+    const { errors: okErrors } = run({ venues: { rows: [venue({ danceability: '' })] } });
     expect(okErrors).toEqual([]);
   });
 
-  it('accepts every valid floor_type', () => {
-    for (const floorType of ['studio', 'hall', 'bar', 'outdoor']) {
-      const { errors } = run({ venues: { rows: [venue({ floor_type: floorType })] } });
+  it('accepts every valid danceability score (1–5)', () => {
+    for (const score of ['1', '2', '3', '4', '5']) {
+      const { errors } = run({ venues: { rows: [venue({ danceability: score })] } });
       expect(errors).toEqual([]);
     }
   });

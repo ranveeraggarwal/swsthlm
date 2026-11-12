@@ -19,9 +19,9 @@ import { useLocale } from '@/components/providers/LocaleProvider';
 import { formatEventDate } from '@/lib/date/format';
 import { ReportCorrectionButton } from '@/features/corrections/ReportCorrectionButton';
 import { AddToCalendarButton } from './AddToCalendarButton';
+import { DanceabilityMeter } from './DanceabilityMeter';
 import { BeginnerChip, StyleChip, TasterClassChip } from './EventChips';
 import { EventFacts } from './EventFacts';
-import { FloorTypeBadge } from './FloorTypeBadge';
 import { ShareButton } from './ShareButton';
 import type { SwingEvent } from '../model/event';
 
@@ -54,9 +54,14 @@ export function EventPermalink({ event }: { event: SwingEvent }) {
 
           <EventFacts event={event} />
 
+          <DanceabilityMeter
+            danceability={event.danceability}
+            muted={event.cancelled}
+            className="max-w-sm rounded border border-[var(--surface-container-highest)] bg-[var(--surface-container)] px-4 py-3"
+          />
+
           <div className="flex flex-wrap items-center gap-2 font-sans">
             <StyleChip style={event.style} layout="permalink" />
-            <FloorTypeBadge floorType={event.floorType} />
             <BeginnerChip beginnerClass={event.beginnerClass} />
             <TasterClassChip tasterClass={event.tasterClass} />
           </div>

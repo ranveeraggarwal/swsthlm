@@ -84,8 +84,13 @@ export function EventCalendar({ events, initialNow }: EventCalendarProps) {
 
   // Facets come from the unfiltered list: a style chip should stay available so
   // you can switch to it, not vanish because the current filter excludes it.
+  // Venues are keyed on the date only, so the chip row doesn't re-sort every
+  // minute as tonight's events end.
   const styles = useMemo(() => availableStyles(events), [events]);
-  const venues = useMemo(() => availableVenues(events), [events]);
+  const venues = useMemo(
+    () => availableVenues(events, { date: now.date, time: '00:00' }),
+    [events, now.date],
+  );
 
   const groups = useMemo(
     () => groupMultiDayOneoffs(filterEvents(events, filters, now)),

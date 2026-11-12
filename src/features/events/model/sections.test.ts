@@ -3,6 +3,7 @@ import type { SwingEvent } from './event';
 import {
   ALL_VENUES,
   NO_FILTERS,
+  availableVenues,
   emptyStateHeading,
   filterEvents,
   summariseFilters,
@@ -110,5 +111,56 @@ describe('summariseFilters', () => {
       kind: 'filtered',
       description: '7 Balboa Livemusik evenemang på Nalen som matchar "blues"',
     });
+  });
+});
+
+describe('availableVenues', () => {
+  const now = { date: '2025-05-19', time: '12:00' };
+  const at = (venue: string, date: string, patch: Partial<SwingEvent> = {}): SwingEvent => ({
+    ...baseEvent,
+    id: `${venue}:${date}`,
+    venue,
+    date,
+    start: '19:00',
+    end: '23:00',
+    ...patch,
+  });
+
+  it('drops venues whose only events have already passed', () => {
+    const venues = availableVenues([at('Nalen', '2025-05-18'), at('Twang', '2025-05-20')], now);
+    expect(venues).toEqual([ALL_VENUES, 'Twang']);
+  });
+
+  it('keeps a venue whose overnight event from yesterday is still running', () => {
+    const late = at('Nalen', '2025-05-18', { start: '22:00', end: '01:00' });
+    expect(availableVenues([late], { date: '2025-05-19', time: '00:30' })).toEqual([ALL_VENUES, 'Nalen']);
+  });
+
+  it('ignores cancelled nights', () => {
+    expect(availableVenues([at('Nalen', '2025-05-20', { cancelled: true })], now)).toEqual([ALL_VENUES]);
+  });
+
+  it('puts studio floors first, then the busiest venues, then by name', () => {
+    const venues = availableVenues(
+      [
+        at('Twang', '2025-05-20'),
+        at('Twang', '2025-05-21'),
+        at('Twang', '2025-05-22'),
+        at('Nalen', '2025-05-20'),
+        at('Källarbyn', '2025-05-20'),
+        at('Swedish Swing Society', '2025-05-20', { danceability: 5 }),
+        at('Chicago Swing Dance Studio', '2025-05-20', { danceability: 5 }),
+        at('Chicago Swing Dance Studio', '2025-05-21', { danceability: 5 }),
+      ],
+      now,
+    );
+    expect(venues).toEqual([
+      ALL_VENUES,
+      'Chicago Swing Dance Studio',
+      'Swedish Swing Society',
+      'Twang',
+      'Källarbyn',
+      'Nalen',
+    ]);
   });
 });

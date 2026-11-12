@@ -1,0 +1,85 @@
+/* The 404 turntable's locked run-out groove — see NotFoundContent.tsx.
+   Every animation here touches `transform` or `opacity` only so it stays on
+   the compositor with zero layout or paint work. */
+
+@keyframes platter-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Tracks the 1px-eccentric inner run-out groove once per 3.2s revolution. */
+@keyframes runout-sway {
+  0%, 100% { transform: rotate(-1.1deg); }
+  50%      { transform: rotate(1.6deg); }
+}
+
+/* Clicking nudges the brass tonearm back out over the music grooves before it
+   glides right back into the locked inner groove. */
+@keyframes needle-nudge {
+  0%   { transform: rotate(0deg); }
+  22%  { transform: rotate(-15deg) scale(1.02); }
+  48%  { transform: rotate(-11deg); }
+  82%  { transform: rotate(1.8deg); }
+  100% { transform: rotate(-1.1deg); }
+}
+
+@keyframes note-float {
+  0%   { opacity: 0; transform: translate(0, 4px) rotate(0deg) scale(0.65); }
+  20%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--drift-x), -22px) rotate(var(--sway)) scale(1.05); }
+}
+
+@keyframes note-fade {
+  0%, 100% { opacity: 0; }
+  30%, 70% { opacity: 1; }
+}
+
+.disc {
+  transform-origin: 62px 66px;
+  animation: platter-spin 3.2s linear infinite;
+}
+
+.armIdle {
+  transform-origin: 124px 28px;
+  animation: runout-sway 3.2s ease-in-out infinite;
+}
+
+.armNudge {
+  transform-origin: 124px 28px;
+  animation: needle-nudge 1.05s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.note {
+  position: absolute;
+  top: 14px;
+  right: -2px;
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+  opacity: 0;
+  animation: note-float 0.95s ease-out forwards;
+}
+
+.first {
+  --drift-x: 14px;
+  --sway: -18deg;
+  animation-delay: 0.06s;
+}
+
+.second {
+  --drift-x: 26px;
+  --sway: 16deg;
+  animation-delay: 0.26s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .disc,
+  .armIdle,
+  .armNudge {
+    animation: none;
+  }
+
+  .note {
+    animation-name: note-fade;
+  }
+}

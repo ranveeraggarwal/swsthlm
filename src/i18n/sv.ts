@@ -211,6 +211,15 @@ export const sv = {
     clearAll: 'Rensa alla filter',
     subscribeCta: 'Prenumerera för att få veta',
     organizersCta: 'Arrangörer: lägg till ert evenemang',
+    pluckBass: 'Knäpp på kontrabasen',
+  },
+  notFound: {
+    eyebrow: '404 · Sidan hittades inte',
+    title: { lead: 'Bandet har ', em: 'spelat sista låten' },
+    body: 'Länken kan vara felstavad, eller så har dansen du letade efter redan dansats klart. Resten av Stockholms dansschema finns kvar här borta.',
+    backHome: 'Tillbaka till kalendern',
+    nudgeNeedle: 'Puffa på nålen',
+    recordLabel: '404 · 78 V/M',
   },
   theme: {
     switchToLight: 'Byt till ljust tema',

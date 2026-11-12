@@ -142,6 +142,9 @@ function parseBody($, name) {
   };
 }
 
+// Straight or curly apostrophe — Chicago's pages use both.
+const ZINKENS = /\bZinken['’]?s Rhythm Club\b/i;
+
 /**
  * Parse one Chicago event page HTML → CandidateEvent[]. Pure — no network.
  * Returns a single-element array on success, [] if the page can't be parsed.
@@ -187,10 +190,15 @@ export function parse(html) {
   // Chicago Live Wednesdays always runs a beginner drop-in at the door, same time as doors.
   const beginnerClass = isLiveWednesdays ? time.start : undefined;
 
+  // Zinken's Rhythm Club is Chicago's balboa night, every edition (Thursdays,
+  // "Saturday Edition"): the blurb welcomes all dances, but it's built for the
+  // Stockholm balboa crowd. Everything else at Chicago is an all-styles social.
+  const style = ZINKENS.test(name) ? 'balboa' : 'all';
+
   return [{
     id: `${VENUE_ID}-${date}`,
     name,
-    style: 'all',
+    style,
     venueId: VENUE_ID,
     date,
     start: time.start,

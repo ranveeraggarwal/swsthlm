@@ -241,7 +241,7 @@ In order:
 |---|---|
 | `date` | From the source. |
 | `start`, `end` | Source times, converted to Europe/Stockholm `HH:MM` (DST-correct). |
-| `style` | Defaults to `all` (or a keyword override). |
+| `style` | Defaults to `all` (or a keyword override — `chicago.mjs` files Zinken's Rhythm Club as `balboa`). |
 | `music` | From the source (`live` for band nights). It is required on a one-off, so a source with no signal falls back to `live`; a source whose titles don't say (`chicago.mjs`: "Zinken's Rhythm Club") must read the blurb too — "DJ music", "DJ: …" — or DJ nights ship as live. |
 | `band` | The act, for live nights. |
 | `organizer` | The venue (or the band, for band-aggregator sources). |

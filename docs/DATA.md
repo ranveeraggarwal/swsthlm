@@ -44,12 +44,12 @@ Adding a new venue is a separate PR from the event that needed it — keeps the 
 **Picking a `danceability` score (`1`–`5`).** This isn't a restaurant review or a square-meter measurement — a cozy jazz pub with world-class music can be a `1` for dancing and still be a wonderful night out. Each number has one fixed meaning on the card:
 
 - **`5` (`Studio floor`)** — a dedicated dance studio with a sprung wood floor and zero furniture or obstacles to dodge (Chicago Swing Dance Studio, Swedish Swing Society on Odengatan).
-- **`4` (`Ballroom / hall`)** — a spacious multi-use hall, foyer, or ballroom set up for dancing with room for full swing-outs (Stockholms stadshus, Scalateatern, Kulturhuset Stadsteatern, Augustas Folksalong).
-- **`3` (`Open-air / pavilion`)** — an outdoor wooden *dansbana* pavilion, garden patio, pier, or park floor (Sprallen, Årstaliden, Stora Skuggans Dansbana, Vintervikens Trädgård, Skeppsholmen).
-- **`2` (`Small bar floor`)** — a bar, cellar pub, or music club with a pocket floor cleared in front of the band — comfortable for Balboa, Shag, or compact Lindy, tight when crowded (Twang, Nomad, S:ta Clara Bierhaus).
-- **`1` (`Tableside / pub`)** — a listening bar or restaurant ("vardagsrumskänsla") where tables and seating come first and any dancing happens tableside if space allows (Norrport, S:t Eriks Jazzbar, Källarbyn, Georgian House).
+- **`4` (`Ballroom / hall`)** — a spacious multi-use hall or ballroom set up for dancing with room for full swing-outs (Stockholms stadshus, Kulturhuset Stadsteatern, Augustas Folksalong).
+- **`3` (`Casual dance floor`)** — a venue with decent room to social-dance, though not a formal ballroom or studio: a spacious speakeasy/bar floor (Lönnkrogen at Scalateatern) or an outdoor *dansbana* pavilion, garden patio, pier, or park floor (Sprallen, Årstaliden, Stora Skuggans Dansbana, Vintervikens Trädgård, Skeppsholmen).
+- **`2` (`Small bar floor`)** — a bar, cellar pub, or music club with a pocket floor cleared in front of the band — comfortable for Balboa, Shag, or compact Lindy, tight when crowded (Källarbyn, Twang, Nomad, S:ta Clara Bierhaus).
+- **`1` (`Tableside / pub`)** — a listening bar or restaurant ("vardagsrumskänsla") where tables and seating come first and any dancing happens tableside if space allows (Norrport, S:t Eriks Jazzbar, Georgian House).
 
-The anchor questions: *is it a purpose-built sprung studio (`5`), or can you do a full indoor swing-out without dodging furniture (`4`), or is it outdoors (`3`), or is there a small pocket floor in front of the band (`2`), or are you squeezing in beside tables (`1`)?* This is a venue-level fact, not a per-event one — if a normally-small venue is transformed for a one-off, don't relabel the venue for one exceptional night.
+The anchor questions: *is it a purpose-built sprung studio (`5`), or a spacious indoor hall for full swing-outs (`4`), or a casual bar/outdoor dance space with decent room (`3`), or a small pocket floor in front of the band (`2`), or are you squeezing in beside tables (`1`)?* This is a venue-level fact, not a per-event one — if a normally-small venue is transformed for a one-off, don't relabel the venue for one exceptional night.
 
 ## `series.csv`
 

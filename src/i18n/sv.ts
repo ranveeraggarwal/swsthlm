@@ -101,7 +101,7 @@ export const sv = {
     levels: {
       5: 'Dansstudio',
       4: 'Danssal',
-      3: 'Utomhus / paviljong',
+      3: 'Enklare dansgolv',
       2: 'Litet bargolv',
       1: 'Pub / mest lyssning',
     },

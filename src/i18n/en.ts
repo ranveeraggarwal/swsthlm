@@ -86,7 +86,7 @@ export const en = {
     levels: {
       5: 'Studio floor',
       4: 'Ballroom / hall',
-      3: 'Open-air / pavilion',
+      3: 'Casual dance floor',
       2: 'Small bar floor',
       1: 'Tableside / pub',
     },

@@ -14,6 +14,13 @@ import { useLocale } from '@/components/providers/LocaleProvider';
 
 const COPIED_FEEDBACK_MS = 2000;
 
+const CopiedCheck: React.ComponentType<{
+  className?: string;
+  'aria-hidden'?: boolean | 'true' | 'false';
+}> = ({ className, ...rest }) => (
+  <Check className={`${className ?? ''} share-check-pop text-[var(--primary)]`} {...rest} />
+);
+
 export function ShareButton({ event }: { event: SwingEvent }) {
   const { bundle } = useLocale();
   const [copied, setCopied] = useState(false);
@@ -47,7 +54,7 @@ export function ShareButton({ event }: { event: SwingEvent }) {
         onClick={handleShare}
         label={bundle.actions.share}
         title={copied ? bundle.actions.linkCopied : bundle.actions.share}
-        icon={copied ? Check : Share2}
+        icon={copied ? CopiedCheck : Share2}
       />
       <span aria-live="polite" className="sr-only">
         {copied ? bundle.actions.linkCopied : ''}

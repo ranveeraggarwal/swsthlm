@@ -162,6 +162,7 @@ export const en = {
       top: 'Live swing',
       bottom: 'Admit one',
     },
+    recordLabel: '78 RPM',
   },
   actions: {
     addToCalendar: 'Add to calendar',

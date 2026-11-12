@@ -280,7 +280,10 @@ body {
   }
 }
 
-/* Tactile Graphic Elevation ("Sticker-Stacking") */
+/* Tactile Graphic Elevation ("Sticker-Stacking").
+   At rest every card sits square on the grid (0deg); lifting an active card
+   applies its deterministic `--card-tilt` so picking it up feels like lifting
+   cardstock off a wooden table. */
 .lift-card {
   transition: var(--transition-physics);
   box-shadow: 2px 2px 0px 0px var(--shadow-ink);
@@ -288,7 +291,7 @@ body {
 
 .lift-card:focus-visible,
 .lift-card[data-lifted='true'] {
-  transform: translate(-4px, -4px);
+  transform: translate(-4px, -4px) rotate(var(--card-tilt, 0deg));
   box-shadow: 6px 6px 0px 0px var(--shadow-ink);
   border-color: var(--on-surface);
 }
@@ -298,7 +301,7 @@ body {
    data-lifted instead (see EventCard.tsx). */
 @media (hover: hover) {
   .lift-card:hover {
-    transform: translate(-4px, -4px);
+    transform: translate(-4px, -4px) rotate(var(--card-tilt, 0deg));
     box-shadow: 6px 6px 0px 0px var(--shadow-ink);
     border-color: var(--on-surface);
   }
@@ -358,7 +361,8 @@ body {
 /* A DJ card's 78, half in its sleeve: centred on the sleeve's edge (the
    bottom of the header band, which clips it), so exactly half of it shows
    at any band height. Lifting the card pops it most of the way out — with a
-   little overshoot — and spins it a quarter turn. */
+   little overshoot — and spins it a quarter turn. When the night is
+   happening right now, the inner disc spins continuously on the compositor. */
 .sleeve-record {
   --record-size: 100px;
   width: var(--record-size);
@@ -367,6 +371,24 @@ body {
   transition:
     translate 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
     rotate 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sleeve-record-mixed {
+  --record-size: 90px;
+}
+
+.sleeve-record[data-spinning='true'] {
+  translate: 0 -18%;
+}
+
+@keyframes record-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.sleeve-record[data-spinning='true'] .sleeve-record-disc {
+  transform-origin: 50px 50px;
+  animation: record-spin 4.5s linear infinite;
 }
 
 .lift-card:focus-visible .sleeve-record,
@@ -382,11 +404,12 @@ body {
   }
 }
 
-/* A live card's admission stamp, inked at a slant across the stub's corner —
-   each at its own slant, set per card as --stamp-tilt. Lifting the card
-   presses it: it squares up a little and swells, with the same overshoot as
-   the record's pop. */
-.ticket-stamp {
+/* A live card's admission stamp (and a cancelled card's box overprint),
+   inked at a slant across the header's corner — each at its own slant, set
+   per card as --stamp-tilt. Lifting the card presses it: it squares up a
+   little and swells, with the same overshoot as the record's pop. */
+.ticket-stamp,
+.cancelled-stamp {
   rotate: var(--stamp-tilt, -14deg);
   transition:
     rotate 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
@@ -399,38 +422,66 @@ body {
   scale: 1.08;
 }
 
+.lift-card:focus-visible .cancelled-stamp,
+.lift-card[data-lifted='true'] .cancelled-stamp {
+  scale: 1.04;
+}
+
 @media (hover: hover) {
   .lift-card:hover .ticket-stamp {
     rotate: calc(var(--stamp-tilt, -14deg) + 8deg);
     scale: 1.08;
   }
-}
 
-@media (prefers-reduced-motion: reduce) {
-  .sleeve-record,
-  .ticket-stamp {
-    transition: none;
-  }
-
-  .lift-card:hover .sleeve-record,
-  .lift-card:focus-visible .sleeve-record,
-  .lift-card[data-lifted='true'] .sleeve-record {
-    translate: none;
-    rotate: none;
-  }
-
-  .lift-card:hover .ticket-stamp,
-  .lift-card:focus-visible .ticket-stamp,
-  .lift-card[data-lifted='true'] .ticket-stamp {
-    rotate: var(--stamp-tilt, -14deg);
-    scale: none;
+  .lift-card:hover .cancelled-stamp {
+    scale: 1.04;
   }
 }
 
-/* Tactile lift states for buttons */
+/* Musical notes drifting out of the bandstand / turntable corner while an
+   event is happening right now. Compositor-only (`transform` + `opacity`). */
+@keyframes card-note-float {
+  0%   { opacity: 0; transform: translate(0, 4px) rotate(0deg) scale(0.65); }
+  22%  { opacity: 0.95; }
+  80%  { opacity: 0.75; }
+  100% { opacity: 0; transform: translate(var(--drift-x, 12px), -20px) rotate(var(--sway, -18deg)) scale(1); }
+}
+
+.card-live-note {
+  pointer-events: none;
+  opacity: 0;
+  animation: card-note-float 2.4s ease-out infinite;
+}
+
+/* Sprung-floor ripple across filled DanceabilityMeter bars when a card lifts:
+   5/5 studios cascade across all five floorboards; 1/5 pubs give a single tap. */
+@keyframes sprung-floor {
+  0%, 100% { transform: translateY(0) scaleY(1); }
+  40%      { transform: translateY(-2.5px) scaleY(1.35); }
+  72%      { transform: translateY(0.5px) scaleY(0.92); }
+}
+
+.lift-card:focus-visible .danceability-bar,
+.lift-card[data-lifted='true'] .danceability-bar {
+  animation: sprung-floor 0.46s cubic-bezier(0.34, 1.56, 0.64, 1) var(--bar-delay, 0ms);
+}
+
+@media (hover: hover) {
+  .lift-card:hover .danceability-bar {
+    animation: sprung-floor 0.46s cubic-bezier(0.34, 1.56, 0.64, 1) var(--bar-delay, 0ms);
+  }
+}
+
+/* Tactile lift states for buttons + ticket-punch snip on Source */
 .lift-btn-primary {
   transition: var(--transition-physics);
   box-shadow: 2px 2px 0px 0px var(--shadow-ink);
+}
+
+.lift-btn-primary .ticket-snip {
+  transition:
+    rotate 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+    scale 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .lift-btn-primary:hover,
@@ -439,9 +490,80 @@ body {
   box-shadow: 4px 4px 0px 0px var(--shadow-ink);
 }
 
+.lift-btn-primary:hover .ticket-snip,
+.lift-btn-primary:focus-visible .ticket-snip {
+  rotate: -14deg;
+  scale: 1.12;
+}
+
 .lift-btn-primary:active {
   transform: translate(0px, 0px);
   box-shadow: 0px 0px 0px 0px var(--shadow-ink);
+}
+
+/* Celebratory stamp-pop when ShareButton confirms a copied link */
+@keyframes share-pop {
+  0%   { transform: scale(0.55) rotate(-14deg); }
+  70%  { transform: scale(1.15) rotate(4deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+.share-check-pop {
+  animation: share-pop 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lift-card,
+  .lift-btn-primary,
+  .lift-btn-primary .ticket-snip,
+  .sleeve-record,
+  .ticket-stamp,
+  .cancelled-stamp {
+    transition: none;
+  }
+
+  .lift-card:hover,
+  .lift-card:focus-visible,
+  .lift-card[data-lifted='true'] {
+    transform: translate(-4px, -4px);
+  }
+
+  .sleeve-record[data-spinning='true'],
+  .lift-card:hover .sleeve-record,
+  .lift-card:focus-visible .sleeve-record,
+  .lift-card[data-lifted='true'] .sleeve-record {
+    translate: none;
+    rotate: none;
+  }
+
+  .sleeve-record[data-spinning='true'] .sleeve-record-disc,
+  .lift-card:hover .danceability-bar,
+  .lift-card:focus-visible .danceability-bar,
+  .lift-card[data-lifted='true'] .danceability-bar,
+  .share-check-pop {
+    animation: none;
+  }
+
+  .card-live-note {
+    animation: none;
+    opacity: 0.85;
+  }
+
+  .lift-card:hover .ticket-stamp,
+  .lift-card:focus-visible .ticket-stamp,
+  .lift-card[data-lifted='true'] .ticket-stamp,
+  .lift-card:hover .cancelled-stamp,
+  .lift-card:focus-visible .cancelled-stamp,
+  .lift-card[data-lifted='true'] .cancelled-stamp {
+    rotate: var(--stamp-tilt, -14deg);
+    scale: none;
+  }
+
+  .lift-btn-primary:hover .ticket-snip,
+  .lift-btn-primary:focus-visible .ticket-snip {
+    rotate: none;
+    scale: none;
+  }
 }
 
 @keyframes slide-up {

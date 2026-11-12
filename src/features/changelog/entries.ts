@@ -54,8 +54,13 @@ export interface ChangelogEntry {
 export const CHANGELOG: ChangelogEntry[] = [
   {
     month: '2026-11',
-    summary: 'A logo that dances',
+    summary: 'Cards and a logo with a little more swing',
     items: [
+      {
+        title: 'Spinning records, perforated stubs, and sprung floorboards',
+        description:
+          'Event cards now feature style-tinted 78 record labels that spin with floating notes while a dance is happening right now, perforated tear-off ticket footers, and danceability bars that ripple when lifted.',
+      },
       {
         title: 'The logo dances when you click it',
         description:

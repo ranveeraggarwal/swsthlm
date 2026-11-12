@@ -16,8 +16,8 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import Papa from 'papaparse';
 import type {
+  Danceability,
   Exception,
-  FloorType,
   Music,
   Oneoff,
   OneoffStatus,
@@ -56,6 +56,13 @@ const prose = (v?: string) => opt(v)?.replace(/\\n/g, '\n');
 
 const isYes =(v?: string) => req(v).toLowerCase() === 'yes';
 
+function parseDanceability(v?: string): Danceability | undefined {
+  const raw = opt(v);
+  if (!raw) return undefined;
+  const n = Number(raw);
+  return n >= 1 && n <= 5 && Number.isInteger(n) ? (n as Danceability) : undefined;
+}
+
 export function loadVenues(): Map<string, Venue> {
   const venues = new Map<string, Venue>();
   for (const r of readCsv('venues.csv')) {
@@ -68,7 +75,7 @@ export function loadVenues(): Map<string, Venue> {
       lat: opt(r.lat),
       lng: opt(r.lng),
       mapsUrl: opt(r.maps_url),
-      floorType: opt(r.floor_type) as FloorType | undefined,
+      danceability: parseDanceability(r.danceability),
     });
   }
   return venues;

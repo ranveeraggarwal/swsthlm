@@ -3,16 +3,13 @@
 // `SwingEvent` is an `Occurrence` (see lib/data/types.ts — a concrete dated
 // instance produced by series expansion) with its venue joined in. It reuses the
 // data layer's enums rather than re-declaring them as loose strings, so a style
-// or floor type that isn't in the data contract is a type error rather than a
-// mystery blank badge.
+// or danceability score that isn't in the data contract is a type error rather
+// than a mystery blank badge.
 //
-// It used to widen `style` to `string` and duplicate the FloorType union, with
-// an adapter in the loader that renamed 'lindy-hop' to 'lindy' on the way in
-// and three components renaming it back to 'Lindy Hop' on the way out. The
-// enums now travel unchanged from CSV to screen; display names live in
-// `./labels.ts`, which is the only place that turns a value into English.
+// Display names and colours live in `./labels.ts`, which is the only place that
+// turns a stored enum or score into localized copy and tokens.
 
-import type { FloorType, Music, Style } from '@/lib/data/types';
+import type { Danceability, Music, Style } from '@/lib/data/types';
 import { SITE_URL } from '@/lib/site';
 
 export interface SwingEvent {
@@ -35,7 +32,7 @@ export interface SwingEvent {
   venue: string;
   address: string;
   neighborhood?: string;
-  floorType?: FloorType;
+  danceability?: Danceability;
 
   style: Style;
   music: Music;

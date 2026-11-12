@@ -43,10 +43,13 @@
   --live: #dc2626;                 /* "Happening now" / urgency — same in dark */
   --on-live: #ffffff;
 
-  --success-container: #e5f3e6;    /* beginner-friendly badge */
+  --success-container: #e5f3e6;    /* beginner-friendly & high danceability */
   --on-success-container: #2f5934;
 
-  --info-container: #eef2ff;       /* multi-night badge */
+  --caution-container: #fde8d7;    /* tight / tableside danceability (1–2) */
+  --on-caution-container: #8a3400;
+
+  --info-container: #eef2ff;       /* multi-night & taster badge */
   --on-info-container: #3730a3;
 
   --ended-container: #e4e4e7;      /* "Ended" badge */
@@ -132,6 +135,9 @@
 
   --success-container: #1f3622;
   --on-success-container: #b3d8b5;
+
+  --caution-container: #4a2810;
+  --on-caution-container: #ffbe94;
 
   --info-container: #2c3254;
   --on-info-container: #c5cdf7;

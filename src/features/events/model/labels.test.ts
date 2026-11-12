@@ -1,10 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import {
   beginnerClassLabel,
-  floorTypeLabel,
+  beginnerEyebrowLabel,
+  danceabilityLabel,
+  danceabilityTone,
+  formatPriceLine,
+  isFreePrice,
   musicBadgeLabel,
   styleFilterLabel,
   styleLabel,
+  tasterEyebrowLabel,
 } from './labels';
 
 describe('styleLabel', () => {
@@ -32,22 +37,59 @@ describe('styleFilterLabel', () => {
   });
 });
 
-describe('beginnerClassLabel', () => {
+describe('beginnerClassLabel & eyebrow class labels', () => {
   it('translates the plain-yes case in Swedish', () => {
     expect(beginnerClassLabel('yes', 'sv')).toBe('Nybörjarvänlig');
+    expect(beginnerEyebrowLabel('yes', 'sv')).toBe('Nybörjarvänlig');
   });
 
-  it('interpolates the class time into the Swedish template', () => {
+  it('interpolates the class time into both full and compact eyebrow templates', () => {
     expect(beginnerClassLabel('19:00', 'sv')).toBe('Nybörjarkurs 19:00');
+    expect(beginnerEyebrowLabel('19:00')).toBe('Intro 19:00');
+    expect(beginnerEyebrowLabel('19:00', 'sv')).toBe('Prova-på 19:00');
+    expect(tasterEyebrowLabel('18:30')).toBe('Taster 18:30');
+    expect(tasterEyebrowLabel('18:30', 'sv')).toBe('Smakprov 18:30');
   });
 });
 
-describe('floorTypeLabel', () => {
-  it('translates every floor type in Swedish', () => {
-    expect(floorTypeLabel('studio', 'sv')).toBe('Dansstudio');
-    expect(floorTypeLabel('hall', 'sv')).toBe('Danssal');
-    expect(floorTypeLabel('bar', 'sv')).toBe('Bar/restaurang');
-    expect(floorTypeLabel('outdoor', 'sv')).toBe('Utomhus');
+describe('danceabilityLabel & danceabilityTone', () => {
+  it('maps every 1–5 score to its fixed English and Swedish label', () => {
+    expect(danceabilityLabel(5)).toBe('Studio floor');
+    expect(danceabilityLabel(4)).toBe('Ballroom / hall');
+    expect(danceabilityLabel(3)).toBe('Open-air / pavilion');
+    expect(danceabilityLabel(2)).toBe('Small bar floor');
+    expect(danceabilityLabel(1)).toBe('Tableside / pub');
+
+    expect(danceabilityLabel(5, 'sv')).toBe('Dansstudio');
+    expect(danceabilityLabel(4, 'sv')).toBe('Danssal');
+    expect(danceabilityLabel(3, 'sv')).toBe('Utomhus / paviljong');
+    expect(danceabilityLabel(2, 'sv')).toBe('Litet bargolv');
+    expect(danceabilityLabel(1, 'sv')).toBe('Pub / mest lyssning');
+  });
+
+  it('buckets 4–5 into success, 3 into tertiary, and 1–2 into caution tokens', () => {
+    expect(danceabilityTone(5).barClass).toContain('--on-success-container');
+    expect(danceabilityTone(4).barClass).toContain('--on-success-container');
+    expect(danceabilityTone(3).barClass).toContain('--tertiary');
+    expect(danceabilityTone(2).barClass).toContain('--on-caution-container');
+    expect(danceabilityTone(1).barClass).toContain('--on-caution-container');
+  });
+});
+
+describe('price helpers', () => {
+  it('detects free admission in English and Swedish phrasing', () => {
+    expect(isFreePrice('Free')).toBe(true);
+    expect(isFreePrice('Free (no booking needed)')).toBe(true);
+    expect(isFreePrice('fri entré - men swisha dricks till husbandet!')).toBe(true);
+    expect(isFreePrice('100 kr')).toBe(false);
+    expect(isFreePrice(undefined)).toBe(false);
+  });
+
+  it('formats price and payment cleanly without nested parentheses', () => {
+    expect(formatPriceLine('50/100 kr', 'Swish/cash')).toBe('50/100 kr (Swish/cash)');
+    expect(formatPriceLine('40 kr (optional)', 'Swish')).toBe('40 kr (optional) · Swish');
+    expect(formatPriceLine('Free')).toBe('Free');
+    expect(formatPriceLine(undefined, undefined)).toBeUndefined();
   });
 });
 

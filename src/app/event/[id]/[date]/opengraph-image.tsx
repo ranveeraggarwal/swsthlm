@@ -6,9 +6,9 @@
 
 import { ImageResponse } from 'next/og';
 import { formatEventDate } from '@/lib/date/format';
-import type { FloorType, Style } from '@/lib/data/types';
+import type { Danceability, Style } from '@/lib/data/types';
 import { getPermalinkEvents } from '@/features/events/loader';
-import { styleLabel } from '@/features/events/model/labels';
+import { danceabilityLabel, styleLabel } from '@/features/events/model/labels';
 
 export const alt = 'Event details';
 export const size = { width: 1200, height: 630 };
@@ -41,11 +41,12 @@ const STYLE_COLORS: Record<Style, { bg: string; fg: string }> = {
   all: { bg: '#f0eee3', fg: '#594138' },
 };
 
-const FLOOR_TYPE_LABELS: Record<FloorType, string> = {
-  studio: 'Dance studio',
-  hall: 'Dance hall',
-  bar: 'Bar / restaurant',
-  outdoor: 'Outdoor',
+const DANCEABILITY_COLORS: Record<Danceability, { bg: string; fg: string }> = {
+  5: { bg: '#e5f3e6', fg: '#2f5934' },
+  4: { bg: '#e5f3e6', fg: '#2f5934' },
+  3: { bg: '#f0eee3', fg: '#725813' },
+  2: { bg: '#fde8d7', fg: '#8a3400' },
+  1: { bg: '#fde8d7', fg: '#8a3400' },
 };
 
 export default async function Image({
@@ -100,7 +101,12 @@ export default async function Image({
 
   const logistics = [event.price, event.payment].filter(Boolean).join(' · ');
 
-  const floorLabel = event.floorType ? FLOOR_TYPE_LABELS[event.floorType] : undefined;
+  const danceabilityBadge = event.danceability
+    ? {
+        text: `${event.danceability}/5 · ${danceabilityLabel(event.danceability)}`,
+        colors: DANCEABILITY_COLORS[event.danceability],
+      }
+    : undefined;
 
   return new ImageResponse(
     (
@@ -152,7 +158,7 @@ export default async function Image({
             padding: '40px 60px',
           }}
         >
-          {/* Identity chips: style, floor type, beginner */}
+          {/* Identity chips: style, danceability, beginner */}
           <div style={{ display: 'flex', marginBottom: 20 }}>
             <span
               style={{
@@ -171,14 +177,14 @@ export default async function Image({
             >
               {styleText}
             </span>
-            {floorLabel && (
+            {danceabilityBadge && (
               <span
                 style={{
                   fontFamily: 'Schibsted Grotesk',
                   fontSize: 14,
                   fontWeight: 600,
-                  color: '#594138',
-                  backgroundColor: '#f0eee3',
+                  color: danceabilityBadge.colors.fg,
+                  backgroundColor: danceabilityBadge.colors.bg,
                   padding: '6px 16px',
                   borderRadius: 4,
                   letterSpacing: '0.08em',
@@ -187,7 +193,7 @@ export default async function Image({
                   marginRight: 12,
                 }}
               >
-                {floorLabel}
+                {danceabilityBadge.text}
               </span>
             )}
             {event.beginnerClass && (

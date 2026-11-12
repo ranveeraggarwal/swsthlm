@@ -8,12 +8,13 @@
 // accumulator. The grouping now happens in `../model/sections.ts` and this is a
 // plain nested map.
 
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { CalendarDays } from 'lucide-react';
 import { isCurrentWeek } from '@/lib/date/calendar';
 import type { Now } from '@/lib/date/clock';
 import { formatEventDate, formatEventDateRange, formatMonthHeading } from '@/lib/date/format';
 import { useLocale } from '@/components/providers/LocaleProvider';
+import type { EventGroup } from '../model/event';
 import { lastNightOf } from '../model/grouping';
 import type { DateSection, MonthSection } from '../model/sections';
 import { EventCard } from './EventCard';
@@ -36,6 +37,97 @@ function SectionHeading({
       <h2 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-[var(--on-surface)]">
         {children}
       </h2>
+    </div>
+  );
+}
+
+/**
+ * One date's card grid.
+ *
+ * At rest (`expandedIds.size === 0`), CSS Grid's default `items-stretch` aligns
+ * sibling cards on the same row to equal height (#465). When a visitor clicks
+ * "Read more" on one card, we snapshot the collapsed heights of its neighbours
+ * and switch the grid to `items-start` so *only* the clicked card grows —
+ * neighbours neither stretch down with blank paper nor jump shorter.
+ */
+function HighlightedDateGrid({
+  groups,
+  now,
+}: {
+  groups: EventGroup[];
+  now: Now;
+}) {
+  const gridRef = useRef<HTMLDivElement>(null);
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(() => new Set());
+  const [lockedHeights, setLockedHeights] = useState<Record<string, number>>({});
+
+  // Drop stale locked heights if the viewport width changes across breakpoints.
+  useEffect(() => {
+    if (expandedIds.size === 0) return;
+    let lastWidth = window.innerWidth;
+    const onResize = () => {
+      if (window.innerWidth !== lastWidth) {
+        lastWidth = window.innerWidth;
+        setLockedHeights({});
+      }
+    };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, [expandedIds.size]);
+
+  const toggleCard = (cardId: string) => {
+    const isClosingLast = expandedIds.size === 1 && expandedIds.has(cardId);
+    if (isClosingLast) {
+      setExpandedIds(new Set());
+      setLockedHeights({});
+      return;
+    }
+
+    if (expandedIds.size === 0 && gridRef.current) {
+      const snapshot: Record<string, number> = {};
+      const nodes = gridRef.current.querySelectorAll<HTMLElement>('[data-card-id]');
+      nodes.forEach((node) => {
+        const id = node.dataset.cardId;
+        if (id) snapshot[id] = Math.round(node.getBoundingClientRect().height);
+      });
+      setLockedHeights(snapshot);
+    }
+
+    setExpandedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(cardId)) {
+        next.delete(cardId);
+      } else {
+        next.add(cardId);
+      }
+      return next;
+    });
+  };
+
+  const anyExpanded = expandedIds.size > 0;
+
+  return (
+    <div
+      ref={gridRef}
+      className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ${
+        anyExpanded ? 'items-start' : ''
+      }`}
+    >
+      {groups.map((group) => {
+        const id = group.event.id;
+        const isExpanded = expandedIds.has(id);
+        return (
+          <EventCard
+            key={id}
+            group={group}
+            isThisWeek={isCurrentWeek(group.dates[0], now.date)}
+            now={now}
+            expanded={isExpanded}
+            onToggleExpand={() => toggleCard(id)}
+            minHeight={anyExpanded && !isExpanded ? lockedHeights[id] : undefined}
+          />
+        );
+      })}
     </div>
   );
 }
@@ -82,16 +174,7 @@ export function HighlightedEvents({
                 : formatEventDate(date, locale)}
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
-              {groups.map((group) => (
-                <EventCard
-                  key={group.event.id}
-                  group={group}
-                  isThisWeek={isCurrentWeek(group.dates[0], now.date)}
-                  now={now}
-                />
-              ))}
-            </div>
+            <HighlightedDateGrid groups={groups} now={now} />
           </div>
         ))}
       </div>

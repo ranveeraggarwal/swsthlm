@@ -3,13 +3,23 @@
 // The full event card, used in the highlighted grid at the top of the homepage.
 // `EventRow` is the compact form for events further out.
 //
-// It's drawn as the night's music: a stamped ticket, punched out at its stub
-// and at its actions, for a live band; a record sleeve for a DJ set. The header
-// band carries the time and the badges; see `EventCardHeader`.
+// Combines the tactile whimsy of the header band with an Editorial Playbill body:
+// 1. `EventCardHeader` (`row-start-1`): a perforated manila ticket stub with
+//    punch-outs and a hand-inked admission stamp for live-band nights, or a
+//    record sleeve with a spinning 78 for DJ nights — carrying the time,
+//    Live/DJ pill, and Tonight / Tomorrow / This Week badge.
+// 2. Editorial Playbill body (`row-start-2`, `1fr`): calm tracked eyebrow
+//    (`STYLE · INTRO 19:00`), Besley slab title, concise `price · performer`
+//    line, and optional 2-line expandable prose.
+// 3. Venue & 5-segment `DanceabilityMeter` band (`row-start-3`): paper-tinted
+//    strip so dedicated dance studios (`5/5`) and cozy listening pubs (`1/5`)
+//    read apart from across the screen (#467).
+// 4. Action footer (`row-start-4`): pinned at the bottom with a second pair of
+//    ticket punch-outs on live-music cards (#465).
 //
 // Cancelled and ended cards are de-emphasised with border, background tint,
 // stripe, badge and (for cancelled) strikethrough — deliberately *not* opacity,
-// which would drag all the descendant text below the WCAG AA contrast threshold.
+// which would drag descendant text below WCAG AA contrast.
 
 import React, { useEffect, useRef, useState } from 'react';
 import { Ticket } from 'lucide-react';
@@ -17,23 +27,36 @@ import type { Music } from '@/lib/data/types';
 import type { Now } from '@/lib/date/clock';
 import { ReportCorrectionButton } from '@/features/corrections/ReportCorrectionButton';
 import { domIdFor, type EventGroup } from '../model/event';
+import {
+  beginnerEyebrowLabel,
+  formatPriceLine,
+  isFreePrice,
+  musicLines,
+  styleEyebrowClass,
+  styleLabel,
+  tasterEyebrowLabel,
+} from '../model/labels';
 import { getTemporalBadge } from '../model/temporal';
 import { useLocale } from '@/components/providers/LocaleProvider';
 import { AddToCalendarButton } from './AddToCalendarButton';
+import { DanceabilityMeter } from './DanceabilityMeter';
 import { EventCardHeader, TicketNotches, type CardShape } from './EventCardHeader';
-import { BeginnerChip, NightsChip, StyleChip, TasterClassChip } from './EventChips';
-import { EventFacts } from './EventFacts';
-import { FloorTypeBadge } from './FloorTypeBadge';
+import { VenueFact } from './EventFacts';
 import { ShareButton } from './ShareButton';
 import { badgeStripeClass } from './TemporalBadgeDisplay';
 
 interface EventCardProps {
   group: EventGroup;
-  /** Drives the "This Week" badge, and the accent stripe when no other badge applies. */
+  /** Drives the accent stripe when no higher-priority temporal badge applies. */
   isThisWeek: boolean;
   /** Force the date line on, for a card whose section heading doesn't carry it. */
   showDate?: boolean;
   now: Now;
+  /** Optional controlled expansion so `HighlightedEvents` can lock sibling heights. */
+  expanded?: boolean;
+  onToggleExpand?: () => void;
+  /** Locked collapsed height while another card in the same grid is expanded. */
+  minHeight?: number;
 }
 
 /** How many lines of the organizer's description to show before "Read more". */
@@ -41,19 +64,35 @@ const DESCRIPTION_CLAMP = 'line-clamp-2';
 
 // A band on stage gets a ticket; a DJ set gets a record sleeve. `mixed` has a
 // band, so it's a ticket — the same call the "Live Music Only" filter makes in
-// `../model/sections.ts`. Structure rather than a word or a colour, so it stays
-// here, like `FloorTypeBadge`'s icons.
+// `../model/sections.ts`.
 const SHAPE: Record<Music, CardShape> = {
   live: 'ticket',
   mixed: 'ticket',
   dj: 'sleeve',
 };
 
-export function EventCard({ group, isThisWeek, showDate, now }: EventCardProps) {
-  const { bundle } = useLocale();
+export function EventCard({
+  group,
+  isThisWeek,
+  showDate,
+  now,
+  expanded,
+  onToggleExpand,
+  minHeight,
+}: EventCardProps) {
+  const { locale, bundle } = useLocale();
   const { event, dates, nightCount } = group;
 
-  const [descriptionExpanded, setDescriptionExpanded] = useState(false);
+  const [uncontrolledExpanded, setUncontrolledExpanded] = useState(false);
+  const descriptionExpanded = expanded ?? uncontrolledExpanded;
+  const toggleDescription = () => {
+    if (onToggleExpand) {
+      onToggleExpand();
+    } else {
+      setUncontrolledExpanded((v) => !v);
+    }
+  };
+
   // Touch has no hover, so a tap toggles the lift instead (see `.lift-card`).
   const [lifted, setLifted] = useState(false);
   const lastPointer = useRef('');
@@ -68,6 +107,7 @@ export function EventCard({ group, isThisWeek, showDate, now }: EventCardProps) 
     document.addEventListener('pointerdown', onOutside);
     return () => document.removeEventListener('pointerdown', onOutside);
   }, [lifted]);
+
   const [descriptionTruncated, setDescriptionTruncated] = useState(false);
   const descriptionRef = useRef<HTMLParagraphElement>(null);
   const descriptionId = domIdFor(event, 'event-desc');
@@ -82,20 +122,29 @@ export function EventCard({ group, isThisWeek, showDate, now }: EventCardProps) 
 
   const badge = getTemporalBadge(event, now, isThisWeek);
   const shape = SHAPE[event.music];
+  const isOver = event.cancelled || badge === 'ended';
+  const priceLine = formatPriceLine(event.price, event.payment);
+  const titleKey = event.title.trim().toLowerCase();
+  const namedPerformers = musicLines(event).filter(
+    (line) => line.name && line.name.trim().toLowerCase() !== titleKey
+  );
+  const hasSubline = Boolean(priceLine) || namedPerformers.length > 0;
 
   // A red halo while it's on. An outline, not a `ring-*`: rings are drawn as a
   // box-shadow, and `.lift-card`'s unlayered box-shadow — the sticker offset —
-  // beats every Tailwind utility, so the ring this used to be never rendered.
+  // beats every Tailwind utility.
   const halo = !event.cancelled && badge === 'happening-now' ? 'outline-2 outline-[var(--live)]/30' : '';
 
   return (
     // A one-column grid, each section pinned to its own row, so a ticket's
-    // notches can share a cell with the band or the actions; and no
+    // notches can share a cell with the header band or the actions; and no
     // `overflow-hidden`, so they can paint over this card's own border.
-    // `isolate` keeps the stripe's z-index below inside the card.
+    // `isolate` keeps the stripe's z-index inside the card.
     <div
       ref={cardRef}
+      data-card-id={event.id}
       data-lifted={lifted}
+      style={minHeight ? { minHeight } : undefined}
       onPointerDown={(e) => {
         lastPointer.current = e.pointerType;
       }}
@@ -104,7 +153,7 @@ export function EventCard({ group, isThisWeek, showDate, now }: EventCardProps) 
           setLifted((v) => !v);
         }
       }}
-      className={`relative isolate lift-card rounded border-2 grid grid-cols-1 text-[var(--on-surface)] ${
+      className={`relative isolate lift-card rounded border-2 grid grid-cols-1 grid-rows-[auto_1fr_auto_auto] text-[var(--on-surface)] ${
         event.cancelled
           ? 'border-[var(--error)]/50 bg-[var(--error-container)]/40'
           : badge === 'ended'
@@ -113,8 +162,8 @@ export function EventCard({ group, isThisWeek, showDate, now }: EventCardProps) 
       } ${halo}`}
     >
       {/* Accent stripe — red for cancelled, temporal colour otherwise. Rounded
-          itself, as the card no longer clips its corners, and lifted over the
-          header band, which can now have a fill (and a stamp) of its own. */}
+          itself, as the card doesn't clip its corners, and lifted over the
+          header band. */}
       {event.cancelled ? (
         <div className="absolute z-[1] top-0 left-0 right-0 h-1.5 rounded-t-sm bg-[var(--error)]" />
       ) : (
@@ -125,49 +174,116 @@ export function EventCard({ group, isThisWeek, showDate, now }: EventCardProps) 
         )
       )}
 
+      {/* Row 1: Tactile ticket stub / record sleeve header + temporal badges */}
       <EventCardHeader group={group} shape={shape} badge={badge} showDate={showDate} />
 
-      <div className="col-start-1 row-start-2 p-5">
+      {/* Row 2: Editorial Playbill body */}
+      <div className="col-start-1 row-start-2 p-5 flex flex-col">
+        {/* Calm tracked eyebrow: style + multi-night + intro/taster callouts */}
+        <div className="flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5 text-[11px] font-bold uppercase tracking-widest mb-1.5 font-sans">
+          <span className={isOver ? 'text-[var(--on-surface-variant)]' : styleEyebrowClass(event.style)}>
+            {styleLabel(event.style, { compact: true }, locale)}
+          </span>
+          {nightCount > 1 && (
+            <>
+              <span aria-hidden="true" className="text-[var(--outline)]">
+                ·
+              </span>
+              <span
+                className={
+                  isOver ? 'text-[var(--on-surface-variant)]' : 'text-[var(--on-info-container)]'
+                }
+              >
+                {nightCount} {bundle.card.nights.other}
+              </span>
+            </>
+          )}
+          {event.beginnerClass && (
+            <>
+              <span aria-hidden="true" className="text-[var(--outline)]">
+                ·
+              </span>
+              <span
+                className={
+                  isOver ? 'text-[var(--on-surface-variant)]' : 'text-[var(--on-success-container)]'
+                }
+              >
+                {beginnerEyebrowLabel(event.beginnerClass, locale)}
+              </span>
+            </>
+          )}
+          {event.tasterClass && (
+            <>
+              <span aria-hidden="true" className="text-[var(--outline)]">
+                ·
+              </span>
+              <span
+                className={
+                  isOver ? 'text-[var(--on-surface-variant)]' : 'text-[var(--on-info-container)]'
+                }
+              >
+                {tasterEyebrowLabel(event.tasterClass, locale)}
+              </span>
+            </>
+          )}
+        </div>
+
         <h3
           title={event.title}
-          className={`font-serif text-xl font-bold tracking-tight text-[var(--on-surface)] leading-snug mb-1.5 truncate ${event.cancelled ? 'line-through' : ''}`}
+          className={`font-serif text-xl font-bold tracking-tight text-[var(--on-surface)] leading-snug line-clamp-2 ${
+            event.cancelled ? 'line-through' : ''
+          }`}
         >
           {event.title}
         </h3>
 
-        {/* The header band already says whether it's a band or a DJ, so
-            only a performer's name earns a line here. */}
-        <EventFacts
-          event={event}
-          struckThrough={event.cancelled}
-          namedPerformersOnly
-          className="mb-4"
-        />
+        {/* Flowing Playbill subline: price · named performer */}
+        {hasSubline && (
+          <p className="mt-1.5 font-sans text-sm text-[var(--on-surface-variant)] leading-relaxed">
+            {priceLine && (
+              <span
+                className={
+                  isFreePrice(event.price) && !isOver
+                    ? 'font-semibold text-[var(--on-success-container)]'
+                    : ''
+                }
+              >
+                {priceLine}
+              </span>
+            )}
+            {namedPerformers.map((line, index) => (
+              <React.Fragment key={line.type}>
+                {(priceLine || index > 0) && (
+                  <span aria-hidden="true" className="mx-1.5 text-[var(--outline)]">
+                    ·
+                  </span>
+                )}
+                <span>
+                  <span className="sr-only">
+                    {line.type === 'live' ? bundle.card.livePrefix : bundle.card.djPrefix}
+                  </span>
+                  <span className="font-medium text-[var(--on-surface)]">{line.name}</span>
+                </span>
+              </React.Fragment>
+            ))}
+          </p>
+        )}
 
-        <div className="flex flex-wrap items-center gap-2 font-sans">
-          <StyleChip style={event.style} layout="card" />
-          <FloorTypeBadge floorType={event.floorType} />
-          <NightsChip nightCount={nightCount} />
-          <BeginnerChip beginnerClass={event.beginnerClass} />
-          <TasterClassChip tasterClass={event.tasterClass} />
-        </div>
-
-        {/* Here rather than with the actions, so the header band and the
-            actions keep the same height from card to card; only this middle
-            section grows with the organizer's prose. */}
         {event.body && (
-          <div className="mt-4 font-sans">
+          <div className="mt-3 font-sans">
             <p
               ref={descriptionRef}
               id={descriptionId}
-              className={`text-sm text-[var(--on-surface-variant)] leading-relaxed whitespace-pre-line ${descriptionExpanded ? '' : DESCRIPTION_CLAMP}`}
+              className={`text-sm text-[var(--on-surface-variant)] leading-relaxed whitespace-pre-line ${
+                descriptionExpanded ? '' : DESCRIPTION_CLAMP
+              }`}
             >
               {event.body}
             </p>
             {descriptionTruncated && (
               <button
                 type="button"
-                onClick={() => setDescriptionExpanded((v) => !v)}
+                onClick={toggleDescription}
                 aria-expanded={descriptionExpanded}
                 aria-controls={descriptionId}
                 className="mt-1 font-sans text-xs font-bold uppercase tracking-wider text-[var(--primary)] hover:underline transition-colors cursor-pointer"
@@ -179,7 +295,18 @@ export function EventCard({ group, isThisWeek, showDate, now }: EventCardProps) 
         )}
       </div>
 
-      <div className="col-start-1 row-start-3 border-t-2 border-[var(--border-ink)] p-5 flex items-center gap-2 font-sans">
+      {/* Row 3: Venue & full-width 5-segment danceability band */}
+      <div
+        className={`col-start-1 row-start-3 px-5 py-3.5 border-t border-[var(--surface-container-highest)] font-sans text-xs ${
+          isOver ? '' : 'bg-[var(--surface-container)]'
+        }`}
+      >
+        <VenueFact event={event} struckThrough={event.cancelled} />
+        <DanceabilityMeter danceability={event.danceability} muted={isOver} className="mt-2.5" />
+      </div>
+
+      {/* Row 4: Action footer */}
+      <div className="col-start-1 row-start-4 border-t-2 border-[var(--border-ink)] px-5 py-3.5 flex items-center gap-2 font-sans">
         {event.ticket && (
           <a
             href={event.ticket}
@@ -197,7 +324,7 @@ export function EventCard({ group, isThisWeek, showDate, now }: EventCardProps) 
         <ReportCorrectionButton event={event} dates={dates} />
       </div>
 
-      {shape === 'ticket' && <TicketNotches className="col-start-1 row-start-3 ticket-notch-top" />}
+      {shape === 'ticket' && <TicketNotches className="col-start-1 row-start-4 ticket-notch-top" />}
     </div>
   );
 }

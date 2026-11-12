@@ -12,7 +12,7 @@
 // and raw Tailwind palette classes are lint-banned outside a literal
 // `className`, so `chipClass` stays a plain object here rather than moving.
 
-import type { FloorType, Music, Style } from '@/lib/data/types';
+import type { Danceability, Music, Style } from '@/lib/data/types';
 import { bundle, DEFAULT_LOCALE, type Locale } from '@/i18n';
 import type { SwingEvent } from './event';
 
@@ -32,10 +32,52 @@ const STYLE_CHIP_CLASSES: Record<Style, string> = {
   all: NEUTRAL_CHIP,
 };
 
+const STYLE_EYEBROW_CLASSES: Record<Style, string> = {
+  'lindy-hop': 'text-[var(--tertiary)]',
+  balboa: 'text-[var(--secondary)]',
+  blues: 'text-[var(--on-surface-variant)]',
+  shag: 'text-[var(--on-surface-variant)]',
+  'rock-n-roll': 'text-[var(--on-surface-variant)]',
+  all: 'text-[var(--on-surface-variant)]',
+};
+
+export interface DanceabilityTone {
+  textClass: string;
+  barClass: string;
+  chipClass: string;
+}
+
+const HIGH_DANCEABILITY_TONE: DanceabilityTone = {
+  textClass: 'text-[var(--on-success-container)]',
+  barClass: 'bg-[var(--on-success-container)]',
+  chipClass:
+    'bg-[var(--success-container)] text-[var(--on-success-container)] border-[var(--on-success-container)]/25',
+};
+
+const MID_DANCEABILITY_TONE: DanceabilityTone = {
+  textClass: 'text-[var(--tertiary)]',
+  barClass: 'bg-[var(--tertiary)]',
+  chipClass: 'bg-[var(--tertiary)]/10 text-[var(--tertiary)] border-[var(--tertiary)]/25',
+};
+
+const LOW_DANCEABILITY_TONE: DanceabilityTone = {
+  textClass: 'text-[var(--on-caution-container)]',
+  barClass: 'bg-[var(--on-caution-container)]',
+  chipClass:
+    'bg-[var(--caution-container)] text-[var(--on-caution-container)] border-[var(--on-caution-container)]/25',
+};
+
+const DANCEABILITY_TONES: Record<Danceability, DanceabilityTone> = {
+  5: HIGH_DANCEABILITY_TONE,
+  4: HIGH_DANCEABILITY_TONE,
+  3: MID_DANCEABILITY_TONE,
+  2: LOW_DANCEABILITY_TONE,
+  1: LOW_DANCEABILITY_TONE,
+};
+
 /**
- * Display name for an event's style. `compact` picks the row list's shorter
- * form, which exists because the chip is `shrink-0` next to a truncating
- * title and the full label pushes the layout.
+ * Display name for an event's style. `compact` picks the row list's and card
+ * eyebrow's shorter form ("All styles" instead of "Social – all styles").
  */
 export function styleLabel(
   style: Style,
@@ -63,6 +105,11 @@ export function styleChipClass(style: Style): string {
   return STYLE_CHIP_CLASSES[style] ?? NEUTRAL_CHIP;
 }
 
+/** Tracked text colour for an event's style in the Playbill eyebrow. */
+export function styleEyebrowClass(style: Style): string {
+  return STYLE_EYEBROW_CLASSES[style] ?? 'text-[var(--on-surface-variant)]';
+}
+
 /**
  * "Beginner friendly" for a plain yes, otherwise the class start time. Both
  * come from the same `beginner_class` column, which holds either 'yes' or HH:MM.
@@ -74,6 +121,17 @@ export function beginnerClassLabel(beginnerClass: string, locale: Locale = DEFAU
     : words.atTime.replace('{time}', beginnerClass);
 }
 
+/** Concise Playbill eyebrow callout for `beginner_class` ("Intro 19:00" or "Beginner friendly"). */
+export function beginnerEyebrowLabel(
+  beginnerClass: string,
+  locale: Locale = DEFAULT_LOCALE,
+): string {
+  const words = bundle(locale).beginnerClass;
+  return beginnerClass.toLowerCase() === 'yes'
+    ? words.friendly
+    : words.eyebrowAtTime.replace('{time}', beginnerClass);
+}
+
 /** "Taster class {time}" — the standalone class before a one-off's main event.
  *  Unlike `beginnerClassLabel` there's no bare "friendly" form: a taster is
  *  always at a specific time (see `docs/DATA.md` `taster_class`). */
@@ -81,9 +139,36 @@ export function tasterClassLabel(tasterClass: string, locale: Locale = DEFAULT_L
   return bundle(locale).tasterClass.atTime.replace('{time}', tasterClass);
 }
 
-/** Display name for a venue's floor type badge. */
-export function floorTypeLabel(floorType: FloorType, locale: Locale = DEFAULT_LOCALE): string {
-  return bundle(locale).floors[floorType];
+/** Concise Playbill eyebrow callout for `taster_class` ("Taster 18:30"). */
+export function tasterEyebrowLabel(tasterClass: string, locale: Locale = DEFAULT_LOCALE): string {
+  return bundle(locale).tasterClass.eyebrowAtTime.replace('{time}', tasterClass);
+}
+
+/** Fixed one-line description for a venue's 1–5 danceability score. */
+export function danceabilityLabel(
+  score: Danceability,
+  locale: Locale = DEFAULT_LOCALE,
+): string {
+  return bundle(locale).danceability.levels[score];
+}
+
+/** Semantic ink, segment fill, and chip classes for a 1–5 danceability score. */
+export function danceabilityTone(score: Danceability): DanceabilityTone {
+  return DANCEABILITY_TONES[score];
+}
+
+/** True when a free-form `price` string starts with "Free", "Gratis", or "Fri entré". */
+export function isFreePrice(price?: string): boolean {
+  if (!price) return false;
+  return /^(free|gratis|fri entr[eé])(?=$|[\s.,;:()/–—-])/i.test(price.trim());
+}
+
+/** Editorial dateline phrasing for `price` and `payment` (e.g. "50/100 kr (Swish)"). */
+export function formatPriceLine(price?: string, payment?: string): string | undefined {
+  if (price && payment) {
+    return price.includes('(') ? `${price} · ${payment}` : `${price} (${payment})`;
+  }
+  return price || payment || undefined;
 }
 
 /** One line of the who's-playing list: a live act or a DJ, named or not. */

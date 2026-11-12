@@ -17,7 +17,7 @@ import { domIdFor, venueMapsUrl, type EventGroup } from '../model/event';
 import { musicLines } from '../model/labels';
 import { AddToCalendarButton } from './AddToCalendarButton';
 import { BeginnerChip, NightsChip, PaymentChip, PriceChip, StyleChip, TasterClassChip } from './EventChips';
-import { FloorTypeBadge } from './FloorTypeBadge';
+import { DanceabilityBadge } from './DanceabilityMeter';
 import { ShareButton } from './ShareButton';
 
 export function EventRow({ group }: { group: EventGroup }) {
@@ -121,7 +121,7 @@ export function EventRow({ group }: { group: EventGroup }) {
             <NightsChip nightCount={nightCount} />
             <BeginnerChip beginnerClass={event.beginnerClass} />
             <TasterClassChip tasterClass={event.tasterClass} />
-            <FloorTypeBadge floorType={event.floorType} />
+            <DanceabilityBadge danceability={event.danceability} />
           </div>
 
           {namedPerformers.length > 0 && (

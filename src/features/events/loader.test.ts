@@ -131,4 +131,30 @@ describe('getEvents', () => {
 
     expect(events.find(e => e.id.startsWith('oneoff-1'))?.body).toBe('First paragraph.\n\nSecond paragraph.');
   });
+
+  it('joins numeric danceability from venues.csv and leaves blank values undefined', async () => {
+    const mockVenues =
+      'id,name,address,neighborhood,danceability\n' +
+      'chicago,Chicago,Hornsgatan 75,Södermalm,5\n' +
+      'unrated,Mystery Hall,Main St 1,City,';
+    const mockSeries = 'id,name,style,venue_id,weekday,start,end,price,payment,beginner_class,music,dj,band,organizer,url,description,status,valid_from,valid_to';
+    const mockExceptions = 'series_id,date,cancelled,start,end,dj,band,music,price,note,description';
+    const mockOneoffs =
+      'id,name,style,venue_id,date,end_date,start,end,price,payment,beginner_class,music,dj,band,organizer,url,description,status\n' +
+      'rated-ev,Rated,lindy-hop,chicago,2026-06-05,,19:00,22:00,,,,dj,,,Org,https://example.com,,live\n' +
+      'unrated-ev,Unrated,lindy-hop,unrated,2026-06-06,,19:00,22:00,,,,dj,,,Org,https://example.com,,live';
+
+    vi.mocked(fs.readFileSync).mockImplementation((path: string | number | URL | Buffer) => {
+      const p = path.toString();
+      if (p.endsWith('venues.csv')) return mockVenues;
+      if (p.endsWith('series.csv')) return mockSeries;
+      if (p.endsWith('exceptions.csv')) return mockExceptions;
+      if (p.endsWith('oneoffs.csv')) return mockOneoffs;
+      return '';
+    });
+
+    const events = await getEvents();
+    expect(events.find((e) => e.id.startsWith('rated-ev'))?.danceability).toBe(5);
+    expect(events.find((e) => e.id.startsWith('unrated-ev'))?.danceability).toBeUndefined();
+  });
 });

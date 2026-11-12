@@ -18,12 +18,9 @@ import { useLocale } from '@/components/providers/LocaleProvider';
 const CHIP_TYPE = 'rounded text-[10px] font-bold uppercase tracking-wider border';
 const CHIP = `inline-flex items-center gap-1 px-2.5 py-0.5 ${CHIP_TYPE}`;
 
-// One entry per surface the style chip appears on. They differ in size and
-// positioning, which is easier to notice — and to deliberately unify — when the
-// three sit next to each other than when they were three components apart.
+// One entry per surface the style chip appears on (`EventCard` renders style as
+// tracked Playbill eyebrow text instead of a chip).
 const STYLE_CHIP_LAYOUT = {
-  /** Card grid: chip in a wrapping row, matched to the other 10px chips. */
-  card: `inline-flex items-center px-2.5 py-0.5 ${CHIP_TYPE}`,
   /** Permalink page: a size larger, as the page has room for it. */
   permalink: 'px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider border',
   /** Row list: tighter, pushed to the right edge of a single-line row. */

@@ -81,11 +81,15 @@ export const en = {
     dj: 'DJ set',
     mixed: 'Live band + DJ',
   },
-  floors: {
-    studio: 'Dance studio',
-    hall: 'Dance hall',
-    bar: 'Bar / restaurant',
-    outdoor: 'Outdoor',
+  danceability: {
+    heading: 'Danceability',
+    levels: {
+      5: 'Studio floor',
+      4: 'Ballroom / hall',
+      3: 'Open-air / pavilion',
+      2: 'Small bar floor',
+      1: 'Tableside / pub',
+    },
   },
   temporal: {
     'happening-now': 'Happening Now',
@@ -97,9 +101,11 @@ export const en = {
   beginnerClass: {
     friendly: 'Beginner friendly',
     atTime: 'Beginner class {time}',
+    eyebrowAtTime: 'Intro {time}',
   },
   tasterClass: {
     atTime: 'Taster class {time}',
+    eyebrowAtTime: 'Taster {time}',
   },
   home: {
     title: { lead: 'Stockholm in ', em: 'Full Swing' },

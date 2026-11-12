@@ -26,7 +26,7 @@ const WEEKDAYS = new Set([
 ]);
 const SERIES_STATUS = new Set(['draft', 'live', 'ended']);
 const ONEOFF_STATUS = new Set(['draft', 'live', 'ended', 'cancelled']);
-const FLOOR_TYPES = new Set(['studio', 'hall', 'bar', 'outdoor']);
+const DANCEABILITY = new Set(['1', '2', '3', '4', '5']);
 // How long a `live` one-off may sit past its last day before the gate fails on
 // it. scripts/mark-ended.mjs flips those rows to `ended` nightly, but its PR
 // waits on a human merge, so a few days of lag is normal operation rather than
@@ -44,7 +44,7 @@ const SWING = new Set(['yes', 'no', 'unknown']);
 const SCHEMA = {
   venues: {
     required: ['id', 'name', 'address', 'neighborhood'],
-    optional: ['lat', 'lng', 'maps_url', 'floor_type'],
+    optional: ['lat', 'lng', 'maps_url', 'danceability'],
   },
   series: {
     required: [
@@ -163,8 +163,10 @@ export function validateData(datasets, opts = {}) {
     if (id && seenVenue.has(id)) err('venues', n, `duplicate id "${id}"`);
     seenVenue.add(id);
 
-    const floorType = val(row, 'floor_type');
-    if (floorType && !FLOOR_TYPES.has(floorType)) err('venues', n, `invalid floor_type "${floorType}"`);
+    const danceability = val(row, 'danceability');
+    if (danceability && !DANCEABILITY.has(danceability)) {
+      err('venues', n, `invalid danceability "${danceability}" (expected 1–5)`);
+    }
   });
 
   // --- series ---

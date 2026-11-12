@@ -42,8 +42,8 @@ src/
       components/               the UI
         EventCalendar.tsx         the homepage listing (stateful; the only one)
         FilterPanel.tsx EmptyState.tsx EventSections.tsx
-        EventCard.tsx EventCardHeader.tsx EventRow.tsx
-        EventFacts.tsx EventChips.tsx FloorTypeBadge.tsx TemporalBadgeDisplay.tsx
+        EventCard.tsx EventCardHeader.tsx EventRow.tsx EventPermalink.tsx
+        EventFacts.tsx EventChips.tsx DanceabilityMeter.tsx TemporalBadgeDisplay.tsx
         AddToCalendarButton.tsx ShareButton.tsx SubscribeButton.tsx
     corrections/              "Wrong info?" dialog + the mailto it builds
     changelog/               "What's new" timeline + its entries
@@ -103,7 +103,7 @@ the copies had diverged: the same style read "Social – all styles" on a card a
 different surfaces, add a named variant rather than a local mapping.
 
 The split is by *kind*, not by convenience. `features/events/model/labels.ts`
-holds `chipClass` and the accessors (`styleLabel`, `floorTypeLabel`, …) —
+holds `chipClass` and the accessors (`styleLabel`, `danceabilityLabel`, …) —
 structure and colour. `src/i18n/<locale>.ts` holds what those accessors return —
 words. A translator should open one file, not four; before this split they'd have
 had to edit `labels.ts`, `format.ts`, `sections.ts` and the dictionary, one of
@@ -131,7 +131,7 @@ Everything downstream consumes `SwingEvent[]` and never sees a CSV.
 `lib/data/types.ts` describes the CSV rows and the expanded `Occurrence`.
 `features/events/model/event.ts` defines `SwingEvent` — an `Occurrence` with its
 venue joined — and that is what the homepage, permalinks, ICS feed and JSON-LD all
-render. It reuses the data layer's enums (`Style`, `Music`, `FloorType`) rather
+render. It reuses the data layer's enums (`Style`, `Music`, `Danceability`) rather
 than re-declaring them, so a value outside the data contract is a type error
 instead of a blank badge.
 
@@ -151,7 +151,7 @@ tree. The component reads the locale and passes it down.
 
 The consequence to know before adding a component: **anything that renders a word
 has to be a client component**, because the locale only exists on the client.
-That's why `EventFacts`, `EventChips`, `FloorTypeBadge` and `TemporalBadgeDisplay`
+That's why `EventFacts`, `EventChips`, `DanceabilityMeter` and `TemporalBadgeDisplay`
 carry `'use client'` themselves — the permalink route is a server component and
 renders them directly, so they can't inherit it from a client parent. Data
 loading is unaffected: rule 6 still holds, `loader.ts` still runs at build, and

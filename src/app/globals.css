@@ -73,6 +73,18 @@
      in dark mode this becomes the deepest surface tone, NOT cream. */
   --shadow-ink: #1b1c16;
 
+  /* The filter panel's soft controls: a slightly sunken groove (switch
+     tracks, idle chips) and the paper that sits raised on it (the switch's
+     sliding block, a chosen "All" chip). Their own tokens because the two
+     themes move in opposite directions — here raised is white on a grey
+     groove; after dark, raised must be *lighter* than the panel and the
+     groove darker (see "After dark, light is elevation" in DESIGN.md). */
+  --groove: #e4e3d8;
+  --groove-hover: #dcdad0;
+  --groove-raised: #ffffff;
+  --groove-inset: inset 0 1px 3px rgb(27 28 22 / 0.18);
+  --groove-lift: 0 1px 2px rgb(27 28 22 / 0.25), 0 2px 6px rgb(27 28 22 / 0.12);
+
   --transition-physics: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -159,6 +171,14 @@
   /* Near-true black: with cards lifted off the floor tonally, the offset
      sticker shadow reads again */
   --shadow-ink: #110b07;
+
+  /* Groove below the espresso panel (#2d231c), raised paper a clear step
+     above it; shadows deepen since a dark ground swallows a light one. */
+  --groove: #251d17;
+  --groove-hover: #2a211a;
+  --groove-raised: #4b3d33;
+  --groove-inset: inset 0 1px 3px rgb(0 0 0 / 0.45);
+  --groove-lift: 0 1px 2px rgb(0 0 0 / 0.5), 0 2px 6px rgb(0 0 0 / 0.3);
 }
 
 @theme inline {

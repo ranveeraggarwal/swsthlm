@@ -188,6 +188,9 @@ Small tags used on the permalink page and in expanded `EventRow` details: dance 
 
 Each chip family has its own semantic token pair rather than one shared accent — beginner and `4–5` danceability use `--success-container`, `1–2` danceability uses `--caution-container`, multi-night and taster classes use `--info-container`, an ended card uses `--ended-container`, and style chips map per style (Lindy → tertiary, Balboa → secondary, the rest neutral). Adding a new chip family means adding a token pair, not reaching for a Tailwind palette class. The wording and the colour mapping both live in `src/features/events/model/labels.ts`; the chip components are in `src/features/events/components/EventChips.tsx` and `DanceabilityMeter.tsx`.
 
+### Filter panel controls
+The filter panel is the one place that drops the ink keylines. Its controls use a soft **groove** look instead: the sunken surface is `--groove` with an inset shadow, and the chosen option sits raised on it with `--groove-lift`. That covers the search field (raised paper with a soft inset and a `--primary` focus ring), the Music / Danceability switch tracks, and the idle style and venue chips. A chosen "All" option is neutral `--groove-raised` paper. A chosen real filter takes its facet accent (style → primary, venue → secondary, Live → tertiary, Best → the inverted success pair, matching the 5/5 meter), so colour in the panel always means "this filter is on". The tokens are defined per theme, because after dark the raised paper has to be lighter than the panel and the groove darker. Components: `src/features/events/components/FilterPanel.tsx`.
+
 ### Navigation
 The navigation bar should be a simple, centered list of uppercase labels. It remains fixed to the top but uses a semi-transparent Cream backdrop with a "glass" blur to keep the focus on the content underneath as the user scrolls through the "rhythm" of the page.
 
@@ -257,6 +260,10 @@ Exact values as merged in `src/app/globals.css` (`:root` vs. `:root[data-theme='
 | `--ticket-stock` | `#edd8a8` | `#52432d` |
 | `--border-ink` | `#1b1c16` | `#614a3c` |
 | `--shadow-ink` | `#1b1c16` | `#110b07` |
+| `--groove` | `#e4e3d8` | `#251d17` |
+| `--groove-hover` | `#dcdad0` | `#2a211a` |
+| `--groove-raised` | `#ffffff` | `#4b3d33` |
+| `--groove-inset` / `--groove-lift` | soft ink-tinted shadows | deeper black shadows |
 
 `color-scheme` is also set per theme (`light` / `dark`) on the same `:root` blocks, so native form controls and the scrollbar follow automatically.
 

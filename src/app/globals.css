@@ -231,52 +231,36 @@ body {
   background: var(--primary);
 }
 
-/* Filter pill scroll container with fade edges. Each edge fades only while
-   there is more to scroll to on that side; `ScrollFade` sets the data
-   attributes from the live scroll position (#463). */
+/* Filter pill scroll container with fade edges. Each edge fades in proportion
+   to how much is left to scroll on that side; `ScrollFade` writes
+   `--fade-start` / `--fade-end` (0–1) on the scroller from the live scroll
+   position (#463). The defaults here are the first paint, before that script
+   runs: at the start of the row, with more to the right.
+
+   The fade is a mask on the scroller itself, not a gradient overlaid on top:
+   an overlay's edge and the scroller's clipping edge round to device pixels
+   separately, which left a one-pixel unfaded sliver of chip at each edge. A
+   mask has no colour, so it needs no token and works on any background. The
+   mask follows the scroll directly; there is deliberately no transition (it
+   would lag the finger). */
 .filter-scroll-container {
-  position: relative;
-}
-
-.filter-scroll-container::before,
-.filter-scroll-container::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 48px;
-  pointer-events: none;
-  z-index: 1;
-  opacity: 0;
-  transition: opacity 150ms ease-out;
-}
-
-.filter-scroll-container::before {
-  left: 0;
-  background: linear-gradient(to left, transparent, var(--surface-container-low));
-}
-
-.filter-scroll-container::after {
-  right: 0;
-  background: linear-gradient(to right, transparent, var(--surface-container-low));
-}
-
-.filter-scroll-container[data-fade-start='true']::before,
-.filter-scroll-container[data-fade-end='true']::after {
-  opacity: 1;
+  --fade-start: 0;
+  --fade-end: 1;
+  --fade-mask: linear-gradient(
+    to right,
+    transparent,
+    #000 calc(var(--fade-start) * 48px),
+    #000 calc(100% - var(--fade-end) * 48px),
+    transparent
+  );
+  -webkit-mask-image: var(--fade-mask);
+  mask-image: var(--fade-mask);
 }
 
 @media (min-width: 768px) {
-  .filter-scroll-container::before,
-  .filter-scroll-container::after {
-    display: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .filter-scroll-container::before,
-  .filter-scroll-container::after {
-    transition: none;
+  .filter-scroll-container {
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 }
 

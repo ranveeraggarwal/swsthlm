@@ -27,7 +27,7 @@ src/
     event/[id]/[date]/        permalink + its OG image
     calendar.ics/             the ICS subscription feed
     sitemap.ts robots.ts manifest.ts opengraph-image.tsx
-    layout.tsx globals.css
+    layout.tsx not-found.tsx globals.css
 
   features/                 One folder per thing the site does.
     events/                   the calendar — 90% of the app
@@ -51,7 +51,8 @@ src/
 
   components/               Shared across features. Nothing domain-specific.
     layout/                   Header, Footer, ThemeToggle, InstallToast,
-                              FreshnessSignal, HomeHero, SkipToContentLink
+                              FreshnessSignal, HomeHero, NotFoundContent,
+                              SkipToContentLink
     providers/                LocaleProvider — cross-cutting client context
     ui/                       Modal, IconButton, GitHubIcon, CalendarProviderMarks
 

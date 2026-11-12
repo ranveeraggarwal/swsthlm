@@ -232,8 +232,9 @@ interface FacetSwitchProps {
  * chosen word.
  *
  * Underneath it's a native radio pair, visually hidden, so the browser gives it
- * radio semantics, arrow-key movement and form behaviour for free; the labels
- * are the tap targets. The focus ring is drawn on whichever label holds the
+ * radio semantics, arrow-key movement and form behaviour for free. The two
+ * labels fill the switch, so a tap anywhere on it lands on one: the other side
+ * selects it, the chosen side flips it. The focus ring is drawn on whichever label holds the
  * focused input, since the input itself is invisible.
  */
 function FacetSwitch({ id, label, icon, offLabel, onLabel, on, onChange, tone }: FacetSwitchProps) {
@@ -278,6 +279,12 @@ function FacetSwitch({ id, label, icon, offLabel, onLabel, on, onChange, tone }:
                 className="sr-only"
                 checked={selected}
                 onChange={() => onChange(value)}
+                // The whole switch is one tap target: tapping the side that's
+                // already chosen flips it too, the way a physical switch does.
+                // A checked radio fires `click` but not `change`, hence here.
+                onClick={() => {
+                  if (selected) onChange(!value);
+                }}
               />
               {text}
             </label>

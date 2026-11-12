@@ -100,14 +100,17 @@ function matchesVenue(event: SwingEvent, venue: string): boolean {
 }
 
 /**
- * The style chips to offer, derived from what's actually listed rather than from
- * the full enum — a filter for a style nobody is running this month is a dead
- * end. ALL_STYLES leads as the "no filter" option, and is skipped as a chip of
- * its own because an 'all' event already matches every other filter.
+ * The style chips to offer, derived from what's actually still to come rather
+ * than from the full enum — a filter for a style nobody is running is a dead
+ * end. Same live-clock and cancelled-night rule as `availableVenues` below,
+ * for the same reason: the list is baked at build time. ALL_STYLES leads as the
+ * "no filter" option, and is skipped as a chip of its own because an 'all'
+ * event already matches every other filter.
  */
-export function availableStyles(events: SwingEvent[]): Style[] {
+export function availableStyles(events: SwingEvent[], now: Now): Style[] {
   const styles = new Set<Style>();
   for (const event of events) {
+    if (event.cancelled || isPastEvent(event, now)) continue;
     if (event.style !== ALL_STYLES) styles.add(event.style);
   }
   return [ALL_STYLES, ...[...styles].sort()];

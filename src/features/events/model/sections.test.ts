@@ -3,6 +3,7 @@ import type { SwingEvent } from './event';
 import {
   ALL_VENUES,
   NO_FILTERS,
+  availableStyles,
   availableVenues,
   emptyStateHeading,
   filterEvents,
@@ -162,5 +163,31 @@ describe('availableVenues', () => {
       'Källarbyn',
       'Nalen',
     ]);
+  });
+});
+
+describe('availableStyles', () => {
+  const now = { date: '2025-05-19', time: '12:00' };
+  const on = (style: SwingEvent['style'], date: string, patch: Partial<SwingEvent> = {}): SwingEvent => ({
+    ...baseEvent,
+    id: `${style}:${date}`,
+    style,
+    date,
+    start: '19:00',
+    end: '23:00',
+    ...patch,
+  });
+
+  it('offers only styles with an upcoming, non-cancelled night', () => {
+    const styles = availableStyles(
+      [
+        on('balboa', '2025-05-18'),
+        on('shag', '2025-05-20', { cancelled: true }),
+        on('lindy-hop', '2025-05-20'),
+        on('all', '2025-05-20'),
+      ],
+      now,
+    );
+    expect(styles).toEqual(['all', 'lindy-hop']);
   });
 });

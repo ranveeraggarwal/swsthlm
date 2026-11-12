@@ -231,10 +231,15 @@ body {
   background: var(--primary);
 }
 
-/* Filter pill scroll container with fade edges. Each edge fades only while
-   there is more to scroll to on that side; `ScrollFade` sets the data
-   attributes from the live scroll position (#463). */
+/* Filter pill scroll container with fade edges. Each edge fades in proportion
+   to how much is left to scroll on that side; `ScrollFade` writes
+   `--fade-start` / `--fade-end` (0–1) from the live scroll position (#463).
+   The defaults here are the first paint, before that script runs: at the
+   start of the row, with more to the right. The opacity follows the scroll
+   directly, so there is deliberately no transition (it would lag the finger). */
 .filter-scroll-container {
+  --fade-start: 0;
+  --fade-end: 1;
   position: relative;
 }
 
@@ -247,36 +252,24 @@ body {
   width: 48px;
   pointer-events: none;
   z-index: 1;
-  opacity: 0;
-  transition: opacity 150ms ease-out;
 }
 
 .filter-scroll-container::before {
   left: 0;
+  opacity: var(--fade-start);
   background: linear-gradient(to left, transparent, var(--surface-container-low));
 }
 
 .filter-scroll-container::after {
   right: 0;
+  opacity: var(--fade-end);
   background: linear-gradient(to right, transparent, var(--surface-container-low));
-}
-
-.filter-scroll-container[data-fade-start='true']::before,
-.filter-scroll-container[data-fade-end='true']::after {
-  opacity: 1;
 }
 
 @media (min-width: 768px) {
   .filter-scroll-container::before,
   .filter-scroll-container::after {
     display: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .filter-scroll-container::before,
-  .filter-scroll-container::after {
-    transition: none;
   }
 }
 

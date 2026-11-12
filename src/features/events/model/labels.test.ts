@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
+  BANDSTAND_MOTIFS,
+  bandstandMotif,
   beginnerClassLabel,
   beginnerEyebrowLabel,
   cardLiftTilt,
@@ -108,13 +110,16 @@ describe('musicBadgeLabel', () => {
 });
 
 describe('card print & whimsy helpers', () => {
-  it('pairs each 78 record label fill with its matching --on-* ink token', () => {
+  it('pairs each 78 record label fill with its matching --on-* ink and accent stroke token', () => {
     expect(recordLabelTone('lindy-hop').fillClass).toContain('--tertiary');
     expect(recordLabelTone('lindy-hop').strokeClass).toContain('--on-tertiary');
+    expect(recordLabelTone('lindy-hop').accentStrokeClass).toContain('--tertiary');
     expect(recordLabelTone('balboa').fillClass).toContain('--secondary');
     expect(recordLabelTone('balboa').strokeClass).toContain('--on-secondary');
+    expect(recordLabelTone('balboa').accentStrokeClass).toContain('--secondary');
     expect(recordLabelTone('all').fillClass).toContain('--primary');
     expect(recordLabelTone('all').strokeClass).toContain('--on-primary');
+    expect(recordLabelTone('all').accentStrokeClass).toContain('--primary');
   });
 
   it('picks a subtle, non-zero deterministic lift tilt per occurrence id', () => {
@@ -122,5 +127,16 @@ describe('card print & whimsy helpers', () => {
     expect(Math.abs(tilt)).toBeGreaterThan(0);
     expect(Math.abs(tilt)).toBeLessThanOrEqual(1);
     expect(cardLiftTilt('danshuset-2026-08:2026-08-28')).toBe(tilt);
+  });
+
+  it('deterministically distributes occurrence ids across all three bandstand motifs', () => {
+    const first = bandstandMotif('chicago-live-weds-autumn-2026:2026-11-11');
+    expect(BANDSTAND_MOTIFS).toContain(first);
+    expect(bandstandMotif('chicago-live-weds-autumn-2026:2026-11-11')).toBe(first);
+
+    const seen = new Set(
+      Array.from({ length: 18 }, (_, i) => bandstandMotif(`live-event-${i}:2026-11-${10 + i}`))
+    );
+    expect(seen).toEqual(new Set(BANDSTAND_MOTIFS));
   });
 });

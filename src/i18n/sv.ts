@@ -183,6 +183,10 @@ export const sv = {
     opensInNewTab: ' (öppnas i en ny flik)',
     livePrefix: 'Live: ',
     djPrefix: 'DJ: ',
+    admissionStamp: {
+      top: 'Live swing',
+      bottom: 'Entré',
+    },
   },
   actions: {
     addToCalendar: 'Lägg till i kalendern',

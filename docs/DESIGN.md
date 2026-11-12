@@ -168,13 +168,12 @@ The shape language is **Soft (0.25rem)**. This provides enough roundness to feel
 - **Tertiary/Ghost:** Text-only with an underline that appears on hover, mimicking a rhythmic "beat."
 
 ### Cards
-Cards are the primary container for near-term events (`EventCard`). Each card is framed as an **Editorial Playbill** — a crisp rectangular paper-stock sheet (`border-2 border-[var(--border-ink)] bg-[var(--surface-container-low)]`) with a `2px 2px 0px` `--shadow-ink` offset (`.lift-card`) and a `6px` temporal accent stripe across the top. Cards sharing a horizontal grid row stretch to equal height (`grid-rows-[1fr_auto_auto]`) so their venue bands and action footers align cleanly across columns.
+Cards are the primary container for near-term events (`EventCard`). Each card pairs the tactile whimsy of a vintage ticket or record sleeve with a calm **Editorial Playbill** body (`border-2 border-[var(--border-ink)] bg-[var(--surface-container-low)]`, `2px 2px 0px` `--shadow-ink` offset via `.lift-card`, and a `6px` temporal accent stripe). Collapsed cards sharing a horizontal row align to equal height (`grid-rows-[auto_1fr_auto_auto]`); expanding "Read more" on one card grows only that card while locking its neighbours at their collapsed height.
 
-Rather than wrapping every fact in competing pill borders, the Playbill separates the event into three calm zones:
-
-1. **Editorial Body (`p-5`)** — opens with a tracked uppercase **eyebrow row** pairing the dance style + class callout (`BLUES · INTRO 19:00`) on the left with the music format (`● LIVE BAND` in `--primary` ink or `DJ SET` in `--on-surface-variant`) on the right, followed by the `Besley` headline (`line-clamp-2`), a flowing **dateline sentence** (`19:00–22:00 · Free / 100 kr · Performer`), and optional 2-line clamped organizer prose.
-2. **Venue & Danceability Band (`bg-[var(--surface-container)]`)** — a full-width paper-tinted band carrying the linked venue + neighborhood above a **5-segment horizontal danceability meter** (`DanceabilityMeter`, `1/5`–`5/5` with its fixed room label). High danceability (`4`–`5`, ballrooms and sprung studios) fills in `--on-success-container`; outdoor/medium (`3`) fills in `--tertiary`; cozy listening bars and pocket floors (`1`–`2`) fill in `--on-caution-container`. Unverified venues omit the meter cleanly.
-3. **Action Footer (`border-t-2 border-[var(--border-ink)]`)** — the primary `Source` button alongside calendar, share, and correction icon controls.
+1. **Tactile Header Band (`EventCardHeader`)** — carries the time, `Live band` / `DJ set` pill, and temporal badge (`Tonight`, `Tomorrow`, `This Week`, `Happening Now`, `Ended`). Live-music cards render as a perforated manila ticket stub (`--ticket-stock`) with semicircular punch-outs (`.ticket-notch`) and a ragged rubber admission stamp (`.ticket-stamp`) that presses on hover; DJ cards render as a record sleeve with a 78-rpm disc (`.sleeve-record`) that pops out and spins 90° on hover.
+2. **Editorial Playbill Body (`p-5`)** — replaces competing pill clusters with a tracked uppercase **eyebrow** (`BLUES · INTRO 19:00`), the `Besley` headline (`line-clamp-2`), a flowing `price · performer` subline, and optional 2-line clamped organizer prose.
+3. **Venue & Danceability Band (`bg-[var(--surface-container)]`)** — a full-width paper-tinted band carrying the linked venue + neighborhood above a **5-segment horizontal danceability meter** (`DanceabilityMeter`, `1/5`–`5/5` with its fixed room label). High danceability (`4`–`5`, ballrooms and sprung studios) fills in `--on-success-container`; outdoor/medium (`3`) fills in `--tertiary`; cozy listening bars and pocket floors (`1`–`2`) fill in `--on-caution-container`. Unverified venues omit the meter cleanly.
+4. **Action Footer (`border-t-2 border-[var(--border-ink)]`)** — the primary `Source` button alongside calendar, share, and correction icon controls (plus bottom ticket punch-outs on live-music cards).
 
 ### Input Fields
 Two treatments are in use, and the difference is deliberate:
@@ -255,6 +254,7 @@ Exact values as merged in `src/app/globals.css` (`:root` vs. `:root[data-theme='
 | `--ended-outline` | `#a1a1aa` | `#55555c` |
 | `--ended-surface` | `#fafafa` | `#272321` |
 | `--ended-surface-outline` | `#d4d4d8` | `#4c4540` |
+| `--ticket-stock` | `#edd8a8` | `#52432d` |
 | `--border-ink` | `#1b1c16` | `#614a3c` |
 | `--shadow-ink` | `#1b1c16` | `#110b07` |
 

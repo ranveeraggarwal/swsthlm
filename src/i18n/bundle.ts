@@ -269,6 +269,11 @@ export interface LocaleBundle {
     /** Prefixes a performer line for screen readers. */
     livePrefix: string;
     djPrefix: string;
+    /** Decorative circular rubber stamp on a live-music ticket's corner. */
+    admissionStamp: {
+      top: string;
+      bottom: string;
+    };
   };
   /** The three action buttons on a card, and the calendar sheets they open. */
   actions: {

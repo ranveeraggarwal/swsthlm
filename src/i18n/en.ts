@@ -158,6 +158,10 @@ export const en = {
     opensInNewTab: ' (opens in a new tab)',
     livePrefix: 'Live: ',
     djPrefix: 'DJ: ',
+    admissionStamp: {
+      top: 'Live swing',
+      bottom: 'Admit one',
+    },
   },
   actions: {
     addToCalendar: 'Add to calendar',

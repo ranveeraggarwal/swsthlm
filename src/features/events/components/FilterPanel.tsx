@@ -8,7 +8,7 @@ import React from 'react';
 import { Footprints, MapPin, Music, Search, SlidersHorizontal, Sparkles, X } from 'lucide-react';
 import type { Style } from '@/lib/data/types';
 import { styleFilterLabel } from '../model/labels';
-import { ALL_STYLES, ALL_VENUES, venueFilterLabel, type EventFilters } from '../model/sections';
+import { venueFilterLabel, type EventFilters } from '../model/sections';
 import { useLocale } from '@/components/providers/LocaleProvider';
 import { ScrollFade } from '@/components/ui/ScrollFade';
 
@@ -38,13 +38,7 @@ const CHIP_IDLE =
 // The lifted "pressed" look, one variant per facet accent. Written out in full
 // rather than interpolated: Tailwind only generates classes it can see as
 // literal strings in the source.
-//
-// `neutral` is for a facet's "All" option. Colour means "this filter is on":
-// with nothing filtered the panel stays paper-and-ink, and the moment a filter
-// is set its accent is the only colour in that row.
 const CHIP_SELECTED = {
-  neutral:
-    'bg-[var(--surface-container-high)] text-[var(--on-surface)] font-bold shadow-[2px_2px_0px_0px_var(--shadow-ink)] -translate-y-0.5 -translate-x-0.5',
   primary:
     'bg-[var(--primary)] text-[var(--on-primary)] font-bold shadow-[2px_2px_0px_0px_var(--shadow-ink)] -translate-y-0.5 -translate-x-0.5',
   secondary:
@@ -168,13 +162,7 @@ export function FilterPanel({
                 type="button"
                 onClick={() => onChange({ style })}
                 aria-pressed={filters.style === style}
-                className={`${CHIP_BASE} ${
-                  filters.style !== style
-                    ? CHIP_IDLE
-                    : style === ALL_STYLES
-                      ? CHIP_SELECTED.neutral
-                      : CHIP_SELECTED.primary
-                }`}
+                className={`${CHIP_BASE} ${filters.style === style ? CHIP_SELECTED.primary : CHIP_IDLE}`}
               >
                 {styleFilterLabel(style, locale)}
               </button>
@@ -194,13 +182,7 @@ export function FilterPanel({
                 type="button"
                 onClick={() => onChange({ venue })}
                 aria-pressed={filters.venue === venue}
-                className={`${CHIP_BASE} ${
-                  filters.venue !== venue
-                    ? CHIP_IDLE
-                    : venue === ALL_VENUES
-                      ? CHIP_SELECTED.neutral
-                      : CHIP_SELECTED.secondary
-                }`}
+                className={`${CHIP_BASE} ${filters.venue === venue ? CHIP_SELECTED.secondary : CHIP_IDLE}`}
               >
                 {venueFilterLabel(venue, locale)}
               </button>
@@ -212,8 +194,8 @@ export function FilterPanel({
   );
 }
 
-// The sliding block's colour once a switch is on, and the label text on it.
-// Off ("All") is neutral, same rule as the chips' `neutral`.
+// The sliding block's colour, and the label text on it. The block is always in
+// its facet's accent, on "All" too, the same way the chosen chip in each row is.
 const SWITCH_TONE = {
   tertiary: { knob: 'bg-[var(--tertiary)]', text: 'text-[var(--on-tertiary)]' },
   // The inverted success pair, so "Best" reads in the same green as a 5/5
@@ -262,8 +244,8 @@ function FacetSwitch({ id, label, icon, offLabel, onLabel, on, onChange, tone }:
         <span
           aria-hidden="true"
           className={`absolute top-[3px] bottom-[3px] left-[3px] w-[calc(50%-3px)] rounded-sm border-2 border-[var(--border-ink)] shadow-[2px_2px_0px_0px_var(--shadow-ink)] transition-[translate,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none ${
-            on ? `translate-x-full ${SWITCH_TONE[tone].knob}` : 'translate-x-0 bg-[var(--surface-container-high)]'
-          }`}
+            on ? 'translate-x-full' : 'translate-x-0'
+          } ${SWITCH_TONE[tone].knob}`}
         />
         {options.map(({ value, text }) => {
           const selected = on === value;
@@ -272,9 +254,7 @@ function FacetSwitch({ id, label, icon, offLabel, onLabel, on, onChange, tone }:
               key={String(value)}
               className={`relative z-10 flex items-center justify-center min-w-0 px-1 rounded-sm font-sans text-xs font-bold uppercase tracking-wider whitespace-nowrap cursor-pointer transition-colors has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[var(--primary)] ${
                 selected
-                  ? value
-                    ? SWITCH_TONE[tone].text
-                    : 'text-[var(--on-surface)]'
+                  ? SWITCH_TONE[tone].text
                   : 'text-[var(--on-surface-variant)] hover:text-[var(--on-surface)]'
               }`}
             >

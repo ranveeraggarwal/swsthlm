@@ -7,6 +7,7 @@ import {
   availableVenues,
   emptyStateHeading,
   filterEvents,
+  hasActiveFilters,
   summariseFilters,
   venueFilterLabel,
   type EventFilters,
@@ -92,6 +93,24 @@ describe('filterEvents', () => {
     });
     expect(kept).toEqual([]);
   });
+
+  it('keeps only 5/5 venues when the Best floor filter is on, and drops unrated ones', () => {
+    const studio = { ...baseEvent, id: 'studio', danceability: 5 as const };
+    const hall = { ...baseEvent, id: 'hall', danceability: 4 as const };
+    const unrated = { ...baseEvent, id: 'unrated' };
+    const now = { date: '2025-05-19', time: '12:00' };
+    expect(filterEvents([studio, hall, unrated], { ...NO_FILTERS, bestFloorOnly: true }, now)).toEqual([
+      studio,
+    ]);
+    expect(filterEvents([studio, hall, unrated], NO_FILTERS, now)).toEqual([studio, hall, unrated]);
+  });
+});
+
+describe('hasActiveFilters', () => {
+  it('counts the Best floor filter as active', () => {
+    expect(hasActiveFilters({ ...NO_FILTERS, bestFloorOnly: true })).toBe(true);
+    expect(hasActiveFilters(NO_FILTERS)).toBe(false);
+  });
 });
 
 describe('summariseFilters', () => {
@@ -104,13 +123,25 @@ describe('summariseFilters', () => {
 
   it('translates the live-music qualifier, venue clause and search clause in Swedish', () => {
     const summary = summariseFilters(
-      { search: 'blues', style: 'balboa', venue: 'Nalen', liveMusicOnly: true },
+      { search: 'blues', style: 'balboa', venue: 'Nalen', liveMusicOnly: true, bestFloorOnly: false },
       7,
       'sv',
     );
     expect(summary).toEqual({
       kind: 'filtered',
       description: '7 Balboa Livemusik evenemang på Nalen som matchar "blues"',
+    });
+  });
+
+  it('adds the best-floors clause before the venue clause in Swedish', () => {
+    const summary = summariseFilters(
+      { ...NO_FILTERS, style: 'balboa', venue: 'Nalen', bestFloorOnly: true },
+      2,
+      'sv',
+    );
+    expect(summary).toEqual({
+      kind: 'filtered',
+      description: '2 Balboa evenemang på de bästa golven på Nalen',
     });
   });
 });

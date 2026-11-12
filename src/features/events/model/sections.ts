@@ -8,7 +8,7 @@
 
 import { getMonthKey, isCurrentWeek, isNextWeek, isSunday } from '@/lib/date/calendar';
 import type { Now } from '@/lib/date/clock';
-import type { Style } from '@/lib/data/types';
+import type { Danceability, Style } from '@/lib/data/types';
 import { bundle, DEFAULT_LOCALE, type Locale } from '@/i18n';
 import type { EventGroup, SwingEvent } from './event';
 import { firstNightOf } from './grouping';
@@ -19,6 +19,12 @@ import { isPastEvent } from './temporal';
 export const ALL_STYLES = 'all';
 /** Sentinel meaning "don't filter on venue". */
 export const ALL_VENUES = 'all';
+/**
+ * The danceability score the "Best" floor filter keeps: purpose-built studios
+ * with a sprung floor (see `docs/DATA.md`). Venues with no score are left out
+ * when the filter is on — we can't vouch for a floor nobody has rated.
+ */
+export const BEST_DANCEABILITY: Danceability = 5;
 
 /** Chip text for a venue filter option. */
 export function venueFilterLabel(venue: string, locale: Locale = DEFAULT_LOCALE): string {
@@ -32,6 +38,8 @@ export interface EventFilters {
   /** A venue name, or ALL_VENUES for no filter. */
   venue: string;
   liveMusicOnly: boolean;
+  /** Only venues scored BEST_DANCEABILITY. */
+  bestFloorOnly: boolean;
 }
 
 export const NO_FILTERS: EventFilters = {
@@ -39,6 +47,7 @@ export const NO_FILTERS: EventFilters = {
   style: ALL_STYLES,
   venue: ALL_VENUES,
   liveMusicOnly: false,
+  bestFloorOnly: false,
 };
 
 export function hasActiveFilters(filters: EventFilters): boolean {
@@ -46,6 +55,7 @@ export function hasActiveFilters(filters: EventFilters): boolean {
     filters.style !== ALL_STYLES ||
     filters.venue !== ALL_VENUES ||
     filters.liveMusicOnly ||
+    filters.bestFloorOnly ||
     filters.search !== ''
   );
 }
@@ -70,6 +80,10 @@ function matchesMusic(event: SwingEvent, liveMusicOnly: boolean): boolean {
   return !liveMusicOnly || event.music === 'live' || event.music === 'mixed';
 }
 
+function matchesFloor(event: SwingEvent, bestFloorOnly: boolean): boolean {
+  return !bestFloorOnly || event.danceability === BEST_DANCEABILITY;
+}
+
 /**
  * Apply the filters, and drop anything already in the past.
  *
@@ -91,7 +105,8 @@ export function filterEvents(
       matchesSearch(event, filters.search) &&
       matchesStyle(event, filters.style) &&
       matchesVenue(event, filters.venue) &&
-      matchesMusic(event, filters.liveMusicOnly),
+      matchesMusic(event, filters.liveMusicOnly) &&
+      matchesFloor(event, filters.bestFloorOnly),
   );
 }
 
@@ -261,6 +276,9 @@ export function summariseFilters(
 
   const noun = count === 1 ? words.eventNoun.one : words.eventNoun.other;
   let description = `${count} ${qualifiers.length > 0 ? `${qualifiers.join(' ')} ` : ''}${noun}`;
+  if (filters.bestFloorOnly) {
+    description = words.onBestFloors.replace('{description}', description);
+  }
   if (filters.venue !== ALL_VENUES) {
     description = words.atVenue.replace('{description}', description).replace('{venue}', filters.venue);
   }

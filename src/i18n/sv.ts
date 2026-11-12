@@ -151,7 +151,10 @@ export const sv = {
     clearSearch: 'Rensa sökningen',
     byStyle: 'Filtrera på stil',
     music: 'Musik',
-    liveMusicOnly: 'Endast livemusik',
+    musicAll: 'Alla',
+    musicLive: 'Live',
+    floorAll: 'Alla',
+    floorBest: 'Bästa',
     byVenue: 'Filtrera på lokal',
     allVenues: 'Alla lokaler',
     // "Evenemang" doesn't inflect for number, so both plural forms are the
@@ -159,6 +162,7 @@ export const sv = {
     // they'd differ.
     eventNoun: { one: 'evenemang', other: 'evenemang' },
     liveMusicQualifier: 'Livemusik',
+    onBestFloors: '{description} på de bästa golven',
     atVenue: '{description} på {venue}',
     matchingSearch: '{description} som matchar "{search}"',
     emptyState: {

@@ -226,15 +226,24 @@ export interface LocaleBundle {
     clearSearch: string;
     byStyle: string;
     music: string;
-    liveMusicOnly: string;
+    /** The two sides of the Music switch: no filter, and live music only.
+     *  Short — each side gets half of a half-width switch on a phone. */
+    musicAll: string;
+    musicLive: string;
+    /** The two sides of the Danceability switch (its heading is
+     *  `danceability.heading`): no filter, and studio floors (5/5) only. */
+    floorAll: string;
+    floorBest: string;
     byVenue: string;
     /** "All Venues" — the venue chip's "don't filter" sentinel, same idea as
      *  the style table's `filter` word. */
     allVenues: string;
     /** The noun in "`{count}` `{noun}`" above the grid. */
     eventNoun: PluralForms;
-    /** Appended to the summary when "Live Music Only" is on. */
+    /** Appended to the summary when the Music switch is on Live. */
     liveMusicQualifier: string;
+    /** Takes `{description}`; applied when the Danceability switch is on Best. */
+    onBestFloors: string;
     /** Takes `{description}` and `{venue}`. */
     atVenue: string;
     /** Takes `{description}` and `{search}`. */

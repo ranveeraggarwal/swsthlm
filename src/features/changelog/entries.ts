@@ -71,6 +71,11 @@ export const CHANGELOG: ChangelogEntry[] = [
         description:
           'Click the orange note in the top corner to head home and it does a little rock step while a couple of notes float out.',
       },
+      {
+        title: 'Find the best dance floors',
+        description:
+          'A new Danceability switch in the filters shows only nights at proper dance studios with sprung floors, and sits next to a matching All / Live switch for live music.',
+      },
     ],
   },
   {

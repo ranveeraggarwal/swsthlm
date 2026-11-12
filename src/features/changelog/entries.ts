@@ -54,8 +54,13 @@ export interface ChangelogEntry {
 export const CHANGELOG: ChangelogEntry[] = [
   {
     month: '2026-11',
-    summary: 'Cards and a logo with a little more swing',
+    summary: 'Cards, turntables, and a bandstand with a little more swing',
     items: [
+      {
+        title: 'A 78 in the run-out groove on missing pages, and a bass on empty searches',
+        description:
+          'Mistyped links now land on a spinning 78 stuck in its last groove (give the needle a nudge), and empty filter searches rest an upright bass on the bandstand that plucks a note when you tap it.',
+      },
       {
         title: 'Spinning records, perforated stubs, and sprung floorboards',
         description:

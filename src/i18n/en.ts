@@ -188,6 +188,15 @@ export const en = {
     clearAll: 'Clear all filters',
     subscribeCta: 'Subscribe to get notified',
     organizersCta: 'Organizers: add your event',
+    pluckBass: 'Pluck a bass string',
+  },
+  notFound: {
+    eyebrow: '404 · Page not found',
+    title: { lead: 'The band ', em: 'played its last number' },
+    body: "This link may be mistyped, or the dance you were looking for has already wrapped up. The rest of Stockholm's floor is right back this way.",
+    backHome: 'Back to the calendar',
+    nudgeNeedle: 'Nudge the needle',
+    recordLabel: '404 · 78 RPM',
   },
   theme: {
     switchToLight: 'Switch to light theme',

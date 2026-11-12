@@ -278,11 +278,6 @@ export interface LocaleBundle {
     /** Prefixes a performer line for screen readers. */
     livePrefix: string;
     djPrefix: string;
-    /** Decorative circular rubber stamp on a live-music ticket's corner. */
-    admissionStamp: {
-      top: string;
-      bottom: string;
-    };
     /** Decorative speed mark printed on a DJ night's 78-rpm record label. */
     recordLabel: string;
   };

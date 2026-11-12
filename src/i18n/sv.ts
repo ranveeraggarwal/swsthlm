@@ -187,10 +187,6 @@ export const sv = {
     opensInNewTab: ' (öppnas i en ny flik)',
     livePrefix: 'Live: ',
     djPrefix: 'DJ: ',
-    admissionStamp: {
-      top: 'Live swing',
-      bottom: 'Entré',
-    },
     // Swedish shellac 78s (Sonora, Cupol) marked speed in "varv per minut".
     recordLabel: '78 V/M',
   },

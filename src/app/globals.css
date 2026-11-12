@@ -388,22 +388,13 @@ body {
   }
 }
 
-/* A live card's admission stamp (and a cancelled card's box overprint),
-   inked at a slant across the header's corner — each at its own slant, set
-   per card as --stamp-tilt. Lifting the card presses it: it squares up a
-   little and swells, with the same overshoot as the record's pop. */
-.ticket-stamp,
+/* A cancelled card's box overprint, inked at a slant across the header's
+   corner — each at its own slant, set per card as --stamp-tilt. Lifting the
+   card presses it: it swells a little, with the same overshoot as the
+   record's pop. */
 .cancelled-stamp {
   rotate: var(--stamp-tilt, -14deg);
-  transition:
-    rotate 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
-    scale 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.lift-card:focus-visible .ticket-stamp,
-.lift-card[data-lifted='true'] .ticket-stamp {
-  rotate: calc(var(--stamp-tilt, -14deg) + 8deg);
-  scale: 1.08;
+  transition: scale 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .lift-card:focus-visible .cancelled-stamp,
@@ -412,18 +403,136 @@ body {
 }
 
 @media (hover: hover) {
-  .lift-card:hover .ticket-stamp {
-    rotate: calc(var(--stamp-tilt, -14deg) + 8deg);
-    scale: 1.08;
-  }
-
   .lift-card:hover .cancelled-stamp {
     scale: 1.04;
   }
 }
 
-/* Musical notes drifting out of the bandstand / turntable corner while an
-   event is happening right now. Compositor-only (`transform` + `opacity`). */
+/* A live night's instruments (`BandstandInstruments`), propped in the ticket's
+   corner. Lifting the card nudges the whole band up off the perforation. */
+.bandstand {
+  /* Sized to the band's shortest (one-line time + badges) height, so nothing
+     is clipped at the top; it stands on the perforation as the band grows. */
+  height: 80px;
+  width: 119px;
+  transition: translate 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.bandstand-mixed {
+  width: 76px;
+}
+
+.lift-card:focus-visible .bandstand,
+.lift-card[data-lifted='true'] .bandstand {
+  translate: 0 -3px;
+}
+
+@media (hover: hover) {
+  .lift-card:hover .bandstand {
+    translate: 0 -3px;
+  }
+}
+
+/* While the night is happening right now, the band plays — at a relaxed
+   ~80 bpm, a beat every 0.75s. Each part pivots about its own box (the
+   trumpet and trombone at the mouthpiece, the bass on its endpin), so it
+   needs `transform-box: fill-box`. Compositor-only (`rotate`/`translate`/
+   `scale` + `opacity`). */
+.bandstand-part {
+  transform-box: fill-box;
+}
+
+.bandstand-note {
+  opacity: 0;
+}
+
+.bandstand[data-playing='true'] .bandstand-trumpet {
+  transform-origin: 0% 50%;
+  animation: band-rock 0.75s ease-in-out infinite alternate;
+}
+
+.bandstand[data-playing='true'] .bandstand-trombone {
+  transform-origin: 0% 50%;
+  animation: band-rock-gentle 1.5s ease-in-out infinite alternate;
+}
+
+.bandstand[data-playing='true'] .bandstand-slide {
+  animation: band-slide 0.75s ease-in-out infinite alternate;
+}
+
+.bandstand[data-playing='true'] .bandstand-sax {
+  transform-origin: 40% 5%;
+  animation: band-sway 1.5s ease-in-out infinite alternate;
+}
+
+.bandstand[data-playing='true'] .bandstand-bass {
+  transform-origin: 50% 100%;
+  animation: band-sway-gentle 1.5s ease-in-out infinite alternate;
+}
+
+.bandstand[data-playing='true'] .bandstand-strings {
+  animation: band-buzz 0.16s steps(2) infinite;
+}
+
+.bandstand[data-playing='true'] .bandstand-drum {
+  transform-origin: 50% 100%;
+  animation: band-kick 0.75s cubic-bezier(0.2, 0.8, 0.3, 1) infinite;
+}
+
+.bandstand[data-playing='true'] .bandstand-cymbal {
+  transform-origin: 50% 50%;
+  animation: band-crash 0.75s ease-out infinite;
+}
+
+.bandstand[data-playing='true'] .bandstand-note {
+  transform-origin: 50% 50%;
+  animation: card-note-float 2.25s ease-out infinite;
+}
+
+@keyframes band-rock {
+  from { rotate: -6deg; }
+  to   { rotate: 4deg; }
+}
+
+@keyframes band-rock-gentle {
+  from { rotate: -3deg; }
+  to   { rotate: 3deg; }
+}
+
+@keyframes band-sway {
+  from { rotate: -4deg; }
+  to   { rotate: 3deg; }
+}
+
+@keyframes band-sway-gentle {
+  from { rotate: -2.5deg; }
+  to   { rotate: 2.5deg; }
+}
+
+@keyframes band-slide {
+  from { translate: 0 0; }
+  to   { translate: 9px 0; }
+}
+
+@keyframes band-buzz {
+  from { translate: -0.35px 0; }
+  to   { translate: 0.35px 0; }
+}
+
+@keyframes band-kick {
+  0%   { scale: 1.06; }
+  35%  { scale: 1; }
+  100% { scale: 1; }
+}
+
+@keyframes band-crash {
+  0%   { rotate: -12deg; }
+  60%  { rotate: 3deg; }
+  100% { rotate: 0deg; }
+}
+
+/* Musical notes drifting out of the turntable corner (and the bandstand's
+   horns) while an event is happening right now. Compositor-only (`transform` + `opacity`). */
 @keyframes card-note-float {
   0%   { opacity: 0; transform: translate(0, 4px) rotate(0deg) scale(0.65); }
   22%  { opacity: 0.95; }
@@ -501,7 +610,7 @@ body {
   .lift-btn-primary,
   .lift-btn-primary .ticket-snip,
   .sleeve-record,
-  .ticket-stamp,
+  .bandstand,
   .cancelled-stamp {
     transition: none;
   }
@@ -533,13 +642,24 @@ body {
     opacity: 0.85;
   }
 
-  .lift-card:hover .ticket-stamp,
-  .lift-card:focus-visible .ticket-stamp,
-  .lift-card[data-lifted='true'] .ticket-stamp,
+  /* The band holds still; its notes rest where they'd start. */
+  .bandstand[data-playing='true'] .bandstand-part {
+    animation: none;
+  }
+
+  .bandstand[data-playing='true'] .bandstand-note {
+    opacity: 0.85;
+  }
+
+  .lift-card:hover .bandstand,
+  .lift-card:focus-visible .bandstand,
+  .lift-card[data-lifted='true'] .bandstand {
+    translate: none;
+  }
+
   .lift-card:hover .cancelled-stamp,
   .lift-card:focus-visible .cancelled-stamp,
   .lift-card[data-lifted='true'] .cancelled-stamp {
-    rotate: var(--stamp-tilt, -14deg);
     scale: none;
   }
 

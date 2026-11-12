@@ -1,0 +1,76 @@
+/* Plucking the empty-state bandstand's upright bass — see EmptyState.tsx.
+   All keyframes touch `transform` or `opacity` only so they run on the
+   compositor without layout or paint work. */
+
+/* Resonant body thump, pivoting on the brass endpin tip on the floor. */
+@keyframes bass-thump {
+  0%   { transform: none; }
+  18%  { transform: rotate(-3.2deg) scale(1.02); }
+  44%  { transform: rotate(2.1deg); }
+  70%  { transform: rotate(-1deg); }
+  100% { transform: none; }
+}
+
+/* Damped side-to-side shimmer across the middle strings when plucked. */
+@keyframes string-vibrate {
+  0%, 100% { transform: translateX(0); }
+  15%      { transform: translateX(1.8px); }
+  32%      { transform: translateX(-1.6px); }
+  50%      { transform: translateX(1.2px); }
+  68%      { transform: translateX(-0.8px); }
+  85%      { transform: translateX(0.4px); }
+}
+
+@keyframes note-float {
+  0%   { opacity: 0; transform: translate(0, 2px) rotate(0deg) scale(0.65); }
+  20%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--drift-x), -22px) rotate(var(--sway)) scale(1.05); }
+}
+
+@keyframes note-fade {
+  0%, 100% { opacity: 0; }
+  30%, 70% { opacity: 1; }
+}
+
+.thump {
+  transform-origin: 52px 110px;
+  animation: bass-thump 0.58s ease-out;
+}
+
+.strings {
+  animation: string-vibrate 0.52s ease-out;
+}
+
+.note {
+  position: absolute;
+  top: 46px;
+  right: 8px;
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+  opacity: 0;
+  animation: note-float 0.92s ease-out forwards;
+}
+
+.first {
+  --drift-x: 16px;
+  --sway: -18deg;
+  animation-delay: 0.04s;
+}
+
+.second {
+  --drift-x: 28px;
+  --sway: 16deg;
+  animation-delay: 0.24s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .thump,
+  .strings {
+    animation: none;
+  }
+
+  .note {
+    animation-name: note-fade;
+  }
+}

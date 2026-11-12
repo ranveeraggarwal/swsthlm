@@ -301,6 +301,19 @@ export interface LocaleBundle {
     clearAll: string;
     subscribeCta: string;
     organizersCta: string;
+    /** Accessible label + hover title on the pluckable upright bass. */
+    pluckBass: string;
+  };
+  /** The 404 page: a 78 spinning in its locked run-out groove after the dance ended. */
+  notFound: {
+    eyebrow: string;
+    title: EmphasisedText;
+    body: string;
+    backHome: string;
+    /** Accessible label + hover title on the interactive turntable. */
+    nudgeNeedle: string;
+    /** Decorative speed mark printed on the 404 record's center label. */
+    recordLabel: string;
   };
   theme: {
     switchToLight: string;

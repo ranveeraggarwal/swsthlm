@@ -56,13 +56,13 @@ describe('danceabilityLabel & danceabilityTone', () => {
   it('maps every 1–5 score to its fixed English and Swedish label', () => {
     expect(danceabilityLabel(5)).toBe('Studio floor');
     expect(danceabilityLabel(4)).toBe('Ballroom / hall');
-    expect(danceabilityLabel(3)).toBe('Open-air / pavilion');
+    expect(danceabilityLabel(3)).toBe('Casual dance floor');
     expect(danceabilityLabel(2)).toBe('Small bar floor');
     expect(danceabilityLabel(1)).toBe('Tableside / pub');
 
     expect(danceabilityLabel(5, 'sv')).toBe('Dansstudio');
     expect(danceabilityLabel(4, 'sv')).toBe('Danssal');
-    expect(danceabilityLabel(3, 'sv')).toBe('Utomhus / paviljong');
+    expect(danceabilityLabel(3, 'sv')).toBe('Enklare dansgolv');
     expect(danceabilityLabel(2, 'sv')).toBe('Litet bargolv');
     expect(danceabilityLabel(1, 'sv')).toBe('Pub / mest lyssning');
   });

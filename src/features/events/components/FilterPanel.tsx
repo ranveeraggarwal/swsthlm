@@ -5,10 +5,10 @@
 // `../model/sections.ts`; what the chips are called is `../model/labels.ts`.
 
 import React from 'react';
-import { MapPin, Music, Search, SlidersHorizontal, Sparkles, X } from 'lucide-react';
+import { Footprints, MapPin, Music, Search, SlidersHorizontal, Sparkles, X } from 'lucide-react';
 import type { Style } from '@/lib/data/types';
 import { styleFilterLabel } from '../model/labels';
-import { venueFilterLabel, type EventFilters } from '../model/sections';
+import { ALL_STYLES, ALL_VENUES, venueFilterLabel, type EventFilters } from '../model/sections';
 import { useLocale } from '@/components/providers/LocaleProvider';
 import { ScrollFade } from '@/components/ui/ScrollFade';
 
@@ -33,17 +33,28 @@ const CHIP_IDLE =
 // The lifted "pressed" look, one variant per facet accent. Written out in full
 // rather than interpolated: Tailwind only generates classes it can see as
 // literal strings in the source.
+//
+// `neutral` is for a facet's "All" option. Colour means "this filter is on":
+// with nothing filtered the panel stays paper-and-ink, and the moment a filter
+// is set its accent is the only colour in that row.
 const CHIP_SELECTED = {
+  neutral:
+    'bg-[var(--surface-container-high)] text-[var(--on-surface)] font-bold shadow-[2px_2px_0px_0px_var(--shadow-ink)] -translate-y-0.5 -translate-x-0.5',
   primary:
     'bg-[var(--primary)] text-[var(--on-primary)] font-bold shadow-[2px_2px_0px_0px_var(--shadow-ink)] -translate-y-0.5 -translate-x-0.5',
   secondary:
     'bg-[var(--secondary)] text-[var(--on-secondary)] font-bold shadow-[2px_2px_0px_0px_var(--shadow-ink)] -translate-y-0.5 -translate-x-0.5',
-  tertiary:
-    'bg-[var(--tertiary)] text-[var(--on-tertiary)] font-bold shadow-[2px_2px_0px_0px_var(--shadow-ink)] -translate-y-0.5 -translate-x-0.5',
 } as const;
 
-const FACET_LABEL =
-  'flex items-center gap-2 font-sans text-xs font-bold text-[var(--on-surface-variant)] uppercase tracking-widest mb-3';
+const FACET_LABEL_BASE =
+  'flex items-center gap-2 font-sans text-xs font-bold text-[var(--on-surface-variant)] uppercase mb-3';
+
+const FACET_LABEL = `${FACET_LABEL_BASE} tracking-widest`;
+
+// The switches' labels sit in half-width columns. Below `sm` the tracking
+// tightens and the text truncates rather than wrapping: "Dansvänlighet" on a
+// 320px phone otherwise pushes its own icon out of the column.
+const SWITCH_LABEL = `${FACET_LABEL_BASE} tracking-wider sm:tracking-widest whitespace-nowrap [&>svg]:shrink-0`;
 
 export function FilterPanel({
   id,
@@ -58,7 +69,7 @@ export function FilterPanel({
   return (
     <div
       id={id}
-      className="border border-[var(--surface-container-highest)] bg-[var(--surface-container-low)] rounded-lg p-6 mb-12 shadow-sm animate-in fade-in slide-in-from-top-2 duration-200"
+      className="border border-[var(--surface-container-highest)] bg-[var(--surface-container-low)] rounded-lg p-4 sm:p-6 mb-12 shadow-sm animate-in fade-in slide-in-from-top-2 duration-200"
     >
       <div className="flex flex-col gap-6">
         <div className="flex items-center gap-3 border-b border-[var(--surface-container-highest)] pb-4 mb-2">
@@ -113,41 +124,57 @@ export function FilterPanel({
           )}
         </div>
 
-        {/* Style + music */}
-        <div className="flex flex-col md:flex-row gap-6">
-          <div className="flex-1">
-            <span id={`${id}-style-label`} className={FACET_LABEL}>
-              <Sparkles aria-hidden="true" className="w-3.5 h-3.5 text-[var(--primary)]" /> {t.byStyle}
-            </span>
-            <ScrollFade role="group" aria-labelledby={`${id}-style-label`} className={SCROLLER}>
-              {styles.map((style) => (
-                <button
-                  key={style}
-                  type="button"
-                  onClick={() => onChange({ style })}
-                  aria-pressed={filters.style === style}
-                  className={`${CHIP_BASE} ${filters.style === style ? CHIP_SELECTED.primary : CHIP_IDLE}`}
-                >
-                  {styleFilterLabel(style, locale)}
-                </button>
-              ))}
-            </ScrollFade>
-          </div>
+        {/* Music + danceability: two quick either/or switches, side by side
+            even on a phone, ahead of the long scrolling rows. */}
+        <div className="grid grid-cols-2 gap-3 md:max-w-lg">
+          <FacetSwitch
+            id={`${id}-music`}
+            label={t.music}
+            icon={<Music aria-hidden="true" className="w-3.5 h-3.5 text-[var(--tertiary)]" />}
+            offLabel={t.musicAll}
+            onLabel={t.musicLive}
+            on={filters.liveMusicOnly}
+            onChange={(liveMusicOnly) => onChange({ liveMusicOnly })}
+            tone="tertiary"
+          />
+          <FacetSwitch
+            id={`${id}-floor`}
+            label={bundle.danceability.heading}
+            icon={
+              <Footprints aria-hidden="true" className="w-3.5 h-3.5 text-[var(--on-success-container)]" />
+            }
+            offLabel={t.floorAll}
+            onLabel={t.floorBest}
+            on={filters.bestFloorOnly}
+            onChange={(bestFloorOnly) => onChange({ bestFloorOnly })}
+            tone="success"
+          />
+        </div>
 
-          <div className="md:w-48">
-            <span className={FACET_LABEL}>
-              <Music aria-hidden="true" className="w-3.5 h-3.5 text-[var(--tertiary)]" /> {t.music}
-            </span>
-            <button
-              type="button"
-              onClick={() => onChange({ liveMusicOnly: !filters.liveMusicOnly })}
-              aria-pressed={filters.liveMusicOnly}
-              className={`w-full flex items-center justify-center gap-2 ${CHIP_BASE} ${filters.liveMusicOnly ? CHIP_SELECTED.tertiary : CHIP_IDLE}`}
-            >
-              <Music aria-hidden="true" className="w-3.5 h-3.5" />
-              {t.liveMusicOnly}
-            </button>
-          </div>
+        {/* Style */}
+        <div>
+          <span id={`${id}-style-label`} className={FACET_LABEL}>
+            <Sparkles aria-hidden="true" className="w-3.5 h-3.5 text-[var(--primary)]" /> {t.byStyle}
+          </span>
+          <ScrollFade role="group" aria-labelledby={`${id}-style-label`} className={SCROLLER}>
+            {styles.map((style) => (
+              <button
+                key={style}
+                type="button"
+                onClick={() => onChange({ style })}
+                aria-pressed={filters.style === style}
+                className={`${CHIP_BASE} ${
+                  filters.style !== style
+                    ? CHIP_IDLE
+                    : style === ALL_STYLES
+                      ? CHIP_SELECTED.neutral
+                      : CHIP_SELECTED.primary
+                }`}
+              >
+                {styleFilterLabel(style, locale)}
+              </button>
+            ))}
+          </ScrollFade>
         </div>
 
         {/* Venue */}
@@ -162,13 +189,100 @@ export function FilterPanel({
                 type="button"
                 onClick={() => onChange({ venue })}
                 aria-pressed={filters.venue === venue}
-                className={`${CHIP_BASE} ${filters.venue === venue ? CHIP_SELECTED.secondary : CHIP_IDLE}`}
+                className={`${CHIP_BASE} ${
+                  filters.venue !== venue
+                    ? CHIP_IDLE
+                    : venue === ALL_VENUES
+                      ? CHIP_SELECTED.neutral
+                      : CHIP_SELECTED.secondary
+                }`}
               >
                 {venueFilterLabel(venue, locale)}
               </button>
             ))}
           </ScrollFade>
         </div>
+      </div>
+    </div>
+  );
+}
+
+// The sliding block's colour once a switch is on, and the label text on it.
+// Off ("All") is neutral, same rule as the chips' `neutral`.
+const SWITCH_TONE = {
+  tertiary: { knob: 'bg-[var(--tertiary)]', text: 'text-[var(--on-tertiary)]' },
+  // The inverted success pair, so "Best" reads in the same green as a 5/5
+  // danceability meter on the cards (which fills in --on-success-container).
+  success: { knob: 'bg-[var(--on-success-container)]', text: 'text-[var(--success-container)]' },
+} as const;
+
+interface FacetSwitchProps {
+  id: string;
+  label: string;
+  icon: React.ReactNode;
+  offLabel: string;
+  onLabel: string;
+  on: boolean;
+  onChange: (on: boolean) => void;
+  tone: keyof typeof SWITCH_TONE;
+}
+
+/**
+ * A two-option switch — "All | Live" — with a block that slides behind the
+ * chosen word.
+ *
+ * Underneath it's a native radio pair, visually hidden, so the browser gives it
+ * radio semantics, arrow-key movement and form behaviour for free; the labels
+ * are the tap targets. The focus ring is drawn on whichever label holds the
+ * focused input, since the input itself is invisible.
+ */
+function FacetSwitch({ id, label, icon, offLabel, onLabel, on, onChange, tone }: FacetSwitchProps) {
+  const labelId = `${id}-label`;
+  const options = [
+    { value: false, text: offLabel },
+    { value: true, text: onLabel },
+  ];
+  return (
+    <div className="min-w-0">
+      <span id={labelId} className={SWITCH_LABEL}>
+        {icon}
+        <span className="truncate">{label}</span>
+      </span>
+      <div
+        role="radiogroup"
+        aria-labelledby={labelId}
+        className="relative grid grid-cols-2 h-11 p-[3px] rounded-md border-2 border-[var(--border-ink)] bg-[var(--surface-container)]"
+      >
+        <span
+          aria-hidden="true"
+          className={`absolute top-[3px] bottom-[3px] left-[3px] w-[calc(50%-3px)] rounded-sm border-2 border-[var(--border-ink)] shadow-[2px_2px_0px_0px_var(--shadow-ink)] transition-[translate,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none ${
+            on ? `translate-x-full ${SWITCH_TONE[tone].knob}` : 'translate-x-0 bg-[var(--surface-container-high)]'
+          }`}
+        />
+        {options.map(({ value, text }) => {
+          const selected = on === value;
+          return (
+            <label
+              key={String(value)}
+              className={`relative z-10 flex items-center justify-center min-w-0 px-1 rounded-sm font-sans text-xs font-bold uppercase tracking-wider whitespace-nowrap cursor-pointer transition-colors has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[var(--primary)] ${
+                selected
+                  ? value
+                    ? SWITCH_TONE[tone].text
+                    : 'text-[var(--on-surface)]'
+                  : 'text-[var(--on-surface-variant)] hover:text-[var(--on-surface)]'
+              }`}
+            >
+              <input
+                type="radio"
+                name={id}
+                className="sr-only"
+                checked={selected}
+                onChange={() => onChange(value)}
+              />
+              {text}
+            </label>
+          );
+        })}
       </div>
     </div>
   );

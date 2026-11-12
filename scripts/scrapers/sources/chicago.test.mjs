@@ -129,6 +129,13 @@ describe('chicago parser', () => {
       expect(e.description).not.toMatch(/TBA|DJ:/);
     });
 
+    it("files every Zinken's Rhythm Club edition as balboa", () => {
+      for (const title of ["Zinken's Rhythm Club", 'Zinken’s Rhythm Club - Saturday Edition']) {
+        const [e] = parse(withBlurb(title, [intro, outro]));
+        expect(e.style).toBe('balboa');
+      }
+    });
+
     it('lets a Live title win over a blurb that mentions DJs', () => {
       const [e] = parse(withBlurb('Chicago Live Saturdays - TBA', [intro, 'DJ: Andreas Ohlsson']));
       expect(e.music).toBe('live');

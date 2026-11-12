@@ -254,24 +254,9 @@ export function hashOf(key: string): number {
   return Math.abs(hash);
 }
 
-const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
-
-/**
- * Decorative roll-ticket serial number (`№ MMDD·NNN`), derived purely from the
- * date string and occurrence id with no `Date` or `Math.random()` calls.
- */
-export function ticketSerial(event: Pick<SwingEvent, 'id' | 'date'>): string {
-  const mmdd = ISO_DATE.test(event.date)
-    ? `${event.date.slice(5, 7)}${event.date.slice(8, 10)}`
-    : '0000';
-  const seq = String(hashOf(event.id) % 1000).padStart(3, '0');
-  return `№ ${mmdd}·${seq}`;
-}
-
 const LIFT_TILTS = [-0.75, -0.5, 0.5, 0.75] as const;
 
 /** Subtle hand-dealt slant (degrees) applied when an active card is lifted. */
 export function cardLiftTilt(id: string): number {
   return LIFT_TILTS[hashOf(id) % LIFT_TILTS.length];
 }
-

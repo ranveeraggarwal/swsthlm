@@ -1,10 +1,10 @@
 'use client';
 
 // The band across the top of an event card, drawn as the night's music: a
-// ticket stub, inked with an admission stamp and roll-ticket serial number,
-// when a band is playing; a record sleeve with a style-labelled 78 half out of
-// it when a DJ is; or both together when a band and a DJ share the bill. It
-// carries the time and the badges, so the kind of night reads before the title.
+// ticket stub, inked with an admission stamp, when a band is playing; a record
+// sleeve with a style-labelled 78 half out of it when a DJ is; or both
+// together when a band and a DJ share the bill. It carries the time and the
+// badges, so the kind of night reads before the title does.
 //
 // It's printed in the card's own ink, and on its own paper — bar a ticket's
 // stub, which is tan stock (`--ticket-stock`). The shapes do the telling, so
@@ -17,7 +17,7 @@ import type { Style } from '@/lib/data/types';
 import { formatEventDateRange, formatEventDateShort } from '@/lib/date/format';
 import { useLocale } from '@/components/providers/LocaleProvider';
 import type { EventGroup } from '../model/event';
-import { hashOf, musicBadgeLabel, recordLabelTone, ticketSerial } from '../model/labels';
+import { hashOf, musicBadgeLabel, recordLabelTone } from '../model/labels';
 import type { TemporalBadge } from '../model/temporal';
 import { TemporalBadgeDisplay } from './TemporalBadgeDisplay';
 
@@ -47,7 +47,6 @@ export function EventCardHeader({
   const hasRecord = shape === 'sleeve' || shape === 'mixed';
   const isOver = event.cancelled || badge === 'ended';
   const isLiveNow = badge === 'happening-now' && !event.cancelled;
-  const hasDateLine = nightCount > 1 || Boolean(showDate);
 
   const clearance =
     shape === 'mixed' ? 'pr-34' : isTicket ? 'pr-26' : 'pr-32';
@@ -69,25 +68,11 @@ export function EventCardHeader({
               'border-[var(--border-ink)]'
         }`}
       >
-        {(hasDateLine || isTicket) && (
-          <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 mb-0.5">
-            {hasDateLine && (
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--on-surface-variant)]">
-                {nightCount > 1
-                  ? formatEventDateRange(dates[0], dates[dates.length - 1], locale)
-                  : formatEventDateShort(dates[0], locale)}
-              </span>
-            )}
-            {isTicket && (
-              <span
-                aria-hidden="true"
-                className={`text-[10px] font-mono font-bold tracking-widest tabular-nums ${
-                  isOver ? 'text-[var(--outline)]' : 'text-[var(--primary)]'
-                }`}
-              >
-                {hasDateLine ? `· ${ticketSerial(event)}` : ticketSerial(event)}
-              </span>
-            )}
+        {(nightCount > 1 || showDate) && (
+          <div className="text-[11px] font-bold uppercase tracking-wider text-[var(--on-surface-variant)] mb-0.5">
+            {nightCount > 1
+              ? formatEventDateRange(dates[0], dates[dates.length - 1], locale)
+              : formatEventDateShort(dates[0], locale)}
           </div>
         )}
         <div

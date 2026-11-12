@@ -57,9 +57,9 @@ export const CHANGELOG: ChangelogEntry[] = [
     summary: 'Cards and a logo with a little more swing',
     items: [
       {
-        title: 'Spinning records, numbered tickets, and sprung floorboards',
+        title: 'Spinning records, perforated stubs, and sprung floorboards',
         description:
-          'Event cards now carry numbered ticket stubs, style-tinted 78 record labels that spin with floating notes while a dance is happening right now, and danceability bars that ripple when lifted.',
+          'Event cards now feature style-tinted 78 record labels that spin with floating notes while a dance is happening right now, perforated tear-off ticket footers, and danceability bars that ripple when lifted.',
       },
       {
         title: 'The logo dances when you click it',

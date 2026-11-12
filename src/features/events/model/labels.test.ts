@@ -12,7 +12,6 @@ import {
   styleFilterLabel,
   styleLabel,
   tasterEyebrowLabel,
-  ticketSerial,
 } from './labels';
 
 describe('styleLabel', () => {
@@ -116,15 +115,6 @@ describe('card print & whimsy helpers', () => {
     expect(recordLabelTone('balboa').strokeClass).toContain('--on-secondary');
     expect(recordLabelTone('all').fillClass).toContain('--primary');
     expect(recordLabelTone('all').strokeClass).toContain('--on-primary');
-  });
-
-  it('formats deterministic MMDD·NNN roll-ticket serial numbers without Date math', () => {
-    const first = ticketSerial({ id: 'chicago-live-weds:2026-11-18', date: '2026-11-18' });
-    const second = ticketSerial({ id: 'chicago-live-weds:2026-11-25', date: '2026-11-25' });
-    expect(first).toMatch(/^№ 1118·\d{3}$/);
-    expect(second).toMatch(/^№ 1125·\d{3}$/);
-    expect(first).not.toBe(second);
-    expect(ticketSerial({ id: 'chicago-live-weds:2026-11-18', date: '2026-11-18' })).toBe(first);
   });
 
   it('picks a subtle, non-zero deterministic lift tilt per occurrence id', () => {

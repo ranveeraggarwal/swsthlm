@@ -24,17 +24,13 @@ interface FilterPanelProps {
 const SCROLLER =
   'flex overflow-x-auto pb-2 -mb-2 gap-2.5 snap-x md:flex-wrap [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]';
 
-// The chips share the switches' soft "groove" look (tokens in globals.css):
-// an idle chip sits flat in a shallow groove, a chosen one is raised off it on
-// a soft shadow. No ink keylines — the panel used to stack a 2px outline on
-// every chip and two on every switch, which read as harsh.
 const CHIP_BASE =
-  'snap-start whitespace-nowrap px-4 py-2.5 rounded text-xs font-bold uppercase tracking-wider transition-all cursor-pointer';
+  'snap-start whitespace-nowrap px-4 py-2 rounded text-xs font-bold uppercase tracking-wider border-2 border-[var(--border-ink)] transition-all cursor-pointer';
 
 const CHIP_IDLE =
-  'bg-[var(--groove)] hover:bg-[var(--groove-hover)] text-[var(--on-surface-variant)] hover:text-[var(--on-surface)] [box-shadow:var(--groove-inset)]';
+  'bg-[var(--surface-container)] hover:bg-[var(--surface-container-high)] text-[var(--on-surface)] shadow-[0px_0px_0px_0px_var(--shadow-ink)]';
 
-// The raised "chosen" look, one variant per facet accent. Written out in full
+// The lifted "pressed" look, one variant per facet accent. Written out in full
 // rather than interpolated: Tailwind only generates classes it can see as
 // literal strings in the source.
 //
@@ -42,9 +38,12 @@ const CHIP_IDLE =
 // with nothing filtered the panel stays paper-and-ink, and the moment a filter
 // is set its accent is the only colour in that row.
 const CHIP_SELECTED = {
-  neutral: 'bg-[var(--groove-raised)] text-[var(--on-surface)] [box-shadow:var(--groove-lift)]',
-  primary: 'bg-[var(--primary)] text-[var(--on-primary)] [box-shadow:var(--groove-lift)]',
-  secondary: 'bg-[var(--secondary)] text-[var(--on-secondary)] [box-shadow:var(--groove-lift)]',
+  neutral:
+    'bg-[var(--surface-container-high)] text-[var(--on-surface)] font-bold shadow-[2px_2px_0px_0px_var(--shadow-ink)] -translate-y-0.5 -translate-x-0.5',
+  primary:
+    'bg-[var(--primary)] text-[var(--on-primary)] font-bold shadow-[2px_2px_0px_0px_var(--shadow-ink)] -translate-y-0.5 -translate-x-0.5',
+  secondary:
+    'bg-[var(--secondary)] text-[var(--on-secondary)] font-bold shadow-[2px_2px_0px_0px_var(--shadow-ink)] -translate-y-0.5 -translate-x-0.5',
 } as const;
 
 const FACET_LABEL_BASE =
@@ -82,7 +81,7 @@ export function FilterPanel({
         </div>
 
         {/* Search */}
-        <div className="relative w-full bg-[var(--surface-container-lowest)] rounded-md [box-shadow:var(--groove-inset)] ring-1 ring-[var(--surface-container-highest)] transition-shadow focus-within:ring-2 focus-within:ring-[var(--primary)]">
+        <div className="relative w-full bg-[var(--surface-container-lowest)] border-2 border-[var(--border-ink)] rounded shadow-[2px_2px_0px_var(--shadow-ink)] transition-all focus-within:shadow-[4px_4px_0px_var(--primary)] focus-within:-translate-x-0.5 focus-within:-translate-y-0.5">
           <Search
             aria-hidden="true"
             className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--outline)]"
@@ -253,12 +252,12 @@ function FacetSwitch({ id, label, icon, offLabel, onLabel, on, onChange, tone }:
       <div
         role="radiogroup"
         aria-labelledby={labelId}
-        className="relative grid grid-cols-2 h-11 p-[3px] rounded-md bg-[var(--groove)] [box-shadow:var(--groove-inset)]"
+        className="relative grid grid-cols-2 h-11 p-[3px] rounded-md border-2 border-[var(--border-ink)] bg-[var(--surface-container)]"
       >
         <span
           aria-hidden="true"
-          className={`absolute top-[3px] bottom-[3px] left-[3px] w-[calc(50%-3px)] rounded-sm [box-shadow:var(--groove-lift)] transition-[translate,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none ${
-            on ? `translate-x-full ${SWITCH_TONE[tone].knob}` : 'translate-x-0 bg-[var(--groove-raised)]'
+          className={`absolute top-[3px] bottom-[3px] left-[3px] w-[calc(50%-3px)] rounded-sm border-2 border-[var(--border-ink)] shadow-[2px_2px_0px_0px_var(--shadow-ink)] transition-[translate,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none ${
+            on ? `translate-x-full ${SWITCH_TONE[tone].knob}` : 'translate-x-0 bg-[var(--surface-container-high)]'
           }`}
         />
         {options.map(({ value, text }) => {

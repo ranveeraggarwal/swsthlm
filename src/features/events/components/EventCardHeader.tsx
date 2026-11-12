@@ -1,7 +1,8 @@
 'use client';
 
 // The band across the top of an event card, drawn as the night's music: a
-// ticket stub, inked with an admission stamp, when a band is playing; a record
+// ticket stub with the band's instruments propped in its corner (see
+// `BandstandInstruments`) when a band is playing; a record
 // sleeve with a style-labelled 78 half out of it when a DJ is; or both
 // together when a band and a DJ share the bill. It carries the time and the
 // badges, so the kind of night reads before the title does.
@@ -19,6 +20,7 @@ import { useLocale } from '@/components/providers/LocaleProvider';
 import type { EventGroup } from '../model/event';
 import { hashOf, musicBadgeLabel, recordLabelTone } from '../model/labels';
 import type { TemporalBadge } from '../model/temporal';
+import { BandstandInstruments } from './BandstandInstruments';
 import { TemporalBadgeDisplay } from './TemporalBadgeDisplay';
 
 export type CardShape = 'ticket' | 'sleeve' | 'mixed';
@@ -49,7 +51,7 @@ export function EventCardHeader({
   const isLiveNow = badge === 'happening-now' && !event.cancelled;
 
   const clearance =
-    shape === 'mixed' ? 'pr-34' : isTicket ? 'pr-26' : 'pr-32';
+    shape === 'mixed' ? 'pr-38' : isTicket ? 'pr-30' : 'pr-32';
 
   return (
     <>
@@ -59,8 +61,8 @@ export function EventCardHeader({
             ? // The perforation: slots punched through the stock, so inked in
               // the deepest tone rather than as a keyline — the same as
               // --border-ink in light; in dark, an umber dash would vanish into
-              // the kraft. Room on the right for the stamp (and on mixed nights
-              // the 78 beside it), which the band clips. The stub is printed on
+              // the kraft. Room on the right for the instruments (and on mixed
+              // nights the 78 beside them), which the band clips. The stub is printed on
               // tan stock unless the night is over: then it takes the card's
               // own muted surface, like the rest.
               `border-dashed border-[var(--shadow-ink)] ${isOver ? '' : 'bg-[var(--ticket-stock)]'}`
@@ -103,13 +105,19 @@ export function EventCardHeader({
           />
         )}
         {isTicket && !event.cancelled && (
-          <AdmissionStamp impression={event.id} faded={isOver} mixed={shape === 'mixed'} />
+          <BandstandInstruments
+            style={event.style}
+            faded={isOver}
+            playing={isLiveNow}
+            mixed={shape === 'mixed'}
+          />
         )}
         {event.cancelled && <CancelledStamp impression={event.id} />}
       </div>
 
       {isTicket && <TicketNotches className="col-start-1 row-start-1 ticket-notch-bottom" />}
-      {isLiveNow && <LiveHeaderNotes />}
+      {/* A band's horns blow their own notes; a lone turntable gets these. */}
+      {isLiveNow && shape === 'sleeve' && <LiveHeaderNotes />}
     </>
   );
 }
@@ -133,7 +141,7 @@ export function TicketNotches({ className }: { className: string }) {
 }
 
 /**
- * Two eighth notes drifting up from the bandstand / turntable corner while an
+ * Two eighth notes drifting up from the turntable corner while a DJ night is
  * event is happening right now. Placed on the outer grid cell so the header
  * band's `overflow-hidden` doesn't clip them at the top edge.
  */
@@ -209,79 +217,6 @@ function RubberInkDefs({ id, seed }: { id: string; seed: number }) {
         <rect width="140" height="140" fill={`url(#${id}-press)`} />
       </mask>
     </>
-  );
-}
-
-/**
- * A live night's admission stamp, inked across the ticket's corner and half
- * off the edge, the way a hurried one at the door lands. Decoration only —
- * the badge beside the time is what says "Live band" — but its words are
- * still read from the locale bundle, since a Swedish visitor sees them.
- *
- * Rubber never prints clean, so it's inked like the real thing: flecks where
- * the ink didn't take, edges a touch ragged, one side pressed harder than the
- * other. And no two land alike — `impression` (the event's id) picks each
- * one's slant and fleck pattern, so a page of tickets isn't a page of clip-art.
- */
-function AdmissionStamp({
-  impression,
-  faded,
-  mixed,
-}: {
-  impression: string;
-  faded: boolean;
-  mixed?: boolean;
-}) {
-  const { bundle } = useLocale();
-  const id = `stamp-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
-  const words = bundle.card.admissionStamp;
-  const hash = hashOf(impression);
-  const tilt = -(9 + (hash % 9)); // -9° to -17°
-  const seed = hash % 997;
-
-  return (
-    <svg
-      aria-hidden="true"
-      focusable="false"
-      viewBox="0 0 120 120"
-      style={{ '--stamp-tilt': `${tilt}deg` } as React.CSSProperties}
-      className={`ticket-stamp absolute ${
-        mixed ? '-top-2 right-12 w-20 h-20 z-[1]' : '-top-1.5 -right-0.5 w-24 h-24'
-      } ${faded ? 'text-[var(--outline)]' : 'text-[var(--primary)]'}`}
-    >
-      <defs>
-        {/* Over the top, left to right, letters standing outward... */}
-        <path id={`${id}-top`} d="M22 60a38 38 0 0 1 76 0" />
-        {/* ...and under the bottom, left to right, letters standing inward. */}
-        <path id={`${id}-bottom`} d="M14 60a46 46 0 0 0 92 0" />
-        <RubberInkDefs id={id} seed={seed} />
-      </defs>
-
-      <g mask={`url(#${id}-pressure)`}>
-        <g filter={`url(#${id}-ink)`}>
-          <g className="fill-none stroke-current">
-            <circle cx="60" cy="60" r="56" strokeWidth={3.5} />
-            <circle cx="60" cy="60" r="51" strokeWidth={1.2} />
-            <circle cx="60" cy="60" r="33" strokeWidth={1.2} />
-          </g>
-          <g className="fill-current font-sans uppercase" fontSize={9.5} fontWeight={800} letterSpacing={1.5}>
-            <text>
-              <textPath href={`#${id}-top`} startOffset="50%" textAnchor="middle">
-                {words.top}
-              </textPath>
-            </text>
-            <text>
-              <textPath href={`#${id}-bottom`} startOffset="50%" textAnchor="middle">
-                {words.bottom}
-              </textPath>
-            </text>
-            <circle cx="18" cy="60" r="1.8" />
-            <circle cx="102" cy="60" r="1.8" />
-            <polygon points="60,47 63.23,55.55 72.36,55.98 65.23,61.7 67.64,70.52 60,65.5 52.36,70.52 54.77,61.7 47.64,55.98 56.77,55.55" />
-          </g>
-        </g>
-      </g>
-    </svg>
   );
 }
 

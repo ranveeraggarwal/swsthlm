@@ -5,7 +5,7 @@
 //
 // Combines the tactile whimsy of the header band with an Editorial Playbill body:
 // 1. `EventCardHeader` (`row-start-1`): a perforated manila ticket stub with
-//    punch-outs and a hand-inked admission stamp for live-band nights, or a
+//    punch-outs and the band's instruments in its corner for live-band nights, or a
 //    record sleeve with a spinning 78 for DJ nights — carrying the time,
 //    Live/DJ pill, and Tonight / Tomorrow / This Week badge.
 // 2. Editorial Playbill body (`row-start-2`, `1fr`): calm tracked eyebrow
@@ -64,7 +64,7 @@ interface EventCardProps {
 const DESCRIPTION_CLAMP = 'line-clamp-2';
 
 // A band on stage gets a perforated ticket; a DJ set gets a record sleeve; a
-// bill with both (`mixed`) tucks the 78 behind the stamped ticket stub.
+// bill with both (`mixed`) tucks the 78 beside the ticket stub's horn section.
 const SHAPE: Record<Music, CardShape> = {
   live: 'ticket',
   mixed: 'mixed',

@@ -211,12 +211,16 @@ export interface RecordLabelTone {
   fillClass: string;
   strokeClass: string;
   textFillClass: string;
+  /** The label colour itself as a stroke, for line-drawn accents in the same
+   *  tint (the bandstand's drum hoops and note stems). */
+  accentStrokeClass: string;
 }
 
 const PRIMARY_RECORD_LABEL: RecordLabelTone = {
   fillClass: 'fill-[var(--primary)]',
   strokeClass: 'stroke-[var(--on-primary)]',
   textFillClass: 'fill-[var(--on-primary)]',
+  accentStrokeClass: 'stroke-[var(--primary)]',
 };
 
 // Keyed by `Style` so a DJ card's 78 center label echoes the night's dance
@@ -227,11 +231,13 @@ const RECORD_LABEL_TONES: Record<Style, RecordLabelTone> = {
     fillClass: 'fill-[var(--tertiary)]',
     strokeClass: 'stroke-[var(--on-tertiary)]',
     textFillClass: 'fill-[var(--on-tertiary)]',
+    accentStrokeClass: 'stroke-[var(--tertiary)]',
   },
   balboa: {
     fillClass: 'fill-[var(--secondary)]',
     strokeClass: 'stroke-[var(--on-secondary)]',
     textFillClass: 'fill-[var(--on-secondary)]',
+    accentStrokeClass: 'stroke-[var(--secondary)]',
   },
   blues: PRIMARY_RECORD_LABEL,
   shag: PRIMARY_RECORD_LABEL,

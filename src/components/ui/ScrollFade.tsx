@@ -2,38 +2,44 @@
 
 // A horizontal scroller whose edges fade only where there is more to scroll to.
 // The fade itself is CSS (`.filter-scroll-container` in globals.css); this
-// component measures the scroll position and sets `data-fade-start` /
-// `data-fade-end` on the wrapper so each edge fades only while content is
-// hidden past it (#463).
+// component measures the scroll position and writes `--fade-start` /
+// `--fade-end` (0–1) on the wrapper. Each edge's strength follows the distance
+// left to scroll on that side, so both fades ease out as you approach the edge
+// rather than switching off at it (#463).
 //
-// The first render (server HTML, and the client's hydration pass) assumes
-// "at the start, more to the right" — the common case for a chip row on a
-// phone — so there is no hydration mismatch; the real values land in an effect.
+// The values are written straight to the element's style, not through React
+// state: they change on every scroll frame, and the stylesheet's defaults
+// ("at the start, more to the right") already cover the server HTML and the
+// hydration pass, so there is nothing for React to reconcile.
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 
-// Sub-pixel scroll positions (zoom, fractional device pixel ratios) mean the
-// scroller rarely lands exactly on 0 or on its maximum.
-const EDGE_TOLERANCE_PX = 2;
+// How far from an edge the fade reaches full strength. Matches the fade's
+// width in globals.css, so the gradient is fully on whenever a full fade's
+// worth of content is hidden past it.
+const FADE_RAMP_PX = 48;
 
 type ScrollFadeProps = React.HTMLAttributes<HTMLDivElement>;
 
 export function ScrollFade({ children, ...scrollerProps }: ScrollFadeProps) {
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
-  const [fade, setFade] = useState({ start: false, end: true });
 
   useEffect(() => {
+    const wrapper = wrapperRef.current;
     const el = scrollerRef.current;
-    if (!el) return;
+    if (!wrapper || !el) return;
 
     const update = () => {
-      const maxScroll = el.scrollWidth - el.clientWidth;
-      // `scrollLeft` is negative in right-to-left layouts; `Math.abs` keeps
-      // "distance from the start" meaningful either way.
-      const offset = Math.abs(el.scrollLeft);
-      const start = offset > EDGE_TOLERANCE_PX;
-      const end = maxScroll - offset > EDGE_TOLERANCE_PX;
-      setFade((prev) => (prev.start === start && prev.end === end ? prev : { start, end }));
+      const maxScroll = Math.max(0, el.scrollWidth - el.clientWidth);
+      // Clamp to the real scroll range: iOS rubber-band overscroll briefly
+      // reports a negative `scrollLeft` past the start (and more than the
+      // maximum past the end), which would otherwise hold a fade on during
+      // the bounce and then drop it all at once.
+      const offset = Math.min(Math.max(el.scrollLeft, 0), maxScroll);
+      const ramp = (distance: number) => Math.min(distance / FADE_RAMP_PX, 1).toFixed(3);
+      wrapper.style.setProperty('--fade-start', ramp(offset));
+      wrapper.style.setProperty('--fade-end', ramp(maxScroll - offset));
     };
 
     update();
@@ -52,11 +58,7 @@ export function ScrollFade({ children, ...scrollerProps }: ScrollFadeProps) {
   }, [children]);
 
   return (
-    <div
-      className="filter-scroll-container"
-      data-fade-start={fade.start ? 'true' : undefined}
-      data-fade-end={fade.end ? 'true' : undefined}
-    >
+    <div ref={wrapperRef} className="filter-scroll-container">
       <div ref={scrollerRef} {...scrollerProps}>
         {children}
       </div>

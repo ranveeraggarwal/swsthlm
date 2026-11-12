@@ -1,11 +1,16 @@
 'use client';
 
 // A horizontal scroller whose edges fade only where there is more to scroll to.
-// The fade itself is CSS (`.filter-scroll-container` in globals.css); this
+// The fade itself is CSS (`.filter-scroll-container` in globals.css): a mask on
+// the scroller, so the content itself turns transparent at the edge. This
 // component measures the scroll position and writes `--fade-start` /
-// `--fade-end` (0–1) on the wrapper. Each edge's strength follows the distance
+// `--fade-end` (0–1) on the scroller. Each edge's strength follows the distance
 // left to scroll on that side, so both fades ease out as you approach the edge
 // rather than switching off at it (#463).
+//
+// A mask rather than a gradient overlaid on top: an overlay and the scroller's
+// clipping edge round to device pixels separately when the panel's width is
+// fractional, which left a one-pixel sliver of chip unfaded at each edge.
 //
 // The values are written straight to the element's style, not through React
 // state: they change on every scroll frame, and the stylesheet's defaults
@@ -21,14 +26,12 @@ const FADE_RAMP_PX = 48;
 
 type ScrollFadeProps = React.HTMLAttributes<HTMLDivElement>;
 
-export function ScrollFade({ children, ...scrollerProps }: ScrollFadeProps) {
-  const wrapperRef = useRef<HTMLDivElement>(null);
+export function ScrollFade({ children, className, ...scrollerProps }: ScrollFadeProps) {
   const scrollerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const wrapper = wrapperRef.current;
     const el = scrollerRef.current;
-    if (!wrapper || !el) return;
+    if (!el) return;
 
     const update = () => {
       const maxScroll = Math.max(0, el.scrollWidth - el.clientWidth);
@@ -38,8 +41,8 @@ export function ScrollFade({ children, ...scrollerProps }: ScrollFadeProps) {
       // the bounce and then drop it all at once.
       const offset = Math.min(Math.max(el.scrollLeft, 0), maxScroll);
       const ramp = (distance: number) => Math.min(distance / FADE_RAMP_PX, 1).toFixed(3);
-      wrapper.style.setProperty('--fade-start', ramp(offset));
-      wrapper.style.setProperty('--fade-end', ramp(maxScroll - offset));
+      el.style.setProperty('--fade-start', ramp(offset));
+      el.style.setProperty('--fade-end', ramp(maxScroll - offset));
     };
 
     update();
@@ -58,10 +61,12 @@ export function ScrollFade({ children, ...scrollerProps }: ScrollFadeProps) {
   }, [children]);
 
   return (
-    <div ref={wrapperRef} className="filter-scroll-container">
-      <div ref={scrollerRef} {...scrollerProps}>
-        {children}
-      </div>
+    <div
+      ref={scrollerRef}
+      className={className ? `filter-scroll-container ${className}` : 'filter-scroll-container'}
+      {...scrollerProps}
+    >
+      {children}
     </div>
   );
 }

@@ -115,28 +115,56 @@ function matchesVenue(event: SwingEvent, venue: string): boolean {
 }
 
 /**
- * The style chips to offer, derived from what's actually listed rather than from
- * the full enum — a filter for a style nobody is running this month is a dead
- * end. ALL_STYLES leads as the "no filter" option, and is skipped as a chip of
- * its own because an 'all' event already matches every other filter.
+ * The style chips to offer, derived from what's actually still to come rather
+ * than from the full enum — a filter for a style nobody is running is a dead
+ * end. Same live-clock and cancelled-night rule as `availableVenues` below,
+ * for the same reason: the list is baked at build time. ALL_STYLES leads as the
+ * "no filter" option, and is skipped as a chip of its own because an 'all'
+ * event already matches every other filter.
  */
-export function availableStyles(events: SwingEvent[]): Style[] {
+export function availableStyles(events: SwingEvent[], now: Now): Style[] {
   const styles = new Set<Style>();
   for (const event of events) {
+    if (event.cancelled || isPastEvent(event, now)) continue;
     if (event.style !== ALL_STYLES) styles.add(event.style);
   }
   return [ALL_STYLES, ...[...styles].sort()];
 }
 
-/** Venue chips, same principle: only venues with something on. */
-export function availableVenues(events: SwingEvent[]): string[] {
-  const venues = new Set<string>();
+/**
+ * Venue chips: only venues with something still to come, busiest first.
+ *
+ * "Still to come" is decided here against the live clock, not at build time.
+ * The list is baked when the site is built, so without this a venue whose last
+ * event was yesterday keeps its chip until the next deploy — and picking it
+ * lands on an empty page. Cancelled nights don't count either: a venue whose
+ * only listed night is off has nothing to go to. It's one pass over a few
+ * hundred in-memory events, so there's nothing to precompute or cache.
+ *
+ * Order: dedicated dance studios (danceability 5 — Chicago, Swedish Swing
+ * Society) lead, since that's where most of the dancing happens; then by number
+ * of upcoming nights, most first; then by name, so the order is stable.
+ */
+export function availableVenues(events: SwingEvent[], now: Now): string[] {
+  const venues = new Map<string, { count: number; studio: boolean }>();
   for (const event of events) {
+    if (event.cancelled || isPastEvent(event, now)) continue;
     const venue = event.venue?.trim();
-    if (venue && venue.toLowerCase() !== ALL_VENUES) venues.add(venue);
+    if (!venue || venue.toLowerCase() === ALL_VENUES) continue;
+    const entry = venues.get(venue) ?? { count: 0, studio: false };
+    entry.count += 1;
+    if (event.danceability === STUDIO_FLOOR) entry.studio = true;
+    venues.set(venue, entry);
   }
-  return [ALL_VENUES, ...[...venues].sort()];
+  const ranked = [...venues].sort(
+    ([nameA, a], [nameB, b]) =>
+      Number(b.studio) - Number(a.studio) || b.count - a.count || nameA.localeCompare(nameB, 'sv'),
+  );
+  return [ALL_VENUES, ...ranked.map(([name]) => name)];
 }
+
+/** The top danceability score: a dedicated studio with a sprung floor. */
+const STUDIO_FLOOR = 5;
 
 /** A day's worth of cards, in the highlighted grid. */
 export interface DateSection {

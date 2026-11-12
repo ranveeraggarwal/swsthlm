@@ -21,8 +21,13 @@ interface FilterPanelProps {
   searchInputRef: React.RefObject<HTMLInputElement | null>;
 }
 
+// A horizontal scroller clips on both axes (CSS turns `overflow-y: visible`
+// into `auto` once `overflow-x` scrolls), so the selected chip's lift and its
+// focus ring need room inside the box: the padding is offset by an equal
+// negative margin so the row still lines up with the labels. `overflow-y-hidden`
+// stops the row from also scrolling vertically by a few pixels.
 const SCROLLER =
-  'flex overflow-x-auto pb-2 -mb-2 gap-2.5 snap-x md:flex-wrap [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]';
+  'flex overflow-x-auto overflow-y-hidden p-1.5 -m-1.5 pb-2 -mb-2 scroll-px-1.5 gap-2.5 snap-x md:flex-wrap [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]';
 
 const CHIP_BASE =
   'snap-start whitespace-nowrap px-4 py-2 rounded text-xs font-bold uppercase tracking-wider border-2 border-[var(--border-ink)] transition-all cursor-pointer';

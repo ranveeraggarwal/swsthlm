@@ -186,7 +186,7 @@ Both go through tokens; neither uses a raw colour.
 ### Chips & Badges
 Small tags used on the permalink page and in expanded `EventRow` details: dance style, compact `DanceabilityBadge` (`1/5`–`5/5`), beginner/taster class, price, payment, and "3 nights". They are `rounded` (not pill), uppercase, and 10px.
 
-Each chip family has its own semantic token pair rather than one shared accent — beginner and `4–5` danceability use `--success-container`, `1–2` danceability uses `--caution-container`, multi-night and taster classes use `--info-container`, an ended card uses `--ended-container`, and style chips map per style (Lindy → tertiary, Balboa → secondary, the rest neutral). Adding a new chip family means adding a token pair, not reaching for a Tailwind palette class. The wording and the colour mapping both live in `src/features/events/model/labels.ts`; the chip components are in `src/features/events/components/EventChips.tsx` and `DanceabilityMeter.tsx`.
+Each chip family has its own semantic token pair rather than one shared accent — beginner and `4–5` danceability use `--success-container`, `1–2` danceability uses `--caution-container`, multi-night and taster classes use `--info-container`, an ended card uses `--ended-container`, and style chips, card eyebrows, and 78 record labels map per dance family (Lindy Hop → `--style-lindy*` Savoy brick red, Blues → `--style-blues*` ballroom blue, Balboa → `--style-balboa*` harbor teal, the rest neutral / `--primary` on 78 labels). Adding a new chip family means adding a token pair, not reaching for a Tailwind palette class. The wording and the colour mapping both live in `src/features/events/model/labels.ts`; the chip components are in `src/features/events/components/EventChips.tsx` and `DanceabilityMeter.tsx`.
 
 ### Navigation
 The navigation bar should be a simple, centered list of uppercase labels. It remains fixed to the top but uses a semi-transparent Cream backdrop with a "glass" blur to keep the focus on the content underneath as the user scrolls through the "rhythm" of the page.
@@ -254,6 +254,15 @@ Exact values as merged in `src/app/globals.css` (`:root` vs. `:root[data-theme='
 | `--ended-outline` | `#a1a1aa` | `#55555c` |
 | `--ended-surface` | `#fafafa` | `#272321` |
 | `--ended-surface-outline` | `#d4d4d8` | `#4c4540` |
+| `--style-lindy` | `#9e2323` | `#ff9e99` |
+| `--on-style-lindy` | `#ffffff` | `#5c1111` |
+| `--style-lindy-container` | `#fce8e6` | `#4a1c1a` |
+| `--style-blues` | `#35527a` | `#b7c7eb` |
+| `--on-style-blues` | `#ffffff` | `#1d2d47` |
+| `--style-blues-container` | `#e6eef8` | `#26354d` |
+| `--style-balboa` | `#1b6058` | `#8ad1c7` |
+| `--on-style-balboa` | `#ffffff` | `#0b3732` |
+| `--style-balboa-container` | `#e0f2ef` | `#193b37` |
 | `--ticket-stock` | `#edd8a8` | `#52432d` |
 | `--border-ink` | `#1b1c16` | `#614a3c` |
 | `--shadow-ink` | `#1b1c16` | `#110b07` |

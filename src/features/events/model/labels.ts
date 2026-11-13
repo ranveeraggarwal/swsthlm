@@ -23,19 +23,21 @@ const NEUTRAL_CHIP =
 // error here until it has a colour (and, via `LocaleBundle['styles']`, a label
 // in every locale).
 const STYLE_CHIP_CLASSES: Record<Style, string> = {
-  'lindy-hop': 'bg-[var(--tertiary)]/10 text-[var(--tertiary)] border-[var(--tertiary)]/20',
-  balboa: 'bg-[var(--secondary)]/10 text-[var(--secondary)] border-[var(--secondary)]/20',
+  'lindy-hop':
+    'bg-[var(--style-lindy-container)] text-[var(--style-lindy)] border-[var(--style-lindy)]/25',
+  balboa:
+    'bg-[var(--style-balboa-container)] text-[var(--style-balboa)] border-[var(--style-balboa)]/25',
   blues:
-    'bg-[var(--surface-container-high)] text-[var(--on-surface-variant)] border-[var(--outline-variant)]',
+    'bg-[var(--style-blues-container)] text-[var(--style-blues)] border-[var(--style-blues)]/25',
   shag: NEUTRAL_CHIP,
   'rock-n-roll': NEUTRAL_CHIP,
   all: NEUTRAL_CHIP,
 };
 
 const STYLE_EYEBROW_CLASSES: Record<Style, string> = {
-  'lindy-hop': 'text-[var(--tertiary)]',
-  balboa: 'text-[var(--secondary)]',
-  blues: 'text-[var(--on-surface-variant)]',
+  'lindy-hop': 'text-[var(--style-lindy)]',
+  balboa: 'text-[var(--style-balboa)]',
+  blues: 'text-[var(--style-blues)]',
   shag: 'text-[var(--on-surface-variant)]',
   'rock-n-roll': 'text-[var(--on-surface-variant)]',
   all: 'text-[var(--on-surface-variant)]',
@@ -220,20 +222,25 @@ const PRIMARY_RECORD_LABEL: RecordLabelTone = {
 };
 
 // Keyed by `Style` so a DJ card's 78 center label echoes the night's dance
-// family (brass for Lindy, navy for Balboa, sunset otherwise), using paired
-// `--on-*` ink tokens so the micro-print stays legible in dark mode too.
+// family (Savoy red for Lindy, ballroom blue for Blues, harbor teal for Balboa,
+// sunset otherwise), using paired `--on-style-*` ink tokens so micro-print
+// stays legible in dark mode too.
 const RECORD_LABEL_TONES: Record<Style, RecordLabelTone> = {
   'lindy-hop': {
-    fillClass: 'fill-[var(--tertiary)]',
-    strokeClass: 'stroke-[var(--on-tertiary)]',
-    textFillClass: 'fill-[var(--on-tertiary)]',
+    fillClass: 'fill-[var(--style-lindy)]',
+    strokeClass: 'stroke-[var(--on-style-lindy)]',
+    textFillClass: 'fill-[var(--on-style-lindy)]',
   },
   balboa: {
-    fillClass: 'fill-[var(--secondary)]',
-    strokeClass: 'stroke-[var(--on-secondary)]',
-    textFillClass: 'fill-[var(--on-secondary)]',
+    fillClass: 'fill-[var(--style-balboa)]',
+    strokeClass: 'stroke-[var(--on-style-balboa)]',
+    textFillClass: 'fill-[var(--on-style-balboa)]',
   },
-  blues: PRIMARY_RECORD_LABEL,
+  blues: {
+    fillClass: 'fill-[var(--style-blues)]',
+    strokeClass: 'stroke-[var(--on-style-blues)]',
+    textFillClass: 'fill-[var(--on-style-blues)]',
+  },
   shag: PRIMARY_RECORD_LABEL,
   'rock-n-roll': PRIMARY_RECORD_LABEL,
   all: PRIMARY_RECORD_LABEL,

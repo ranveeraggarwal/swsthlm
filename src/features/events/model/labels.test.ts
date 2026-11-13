@@ -9,6 +9,8 @@ import {
   isFreePrice,
   musicBadgeLabel,
   recordLabelTone,
+  styleChipClass,
+  styleEyebrowClass,
   styleFilterLabel,
   styleLabel,
   tasterEyebrowLabel,
@@ -108,11 +110,25 @@ describe('musicBadgeLabel', () => {
 });
 
 describe('card print & whimsy helpers', () => {
+  it('maps Lindy Hop, Blues, and Balboa chips and eyebrows to their dedicated style tokens', () => {
+    expect(styleChipClass('lindy-hop')).toContain('--style-lindy');
+    expect(styleChipClass('blues')).toContain('--style-blues');
+    expect(styleChipClass('balboa')).toContain('--style-balboa');
+    expect(styleChipClass('all')).toContain('--surface-container');
+
+    expect(styleEyebrowClass('lindy-hop')).toContain('--style-lindy');
+    expect(styleEyebrowClass('blues')).toContain('--style-blues');
+    expect(styleEyebrowClass('balboa')).toContain('--style-balboa');
+    expect(styleEyebrowClass('all')).toContain('--on-surface-variant');
+  });
+
   it('pairs each 78 record label fill with its matching --on-* ink token', () => {
-    expect(recordLabelTone('lindy-hop').fillClass).toContain('--tertiary');
-    expect(recordLabelTone('lindy-hop').strokeClass).toContain('--on-tertiary');
-    expect(recordLabelTone('balboa').fillClass).toContain('--secondary');
-    expect(recordLabelTone('balboa').strokeClass).toContain('--on-secondary');
+    expect(recordLabelTone('lindy-hop').fillClass).toContain('--style-lindy');
+    expect(recordLabelTone('lindy-hop').strokeClass).toContain('--on-style-lindy');
+    expect(recordLabelTone('blues').fillClass).toContain('--style-blues');
+    expect(recordLabelTone('blues').strokeClass).toContain('--on-style-blues');
+    expect(recordLabelTone('balboa').fillClass).toContain('--style-balboa');
+    expect(recordLabelTone('balboa').strokeClass).toContain('--on-style-balboa');
     expect(recordLabelTone('all').fillClass).toContain('--primary');
     expect(recordLabelTone('all').strokeClass).toContain('--on-primary');
   });

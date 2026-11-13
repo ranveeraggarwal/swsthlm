@@ -57,6 +57,11 @@ export const CHANGELOG: ChangelogEntry[] = [
     summary: 'Cards, turntables, and a bandstand with a little more swing',
     items: [
       {
+        title: 'Signature colours for Lindy Hop, Blues, and Balboa',
+        description:
+          'Cards, chips, and 78 record labels now dress Lindy Hop in Savoy red, Blues in ballroom blue, and Balboa in harbor teal so you can spot your style across the schedule at a glance.',
+      },
+      {
         title: 'A 78 in the run-out groove on missing pages, and a bass on empty searches',
         description:
           'Mistyped links now land on a spinning 78 stuck in its last groove (give the needle a nudge), and empty filter searches rest an upright bass on the bandstand that plucks a note when you tap it.',

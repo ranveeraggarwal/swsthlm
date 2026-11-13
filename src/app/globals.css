@@ -58,6 +58,21 @@
   --ended-surface: #fafafa;        /* ended card background */
   --ended-surface-outline: #d4d4d8;
 
+  /* Dance-style inks & chip fills: Savoy brick red (Lindy Hop), ballroom slate
+     blue (Blues), and Pacific harbor teal (Balboa). Each ink clears WCAG AA on
+     cream cards and its container, and pairs with --on-style-* on 78 labels. */
+  --style-lindy: #9e2323;
+  --on-style-lindy: #ffffff;
+  --style-lindy-container: #fce8e6;
+
+  --style-blues: #35527a;
+  --on-style-blues: #ffffff;
+  --style-blues-container: #e6eef8;
+
+  --style-balboa: #1b6058;
+  --on-style-balboa: #ffffff;
+  --style-balboa-container: #e0f2ef;
+
   /* A live-music ticket's header band: manila stock — the palette's
      tertiary-fixed-dim brass (#e5c273) at 55% on the card's cream
      (#f6f4e9). Tan, not the full gold. --on-surface reads on it. */
@@ -147,6 +162,18 @@
   --ended-outline: #55555c;
   --ended-surface: #272321;
   --ended-surface-outline: #4c4540;
+
+  --style-lindy: #ff9e99;
+  --on-style-lindy: #5c1111;
+  --style-lindy-container: #4a1c1a;
+
+  --style-blues: #b7c7eb;
+  --on-style-blues: #1d2d47;
+  --style-blues-container: #26354d;
+
+  --style-balboa: #8ad1c7;
+  --on-style-balboa: #0b3732;
+  --style-balboa-container: #193b37;
 
   /* Kraft stock: the same brass at 20% on the espresso card (#2d231c) — a
      step lighter than the card, as a raised layer should be after dark, and

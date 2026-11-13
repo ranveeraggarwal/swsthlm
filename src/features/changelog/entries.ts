@@ -57,6 +57,11 @@ export const CHANGELOG: ChangelogEntry[] = [
     summary: 'Cards, turntables, and a bandstand with a little more swing',
     items: [
       {
+        title: 'A swinging bandstand on live-music cards',
+        description:
+          'Live-band tickets now rotate through a jazz trumpet, a 1940s ballroom ribbon mic, and a painted kick drum that pop up when you lift a card and play along while the band is on stage.',
+      },
+      {
         title: 'A 78 in the run-out groove on missing pages, and a bass on empty searches',
         description:
           'Mistyped links now land on a spinning 78 stuck in its last groove (give the needle a nudge), and empty filter searches rest an upright bass on the bandstand that plucks a note when you tap it.',

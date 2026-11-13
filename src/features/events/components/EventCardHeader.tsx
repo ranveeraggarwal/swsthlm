@@ -1,10 +1,11 @@
 'use client';
 
 // The band across the top of an event card, drawn as the night's music: a
-// ticket stub, inked with an admission stamp, when a band is playing; a record
-// sleeve with a style-labelled 78 half out of it when a DJ is; or both
-// together when a band and a DJ share the bill. It carries the time and the
-// badges, so the kind of night reads before the title does.
+// perforated ticket stub with a rotating bandstand piece (jazz horn, ballroom
+// ribbon mic, or painted kick drum) when a band is playing; a record sleeve
+// with a style-labelled 78 half out of it when a DJ is; or both together when
+// a band and a DJ share the bill. It carries the time and the badges, so the
+// kind of night reads before the title does.
 //
 // It's printed in the card's own ink, and on its own paper — bar a ticket's
 // stub, which is tan stock (`--ticket-stock`). The shapes do the telling, so
@@ -17,7 +18,13 @@ import type { Style } from '@/lib/data/types';
 import { formatEventDateRange, formatEventDateShort } from '@/lib/date/format';
 import { useLocale } from '@/components/providers/LocaleProvider';
 import type { EventGroup } from '../model/event';
-import { hashOf, musicBadgeLabel, recordLabelTone } from '../model/labels';
+import {
+  bandstandMotif,
+  hashOf,
+  musicBadgeLabel,
+  recordLabelTone,
+  type RecordLabelTone,
+} from '../model/labels';
 import type { TemporalBadge } from '../model/temporal';
 import { TemporalBadgeDisplay } from './TemporalBadgeDisplay';
 
@@ -49,7 +56,7 @@ export function EventCardHeader({
   const isLiveNow = badge === 'happening-now' && !event.cancelled;
 
   const clearance =
-    shape === 'mixed' ? 'pr-34' : isTicket ? 'pr-26' : 'pr-32';
+    shape === 'mixed' ? 'pr-34' : isTicket ? 'pr-28' : 'pr-32';
 
   return (
     <>
@@ -59,10 +66,10 @@ export function EventCardHeader({
             ? // The perforation: slots punched through the stock, so inked in
               // the deepest tone rather than as a keyline — the same as
               // --border-ink in light; in dark, an umber dash would vanish into
-              // the kraft. Room on the right for the stamp (and on mixed nights
-              // the 78 beside it), which the band clips. The stub is printed on
-              // tan stock unless the night is over: then it takes the card's
-              // own muted surface, like the rest.
+              // the kraft. Room on the right for the bandstand piece (and on
+              // mixed nights the 78 beside it), which the band clips. The stub
+              // is printed on tan stock unless the night is over: then it takes
+              // the card's own muted surface, like the rest.
               `border-dashed border-[var(--shadow-ink)] ${isOver ? '' : 'bg-[var(--ticket-stock)]'}`
             : // The sleeve's edge, and room on the right for the record.
               'border-[var(--border-ink)]'
@@ -94,6 +101,15 @@ export function EventCardHeader({
           )}
         </div>
 
+        {isTicket && !event.cancelled && (
+          <BandstandArt
+            id={event.id}
+            style={event.style}
+            faded={isOver}
+            playing={isLiveNow}
+            mixed={shape === 'mixed'}
+          />
+        )}
         {hasRecord && (
           <SleeveRecord
             style={event.style}
@@ -101,9 +117,6 @@ export function EventCardHeader({
             spinning={isLiveNow}
             mixed={shape === 'mixed'}
           />
-        )}
-        {isTicket && !event.cancelled && (
-          <AdmissionStamp impression={event.id} faded={isOver} mixed={shape === 'mixed'} />
         )}
         {event.cancelled && <CancelledStamp impression={event.id} />}
       </div>
@@ -213,72 +226,329 @@ function RubberInkDefs({ id, seed }: { id: string; seed: number }) {
 }
 
 /**
- * A live night's admission stamp, inked across the ticket's corner and half
- * off the edge, the way a hurried one at the door lands. Decoration only —
- * the badge beside the time is what says "Live band" — but its words are
- * still read from the locale bundle, since a Swedish visitor sees them.
+ * A live night's stage piece, deterministically picked per occurrence so a
+ * grid of live-band nights reads like a three-piece swing combo — a 3-valve
+ * jazz horn, a 1940s ballroom ribbon mic, or a painted Savoy/Nalen kick drum.
  *
- * Rubber never prints clean, so it's inked like the real thing: flecks where
- * the ink didn't take, edges a touch ragged, one side pressed harder than the
- * other. And no two land alike — `impression` (the event's id) picks each
- * one's slant and fleck pattern, so a page of tickets isn't a page of clip-art.
+ * Each motif shares the 78's two-layer choreography: lifting the card pops the
+ * outer `<svg>` up from the ticket seam with a spring overshoot, while
+ * `data-playing="true"` (`Happening Now`) runs a continuous compositor-only
+ * riff, croon, or 4-beat kick on the inner group.
  */
-function AdmissionStamp({
-  impression,
+function BandstandArt({
+  id,
+  style,
   faded,
+  playing,
   mixed,
 }: {
-  impression: string;
+  id: string;
+  style: Style;
   faded: boolean;
+  playing?: boolean;
   mixed?: boolean;
 }) {
-  const { bundle } = useLocale();
-  const id = `stamp-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
-  const words = bundle.card.admissionStamp;
-  const hash = hashOf(impression);
-  const tilt = -(9 + (hash % 9)); // -9° to -17°
-  const seed = hash % 997;
+  const motif = bandstandMotif(id);
+  const tone = recordLabelTone(style);
+  const mutedClass = faded ? 'grayscale opacity-50' : '';
 
+  if (motif === 'horn') {
+    return (
+      <HornMotif
+        tone={tone}
+        playing={playing}
+        mixed={mixed}
+        mutedClass={mutedClass}
+      />
+    );
+  }
+
+  if (motif === 'mic') {
+    return (
+      <MicMotif
+        tone={tone}
+        playing={playing}
+        mixed={mixed}
+        mutedClass={mutedClass}
+      />
+    );
+  }
+
+  return (
+    <DrumMotif
+      tone={tone}
+      playing={playing}
+      mixed={mixed}
+      mutedClass={mutedClass}
+    />
+  );
+}
+
+interface MotifProps {
+  tone: RecordLabelTone;
+  playing?: boolean;
+  mixed?: boolean;
+  mutedClass: string;
+}
+
+/** 3-valve mid-century jazz trumpet rising from the ticket corner. */
+function HornMotif({ tone, playing, mixed, mutedClass }: MotifProps) {
   return (
     <svg
       aria-hidden="true"
       focusable="false"
-      viewBox="0 0 120 120"
-      style={{ '--stamp-tilt': `${tilt}deg` } as React.CSSProperties}
-      className={`ticket-stamp absolute ${
-        mixed ? '-top-2 right-12 w-20 h-20 z-[1]' : '-top-1.5 -right-0.5 w-24 h-24'
-      } ${faded ? 'text-[var(--outline)]' : 'text-[var(--primary)]'}`}
+      viewBox="0 0 100 100"
+      data-playing={playing ? 'true' : undefined}
+      className={`stage-motif stage-horn absolute pointer-events-none ${
+        mixed ? 'stage-motif-mixed right-14' : '-right-1'
+      } ${mutedClass}`}
     >
-      <defs>
-        {/* Over the top, left to right, letters standing outward... */}
-        <path id={`${id}-top`} d="M22 60a38 38 0 0 1 76 0" />
-        {/* ...and under the bottom, left to right, letters standing inward. */}
-        <path id={`${id}-bottom`} d="M14 60a46 46 0 0 0 92 0" />
-        <RubberInkDefs id={id} seed={seed} />
-      </defs>
+      {/* Sound riff arcs fanning out from the bell */}
+      <g
+        className={`stage-wave stage-wave-1 fill-none ${tone.accentStrokeClass}`}
+        strokeWidth={2.6}
+        strokeLinecap="round"
+      >
+        <path d="M19 23A18 18 0 0 0 11 45" />
+      </g>
+      <g
+        className={`stage-wave stage-wave-2 fill-none ${tone.accentStrokeClass}`}
+        strokeOpacity={0.72}
+        strokeWidth={2.1}
+        strokeLinecap="round"
+      >
+        <path d="M12 16A26 26 0 0 0 2 46" />
+      </g>
 
-      <g mask={`url(#${id}-pressure)`}>
-        <g filter={`url(#${id}-ink)`}>
-          <g className="fill-none stroke-current">
-            <circle cx="60" cy="60" r="56" strokeWidth={3.5} />
-            <circle cx="60" cy="60" r="51" strokeWidth={1.2} />
-            <circle cx="60" cy="60" r="33" strokeWidth={1.2} />
+      <g className="stage-horn-body">
+        <g transform="rotate(24 58 58)">
+          {/* Lower tuning slide loop */}
+          <rect
+            x="53"
+            y="52"
+            width="34"
+            height="13"
+            rx="6.5"
+            className="fill-none stroke-[var(--border-ink)]"
+            strokeWidth={5.2}
+          />
+          <rect
+            x="53"
+            y="52"
+            width="34"
+            height="13"
+            rx="6.5"
+            className="fill-none stroke-[var(--tertiary)]"
+            strokeWidth={2.2}
+          />
+
+          {/* Three piston valve casings + pearl finger buttons */}
+          <g className="fill-[var(--tertiary)] stroke-[var(--border-ink)]" strokeWidth={2}>
+            <rect x="57" y="36" width="5.5" height="14" rx="1" />
+            <rect x="65.5" y="36" width="5.5" height="14" rx="1" />
+            <rect x="74" y="36" width="5.5" height="14" rx="1" />
           </g>
-          <g className="fill-current font-sans uppercase" fontSize={9.5} fontWeight={800} letterSpacing={1.5}>
-            <text>
-              <textPath href={`#${id}-top`} startOffset="50%" textAnchor="middle">
-                {words.top}
-              </textPath>
-            </text>
-            <text>
-              <textPath href={`#${id}-bottom`} startOffset="50%" textAnchor="middle">
-                {words.bottom}
-              </textPath>
-            </text>
-            <circle cx="18" cy="60" r="1.8" />
-            <circle cx="102" cy="60" r="1.8" />
-            <polygon points="60,47 63.23,55.55 72.36,55.98 65.23,61.7 67.64,70.52 60,65.5 52.36,70.52 54.77,61.7 47.64,55.98 56.77,55.55" />
+          <g
+            className="fill-[var(--surface-container-lowest)] stroke-[var(--border-ink)]"
+            strokeWidth={1.6}
+          >
+            <rect x="56" y="32.5" width="7.5" height="3.5" rx="1.5" />
+            <rect x="64.5" y="32.5" width="7.5" height="3.5" rx="1.5" />
+            <rect x="73" y="32.5" width="7.5" height="3.5" rx="1.5" />
           </g>
+
+          {/* Exponential brass bell + leadpipe */}
+          <path
+            d="M98 48.5L48 48.5C36 48.5 27 40 21 29L21 74C27 63 36 54.5 48 54.5L98 54.5Z"
+            className="fill-[var(--tertiary)] stroke-[var(--border-ink)]"
+            strokeWidth={2.6}
+            strokeLinejoin="round"
+          />
+          <path
+            d="M48 50C37 50 29 44 24 36"
+            className="fill-none stroke-[var(--on-tertiary)]"
+            strokeOpacity={0.48}
+            strokeWidth={1.9}
+            strokeLinecap="round"
+          />
+
+          {/* Rolled rim & style-tinted inner throat */}
+          <ellipse
+            cx="21"
+            cy="51.5"
+            rx="5.4"
+            ry="22.5"
+            className="fill-[var(--shadow-ink)] stroke-[var(--border-ink)]"
+            strokeWidth={1.2}
+          />
+          <ellipse cx="22.2" cy="51.5" rx="3" ry="14" className={tone.fillClass} />
+        </g>
+      </g>
+    </svg>
+  );
+}
+
+/** 1940s Art Deco ballroom pill ribbon microphone in a U-yoke cradle. */
+function MicMotif({ tone, playing, mixed, mutedClass }: MotifProps) {
+  return (
+    <svg
+      aria-hidden="true"
+      focusable="false"
+      viewBox="0 0 100 100"
+      data-playing={playing ? 'true' : undefined}
+      className={`stage-motif stage-mic absolute pointer-events-none ${
+        mixed ? 'stage-motif-mixed right-14' : 'right-1.5'
+      } ${mutedClass}`}
+    >
+      {/* Radiating broadcast arcs */}
+      <g
+        className={`stage-wave stage-wave-1 fill-none ${tone.accentStrokeClass}`}
+        strokeWidth={2.3}
+        strokeLinecap="round"
+      >
+        <path d="M22 24A22 22 0 0 0 22 48" />
+        <path d="M78 24A22 22 0 0 1 78 48" />
+      </g>
+      <g
+        className={`stage-wave stage-wave-2 fill-none ${tone.accentStrokeClass}`}
+        strokeOpacity={0.7}
+        strokeWidth={1.8}
+        strokeLinecap="round"
+      >
+        <path d="M14 19A30 30 0 0 0 14 53" />
+        <path d="M86 19A30 30 0 0 1 86 53" />
+      </g>
+
+      {/* Stand post, U-yoke & brass thumbscrews */}
+      <path
+        d="M50 66L50 98M29 41C29 64 71 64 71 41"
+        className="fill-none stroke-[var(--border-ink)]"
+        strokeWidth={3.2}
+        strokeLinecap="round"
+      />
+      <g className="fill-[var(--tertiary)] stroke-[var(--border-ink)]" strokeWidth={1.7}>
+        <circle cx="29" cy="41" r="3" />
+        <circle cx="71" cy="41" r="3" />
+        <circle cx="50" cy="64" r="3" />
+      </g>
+
+      {/* Tilting ribbon capsule */}
+      <g className="stage-mic-head">
+        <rect
+          x="35"
+          y="12"
+          width="30"
+          height="45"
+          rx="15"
+          className="fill-[var(--surface-container-lowest)] stroke-[var(--border-ink)]"
+          strokeWidth={2.6}
+        />
+        <rect x="39" y="16" width="22" height="37" rx="11" className="fill-[var(--shadow-ink)]" />
+        <g className="fill-none stroke-[var(--outline)]" strokeWidth={1.8} strokeLinecap="round">
+          <line x1="42" y1="22" x2="58" y2="22" />
+          <line x1="41" y1="27" x2="59" y2="27" />
+          <line x1="41" y1="42" x2="59" y2="42" />
+          <line x1="42" y1="47" x2="58" y2="47" />
+        </g>
+        {/* Style-tinted call band */}
+        <rect
+          x="35"
+          y="31"
+          width="30"
+          height="7"
+          className={`${tone.fillClass} stroke-[var(--border-ink)]`}
+          strokeWidth={1.8}
+        />
+        <path
+          d="M44.5 34.5h11"
+          className={`fill-none ${tone.strokeClass}`}
+          strokeOpacity={0.8}
+          strokeWidth={1.1}
+          strokeLinecap="round"
+        />
+      </g>
+    </svg>
+  );
+}
+
+/** Vintage painted big-band bass drumhead & brass crash cymbal peeking from the seam. */
+function DrumMotif({ tone, playing, mixed, mutedClass }: MotifProps) {
+  return (
+    <svg
+      aria-hidden="true"
+      focusable="false"
+      viewBox="0 0 100 100"
+      data-playing={playing ? 'true' : undefined}
+      className={`stage-motif stage-drum absolute pointer-events-none ${
+        mixed ? 'stage-motif-mixed right-14' : 'right-1.5'
+      } ${mutedClass}`}
+    >
+      {/* Brass crash cymbal on stand rod */}
+      <g className="stage-drum-cymbal">
+        <line
+          x1="75"
+          y1="34"
+          x2="80"
+          y2="11"
+          className="stroke-[var(--border-ink)]"
+          strokeWidth={2.2}
+          strokeLinecap="round"
+        />
+        <ellipse
+          cx="78"
+          cy="17"
+          rx="16"
+          ry="4.6"
+          transform="rotate(14 78 17)"
+          className="fill-[var(--tertiary)] stroke-[var(--border-ink)]"
+          strokeWidth={2.2}
+        />
+        <ellipse
+          cx="78"
+          cy="16.4"
+          rx="4.5"
+          ry="1.7"
+          transform="rotate(14 78 16.4)"
+          className="fill-[var(--shadow-ink)]"
+        />
+      </g>
+
+      {/* Painted calfskin bass drumhead */}
+      <g className="stage-drum-head">
+        <circle
+          cx="48"
+          cy="56"
+          r="40"
+          className="fill-[var(--shadow-ink)] stroke-[var(--border-ink)]"
+          strokeWidth={1.5}
+        />
+        <circle cx="48" cy="56" r="34" className="fill-[var(--surface-container-lowest)]" />
+        {/* Style-tinted Savoy / Nalen scalloped crest */}
+        <path
+          d="M16.5 56A31.5 31.5 0 0 1 79.5 56L66 56A18 18 0 0 0 30 56Z"
+          className={tone.fillClass}
+        />
+        <circle
+          cx="48"
+          cy="56"
+          r="27.5"
+          className="fill-none stroke-[var(--outline)]"
+          strokeOpacity={0.65}
+          strokeWidth={1}
+          strokeDasharray="4 3"
+        />
+        {/* Classic bandstand star */}
+        <polygon
+          points="48,42 50.8,49.8 59,50.1 52.5,55.1 54.8,63 48,58.4 41.2,63 43.5,55.1 37,50.1 45.2,49.8"
+          className="fill-[var(--on-surface)]"
+        />
+        {/* Brass T-rod tension lugs */}
+        <g className="fill-[var(--tertiary)] stroke-[var(--border-ink)]" strokeWidth={1.4}>
+          <rect x="45.5" y="13" width="5" height="6" rx="1" />
+          <rect x="16" y="25" width="5" height="6" rx="1" transform="rotate(-42 18.5 28)" />
+          <rect x="75" y="25" width="5" height="6" rx="1" transform="rotate(42 77.5 28)" />
+          <rect x="6" y="53.5" width="6" height="5" rx="1" />
+          <rect x="84" y="53.5" width="6" height="5" rx="1" />
         </g>
       </g>
     </svg>
@@ -363,7 +633,7 @@ function SleeveRecord({
       viewBox="0 0 100 100"
       data-spinning={spinning ? 'true' : undefined}
       className={`sleeve-record absolute ${
-        mixed ? 'sleeve-record-mixed right-1.5' : 'right-3'
+        mixed ? 'sleeve-record-mixed right-0.5' : 'right-3'
       } ${faded ? 'grayscale opacity-50' : ''}`}
     >
       <defs>

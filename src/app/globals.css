@@ -358,7 +358,7 @@ body {
 }
 
 .sleeve-record-mixed {
-  --record-size: 90px;
+  --record-size: 82px;
 }
 
 .sleeve-record[data-spinning='true'] {
@@ -388,22 +388,284 @@ body {
   }
 }
 
-/* A live card's admission stamp (and a cancelled card's box overprint),
-   inked at a slant across the header's corner — each at its own slant, set
-   per card as --stamp-tilt. Lifting the card presses it: it squares up a
-   little and swells, with the same overshoot as the record's pop. */
-.ticket-stamp,
+/* A live-band card's rotating bandstand piece (3-valve jazz horn, 1940s ribbon
+   mic, or painted Savoy/Nalen kick drum). Like `.sleeve-record`, the outer SVG
+   handles the spring pop on card lift (`translate` / `rotate` / `scale`), while
+   the inner group runs the continuous compositor keyframe when `data-playing`
+   (`Happening Now`) is active — so hovering a live event lifts the instrument
+   higher without interrupting its groove. */
+.stage-motif {
+  --stage-size: 96px;
+  width: var(--stage-size);
+  height: var(--stage-size);
+  transition:
+    translate 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+    rotate 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+    scale 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.stage-motif-mixed {
+  --stage-size: 78px;
+}
+
+.stage-horn {
+  bottom: -14px;
+}
+
+.stage-horn.stage-motif-mixed {
+  bottom: -10px;
+}
+
+.stage-mic {
+  bottom: calc(var(--stage-size) * -0.32);
+}
+
+.stage-drum {
+  bottom: calc(var(--stage-size) * -0.44);
+}
+
+.stage-mic-head {
+  transform-origin: 50px 58px;
+  transition: rotate 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.stage-drum-head {
+  transform-origin: 48px 56px;
+  transition: scale 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.stage-drum-cymbal {
+  transform-origin: 78px 17px;
+  transition:
+    rotate 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
+    translate 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.stage-wave {
+  opacity: 0;
+  scale: 0.78;
+  transform-origin: 50px 36px;
+  transition:
+    opacity 0.28s ease-out,
+    scale 0.44s cubic-bezier(0.34, 1.56, 0.64, 1),
+    translate 0.44s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.stage-horn .stage-wave {
+  transform-origin: 24px 36px;
+  translate: 5px 3px;
+}
+
+/* Continuous `Happening Now` bandstand grooves (compositor-only) */
+@keyframes stage-horn-riff {
+  0%, 100% { transform: rotate(0deg) translate(0, 0); }
+  22%      { transform: rotate(8deg) translate(-3px, -4px); }
+  46%      { transform: rotate(2deg) translate(-1px, -1px); }
+  70%      { transform: rotate(6.5deg) translate(-2px, -3px); }
+}
+
+@keyframes stage-horn-wave {
+  0%, 100% { opacity: 0.15; transform: translate(3px, 2px) scale(0.85); }
+  30%, 72% { opacity: 0.95; transform: translate(-2px, -2px) scale(1.05); }
+}
+
+@keyframes stage-mic-sway {
+  0%, 100% { transform: rotate(-6deg); }
+  50%      { transform: rotate(6deg); }
+}
+
+@keyframes stage-mic-air {
+  0%   { opacity: 0.92; transform: scale(0.86); }
+  100% { opacity: 0; transform: scale(1.18); }
+}
+
+@keyframes stage-drum-kick {
+  0%, 100% { transform: scale(1); }
+  14%      { transform: scale(1.085); }
+  28%      { transform: scale(0.99); }
+  50%      { transform: scale(1); }
+  64%      { transform: scale(1.065); }
+  78%      { transform: scale(0.995); }
+}
+
+@keyframes stage-cymbal-sizzle {
+  0%, 100% { transform: rotate(-4deg); }
+  16%      { transform: rotate(11deg); }
+  66%      { transform: rotate(-10deg); }
+}
+
+.stage-horn[data-playing='true'] {
+  translate: -4px -5px;
+  rotate: 3deg;
+}
+
+.stage-horn[data-playing='true'] .stage-horn-body {
+  transform-origin: 76px 76px;
+  animation: stage-horn-riff 1.9s ease-in-out infinite;
+}
+
+.stage-horn[data-playing='true'] .stage-wave-1 {
+  animation: stage-horn-wave 1.9s ease-out infinite;
+}
+
+.stage-horn[data-playing='true'] .stage-wave-2 {
+  animation: stage-horn-wave 1.9s ease-out 0.16s infinite;
+}
+
+.stage-mic[data-playing='true'] {
+  translate: 0 -15%;
+}
+
+.stage-mic[data-playing='true'] .stage-mic-head {
+  animation: stage-mic-sway 2.2s ease-in-out infinite;
+}
+
+.stage-mic[data-playing='true'] .stage-wave-1 {
+  animation: stage-mic-air 1.5s ease-out infinite;
+}
+
+.stage-mic[data-playing='true'] .stage-wave-2 {
+  animation: stage-mic-air 1.5s ease-out 0.45s infinite;
+}
+
+.stage-drum[data-playing='true'] {
+  translate: 0 -18%;
+}
+
+.stage-drum[data-playing='true'] .stage-drum-head {
+  animation: stage-drum-kick 1.35s ease-out infinite;
+}
+
+.stage-drum[data-playing='true'] .stage-drum-cymbal {
+  animation: stage-cymbal-sizzle 1.35s ease-in-out infinite;
+}
+
+/* Card lift states for keyboard focus, touch tap, and pointer hover */
+.lift-card:focus-visible .stage-horn,
+.lift-card[data-lifted='true'] .stage-horn {
+  translate: -8px -11px;
+  rotate: 11deg;
+  scale: 1.05;
+}
+
+.lift-card:focus-visible .stage-horn .stage-wave-1,
+.lift-card[data-lifted='true'] .stage-horn .stage-wave-1 {
+  opacity: 1;
+  scale: 1;
+  translate: 0 0;
+  transition-delay: 40ms;
+}
+
+.lift-card:focus-visible .stage-horn .stage-wave-2,
+.lift-card[data-lifted='true'] .stage-horn .stage-wave-2 {
+  opacity: 0.85;
+  scale: 1;
+  translate: -2px -2px;
+  transition-delay: 110ms;
+}
+
+.lift-card:focus-visible .stage-mic,
+.lift-card[data-lifted='true'] .stage-mic {
+  translate: 0 -25%;
+}
+
+.lift-card:focus-visible .stage-mic-head,
+.lift-card[data-lifted='true'] .stage-mic-head {
+  rotate: -8deg;
+}
+
+.lift-card:focus-visible .stage-mic .stage-wave-1,
+.lift-card[data-lifted='true'] .stage-mic .stage-wave-1 {
+  opacity: 0.95;
+  scale: 1;
+  transition-delay: 45ms;
+}
+
+.lift-card:focus-visible .stage-mic .stage-wave-2,
+.lift-card[data-lifted='true'] .stage-mic .stage-wave-2 {
+  opacity: 0.72;
+  scale: 1.05;
+  transition-delay: 115ms;
+}
+
+.lift-card:focus-visible .stage-drum,
+.lift-card[data-lifted='true'] .stage-drum {
+  translate: 0 -28%;
+}
+
+.lift-card:focus-visible .stage-drum-head,
+.lift-card[data-lifted='true'] .stage-drum-head {
+  scale: 1.06;
+}
+
+.lift-card:focus-visible .stage-drum-cymbal,
+.lift-card[data-lifted='true'] .stage-drum-cymbal {
+  rotate: -14deg;
+  translate: 0 -2px;
+}
+
+@media (hover: hover) {
+  .lift-card:hover .stage-horn {
+    translate: -8px -11px;
+    rotate: 11deg;
+    scale: 1.05;
+  }
+
+  .lift-card:hover .stage-horn .stage-wave-1 {
+    opacity: 1;
+    scale: 1;
+    translate: 0 0;
+    transition-delay: 40ms;
+  }
+
+  .lift-card:hover .stage-horn .stage-wave-2 {
+    opacity: 0.85;
+    scale: 1;
+    translate: -2px -2px;
+    transition-delay: 110ms;
+  }
+
+  .lift-card:hover .stage-mic {
+    translate: 0 -25%;
+  }
+
+  .lift-card:hover .stage-mic-head {
+    rotate: -8deg;
+  }
+
+  .lift-card:hover .stage-mic .stage-wave-1 {
+    opacity: 0.95;
+    scale: 1;
+    transition-delay: 45ms;
+  }
+
+  .lift-card:hover .stage-mic .stage-wave-2 {
+    opacity: 0.72;
+    scale: 1.05;
+    transition-delay: 115ms;
+  }
+
+  .lift-card:hover .stage-drum {
+    translate: 0 -28%;
+  }
+
+  .lift-card:hover .stage-drum-head {
+    scale: 1.06;
+  }
+
+  .lift-card:hover .stage-drum-cymbal {
+    rotate: -14deg;
+    translate: 0 -2px;
+  }
+}
+
+/* A cancelled card's box overprint, inked at a slant across the header's
+   corner — each at its own slant, set per card as --stamp-tilt. */
 .cancelled-stamp {
   rotate: var(--stamp-tilt, -14deg);
   transition:
     rotate 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
     scale 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.lift-card:focus-visible .ticket-stamp,
-.lift-card[data-lifted='true'] .ticket-stamp {
-  rotate: calc(var(--stamp-tilt, -14deg) + 8deg);
-  scale: 1.08;
 }
 
 .lift-card:focus-visible .cancelled-stamp,
@@ -412,11 +674,6 @@ body {
 }
 
 @media (hover: hover) {
-  .lift-card:hover .ticket-stamp {
-    rotate: calc(var(--stamp-tilt, -14deg) + 8deg);
-    scale: 1.08;
-  }
-
   .lift-card:hover .cancelled-stamp {
     scale: 1.04;
   }
@@ -501,7 +758,11 @@ body {
   .lift-btn-primary,
   .lift-btn-primary .ticket-snip,
   .sleeve-record,
-  .ticket-stamp,
+  .stage-motif,
+  .stage-mic-head,
+  .stage-drum-head,
+  .stage-drum-cymbal,
+  .stage-wave,
   .cancelled-stamp {
     transition: none;
   }
@@ -515,12 +776,31 @@ body {
   .sleeve-record[data-spinning='true'],
   .lift-card:hover .sleeve-record,
   .lift-card:focus-visible .sleeve-record,
-  .lift-card[data-lifted='true'] .sleeve-record {
+  .lift-card[data-lifted='true'] .sleeve-record,
+  .stage-motif[data-playing='true'],
+  .lift-card:hover .stage-motif,
+  .lift-card:focus-visible .stage-motif,
+  .lift-card[data-lifted='true'] .stage-motif,
+  .lift-card:hover .stage-mic-head,
+  .lift-card:focus-visible .stage-mic-head,
+  .lift-card[data-lifted='true'] .stage-mic-head,
+  .lift-card:hover .stage-drum-head,
+  .lift-card:focus-visible .stage-drum-head,
+  .lift-card[data-lifted='true'] .stage-drum-head,
+  .lift-card:hover .stage-drum-cymbal,
+  .lift-card:focus-visible .stage-drum-cymbal,
+  .lift-card[data-lifted='true'] .stage-drum-cymbal {
     translate: none;
     rotate: none;
+    scale: none;
   }
 
   .sleeve-record[data-spinning='true'] .sleeve-record-disc,
+  .stage-motif[data-playing='true'] .stage-horn-body,
+  .stage-motif[data-playing='true'] .stage-mic-head,
+  .stage-motif[data-playing='true'] .stage-drum-head,
+  .stage-motif[data-playing='true'] .stage-drum-cymbal,
+  .stage-motif[data-playing='true'] .stage-wave,
   .lift-card:hover .danceability-bar,
   .lift-card:focus-visible .danceability-bar,
   .lift-card[data-lifted='true'] .danceability-bar,
@@ -528,14 +808,17 @@ body {
     animation: none;
   }
 
+  .stage-motif[data-playing='true'] .stage-wave-1 {
+    opacity: 0.85;
+    scale: 1;
+    translate: none;
+  }
+
   .card-live-note {
     animation: none;
     opacity: 0.85;
   }
 
-  .lift-card:hover .ticket-stamp,
-  .lift-card:focus-visible .ticket-stamp,
-  .lift-card[data-lifted='true'] .ticket-stamp,
   .lift-card:hover .cancelled-stamp,
   .lift-card:focus-visible .cancelled-stamp,
   .lift-card[data-lifted='true'] .cancelled-stamp {

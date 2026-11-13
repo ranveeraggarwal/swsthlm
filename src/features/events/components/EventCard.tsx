@@ -5,9 +5,9 @@
 //
 // Combines the tactile whimsy of the header band with an Editorial Playbill body:
 // 1. `EventCardHeader` (`row-start-1`): a perforated manila ticket stub with
-//    punch-outs and a hand-inked admission stamp for live-band nights, or a
-//    record sleeve with a spinning 78 for DJ nights — carrying the time,
-//    Live/DJ pill, and Tonight / Tomorrow / This Week badge.
+//    punch-outs and a rotating bandstand piece (horn, ribbon mic, or kick drum)
+//    for live-band nights, or a record sleeve with a spinning 78 for DJ nights —
+//    carrying the time, Live/DJ pill, and Tonight / Tomorrow / This Week badge.
 // 2. Editorial Playbill body (`row-start-2`, `1fr`): calm tracked eyebrow
 //    (`STYLE · INTRO 19:00`), Besley slab title, concise `price · performer`
 //    line, and optional 2-line expandable prose.

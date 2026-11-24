@@ -61,17 +61,23 @@ describe('computeExceptionChanges', () => {
   });
 });
 
-describe('price (fill-only)', () => {
+describe('price', () => {
   const base = { music: 'live', dj: '', band: '', start: '19:00', end: '23:00' };
+  const seriesPrice = '200 kr (150 kr för rabatterade); med prova-på-kurs 250 kr (200 kr)';
 
   it('proposes a scraped price when the occurrence has none', () => {
     const changes = computeExceptionChanges({ ...base, price: '200 kr' }, { ...base, price: '' });
     expect(changes).toEqual([{ field: 'price', from: '', to: '200 kr' }]);
   });
 
-  it('never overwrites a price a human already set', () => {
-    const changes = computeExceptionChanges({ ...base, price: '250 kr' }, { ...base, price: '200 kr' });
-    expect(changes).toHaveLength(0);
+  it('is not a change when the series price already contains the scraped one', () => {
+    const row = { ...base, price: '200 kr (150 kr för rabatterade)' };
+    expect(computeExceptionChanges(row, { ...base, price: seriesPrice })).toHaveLength(0);
+  });
+
+  it('proposes an exception when a night genuinely costs something else', () => {
+    const changes = computeExceptionChanges({ ...base, price: '300 kr' }, { ...base, price: seriesPrice });
+    expect(changes).toEqual([{ field: 'price', from: seriesPrice, to: '300 kr' }]);
   });
 
   it('resolveOccurrence carries series and exception prices', () => {

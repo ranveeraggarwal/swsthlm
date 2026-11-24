@@ -9,10 +9,14 @@ export const EXCEPTION_FIELDS = [
 // Fields the scraper can observe and that are worth proposing an exception for.
 export const EXCEPTION_COMPARE_FIELDS = ['music', 'dj', 'band', 'start', 'end'];
 
-// Fields proposed only to fill a gap: when the series and any exception leave
-// them empty, a scraped value is proposed; when a human already set one, it is
-// never overwritten (a curated price must not be churned by a nightly scrape).
-export const EXCEPTION_FILL_FIELDS = ['price'];
+// Price is compared loosely: the series row often carries the fuller string
+// ("200 kr (150 kr för rabatterade); med prova-på-kurs 250 kr (200 kr)") while
+// an event page shows only part of it. A scraped price the resolved one already
+// contains is not a change; only a genuinely different (or newly present) price
+// is proposed as an exception.
+const norm = (x) => (x ?? '').toLowerCase().replace(/\s+/g, ' ').trim();
+const priceChanged = (scraped, resolved) =>
+  norm(scraped) !== '' && !norm(resolved).includes(norm(scraped));
 
 const val = (row, col) => (row?.[col] ?? '').trim();
 
@@ -39,10 +43,9 @@ export function resolveOccurrence(seriesId, date, seriesData, exceptionsData) {
 // from proposing to blank a human-curated band or DJ every night.
 export function computeExceptionChanges(row, resolved) {
   const differs = (f) => (row[f] ?? '') !== '' && (row[f] ?? '') !== (resolved[f] ?? '');
-  const fills = (f) => (row[f] ?? '') !== '' && (resolved[f] ?? '') === '';
   return [
     ...EXCEPTION_COMPARE_FIELDS.filter(differs),
-    ...EXCEPTION_FILL_FIELDS.filter(fills),
+    ...(priceChanged(row.price, resolved.price) ? ['price'] : []),
   ]
     .map((f) => ({ field: f, from: resolved[f] ?? '', to: row[f] ?? '' }));
 }

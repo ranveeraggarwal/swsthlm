@@ -188,9 +188,10 @@ In order:
      in place (changed fields only); otherwise a new row is proposed. Only
      **non-empty** candidate fields are compared — an empty field means "unknown
      to the scraper," not "should be blank," so it never proposes to blank a
-     human-curated band or DJ. `price` is **fill-only**: it is proposed when the
-     resolved occurrence has no price at all, and never overwrites one a human
-     set.
+     human-curated band or DJ. `price` is compared loosely: the series row holds
+     the default, and an exception is proposed only when the scraped price is
+     absent from the resolved one (a page showing part of the series' fuller
+     price string is not a change).
    - `(venue_id, date)` covered by an existing one-off under a different id, or
      by a series with no field differences → **SKIP**.
    - Otherwise → **NEW**.

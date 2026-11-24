@@ -60,3 +60,24 @@ describe('computeExceptionChanges', () => {
     expect(changes).toHaveLength(2); // music and dj only
   });
 });
+
+describe('price (fill-only)', () => {
+  const base = { music: 'live', dj: '', band: '', start: '19:00', end: '23:00' };
+
+  it('proposes a scraped price when the occurrence has none', () => {
+    const changes = computeExceptionChanges({ ...base, price: '200 kr' }, { ...base, price: '' });
+    expect(changes).toEqual([{ field: 'price', from: '', to: '200 kr' }]);
+  });
+
+  it('never overwrites a price a human already set', () => {
+    const changes = computeExceptionChanges({ ...base, price: '250 kr' }, { ...base, price: '200 kr' });
+    expect(changes).toHaveLength(0);
+  });
+
+  it('resolveOccurrence carries series and exception prices', () => {
+    const s = { rows: [{ ...series.rows[0], price: '200 kr' }] };
+    expect(resolveOccurrence('chicago-live-weds', '2026-06-17', s, { rows: [] }).price).toBe('200 kr');
+    const e = { rows: [{ series_id: 'chicago-live-weds', date: '2026-06-17', price: '100 kr' }] };
+    expect(resolveOccurrence('chicago-live-weds', '2026-06-17', s, e).price).toBe('100 kr');
+  });
+});

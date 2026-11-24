@@ -9,6 +9,11 @@ export const EXCEPTION_FIELDS = [
 // Fields the scraper can observe and that are worth proposing an exception for.
 export const EXCEPTION_COMPARE_FIELDS = ['music', 'dj', 'band', 'start', 'end'];
 
+// Fields proposed only to fill a gap: when the series and any exception leave
+// them empty, a scraped value is proposed; when a human already set one, it is
+// never overwritten (a curated price must not be churned by a nightly scrape).
+export const EXCEPTION_FILL_FIELDS = ['price'];
+
 const val = (row, col) => (row?.[col] ?? '').trim();
 
 // Merge series defaults with any existing exception to produce the current
@@ -24,6 +29,7 @@ export function resolveOccurrence(seriesId, date, seriesData, exceptionsData) {
     band: val(e, 'band') || val(s, 'band'),
     start: val(e, 'start') || val(s, 'start'),
     end: val(e, 'end') || val(s, 'end'),
+    price: val(e, 'price') || val(s, 'price'),
   };
 }
 
@@ -32,7 +38,11 @@ export function resolveOccurrence(seriesId, date, seriesData, exceptionsData) {
 // "unknown to the scraper," not "should be blank." This prevents the runner
 // from proposing to blank a human-curated band or DJ every night.
 export function computeExceptionChanges(row, resolved) {
-  return EXCEPTION_COMPARE_FIELDS
-    .filter((f) => (row[f] ?? '') !== '' && (row[f] ?? '') !== (resolved[f] ?? ''))
+  const differs = (f) => (row[f] ?? '') !== '' && (row[f] ?? '') !== (resolved[f] ?? '');
+  const fills = (f) => (row[f] ?? '') !== '' && (resolved[f] ?? '') === '';
+  return [
+    ...EXCEPTION_COMPARE_FIELDS.filter(differs),
+    ...EXCEPTION_FILL_FIELDS.filter(fills),
+  ]
     .map((f) => ({ field: f, from: resolved[f] ?? '', to: row[f] ?? '' }));
 }

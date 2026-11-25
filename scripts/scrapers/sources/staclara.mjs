@@ -1,12 +1,15 @@
 // Source: S:ta Clara Bierhaus live-music calendar (staclara.se/calendar.html).
 //
-// The page is a list of <calendar-event> blocks under a month <h2>:
+// The Stockholm venue lives on stockholm.staclara.se (the www. root is now just
+// a venue picker). The page is a list of <calendar-entry> blocks under a month
+// <h2>; each entry carries its data as JSON in an inline <script>:
 //
-//   <h2>JUNE 2026</h2>
-//   <calendar-event>
-//     <h1>Wed 17 June</h1>
-//     <p>SWING MAGNIFIQUE 19-22<BR>Django Reinhardt Swing Jazz!</p>
-//   </calendar-event>
+//   <h2>NOVEMBER 2026</h2>
+//   <calendar-entry>
+//     <script type="application/json">
+//       {"date": "Thu 19", "content": "<p>\nPETER B&K BAND 19-22\n<BR>\nFive Horn Jazz Band!\n</p>", ...}
+//     </script>
+//   </calendar-entry>
 //
 // S:ta Clara is a jazz/blues pub, so most nights aren't swing dance — and even
 // the jazz nights are often listening acts, not danceable swing. It declares
@@ -19,7 +22,7 @@ import { titleCase } from '../lib/candidate.mjs';
 
 export const id = 'staclara';
 export const label = 'S:ta Clara Bierhaus';
-export const url = 'https://www.staclara.se/calendar.html';
+export const url = 'https://stockholm.staclara.se/calendar.html';
 export const relevance = 'roster';
 
 const VENUE_ID = 'staclara';
@@ -60,7 +63,7 @@ export function parse(html) {
   const events = [];
   let ctx = null; // current { month, year } from the latest <h2>
 
-  $('h2, calendar-event').each((_, el) => {
+  $('h2, calendar-entry').each((_, el) => {
     const tag = el.tagName?.toLowerCase();
     if (tag === 'h2') {
       ctx = parseMonthHeader($(el).text()) ?? ctx;
@@ -68,15 +71,20 @@ export function parse(html) {
     }
     if (!ctx) return;
 
-    const dayText = $(el).find('h1').first().text().trim(); // "Wed 17 June"
-    const dayMatch = dayText.match(/(\d{1,2})/);
+    let entry;
+    try {
+      entry = JSON.parse($(el).find('script[type="application/json"]').first().html() ?? '');
+    } catch {
+      return; // malformed entry — skip it rather than fail the whole source
+    }
+
+    const dayMatch = String(entry?.date ?? '').match(/(\d{1,2})/); // "Thu 19"
     if (!dayMatch) return;
     const day = Number(dayMatch[1]);
     const date = `${ctx.year}-${pad(ctx.month)}-${pad(day)}`;
 
-    // First <p> line (before <BR>) carries the act + time; the rest is genre.
-    const pHtml = $(el).find('p').first().html() ?? '';
-    const [firstRaw, ...restRaw] = pHtml.split(/<br\s*\/?>/i);
+    // First line (before <BR>) carries the act + time; the rest is genre.
+    const [firstRaw, ...restRaw] = String(entry.content ?? '').split(/<br\s*\/?>/i);
     const firstLine = cheerio.load(firstRaw).text().replace(/\s+/g, ' ').trim();
     const genre = cheerio
       .load(restRaw.join(' '))

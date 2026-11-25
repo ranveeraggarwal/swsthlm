@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ONEOFF_FIELDS, candidateToRow, computeRowUpdate } from './candidate.mjs';
+import { ONEOFF_FIELDS, candidateToRow, computeRowUpdate, titleCase } from './candidate.mjs';
 
 const blank = () => Object.fromEntries(ONEOFF_FIELDS.map((f) => [f, '']));
 
@@ -104,5 +104,38 @@ describe('candidateToRow', () => {
   it('writes a taster class time into its column, empty when the source has none', () => {
     expect(candidateToRow({ id: 'x', tasterClass: '18:00' }).taster_class).toBe('18:00');
     expect(candidateToRow({ id: 'x' }).taster_class).toBe('');
+  });
+});
+
+describe('titleCase', () => {
+  it('capitalises each word of uppercase source text', () => {
+    expect(titleCase('JESSES JAZZ BAND')).toBe('Jesses Jazz Band');
+    expect(titleCase('  SWING MAGNIFIQUE ')).toBe('Swing Magnifique');
+  });
+
+  it('keeps accented letters inside a word lowercase', () => {
+    expect(titleCase('MATTE ROSÉN')).toBe('Matte Rosén');
+    expect(titleCase('NYFIKEN BLÅ')).toBe('Nyfiken Blå');
+    expect(titleCase('BJÄRHALL COMBO')).toBe('Bjärhall Combo');
+  });
+
+  it('capitalises an accented letter that starts a word', () => {
+    expect(titleCase('ÅRSTA ÖSTRA ØRESUND')).toBe('Årsta Östra Øresund');
+  });
+
+  it("doesn't start a new word after an apostrophe-like mark", () => {
+    expect(titleCase('JESSE´S JAZZ BAND')).toBe('Jesse´s Jazz Band');
+    expect(titleCase("MC NASTY'S")).toBe("Mc Nasty's");
+    expect(titleCase('HÄLLGREN’S LUCKY QUARTET')).toBe('Hällgren’s Lucky Quartet');
+  });
+
+  it('starts a new word after other punctuation', () => {
+    expect(titleCase('PETER B&K BAND')).toBe('Peter B&K Band');
+    expect(titleCase('JEAN-LUC (LIVE)')).toBe('Jean-Luc (Live)');
+  });
+
+  it('tolerates empty input', () => {
+    expect(titleCase('')).toBe('');
+    expect(titleCase(undefined)).toBe('');
   });
 });

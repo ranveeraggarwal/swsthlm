@@ -30,7 +30,7 @@ describe('staclara parser', () => {
 
   it('extracts every dated entry on the page', () => {
     expect(events).toHaveLength(15);
-    expect(byDate['2026-11-23']?.band).toMatch(/^Jesse.{1}s Jazz Band/i);
+    expect(byDate['2026-11-23']?.band).toBe('Jesse´s Jazz Band');
   });
 
   it('declares roster relevance (mixed venue)', () => {

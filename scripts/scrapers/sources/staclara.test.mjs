@@ -10,48 +10,45 @@ const events = parse(html);
 const byDate = Object.fromEntries(events.map((e) => [e.date, e]));
 
 describe('staclara parser', () => {
-  it('extracts a swing night with the right fields', () => {
-    const e = byDate['2026-06-17'];
+  it('extracts a live-music night with the right fields', () => {
+    const e = byDate['2026-11-19'];
     expect(e).toBeTruthy();
-    expect(e.name).toBe('Swing Magnifique');
+    expect(e.name).toBe('Peter B&K Band');
     expect(e).toMatchObject({
-      id: 'staclara-2026-06-17',
+      id: 'staclara-2026-11-19',
       venueId: 'staclara',
       start: '19:00',
       end: '22:00',
       music: 'live',
       style: 'all',
-      band: 'Swing Magnifique',
+      band: 'Peter B&K Band',
       organizer: 'S:ta Clara Bierhaus',
+      description: 'Five Horn Jazz Band!',
       status: 'live',
     });
   });
 
-  it('includes jazz-band nights (Jesses, Mats Lundmark)', () => {
-    expect(byDate['2026-06-15']?.name).toBe('Jesses Jazz Band');
-    expect(byDate['2026-06-01']?.name).toBe('Mats Lundmark Jazz Quartet');
+  it('extracts every dated entry on the page', () => {
+    expect(events).toHaveLength(15);
+    expect(byDate['2026-11-23']?.band).toMatch(/^Jesse.{1}s Jazz Band/i);
   });
 
   it('declares roster relevance (mixed venue)', () => {
     expect(relevance).toBe('roster');
   });
 
-  it('extracts the band as the event title (used for roster matching)', () => {
-    // The parser only extracts; the runner classifies c.band against the roster.
-    expect(byDate['2026-06-17']?.band).toBe('Swing Magnifique');
-    expect(byDate['2026-06-18']?.band).toBe('Webop Kvintett');
-  });
-
-  it('skips entries with no bookable time (TBC)', () => {
-    // Thu 4 June is "TBC" with no time -> no event that day.
-    expect(byDate['2026-06-04']).toBeUndefined();
-  });
-
-  it('parses an overnight time range (20-00 -> 00:00) when present', () => {
-    // All emitted events have valid HH:MM start/end.
+  it('parses an overnight time range (20-00 -> 00:00)', () => {
+    expect(byDate['2026-11-13']).toMatchObject({ start: '20:00', end: '00:00' });
     for (const e of events) {
       expect(e.start).toMatch(/^([01]\d|2[0-3]):[0-5]\d$/);
       expect(e.end).toMatch(/^([01]\d|2[0-3]):[0-5]\d$/);
     }
+  });
+
+  it('skips entries with no bookable time or a TBC placeholder', () => {
+    const entry = (content) =>
+      `<h2>DECEMBER 2026</h2><calendar-entry><script type="application/json">${JSON.stringify({ date: 'Fri 4', content })}</script></calendar-entry>`;
+    expect(parse(entry('<p>TBC<BR>soon</p>'))).toEqual([]);
+    expect(parse(entry('<p>TBC 19-22</p>'))).toEqual([]);
   });
 });

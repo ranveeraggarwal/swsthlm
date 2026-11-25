@@ -33,10 +33,16 @@ export const ONEOFF_FIELDS = [
  */
 
 // Uppercase source text -> display case. "JESSES JAZZ BAND" -> "Jesses Jazz Band".
+//
+// A letter is capitalised when it starts a word: at the start, or after
+// anything that isn't a letter, digit or apostrophe. Unicode-aware on purpose —
+// `\b` is ASCII-only, so it treats an accented letter as a word edge
+// ("ROSÉN" -> "RosÉn") — and apostrophe-like marks (' ’ ´ `) don't start a word,
+// so "JESSE´S" -> "Jesse´s", not "Jesse´S".
 export function titleCase(str) {
   return (str ?? '')
-    .toLowerCase()
-    .replace(/\b([a-zà-ö])/g, (m) => m.toUpperCase())
+    .toLocaleLowerCase('sv')
+    .replace(/(^|[^\p{L}\p{N}'’´`])(\p{L})/gu, (_, pre, ch) => pre + ch.toLocaleUpperCase('sv'))
     .trim();
 }
 
